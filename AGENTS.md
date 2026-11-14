@@ -76,5 +76,9 @@ The default home is `$XDG_CACHE_HOME/deptime`, else `~/.cache/deptime` (override
   - `ServerMiddleware` = `async (ctx, call_next)`;
   - tests: `mcp.Client(server)` in-process, or `mcp.Client(StdioServerParameters(command=..., args=[...], env=...))`.
 - **griffe 2.4 (checked 2026-10-31):** `griffe.load(name, search_paths=[...], allow_inspection=False, resolve_aliases=True, resolve_external=None)` (`None` loads only a private `_<package>` sibling such as `_pytest`, from `search_paths` alone); aliases expose `final_target`; `Class.all_members` includes inherited members.
-- **Claude Code plugins (checked 2026-11-10 on 2.1.322):** `claude plugin validate integrations/claude-code` passes with no plugin-directory warnings. The icon is `.claude-plugin/icon.png` (1024 px, from `docs/assets/deptime-icon.svg`); the directory takes it only from the first submission. Failed Bash commands fire `PostToolUseFailure`.
+- **Claude Code plugins (checked 2026-11-14 on 2.1.325):** `claude plugin validate --strict integrations/claude-code` passes with nothing to report. Anthropic's plugin directory (docs: `claude.com/docs/plugins/pre-submission-checklist.md`, `code.claude.com/docs/en/plugins/manifest-reference.md`):
+  - blocks a launcher that isn't pinned to an exact version, so `.mcp.json` runs `uvx deptime==<release>` (a test keeps it at `__version__`); a pinned launcher is still held for a reviewer;
+  - takes the listing's icon from `plugin.json`'s `icon` field (`./.claude-plugin/icon.png`, 1024 px, from `docs/assets/deptime-icon.svg`); the docs don't say whether it can change after the first submission;
+  - shows the plugin's README as the listing, which must say what the plugin runs, sends and fetches.
+  Failed Bash commands fire `PostToolUseFailure`.
 - **Claude Code instruction files (2.1.322):** with no `CLAUDE.md`, a project's `AGENTS.md` loads in its place (the `instructionFiles` setting); the import in `CLAUDE.md` also covers older versions and setups that turn that off.

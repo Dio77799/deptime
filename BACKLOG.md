@@ -90,6 +90,8 @@ Nothing. The upkeep above is all the project needs.
 
 ## Done since 2026-11-13
 
+- [x] **DT-GTM-04** (2026-11-14): the Claude Code plugin runs `uvx deptime==<release>` and names its icon in the
+  manifest, as Anthropic's plugin directory requires; a test keeps the pin at the released version.
 - [x] **DT-QA-14** (2026-11-14): closed without code. The check it asked for, an alert when the index falls behind,
   already runs: `bench` runs DT-QA-03's tests on the published index after every build (59 of the last 60 such runs
   passed; today's ran 82 tests).

@@ -10,5 +10,6 @@
   "homepage": "https://github.com/cschmertz/deptime",
   "repository": "https://github.com/cschmertz/deptime",
   "license": "MIT",
+  "icon": "./.claude-plugin/icon.png",
   "keywords": ["python", "dependencies", "deprecation", "upgrade", "mcp"]
 }

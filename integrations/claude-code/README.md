@@ -2,7 +2,7 @@
 
 | Component | File | What it does |
 |---|---|---|
-| MCP server | `.mcp.json` | Runs `uvx deptime mcp` locally over stdio. No account, no key, no data leaves your machine. |
+| MCP server | `.mcp.json` | Runs DepTime locally over stdio with `uvx`, pinned to this plugin's version. No account, no key, no data leaves your machine. |
 | Skill | `skills/deptime/SKILL.md` | Teaches when and how to use `explain_error`, `check_symbols` and `diff_versions` |
 | Hook | `hooks/hooks.json` → `scripts/suggest_deptime.py` | After a Bash command prints a Python version-change error, adds a one-line hint to call `explain_error` (local, no network) |
 
@@ -21,7 +21,7 @@ This repo is also a plugin marketplace (`.claude-plugin/marketplace.json`). In C
 
 From a terminal: `claude plugin marketplace add cschmertz/deptime && claude plugin install deptime@deptime`.
 
-The plugin's MCP server runs `uvx deptime mcp`, which installs DepTime from PyPI.
+The plugin's MCP server runs `uvx deptime==<this plugin's version> mcp`, which installs that exact DepTime release from PyPI.
 
 ## Try it from a source checkout
 
