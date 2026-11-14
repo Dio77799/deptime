@@ -105,11 +105,15 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
   - The one question the benchmarks don't answer. The pilot is as designed in the archive: about 20 covered tasks ×
     2 arms × 3 runs, success by each task's own tests, the pass bar written down before the run. One run, reported
     in the README whichever way it comes out.
-- [ ] **DT-QA-16**: A model-alone baseline beside the traceback score · `P2` `S`
+- [ ] **DT-QA-16**: A model-alone baseline beside the traceback score · `P2` `M`
   - The benchmark's 87% has nothing to compare with. Put the same holdout tracebacks to a model with no tools and
     score its answers with the same scorer (package, name, breaking release, replacement); report it beside
-    DepTime's first run, with the cases newer than the model's training data shown apart. One run; evaluation only,
-    so ADR 0006 is untouched.
+    DepTime's first run, with the cases newer than the model's training data shown apart. Evaluation only, so
+    ADR 0006 is untouched.
+  - How: the 191 tracebacks of the six holdout sets, each with the installed versions DepTime is given. The model,
+    the prompt and the scoring rule are committed before the run. The model answers in the scorer's fields, and a
+    boundary counts when it names either side of it (the last release with the name, or the first without). Three
+    runs, reported as a range. Needs a model API key in the environment. The README gets one row.
 - [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
   - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
     error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered
