@@ -103,6 +103,16 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
   - The one question the benchmarks don't answer. The pilot is as designed in the archive: about 20 covered tasks ×
     2 arms × 3 runs, success by each task's own tests, the pass bar written down before the run. One run, reported
     in the README whichever way it comes out.
+- [ ] **DT-QA-16**: A model-alone baseline beside the traceback score · `P2` `S`
+  - The benchmark's 87% has nothing to compare with. Put the same holdout tracebacks to a model with no tools and
+    score its answers with the same scorer (package, name, breaking release, replacement); report it beside
+    DepTime's first run, with the cases newer than the model's training data shown apart. One run; evaluation only,
+    so ADR 0006 is untouched.
+- [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
+  - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
+    error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered
+    packages, collected by the benchmark's rules and scored once. The upgrade checks already have this measure
+    (the working uses).
 - [ ] **DT-QA-15**: The same for accuracy: S1's runtime probe on each package's newest release · `P3` `M`
   - Split from DT-QA-14. The probe (`bench/s1/`) runs a fixed plan of releases, up to 150 minutes a package, so
     following new releases means reworking it, and a check that needs upkeep defeats its purpose. Wait for a report
