@@ -81,20 +81,12 @@ What still needs a person, about once a month:
 
 ## To do
 
-Small, and each one makes the mode above hold by itself.
-
-- [ ] **DT-QA-14**: A scheduled health check that opens an issue · `P2` `M`
-  - Why: nothing scheduled watches for decay. `bench` re-scores cases whose answers are known, so a new release that
-    binds its names a new way lowers accuracy without failing anything, and a release that keeps failing to build is
-    carried over without a word.
-  - AC: once a month, (a) list each package whose newest PyPI release has been missing from the index, or carried
-    over, for more than three days; (b) run S1's runtime probe (`bench/s1/`) on the newest release of its ten
-    dynamic packages and compare with the index. It opens an issue when (a) lists anything or (b) is over 3% false
-    absent.
-- [ ] **DT-OSS-15**: Dependency updates that merge themselves · `P2` `S`
-  - AC: Dependabot's minor-and-patch groups merge once `ci` and `bench` pass, a few days after the release they
-    bring; griffe and major versions still wait for a person. Each merge is also the activity that keeps the schedule
-    alive.
+- [ ] **DT-QA-14**: A scheduled check that opens an issue when the index falls behind · `P2` `S`
+  - Why: a release that keeps failing to build is carried over from the previous index without a word, and nothing
+    scheduled looks.
+  - AC: once a month a workflow lists each package whose newest PyPI release has been missing from the published
+    index, or carried over, for more than three days, and opens an issue when it lists any (one open issue at a
+    time). It adds nothing that needs upkeep of its own.
 
 ## Done since 2026-11-13
 
@@ -111,6 +103,14 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
   - The one question the benchmarks don't answer. The pilot is as designed in the archive: about 20 covered tasks ×
     2 arms × 3 runs, success by each task's own tests, the pass bar written down before the run. One run, reported
     in the README whichever way it comes out.
+- [ ] **DT-QA-15**: The same for accuracy: S1's runtime probe on each package's newest release · `P3` `M`
+  - Split from DT-QA-14. The probe (`bench/s1/`) runs a fixed plan of releases, up to 150 minutes a package, so
+    following new releases means reworking it, and a check that needs upkeep defeats its purpose. Wait for a report
+    that shows decay.
+- [ ] **DT-OSS-15**: Dependency updates that merge themselves · `P3` `S`
+  - Needs auto-merge and required checks turned on for `main` (neither is set), which changes how every commit
+    lands, and lets unattended updates into the environment that builds the signed index. The monthly upkeep merges
+    them instead.
 - [ ] **DT-GTM-02**: Host the generated rename-map pages (GitHub Pages) · `P2` `S`
 - [ ] **DT-GTM-05**: Try the Cursor rule and the AGENTS.md snippet in a fresh project · `P2` `S`
 - [ ] **DT-SPIKE-05**, **DT-SPIKE-07**: Cursor, VS Code and Claude Desktop, and a first run on Windows · `P2` `S`
