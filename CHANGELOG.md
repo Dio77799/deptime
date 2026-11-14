@@ -24,6 +24,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-11-14
+
+A documentation release: the code is 0.1.13's, and every answer is the same.
+
+### Changed
+- The README, which is also the PyPI page, is rewritten for a first-time reader. It opens with an animated demo
+  drawn from a real answer, gives four first-run numbers under "How well it works" with the full table in
+  `bench/README.md`, and says what DepTime doesn't do (DT-OSS-02)
+- The project is in maintenance mode: the index still rebuilds twice a day, and fixes follow reported wrong
+  answers. `BACKLOG.md` is the short plan; the record of earlier work is `docs/backlog-archive.md`
+
 ## [0.1.13] - 2026-11-11
 
 ### Added
@@ -358,7 +369,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.13...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.14...HEAD
+[0.1.14]: https://github.com/cschmertz/deptime/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/cschmertz/deptime/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/cschmertz/deptime/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/cschmertz/deptime/compare/v0.1.10...v0.1.11

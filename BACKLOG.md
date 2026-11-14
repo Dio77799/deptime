@@ -15,9 +15,10 @@ before that date, with its measurements, is in [docs/backlog-archive.md](docs/ba
 
 ---
 
-## Current state: public alpha, v0.1.13
+## Current state: public alpha, v0.1.14
 
-- **Released:** 0.1.13 is on PyPI, the MCP Registry and GitHub (2026-11-11). `main` has no unreleased code.
+- **Released:** 0.1.14 (2026-11-14) is on PyPI, the MCP Registry and GitHub. It is a documentation release, so the
+  PyPI page shows the current README; the code is 0.1.13's (2026-11-11).
 - **Index:** 53 packages and 6,800 releases on 2026-11-13 (`SNAPSHOT_FORMAT` 26, schema 2); `index.sqlite.xz` is
   51.0 MB and the `.gz` 78.5 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
