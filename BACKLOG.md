@@ -23,7 +23,10 @@ before that date, with its measurements, is in [docs/backlog-archive.md](docs/ba
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
   build of about 3.7 hours.
 - **Checks that run without anyone:** `ci` on every push (489 offline tests), and `bench` on every code change and
-  every published index, which fails on a drop of more than 2 points or a false-positive rate up by more than 1.
+  every published index. `bench` fails on a benchmark drop of more than 2 points or a false-positive rate up by more
+  than 1, and on the published index itself (`tests/test_golden.py`, DT-QA-03): older than 48 h, a package's newest
+  release on PyPI for more than 24 h without being indexed, or a Tier A package's newest release without the names
+  its documentation uses.
 - **How well it works:** the README's table, which leads with first runs on unseen cases. Across the six holdout sets'
   first runs, `explain_error` names the right package, name and release for 86.9% of tracebacks (166/191), and
   `check_symbols` has flagged under 1% of working code for four sets running while finding 96.6% or more of the
@@ -76,20 +79,19 @@ What still needs a person, about once a month:
 - **Keep the schedule alive.** GitHub disables scheduled workflows in a public repository after 60 days without
   repository activity. A merged pull request counts. If the index stops updating, re-enable `build-index` in the
   Actions tab.
-- **Read a build's log before trusting it.** A green build can carry a release over from the previous index when its
-  download or snapshot fails (Invariant 6). DT-QA-14 turns this into a check.
+- **A red `bench` run after a build means the index is behind,** or a new release dropped a documented name: the
+  checks above ran on it. A green build can still carry a release over when its download or snapshot fails
+  (Invariant 6); `bench` catches that once the release is a day old.
 
 ## To do
 
-- [ ] **DT-QA-14**: A scheduled check that opens an issue when the index falls behind · `P2` `S`
-  - Why: a release that keeps failing to build is carried over from the previous index without a word, and nothing
-    scheduled looks.
-  - AC: once a month a workflow lists each package whose newest PyPI release has been missing from the published
-    index, or carried over, for more than three days, and opens an issue when it lists any (one open issue at a
-    time). It adds nothing that needs upkeep of its own.
+Nothing. The upkeep above is all the project needs.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-14** (2026-11-14): closed without code. The check it asked for, an alert when the index falls behind,
+  already runs: `bench` runs DT-QA-03's tests on the published index after every build (59 of the last 60 such runs
+  passed; today's ran 82 tests).
 - [x] **DT-OSS-02** (2026-11-13): README proof. An animated demo drawn from the real answer (`tools/demo_svg.py`),
   "How well it works" as four first-run numbers with the full table in `bench/README.md`, a limits section and a
   status line.
@@ -115,8 +117,8 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     (the working uses).
 - [ ] **DT-QA-15**: The same for accuracy: S1's runtime probe on each package's newest release · `P3` `M`
   - Split from DT-QA-14. The probe (`bench/s1/`) runs a fixed plan of releases, up to 150 minutes a package, so
-    following new releases means reworking it, and a check that needs upkeep defeats its purpose. Wait for a report
-    that shows decay.
+    following new releases means reworking it, and a check that needs upkeep defeats its purpose. DT-QA-03's
+    documented names already watch each Tier A package's newest release. Wait for a report that shows decay.
 - [ ] **DT-OSS-15**: Dependency updates that merge themselves · `P3` `S`
   - Needs auto-merge and required checks turned on for `main` (neither is set), which changes how every commit
     lands, and lets unattended updates into the environment that builds the signed index. The monthly upkeep merges
