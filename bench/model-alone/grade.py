@@ -115,6 +115,15 @@ def other_side(answer: dict, row: dict) -> bool:
     return have[:n] == want[:n]
 
 
+def at_installed(case: dict, row: dict) -> bool:
+    """Is the far side of the boundary the installed release itself, to the case's precision? Then "it went in the
+    release you have" (or "it arrives in the next one") is right without knowing the library's history. Added after
+    the first scoring to explain it; no mark depends on it."""
+    installed = {canonicalize_name(k): v for k, v in case["installed"].items()}
+    have = installed.get(canonicalize_name(case["expected"]["package"]))
+    return bool(have) and other_side({"first_version_without": have, "last_version_without": have}, row)
+
+
 def grade(case: dict, reply: str, row: dict, coverage: Coverage) -> dict:
     """One reply's marks: the benchmark's root cause, boundary and replacement, and where a miss went wrong."""
     expected = case["expected"]
@@ -301,6 +310,28 @@ def main() -> int:
             f"| `{model}` | {sum(has[i] and deptime[i] for i in cases)} | {sum(deptime[i] and not has[i] for i in cases)}"
             f" | {sum(has[i] and not deptime[i] for i in cases)} | {sum(not has[i] and not deptime[i] for i in cases)}"
             f" | {steady} of {len(cases)} |"
+        )
+
+    near = [i for i, c in cases.items() if at_installed(c, rows[i])]
+    far = [i for i in cases if i not in set(near)]
+    out += [
+        "",
+        "## Where the installed release is the boundary",
+        "",
+        "Added after the results were in, to explain them: no part of the rule fixed beforehand. In the first"
+        " column's cases the installed release is itself the first without the name (or the last before a name not"
+        " yet added), to the case's precision, so the release can be read off the question.",
+        "",
+        f"| Answered by | Installed release is the boundary ({len(near)}) | The boundary is elsewhere ({len(far)}) |",
+        "|---|---|---|",
+        f"| DepTime, first run | {spread([sum(deptime[i] for i in near)], len(near))}"
+        f" | {spread([sum(deptime[i] for i in far)], len(far))} |",
+    ]
+    for model, by_run in sorted(runs.items()):
+        marks = [by_run[n] for n in sorted(by_run)]
+        out.append(
+            f"| `{model}` | {spread([count(m, 'passed', near) for m in marks], len(near))}"
+            f" | {spread([count(m, 'passed', far) for m in marks], len(far))} |"
         )
 
     out += [

@@ -23,7 +23,7 @@ before that date, with its measurements, is in [docs/backlog-archive.md](docs/ba
   51.0 MB and the `.gz` 78.5 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
   build of about 3.7 hours.
-- **Checks that run without anyone:** `ci` on every push (489 offline tests), and `bench` on every code change and
+- **Checks that run without anyone:** `ci` on every push (502 offline tests), and `bench` on every code change and
   every published index. `bench` fails on a benchmark drop of more than 2 points or a false-positive rate up by more
   than 1, and on the published index itself (`tests/test_golden.py`, DT-QA-03): older than 48 h, a package's newest
   release on PyPI for more than 24 h without being indexed, or a Tier A package's newest release without the names
@@ -31,7 +31,7 @@ before that date, with its measurements, is in [docs/backlog-archive.md](docs/ba
 - **How well it works:** the README's table, which leads with first runs on unseen cases. Across the six holdout sets'
   first runs, `explain_error` names the right package, name and release for 86.9% of tracebacks (166/191), and
   `check_symbols` has flagged under 1% of working code for four sets running while finding 96.6% or more of the
-  breaks.
+  breaks. A model alone, with no tools, scores 66% to 84% on the same tracebacks (DT-QA-16).
 
 | Milestone | Exit criterion | Status |
 |---|---|---|
@@ -90,6 +90,10 @@ Nothing. The upkeep above is all the project needs.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-16** (2026-11-14): a model-alone baseline beside the traceback score. The six sets' 191 tracebacks,
+  put to three Claude models with no tools under a prompt and rule committed first: 66% to 84% against DepTime's
+  86.9%, with the models ahead on naming the change and its replacement and DepTime ahead on the release
+  (`bench/model-alone/results-2026-11-14.md`). The README has the row.
 - [x] **DT-GTM-04** (2026-11-14): the Claude Code plugin runs `uvx deptime==<release>` and names its icon in the
   manifest, as Anthropic's plugin directory requires; a test keeps the pin at the released version.
 - [x] **DT-QA-14** (2026-11-14): closed without code. The check it asked for, an alert when the index falls behind,
@@ -105,18 +109,10 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
 
 - [ ] **DT-QA-05** with **DT-SPIKE-06**: does an agent fix more dependency breakages with DepTime, and does it call
   it unprompted? · `P2` `L` (pilot `M`)
-  - The one question the benchmarks don't answer. The pilot is as designed in the archive: about 20 covered tasks ×
-    2 arms × 3 runs, success by each task's own tests, the pass bar written down before the run. One run, reported
-    in the README whichever way it comes out.
-- [ ] **DT-QA-16**: A model-alone baseline beside the traceback score · `P2` `M`
-  - The benchmark's 87% has nothing to compare with. Put the same holdout tracebacks to a model with no tools and
-    score its answers with the same scorer (package, name, breaking release, replacement); report it beside
-    DepTime's first run, with the cases newer than the model's training data shown apart. Evaluation only, so
-    ADR 0006 is untouched.
-  - How: the 191 tracebacks of the six holdout sets, each with the installed versions DepTime is given. The model,
-    the prompt and the scoring rule are committed before the run. The model answers in the scorer's fields, and a
-    boundary counts when it names either side of it (the last release with the name, or the first without). Three
-    runs, reported as a range. Needs a model API key in the environment. The README gets one row.
+  - The one question the benchmarks don't answer, and the one DT-QA-16's result points to: a model alone already
+    names most of these changes, so what counts is whether an agent does better with the tool. The pilot is as
+    designed in the archive: about 20 covered tasks × 2 arms × 3 runs, success by each task's own tests, the pass
+    bar written down before the run. One run, reported in the README whichever way it comes out.
 - [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
   - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
     error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered

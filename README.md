@@ -105,17 +105,18 @@ Every answer carries evidence and a confidence level. The contracts are in [docs
 
 ## How well it works
 
-Every number in the table is a **first run**: the cases and their right answers were collected and committed before DepTime ever ran on them.
+Every DepTime number in the table is a **first run**: the cases and their right answers were collected and committed before DepTime ever ran on them.
 
 | How often does it… | First run | Measured on |
 |---|---|---|
 | find the right package, name and breaking release from a real traceback? | **87%** (166 of 191) | Tracebacks from GitHub issues and Stack Overflow, in six sets |
+| *…and a language model alone, answering the same tracebacks from memory with no tools?* | *82% to 84%* (Claude Sonnet 5.5 and Opus 5.5), *66% to 69%* (Haiku 5.5) | The same 191, three runs per model, [scored the same way](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/results-2026-11-14.md). The models name the change and its replacement more often than DepTime, and the release less often |
 | offer the right replacement among its first three suggestions? | **48%** (41 of 85) | The same tracebacks, where a replacement is known |
 | flag code that still works after an upgrade? (lower is better) | **0.1%** (2 of 2,047) | Uses of covered packages in real projects, labelled by running them. Newest of six sets; the oldest scored 3.8% |
 | find the code that an upgrade breaks? | **100%** (147 of 147) | The same projects. Newest set; the six range from 95.9% to 100% |
 
 - **The upgrade checks are the strong part.** The last two rows are `check_symbols`. On the same set, `diff_versions` found 96.7% of the breaks (147 of 152) and flagged 0.1% of working code (2 of 2,113).
-- **Replacements are the weak part.** On unseen errors the right one is offered about half the time. A suggestion at confidence 0.75 or more is usually right: 11 of 11 on the first run over 50 documented migrations, 42 of 45 now.
+- **Replacements are the weak part.** On unseen errors the right one is offered about half the time, where the models in the second row offer it 87% to 99% of the time. A suggestion at confidence 0.75 or more is usually right: 11 of 11 on the first run over 50 documented migrations, 42 of 45 now.
 - **The same cases score higher today** (97.2% of all 393 real tracebacks in the benchmark), because fixes were designed from their misses. That is why the first run is the number to trust.
 - **Where it can't tell, it says so.** `check_symbols` answered `unknown`, with the reason, for 66 working uses and 5 breaks of the newest set, which are left out of its rates above.
 

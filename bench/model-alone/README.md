@@ -107,3 +107,9 @@ uv run python bench/model-alone/grade.py > bench/model-alone/results-<date>.md
 - **Other models.** Three models from one vendor, all with the same training cutoff.
 - **Unseen cases, for the model.** The tracebacks come from public GitHub issues, so a model may have read the
   issue itself, answer included, where the break is older than its training data.
+
+## Result
+
+Added after the run; everything above is as it was committed before it. The run of 2026-11-14 is in
+[results-2026-11-14.md](results-2026-11-14.md), with the replies it scores in `answers/`. `grade.py` gained one
+table afterwards, "Where the installed release is the boundary", to explain the result; it changes no mark.

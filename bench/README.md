@@ -20,6 +20,7 @@ Each check's right answers were written down before DepTime first ran on it ([be
 | The same four, on the [holdout of 2026-11-09](https://github.com/cschmertz/deptime/blob/main/bench/holdout/2026-11c/results-2026-11-09.md): tracebacks; working code flagged by `check_symbols` / `diff_versions`; breaks flagged | 35; 1,801 / 1,841 uses; 128 | 88.6%; 0.5% / 0.3%; 99.2% / 99.2% | 97.1%; 0.06% / 0%; 100% / 98.4% |
 | The same four, on the [holdout of 2026-11-08](https://github.com/cschmertz/deptime/blob/main/bench/holdout/2026-11b/results-2026-11-08.md): tracebacks; working code flagged by `check_symbols` / `diff_versions`; breaks flagged | 37; 2,503 / 2,542 uses; 146 (140 once six wrong labels are corrected) | 91.9%; 1.5% / 0.2%; 95.9% / 95.9% | 100%; 0% / 0%; 100% / 100% |
 | The same four, on the [holdout of 2026-11-07](https://github.com/cschmertz/deptime/blob/main/bench/holdout/2026-11/results-2026-11-07.md): tracebacks; working code flagged by `check_symbols` / `diff_versions`; breaks flagged | 35; 3,600 / 2,399 uses; 130 | 88.6%; 3.8% / 0.3%; 97.7% / 76.9% | 100%; 0.1% / 0.1%; 98.4% / 98.5% |
+| The six holdout sets' tracebacks put to a language model alone, with no tools: right package, name and breaking release ([results](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/results-2026-11-14.md)) | 191, three runs per model | Claude Opus 5.5 83.2% to 83.8%; Claude Sonnet 5.5 81.7% to 82.7%; Claude Haiku 5.5 66.0% to 68.6%. DepTime's first runs on the same 191: 86.9% | run once |
 | Right package, name and breaking release for a traceback from a GitHub issue | 32 collected 2026-11-05 | 68.8% | 100% |
 | The same, on a holdout fixed in advance from [TimeMachine-bench](https://github.com/tohoku-nlp/timemachine-bench) | 29 | 72.4% | 96.6% |
 | Error kind and package read from the traceback: scripts, pytest, chained exceptions, `ExceptionGroup`, IPython, Python 3.10–3.14 | 736, holdout fixed in advance | 93.8% | 100% |
@@ -102,6 +103,18 @@ The seed file (`cases/seed.jsonl`) contains well-documented, real-world breaks. 
 ## Holdout (DT-QA-04)
 
 `tmb/` holds 29 cases from TimeMachine-bench, an outside benchmark, collected after the fixes designed from `cases/` and scored once under a rule fixed in advance. Its first run, 72.4% root cause + boundary, is the number to quote; see `tmb/README.md` and `tmb/results-2026-10-31.md`. `bench.yml` checks it against `tmb/baseline.json`.
+
+## A model alone (DT-QA-16)
+
+`model-alone/` puts the six holdout sets' 191 tracebacks to a language model that has no tools and answers from
+memory, and scores the answers with this benchmark's scorer. The prompt, the models and the rule were committed before
+any model was asked, and it was run once, on 2026-11-14, three runs per model. Claude Opus 5.5 names the right package,
+name and breaking release for 83.2% to 83.8%, Claude Sonnet 5.5 for 81.7% to 82.7% and Claude Haiku 5.5 for 66.0% to
+68.6%, beside 86.9% for DepTime's first runs. The models name the change more often than DepTime (98% to 100% of root
+causes for the two larger ones, against 87.4%) and the replacement far more often (87% to 99% of 85, against 48.2%).
+DepTime is ahead on the release wherever the installed version doesn't give it away: 88.1% against 46% to 66% on the 59
+cases where the boundary isn't the installed release itself. See `model-alone/README.md` for the protocol and
+`model-alone/results-2026-11-14.md` for every table.
 
 ## Per-release holdout (DT-QA-07 to DT-QA-11)
 
