@@ -105,3 +105,9 @@ uv run python bench/model-alone/upgrades/grade.py > bench/model-alone/upgrades/r
   older than the training data.
 - **The other five holdout sets.** DepTime's first runs on them are in their own results; asking them would be about
   six times the calls.
+
+## Result
+
+Added after the run; everything above is as it was committed before it. The run of 2026-11-15 is in
+[results-2026-11-15.md](results-2026-11-15.md), with the replies it scores in `answers/`. `posthoc.py` was added
+afterwards, to date each break by the release that made it; it changes no mark.

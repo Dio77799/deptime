@@ -1,0 +1,595 @@
+{
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|18418ee3ad623119": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|25a907eb3110bff7": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|37f94af4fdb8eed1": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|39e941e47c01a55a": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|484fdd8a2d0e2d1d": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|49fcad6c3b7dd490": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|536c66924f4bc902": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|5a14caf7c596d2ed": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|6c2b8773a90d0fcc": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|71ea0bb28ace57c2": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|7dfb40417d552c27": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|92eb25b9e687f30a": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|c62b11641ed04758": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|ce04b85774354eec": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|d356ec7a30fb9284": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|e17d171ce1bd680a": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up|e73bf73866ad5f5d": {
+  "released": "2025-10-27",
+  "version": "1.0.0"
+ },
+ "pin-ai-learning-gems__ai-learning-gems.github.io-mistralai-up|9ee77662db20a740": {
+  "released": "2026-03-10",
+  "version": "2.0.0"
+ },
+ "pin-ai-learning-gems__ai-learning-gems.github.io-mistralai-up|fd84b151f5d15223": {
+  "released": "2026-03-10",
+  "version": "2.0.0"
+ },
+ "pin-aianytime__medical-rag-using-bio-mistral-7b-langchain-community-up|00ef35dee6e5694f": {
+  "released": "2026-05-22",
+  "version": "0.4.2"
+ },
+ "pin-aianytime__medical-rag-using-bio-mistral-7b-langchain-community-up|4d30adf2c3f83aae": {
+  "released": "2026-05-22",
+  "version": "0.4.2"
+ },
+ "pin-aianytime__medical-rag-using-bio-mistral-7b-langchain-community-up|8000d221060e97e6": {
+  "released": "2026-05-22",
+  "version": "0.4.2"
+ },
+ "pin-aianytime__medical-rag-using-bio-mistral-7b-langchain-community-up|a38511a764dcf15d": {
+  "released": "2026-05-22",
+  "version": "0.4.2"
+ },
+ "pin-conalltimoney__conall-gpt-polars-down|0e56afd770afbead": {
+  "released": "2023-06-09",
+  "version": "0.18.2"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|0bce7a22dff9b279": {
+  "released": "2025-08-01",
+  "version": "2.11.0"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|28e687c91997862d": {
+  "released": "2025-09-03",
+  "version": "2.12.1"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|4cdf37497b7ddbce": {
+  "released": "2025-05-08",
+  "version": "2.3.0"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|628cac76d7fce8ce": {
+  "released": "2025-08-04",
+  "version": "2.11.1"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|840324def54da6a9": {
+  "released": "2025-06-02",
+  "version": "2.6.0"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|b824c21acb509632": {
+  "released": "2025-05-08",
+  "version": "2.3.0"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|bd776a16e9ce5881": {
+  "released": "2025-08-01",
+  "version": "2.11.0"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|c9bd02213ad03587": {
+  "released": "2025-05-24",
+  "version": "2.5.1"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|df15405dec352aef": {
+  "released": "2026-02-22",
+  "version": "3.0.2"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|dfc17d0027fcf8e2": {
+  "released": "2025-05-08",
+  "version": "2.3.0"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|e7d6c4c20b2bf2a5": {
+  "released": "2025-05-10",
+  "version": "2.3.2"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|f6ecf8a39bea1fe0": {
+  "released": "2025-06-11",
+  "version": "2.8.0"
+ },
+ "pin-denodo__denodo-ai-sdk-fastmcp-down|f96cb81a22069425": {
+  "released": "2025-08-01",
+  "version": "2.11.0"
+ },
+ "pin-diceframe__diceframe-pydantic-ai-slim-down|9ce6a4304a154ee8": {
+  "released": "2026-02-23",
+  "version": "1.63.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|09739342c0573ded": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|1d6a97724e845884": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|3d264faec0824ec0": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|8c7d4c9c3e2001a4": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|97d0cf5ae0b92faf": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|a152c05e213173bf": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|a9cbb1020664edfc": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|c83a1c4ad37c7c02": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-dtunai__synthtot-langchain-up|e150f531e1260239": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-emre-avcii__vector-db-ile-unlu-mekan-aramasi--qdrant-client-down|026392286570d744": {
+  "released": "2024-07-01",
+  "version": "1.10.0"
+ },
+ "pin-emre-avcii__vector-db-ile-unlu-mekan-aramasi--qdrant-client-down|0c9f758ec8ba1327": {
+  "released": "2024-03-06",
+  "version": "1.8.0"
+ },
+ "pin-emre-avcii__vector-db-ile-unlu-mekan-aramasi--qdrant-client-down|a7acb4d1b2eac784": {
+  "released": "2024-03-06",
+  "version": "1.8.0"
+ },
+ "pin-emre-avcii__vector-db-ile-unlu-mekan-aramasi--qdrant-client-down|d4ebfef18d4adcf4": {
+  "released": "2024-07-01",
+  "version": "1.10.0"
+ },
+ "pin-gaa-uam__c-gb-scikit-learn-up|7d4aba51984ef247": {
+  "released": "2024-12-09",
+  "version": "1.6.0"
+ },
+ "pin-gaa-uam__c-gb-scikit-learn-up|801fbab0773c0f9f": {
+  "released": "2024-01-18",
+  "version": "1.4.0"
+ },
+ "pin-gaa-uam__c-gb-scikit-learn-up|863f7291061ea70e": {
+  "released": "2023-06-30",
+  "version": "1.3.0"
+ },
+ "pin-gaa-uam__c-gb-scikit-learn-up|cd8b8c5ea34f06d4": {
+  "released": "2024-01-18",
+  "version": "1.4.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|00a0248acb5c6ec4": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|09739342c0573ded": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|0ffa89f74427fa79": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|14b93b27614b6d9e": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|163a51d81fef7022": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|176cfeff65c1e3a2": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|1d6a97724e845884": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|1dc3584fd75c52d9": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|2d9432c1fecb18db": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|32a6038080ac5a2e": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|34c255b10ad7e930": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|3d264faec0824ec0": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|42609654651afba3": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|4ebf99b6cf97f158": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|527546e7f9c58687": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|5511b771d4b3ed02": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|6f405891b5d27233": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|729089cb973c916d": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|7345ae86670966e7": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|a0eeeaee69953e03": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|a4dafef1cd61b0ee": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|a719c583feec116a": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|a9cbb1020664edfc": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|aefc7074e9ccf141": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|b0598b9be74ad91d": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|b725a8ab3c188566": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|c421b7896d2ebcab": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|c83a1c4ad37c7c02": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|e150f531e1260239": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-jerome3o__schemallm-langchain-up|e1d154bdafb8dd43": {
+  "released": "2025-10-17",
+  "version": "1.0.0"
+ },
+ "pin-lza6__aiwritex-main-crewai-down|56a321178d447200": {
+  "released": "2024-11-10",
+  "version": "0.79.0"
+ },
+ "pin-lza6__aiwritex-main-crewai-down|625770e5ac2563cd": {
+  "released": "2024-03-03",
+  "version": "0.17.0"
+ },
+ "pin-lza6__aiwritex-main-crewai-down|f180bb6ce2206eae": {
+  "released": "2024-09-24",
+  "version": "0.63.2"
+ },
+ "pin-lza6__aiwritex-main-crewai-down|f4b20ac802f70b20": {
+  "released": "2024-08-11",
+  "version": "0.51.0"
+ },
+ "pin-mbzuai-oryx__xraygpt-gradio-up|0062a9df61de0f16": {
+  "released": "2023-10-31",
+  "version": "4.0.0"
+ },
+ "pin-mbzuai-oryx__xraygpt-gradio-up|490530b21d385957": {
+  "released": "2023-10-31",
+  "version": "4.0.0"
+ },
+ "pin-mbzuai-oryx__xraygpt-gradio-up|8c5eaa96fef8d84b": {
+  "released": "2023-10-31",
+  "version": "4.0.0"
+ },
+ "pin-mbzuai-oryx__xraygpt-gradio-up|9049d6cf6855a894": {
+  "released": "2023-10-31",
+  "version": "4.0.0"
+ },
+ "pin-mbzuai-oryx__xraygpt-gradio-up|f0cea2af6b832284": {
+  "released": "2023-10-31",
+  "version": "4.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|13a0ae28b810115e": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|373c8a1a7c65e589": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|57bd1d2b6996fd2c": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|64ffc3187a14945f": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|6da8d336eebd1ff4": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|9094213a6000a888": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|927348a648c9e8d0": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|cb66c0d4c256a6ab": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-mindsdb__minds-mcp-mcp-up|e6082428379dc615": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-msu-denver__bili-core-langgraph-down|0f246f63f1f98b92": {
+  "released": "2024-12-03",
+  "version": "0.2.54"
+ },
+ "pin-msu-denver__bili-core-langgraph-down|44b9bed18852bf03": null,
+ "pin-msu-denver__bili-core-langgraph-down|b768e0d9ec5ee0a4": {
+  "released": "2024-11-13",
+  "version": "0.2.47"
+ },
+ "pin-msu-denver__bili-core-langgraph-down|f3a5eafd5eb9cf9a": {
+  "released": "2024-11-13",
+  "version": "0.2.47"
+ },
+ "pin-noumenadigital__npl-integrations-streamlit-down|195ac5a755664285": {
+  "released": "2023-09-21",
+  "version": "1.27.0"
+ },
+ "pin-noumenadigital__npl-integrations-streamlit-down|9da765120c54cc20": {
+  "released": "2023-09-21",
+  "version": "1.27.0"
+ },
+ "pin-oaklight__mango-anthropic-down|42db97f941c92b95": {
+  "released": "2023-06-28",
+  "version": "0.3.0"
+ },
+ "pin-oaklight__mango-anthropic-down|86ca8b5741e19a1b": {
+  "released": "2023-06-28",
+  "version": "0.3.0"
+ },
+ "pin-oaklight__mango-anthropic-up|1a8b2b40e7f53c44": {
+  "released": "2026-08-20",
+  "version": "1.0.0"
+ },
+ "pin-oaklight__mango-anthropic-up|aaef9774a6b07941": {
+  "released": "2026-08-20",
+  "version": "1.0.0"
+ },
+ "pin-openhelix-team__reconvla-transformers-down|2841a7b33f257707": {
+  "released": "2024-01-22",
+  "version": "4.37.0"
+ },
+ "pin-openhelix-team__reconvla-transformers-down|527f46d63a4a059c": {
+  "released": "2024-01-22",
+  "version": "4.37.0"
+ },
+ "pin-openhelix-team__reconvla-transformers-down|918208f9c82c95d7": {
+  "released": "2024-01-22",
+  "version": "4.37.0"
+ },
+ "pin-openhelix-team__reconvla-transformers-down|f687faef9575a791": {
+  "released": "2024-01-22",
+  "version": "4.37.0"
+ },
+ "pin-pbl-nl__appl-docchat-chromadb-down|90245253f3bd75d8": {
+  "released": "2024-06-18",
+  "version": "0.5.1"
+ },
+ "pin-pbl-nl__appl-docchat-chromadb-down|aa6655844c2cd1e1": {
+  "released": "2024-06-18",
+  "version": "0.5.1"
+ },
+ "pin-pbl-nl__appl-docchat-chromadb-down|e199294fb37ff67a": {
+  "released": "2024-06-18",
+  "version": "0.5.1"
+ },
+ "pin-pbl-nl__appl-docchat-chromadb-down|e3529fd1fe2d329d": {
+  "released": "2024-06-18",
+  "version": "0.5.1"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|0018f4e4b68f82bf": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|0a09d1ae510a07b5": {
+  "released": "2025-12-12",
+  "version": "1.24.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|2a34fac430360238": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|44721d9d35897024": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|458220c783df95f1": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|706e82b6a00dd0cc": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|9a123535c98c15c0": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|b76b28e9eab18511": {
+  "released": "2026-09-07",
+  "version": "1.30.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|bf8896257d3df35c": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|c53c241a9fce3ace": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-poisdahl__meal-concierge-mcp-down|ddc9e6b25e654a5a": {
+  "released": "2026-07-28",
+  "version": "2.0.0"
+ },
+ "pin-roborregos__frida-cortex-chromadb-down|8e5bdc4c9d3a2591": {
+  "released": "2024-07-11",
+  "version": "0.5.4"
+ },
+ "pin-roborregos__frida-cortex-chromadb-down|9e958aeb58b2e6ff": {
+  "released": "2024-07-11",
+  "version": "0.5.4"
+ },
+ "pin-sayandipsaha666__medical-chatbot-pinecone-down|27b960a960f81242": {
+  "released": "2024-08-29",
+  "version": "5.1.0"
+ },
+ "pin-sayandipsaha666__medical-chatbot-pinecone-down|b88af3a50813e782": {
+  "released": "2024-08-29",
+  "version": "5.1.0"
+ },
+ "pin-surajrimal07__nepseapi-unofficial-fastmcp-up|2e7ef620950f83d6": null,
+ "pin-surajrimal07__nepseapi-unofficial-fastmcp-up|77e2944121a93798": null,
+ "pin-surajrimal07__nepseapi-unofficial-fastmcp-up|98e5cbc5ad60cf73": null,
+ "pin-surajrimal07__nepseapi-unofficial-fastmcp-up|e5fdad8f167b773f": null,
+ "pin-tonypeng1__personal-chatgpt-mistralai-up|9ee77662db20a740": {
+  "released": "2026-03-10",
+  "version": "2.0.0"
+ },
+ "pin-tonypeng1__personal-chatgpt-mistralai-up|fd84b151f5d15223": {
+  "released": "2026-03-10",
+  "version": "2.0.0"
+ },
+ "pin-vatsalsaglani__claudetools-anthropic-down|195f0750d95e532b": {
+  "released": "2024-01-31",
+  "version": "0.14.0"
+ },
+ "pin-vatsalsaglani__claudetools-anthropic-down|425333773f628d70": {
+  "released": "2024-01-31",
+  "version": "0.14.0"
+ },
+ "pin-vatsalsaglani__claudetools-anthropic-down|68ddc8b90d354178": {
+  "released": "2024-01-31",
+  "version": "0.14.0"
+ },
+ "pin-vatsalsaglani__claudetools-anthropic-down|abb4721bd940e469": {
+  "released": "2024-01-31",
+  "version": "0.14.0"
+ },
+ "pin-vatsalsaglani__claudetools-anthropic-down|d08b8b8ea4e9c9c7": {
+  "released": "2024-01-31",
+  "version": "0.14.0"
+ },
+ "pin-vatsalsaglani__claudetools-anthropic-down|fd3b10987f99fb10": {
+  "released": "2024-01-31",
+  "version": "0.14.0"
+ },
+ "pin-wandb__aihackercup-instructor-down|1db2fe6680d71a42": {
+  "released": "2023-11-27",
+  "version": "0.4.0"
+ },
+ "pin-wandb__aihackercup-instructor-down|2610a7c29f7eb37a": {
+  "released": "2024-04-01",
+  "version": "1.0.0"
+ },
+ "pin-wandb__aihackercup-instructor-down|f132404bec4d4b34": {
+  "released": "2024-04-01",
+  "version": "1.0.0"
+ },
+ "pin-wpydcr__llm-kit-gradio-up|981f753261d1763e": {
+  "released": "2024-10-09",
+  "version": "5.0.0"
+ }
+}

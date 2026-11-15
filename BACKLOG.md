@@ -31,7 +31,8 @@ before that date, with its measurements, is in [docs/backlog-archive.md](docs/ba
 - **How well it works:** the README's table, which leads with first runs on unseen cases. Across the six holdout sets'
   first runs, `explain_error` names the right package, name and release for 86.9% of tracebacks (166/191), and
   `check_symbols` has flagged under 1% of working code for four sets running while finding 96.6% or more of the
-  breaks. A model alone, with no tools, scores 66% to 84% on the same tracebacks (DT-QA-16).
+  breaks. A model alone, with no tools, scores 66% to 84% on the same tracebacks (DT-QA-16), and Claude Sonnet 5.5 alone
+  finds 90.8% of 2026-11f's breaks while flagging 0.2% of its working code (DT-QA-18).
 
 | Milestone | Exit criterion | Status |
 |---|---|---|
@@ -90,6 +91,9 @@ Nothing. The upkeep above is all the project needs.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-18** (2026-11-15): the same comparison for the upgrade checks. The 2026-11f holdout's 2,265 uses put
+  to Claude Sonnet 5.5 with no tools, one run, protocol committed first: 90.8% of breaks found and 0.2% of working uses
+  flagged, against 96.7% and 0.1% for DepTime's first run (`bench/model-alone/upgrades/results-2026-11-15.md`).
 - [x] **DT-QA-16** (2026-11-14): a model-alone baseline beside the traceback score. The six sets' 191 tracebacks,
   put to three Claude models with no tools under a prompt and rule committed first: 66% to 84% against DepTime's
   86.9%, with the models ahead on naming the change and its replacement and DepTime ahead on the release
@@ -113,9 +117,6 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     names most of these changes, so what counts is whether an agent does better with the tool. The pilot is as
     designed in the archive: about 20 covered tasks × 2 arms × 3 runs, success by each task's own tests, the pass
     bar written down before the run. One run, reported in the README whichever way it comes out.
-- [ ] **DT-QA-18**: A model alone on the upgrade checks · `P2` `S`
-  - DT-QA-16's comparison for `check_symbols` and `diff_versions`: the 2026-11f holdout's 2,265 labelled uses put to
-    Claude Sonnet 5.5 with no tools, one run, under a protocol committed first (`bench/model-alone/upgrades/`).
 - [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
   - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
     error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered

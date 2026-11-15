@@ -21,6 +21,7 @@ Each check's right answers were written down before DepTime first ran on it ([be
 | The same four, on the [holdout of 2026-11-08](https://github.com/cschmertz/deptime/blob/main/bench/holdout/2026-11b/results-2026-11-08.md): tracebacks; working code flagged by `check_symbols` / `diff_versions`; breaks flagged | 37; 2,503 / 2,542 uses; 146 (140 once six wrong labels are corrected) | 91.9%; 1.5% / 0.2%; 95.9% / 95.9% | 100%; 0% / 0%; 100% / 100% |
 | The same four, on the [holdout of 2026-11-07](https://github.com/cschmertz/deptime/blob/main/bench/holdout/2026-11/results-2026-11-07.md): tracebacks; working code flagged by `check_symbols` / `diff_versions`; breaks flagged | 35; 3,600 / 2,399 uses; 130 | 88.6%; 3.8% / 0.3%; 97.7% / 76.9% | 100%; 0.1% / 0.1%; 98.4% / 98.5% |
 | The six holdout sets' tracebacks put to a language model alone, with no tools: right package, name and breaking release ([results](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/results-2026-11-14.md)) | 191, three runs per model | Claude Opus 5.5 83.2% to 83.8%; Claude Sonnet 5.5 81.7% to 82.7%; Claude Haiku 5.5 66.0% to 68.6%. DepTime's first runs on the same 191: 86.9% | run once |
+| The 2026-11f holdout's upgrade checks put to a language model alone, with no tools: breaks found and working uses flagged ([results](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/upgrades/results-2026-11-15.md)) | 2,265 uses (152 breaks) from 171 upgrades, one run | Claude Sonnet 5.5: 90.8% of breaks found, 0.2% of working uses flagged. DepTime's first runs on the same uses: 96.7% and 0.1% | run once |
 | Right package, name and breaking release for a traceback from a GitHub issue | 32 collected 2026-11-05 | 68.8% | 100% |
 | The same, on a holdout fixed in advance from [TimeMachine-bench](https://github.com/tohoku-nlp/timemachine-bench) | 29 | 72.4% | 96.6% |
 | Error kind and package read from the traceback: scripts, pytest, chained exceptions, `ExceptionGroup`, IPython, Python 3.10–3.14 | 736, holdout fixed in advance | 93.8% | 100% |
@@ -115,6 +116,16 @@ causes for the two larger ones, against 87.4%) and the replacement far more ofte
 DepTime is ahead on the release wherever the installed version doesn't give it away: 88.1% against 46% to 66% on the 59
 cases where the boundary isn't the installed release itself. See `model-alone/README.md` for the protocol and
 `model-alone/results-2026-11-14.md` for every table.
+
+## A model alone on the upgrade checks (DT-QA-18)
+
+`model-alone/upgrades/` asks the same of the upgrade checks: the 2026-11f holdout's 2,265 labelled uses, one question
+per upgrade (the package, both releases and the uses), put to Claude Sonnet 5.5 with no tools, under a protocol and
+four rules that know nothing committed first. Run once, on 2026-11-15: Sonnet found 90.8% of the 152 breaks and
+flagged 0.2% of the 2,113 working uses, beside 96.7% and 0.1% for DepTime's first run; by upgrade, 24 of the 27 with a
+break against DepTime's 26, and no false alarm on the 144 clean ones for either. The best rule that knows nothing finds
+90.1% while flagging 53.2%. Only 21 breaks come from releases newer than the model's training data, too few to test
+the cutoff. See `model-alone/upgrades/README.md` and `model-alone/upgrades/results-2026-11-15.md`.
 
 ## Per-release holdout (DT-QA-07 to DT-QA-11)
 
