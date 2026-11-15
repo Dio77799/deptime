@@ -116,6 +116,6 @@ the results file is regenerated with both models.
 
 ## Result
 
-Added after the run; everything above is as it was committed before it. The run of 2026-11-15 is in
+Added after the runs; everything above is as it was committed before them. The run of 2026-11-15 is in
 [results-2026-11-15.md](results-2026-11-15.md), with the replies it scores in `answers/`. `posthoc.py` was added
 afterwards, to date each break by the release that made it; it changes no mark.

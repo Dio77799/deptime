@@ -93,7 +93,8 @@ Nothing. The upkeep above is all the project needs.
 
 - [x] **DT-QA-18** (2026-11-15): the same comparison for the upgrade checks. The 2026-11f holdout's 2,265 uses put
   to Claude Sonnet 5.5 with no tools, one run, protocol committed first: 90.8% of breaks found and 0.2% of working uses
-  flagged, against 96.7% and 0.1% for DepTime's first run (`bench/model-alone/upgrades/results-2026-11-15.md`).
+  flagged, against 96.7% and 0.1% for DepTime's first run; Claude Haiku 5.5, 73.7% and 0.3%
+  (`bench/model-alone/upgrades/results-2026-11-15.md`).
 - [x] **DT-QA-16** (2026-11-14): a model-alone baseline beside the traceback score. The six sets' 191 tracebacks,
   put to three Claude models with no tools under a prompt and rule committed first: 66% to 84% against DepTime's
   86.9%, with the models ahead on naming the change and its replacement and DepTime ahead on the release
