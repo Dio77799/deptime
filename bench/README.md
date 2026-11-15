@@ -22,6 +22,7 @@ Each check's right answers were written down before DepTime first ran on it ([be
 | The same four, on the [holdout of 2026-11-07](https://github.com/cschmertz/deptime/blob/main/bench/holdout/2026-11/results-2026-11-07.md): tracebacks; working code flagged by `check_symbols` / `diff_versions`; breaks flagged | 35; 3,600 / 2,399 uses; 130 | 88.6%; 3.8% / 0.3%; 97.7% / 76.9% | 100%; 0.1% / 0.1%; 98.4% / 98.5% |
 | The six holdout sets' tracebacks put to a language model alone, with no tools: right package, name and breaking release ([results](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/results-2026-11-14.md)) | 191, three runs per model | Claude Opus 5.5 83.2% to 83.8%; Claude Sonnet 5.5 81.7% to 82.7%; Claude Haiku 5.5 66.0% to 68.6%. DepTime's first runs on the same 191: 86.9% | run once |
 | The 2026-11f holdout's upgrade checks put to a language model alone, with no tools: breaks found and working uses flagged ([results](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/upgrades/results-2026-11-15.md)) | 2,265 uses (152 breaks) from 171 upgrades, one run per model | Claude Sonnet 5.5: 90.8% of breaks found, 0.2% of working uses flagged; Claude Haiku 5.5: 73.7% and 0.3%. DepTime's first runs on the same uses: 96.7% and 0.1% | run once |
+| The same two comparisons with two cheaper models from other vendors, through OpenRouter ([tracebacks](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/results-2026-11-15.md), [upgrades](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/upgrades/results-2026-11-15.md)) | 191 tracebacks; 2,265 uses, one run per model | Tracebacks: DeepSeek V4.1 Flash 59.2%, Qwen3.5 9B 18.8% (DepTime 86.9%). Upgrades, breaks found and working uses flagged: DeepSeek 80.9% and 2.7%, Qwen 30.9% and 15.4% (DepTime 96.7% and 0.1%) | run once |
 | Right package, name and breaking release for a traceback from a GitHub issue | 32 collected 2026-11-05 | 68.8% | 100% |
 | The same, on a holdout fixed in advance from [TimeMachine-bench](https://github.com/tohoku-nlp/timemachine-bench) | 29 | 72.4% | 96.6% |
 | Error kind and package read from the traceback: scripts, pytest, chained exceptions, `ExceptionGroup`, IPython, Python 3.10–3.14 | 736, holdout fixed in advance | 93.8% | 100% |
@@ -127,6 +128,16 @@ break against DepTime's 26, and no false alarm on the 144 clean ones for either.
 was asked, found 73.7% and flagged 0.3%: 18 of the 27 broken upgrades, and false alarms on 3 clean ones. The best rule that knows nothing finds
 90.1% while flagging 53.2%. Only 21 breaks come from releases newer than the model's training data, too few to test
 the cutoff. See `model-alone/upgrades/README.md` and `model-alone/upgrades/results-2026-11-15.md`.
+
+## Cheaper models (DT-QA-19)
+
+`model-alone/cheaper-models.md` puts both comparisons to two cheaper models from other vendors through OpenRouter,
+with the same prompts and scoring, protocol committed first, one run each, on 2026-11-15. DepTime's lead grows as the
+model gets smaller or cheaper. On the tracebacks, DeepSeek V4.1 Flash names the right package, name and release for
+59.2% and Qwen3.5 9B for 18.8%, against 86.9% for DepTime; Qwen is the first model DepTime beats on replacements too
+(22.4% against 48.2%). On the upgrade checks, DeepSeek finds 80.9% of breaks but flags 2.7% of working uses (a false
+alarm in 18 of 144 clean upgrades), and Qwen finds 30.9% while flagging 15.4%. OpenRouter's free models were busy
+throughout and weren't run.
 
 ## Per-release holdout (DT-QA-07 to DT-QA-11)
 

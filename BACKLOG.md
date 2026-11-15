@@ -91,6 +91,10 @@ Nothing. The upkeep above is all the project needs.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-19** (2026-11-15): two cheaper models alone, through OpenRouter, protocol committed first. Tracebacks:
+  DeepSeek V4.1 Flash 59.2%, Qwen3.5 9B 18.8% (DepTime 86.9%). Upgrades: DeepSeek 80.9% of breaks found with 2.7% of
+  working uses flagged, Qwen 30.9% and 15.4% (DepTime 96.7% and 0.1%). The free models were busy and are left for
+  another day (`bench/model-alone/cheaper-models.md`).
 - [x] **DT-QA-18** (2026-11-15): the same comparison for the upgrade checks. The 2026-11f holdout's 2,265 uses put
   to Claude Sonnet 5.5 with no tools, one run, protocol committed first: 90.8% of breaks found and 0.2% of working uses
   flagged, against 96.7% and 0.1% for DepTime's first run; Claude Haiku 5.5, 73.7% and 0.3%
@@ -118,10 +122,6 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     names most of these changes, so what counts is whether an agent does better with the tool. The pilot is as
     designed in the archive: about 20 covered tasks × 2 arms × 3 runs, success by each task's own tests, the pass
     bar written down before the run. One run, reported in the README whichever way it comes out.
-- [ ] **DT-QA-19**: Cheaper and smaller models alone, on both tests · `P2` `S`
-  - DeepSeek V4.1 Flash, Qwen3.5 9B, and the free Gemma 4 26B, LFM 3 1.7B and Nemotron 3 Ultra through OpenRouter,
-    one run each, the same prompts and scoring as the Claude runs, protocol committed first
-    (`bench/model-alone/cheaper-models.md`).
 - [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
   - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
     error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered

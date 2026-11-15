@@ -87,3 +87,14 @@ uv run python bench/model-alone/upgrades/grade.py > bench/model-alone/upgrades/r
   use its answer; smaller models are less reliable at both. That is DT-QA-05.
 - **The same model run locally.** OpenRouter's providers may serve a model differently from a local quantized copy.
 - **More than one run.** Runs of the same model vary; the Claude runs varied by one to three points.
+
+## Result
+
+Added after the runs; everything above is as it was committed before them. DeepSeek V4.1 Flash and Qwen3.5 9B were
+run on 2026-11-15, $1.76 in all; the results are in [results-2026-11-15.md](results-2026-11-15.md) (tracebacks) and
+[upgrades/results-2026-11-15.md](upgrades/results-2026-11-15.md) (upgrade checks), with the replies in each test's
+`answers/` folder.
+
+**The free models were not run.** Every free endpoint was busy during the trial (rate limited upstream, or
+overloaded), and no reply was stored; asking them was left for another day. The protocol, runner and order above
+still apply to them.
