@@ -24,6 +24,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-11-15
+
+A documentation release: the code is 0.1.13's, and every answer is the same.
+
+### Added
+- The upgrade checks get the same comparison as the tracebacks: the 2026-11f holdout's 2,265 labelled uses put to a
+  model alone, protocol committed first. Claude Sonnet 5.5 finds 91% of the breaks and flags 0.2% of working code,
+  beside DepTime's 96.7% and 0.1%; Haiku 5.5 74% and 0.3% (DT-QA-18)
+- Two cheaper models from other vendors on both comparisons, through OpenRouter: DeepSeek V4.1 Flash and Qwen3.5 9B
+  score 59% and 19% on the tracebacks (DepTime 87%), and on the upgrade checks flag 2.7% and 15% of working code. The
+  README's table gains a row for the upgrade checks and a line on what this shows: the smaller the model, the more
+  DepTime adds (DT-QA-19)
+
+### Changed
+- The Claude Code plugin runs `uvx deptime==0.1.16`
+
 ## [0.1.15] - 2026-11-14
 
 A documentation release: the code is 0.1.13's, and every answer is the same.
@@ -385,7 +401,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.15...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.16...HEAD
+[0.1.16]: https://github.com/cschmertz/deptime/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/cschmertz/deptime/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/cschmertz/deptime/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/cschmertz/deptime/compare/v0.1.12...v0.1.13
