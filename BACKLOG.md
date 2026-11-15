@@ -118,6 +118,10 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     names most of these changes, so what counts is whether an agent does better with the tool. The pilot is as
     designed in the archive: about 20 covered tasks × 2 arms × 3 runs, success by each task's own tests, the pass
     bar written down before the run. One run, reported in the README whichever way it comes out.
+- [ ] **DT-QA-19**: Cheaper and smaller models alone, on both tests · `P2` `S`
+  - DeepSeek V4.1 Flash, Qwen3.5 9B, and the free Gemma 4 26B, LFM 3 1.7B and Nemotron 3 Ultra through OpenRouter,
+    one run each, the same prompts and scoring as the Claude runs, protocol committed first
+    (`bench/model-alone/cheaper-models.md`).
 - [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
   - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
     error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered

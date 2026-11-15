@@ -11,6 +11,13 @@ HERE = Path(__file__).parent.parent / "bench" / "model-alone" / "upgrades"
 sys.path.insert(0, str(HERE))
 
 
+def _load_from(folder: Path, name: str, prefix: str = ""):
+    spec = importlib.util.spec_from_file_location(f"{prefix}{name}", folder / f"{name}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def _load(name: str):
     spec = importlib.util.spec_from_file_location(f"upgrades_{name}", HERE / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
@@ -101,3 +108,67 @@ def test_the_release_series():
     assert grade.series("0.27.2") != grade.series("0.28.0")
     assert grade.series("1.2.0") == grade.series("1.9.1")
     assert grade.series("1.65.2") != grade.series("3.49.0")
+
+
+sys.path.insert(0, str(HERE.parent))
+ask_openrouter = _load_from(HERE.parent, "ask_openrouter")
+
+
+def test_an_openrouter_reply_becomes_what_the_graders_read():
+    response = {
+        "model": "qwen/qwen3.5-9b-0310",
+        "provider": "Example",
+        "choices": [{"finish_reason": "stop", "message": {"content": '{"1": "works"}'}}],
+        "usage": {
+            "prompt_tokens": 900,
+            "completion_tokens": 300,
+            "completion_tokens_details": {"reasoning_tokens": 250},
+            "cost": 0.0001,
+        },
+    }
+    rec = ask_openrouter.record("u1", "qwen/qwen3.5-9b", response, 1.234)
+    assert rec["model_id"] == "qwen/qwen3.5-9b" and rec["reply"] == '{"1": "works"}'
+    assert rec["served_by"] == {"model": "qwen/qwen3.5-9b-0310", "provider": "Example"}
+    assert (rec["input_tokens"], rec["output_tokens"], rec["thinking_tokens"]) == (900, 300, 250)
+    # No choices, or no text: an empty reply, which ask_one tries again.
+    assert ask_openrouter.record("u1", "m", {"error": {"code": 502}}, 0)["reply"] == ""
+
+
+def test_both_tests_are_asked_in_the_claude_runs_order():
+    _, answers, upgrades = ask_openrouter.questions("upgrades")
+    assert answers.name == "answers" and answers.parent.name == "upgrades"
+    assert [i for i, _ in upgrades] == [u["id"] for u in cases.load_upgrades()]
+    assert upgrades[0][1] == cases.user_message(cases.load_upgrades()[0])
+    system, answers, tracebacks = ask_openrouter.questions("tracebacks")
+    assert len(tracebacks) == 191 and answers.parent.name == "model-alone"
+    assert system.startswith("You diagnose Python errors")
+
+
+def test_a_rate_limit_pauses_the_run_and_stores_nothing(monkeypatch):
+    calls = []
+
+    def limited(*args, **kwargs):
+        calls.append(1)
+        return {"error": {"code": 429, "message": "rate limited"}}
+
+    monkeypatch.setattr(ask_openrouter.openrouter, "chat", limited)
+    monkeypatch.setattr(ask_openrouter.time, "sleep", lambda s: None)
+    try:
+        ask_openrouter.ask_one("u1", "message", "m:free", "system")
+    except ask_openrouter.Paused:
+        pass
+    else:
+        raise AssertionError("a lasting rate limit must pause, not return a reply to store")
+    assert len(calls) == len(ask_openrouter.RATE_LIMIT_WAITS) + 1
+
+
+def test_a_rate_limit_then_an_answer_counts_as_one_attempt(monkeypatch):
+    replies = iter(
+        [
+            {"error": {"code": 429}},
+            {"choices": [{"finish_reason": "stop", "message": {"content": "{}"}}], "usage": {}},
+        ]
+    )
+    monkeypatch.setattr(ask_openrouter.openrouter, "chat", lambda *a, **k: next(replies))
+    monkeypatch.setattr(ask_openrouter.time, "sleep", lambda s: None)
+    assert ask_openrouter.ask_one("u1", "message", "m", "system")["reply"] == "{}"
