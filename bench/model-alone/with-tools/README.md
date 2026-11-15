@@ -72,3 +72,9 @@ uv run python bench/model-alone/with-tools/grade.py > bench/model-alone/with-too
   project's tests, is DT-QA-05.
 - **Other tools.** It has DepTime's tools and nothing else: no web search and no reading the installed source.
 - **Other models, and more than one run.**
+
+## Result
+
+Added after the runs; everything above is as it was committed before them. The run of 2026-11-15 is in
+[results-2026-11-15.md](results-2026-11-15.md), with the conversations' replies and tool calls in `tracebacks/` and
+`upgrades/`.

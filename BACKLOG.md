@@ -91,6 +91,9 @@ Nothing. The upkeep above is all the project needs.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-20** (2026-11-15): Qwen3.5 9B with DepTime's five tools, protocol committed first. Tracebacks 86.4%
+  (alone 18.8%, DepTime by itself 94.8% now); upgrades 82.2% of breaks found with 4.5% of working uses flagged (alone
+  30.9% and 15.4%) (`bench/model-alone/with-tools/results-2026-11-15.md`).
 - [x] **DT-QA-19** (2026-11-15): two cheaper models alone, through OpenRouter, protocol committed first. Tracebacks:
   DeepSeek V4.1 Flash 59.2%, Qwen3.5 9B 18.8% (DepTime 86.9%). Upgrades: DeepSeek 80.9% of breaks found with 2.7% of
   working uses flagged, Qwen 30.9% and 15.4% (DepTime 96.7% and 0.1%). The free models were busy and are left for
@@ -122,9 +125,6 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     names most of these changes, so what counts is whether an agent does better with the tool. The pilot is as
     designed in the archive: about 20 covered tasks × 2 arms × 3 runs, success by each task's own tests, the pass
     bar written down before the run. One run, reported in the README whichever way it comes out.
-- [ ] **DT-QA-20**: A small model with DepTime's tools · `P2` `S`
-  - Qwen3.5 9B asked both model-alone tests again with DepTime's five MCP tools available, one run, protocol
-    committed first (`bench/model-alone/with-tools/`): does it get DepTime's answers through?
 - [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
   - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
     error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered
