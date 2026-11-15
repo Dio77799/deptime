@@ -96,13 +96,15 @@ In order. The first line of each phase is what it delivers.
 
 **Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
 code?" from a project directory.
-- [ ] **DT-QA-21**: Score the command end to end on the holdout projects · `P1` `M` · deps: CORE-58
-  - The six sets' pinned upgrades name each repository and commit: check them out, run `check-upgrade` with the
-    set's `from` and `to`, and score its breaks against the probe's labels. Also how many of the set's labelled uses
-    DepTime's reader finds. Protocol first, with the bar written in it.
+- [ ] **DT-CORE-69**: Report each break where the project's code names it · `P1` `M` · deps: QA-21
+  - DT-QA-21's patterns: query a module named in an import (`from langchain.llms import X` asks about
+    `langchain.llms`); when a class or module is missing, still list the members used through it, each with its lines;
+    read `from google import genai` then `genai.Client`. No new false alarms on the six sets.
+- [ ] **DT-QA-24**: DT-QA-21 again after DT-CORE-69, reported as a second, in-sample run · `P1` `S` · deps: CORE-69
+  - Same protocol, sources and bar. Phase 3 starts if all four measures are met.
 
 **Phase 3, the GitHub Action (DT-GTM-06).** A check on Dependabot and Renovate pull requests.
-- [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, QA-21
+- [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, QA-24
   - On a pull request that changes a lockfile or requirements file: pull the index (cached), run `check-upgrade
     --base` against the base branch, write the report to the job summary with an annotation per broken line, and fail
     the check only on confirmed breaks. Dependabot's pull requests get a read-only token and no secrets, so it must
@@ -137,6 +139,10 @@ code?" from a project directory.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-21** (2026-11-15): `check-upgrade` end to end on 1,129 holdout upgrades (636 projects): breaks found
+  73.3% (bar 90%), working uses flagged 0.04% (bar 1%), clean upgrades failed 8.3% (bar 5%), labelled uses read 91.1%
+  (bar 95%); 151 of 155 upgrades with a break fail. Most misses are a break reported on the class or module next to
+  the labelled path (`bench/upgrade-check/results-2026-11-15.md`).
 - [x] **DT-CORE-66**, **DT-CORE-58**, **DT-CORE-59** (2026-11-15): `deptime check-upgrade [path] [--base REV]
   [--package P --to V]` reads the version change from `uv.lock`, `poetry.lock`, `requirements*.txt` or `pyproject.toml`
   pins (git base against the working tree), reads the project with `snippet.py` and runs `check_symbols` at both
