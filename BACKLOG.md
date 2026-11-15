@@ -96,13 +96,13 @@ In order. The first line of each phase is what it delivers.
 
 **Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
 code?" from a project directory.
-- [ ] **DT-QA-25**: Are the clean upgrades' failures real? · `P1` `S` · deps: QA-24
-  - DT-QA-24 missed only "clean upgrades failed" (8.3%), which counts breaks on uses nobody labelled as false. The
-    probe checks each break reported on a clean upgrade; Phase 3 starts if at most 5% of clean upgrades fail with no
-    confirmed break (`bench/upgrade-check/audit/README.md`).
-
 **Phase 3, the GitHub Action (DT-GTM-06).** A check on Dependabot and Renovate pull requests.
-- [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, QA-25
+- [ ] **DT-CORE-70**: Keywords of a class's own fields aren't rejected when its constructor is inherited · `P1` `S`
+  · deps: QA-25
+  - transformers 5's config classes inherit `PreTrainedConfig.__init__`, so `LlamaConfig(vocab_size=)` reads as a
+    rejected keyword although the generated constructor takes it (DT-QA-25's false breaks). Abstain instead, with a
+    note. No new false negatives on the six sets.
+- [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, CORE-70
   - On a pull request that changes a lockfile or requirements file: pull the index (cached), run `check-upgrade
     --base` against the base branch, write the report to the job summary with an annotation per broken line, and fail
     the check only on confirmed breaks. Dependabot's pull requests get a read-only token and no secrets, so it must
@@ -137,6 +137,10 @@ code?" from a project directory.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-25** (2026-11-15): the probe on every break reported on a clean upgrade: 2.4% of clean upgrades
+  (23/974) fail with no confirmed break (bar 5%, met), so Phase 3 starts. 6 of the 9 "false" upgrades are weaviate
+  4's raising `Client`, which the probe can't see; the rest are DT-CORE-70, DT-DATA-51 and DT-DATA-78
+  (`bench/upgrade-check/audit/results-2026-11-15.md`).
 - [x] **DT-QA-24** (2026-11-15): DT-QA-21 again after DT-CORE-69, in-sample: breaks found 97.8%, working uses
   flagged 0.04%, labelled uses read 99.9% (met); clean upgrades failed 8.3% (missed, unchanged)
   (`bench/upgrade-check/results-2026-11-15-second.md`).
@@ -223,9 +227,9 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 | ID | Gap | Fix is in |
 |---|---|---|
 | DT-DATA-75 | Names in compiled extension modules read `missing` (scikit-learn's `tree._tree`) | extraction |
-| DT-DATA-51 | Names computed at import time read absent (instructor's provider factories, chromadb's embedding functions) | extraction |
+| DT-DATA-51 | Names computed at import time read absent (instructor's provider factories, chromadb's embedding functions, matplotlib's `cm` colormaps) | extraction |
 | DT-DATA-77 | A keyword only a decorator takes reads `never_existed` (huggingface_hub's `use_auth_token`) | extraction |
-| DT-DATA-78 | openai 1.0's removed resources point to response types of the same name | curated hints, pairing rule |
+| DT-DATA-78 | openai 1.0's removed resources point to response types of the same name; `ChatCompletion.create` reads missing where a proxy raises | curated hints, pairing rule |
 | DT-DATA-73 | matplotlib 3.10's `cm.ScalarMappable` reads private, so its members read missing | extraction |
 | DT-DATA-71 | Names a module only imports read public through a membership-test shim (instructor's `hooks`) | extraction |
 | DT-DATA-72 | A name only a stub binds reads present where the runtime raises (numpy 2.0's `cast`) | extraction |
