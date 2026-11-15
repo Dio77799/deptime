@@ -436,6 +436,24 @@ def _break_line(b: UpgradeBreak, at: str) -> str:
     return " ".join(parts)
 
 
+def _fold(breaks: list[UpgradeBreak]) -> list[tuple[UpgradeBreak, list[UpgradeBreak]]]:
+    """Each break with the missing names under it that a missing module or class takes with it (DT-CORE-69): one
+    change to fix, listed once, with every line it reaches."""
+    gone = sorted((b.path for b in breaks if b.kind == "missing"), key=len)
+    top: dict[str, str] = {}
+    for path in gone:
+        top[path] = next((g for g in gone if path.startswith(g + ".")), path)
+    under: dict[str, list[UpgradeBreak]] = {}
+    for b in breaks:
+        if b.kind == "missing" and top[b.path] != b.path:
+            under.setdefault(top[b.path], []).append(b)
+    return [
+        (b, under.get(b.path, []) if b.kind == "missing" else [])
+        for b in breaks
+        if b.kind != "missing" or top[b.path] == b.path
+    ]
+
+
 def to_markdown(result: UpgradeCheckResult) -> str:
     lines = ["## DepTime upgrade check", ""]
     n = result.breaks
@@ -462,8 +480,15 @@ def to_markdown(result: UpgradeCheckResult) -> str:
             facts.append(f"answered for {p.resolved_version}, the nearest indexed release")
         lines += ["; ".join(facts) + ".", ""]
         if p.breaks:
+            at = p.resolved_version or c.to_version or ""
             lines.append("**Breaks**")
-            lines += [_break_line(b, p.resolved_version or c.to_version or "") for b in p.breaks]
+            for b, under in _fold(p.breaks):
+                lines.append(_break_line(b, at))
+                if under:
+                    shown = "; ".join(
+                        _code(u.path) + (f" at {_where(u.locations)}" if u.locations else "") for u in under
+                    )
+                    lines.append(f"  - Missing with it: {shown}.")
             lines.append("")
         groups = [
             ("deprecated", "Deprecated at the new version", lambda x: x.new, True),

@@ -1124,10 +1124,7 @@ class DepTime:
                 positional[key] = count
         row = self.store.resolve_version(name, version)[0] if self.store and self._indexed(name) else None
         for (built_by, attr), kwargs in uses.members.items():
-            span = (
-                self.store.span_at(name, built_by, row["ordinal"]) if row is not None and self.store else None
-            )
-            if span is not None and span["kind"] == "class":
+            if row is not None and self._builds_class(name, built_by, row["ordinal"]):
                 found.setdefault(f"{built_by}.{attr}", []).extend(kwargs)
                 if (built_by, attr) in uses.positional:
                     positional.setdefault(f"{built_by}.{attr}", uses.positional[(built_by, attr)])
@@ -1137,6 +1134,16 @@ class DepTime:
         return [SymbolQuery(path=p, kwargs=k, positional=positional.get(p)) for p, k in merged.items()], len(
             found
         )
+
+    def _builds_class(self, name: str, path: str, ordinal: int) -> bool:
+        """Whether calling `path` builds an object of a class whose attributes can be checked: a class at the release,
+        or a class in another release that is gone at this one, so each member used through it is reported missing
+        with its own lines, not only the class (DT-CORE-69)."""
+        assert self.store is not None
+        span = self.store.span_at(name, path, ordinal)
+        if span is not None:
+            return span["kind"] == "class"
+        return any(s["kind"] == "class" for s in self.store.spans(name, path))
 
     def _check_symbols(
         self, name: str, spec: PackageSpec, version: str, symbols: list[SymbolQuery], depth: int = 0

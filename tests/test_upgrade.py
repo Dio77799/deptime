@@ -96,6 +96,55 @@ def test_deprecations_are_warnings_new_or_already_there(coverage):
     assert "Already deprecated at the old version: 1" in to_markdown(res)
 
 
+def test_the_module_of_a_from_import_and_a_namespace_package_are_read():
+    # DT-CORE-69: `from langchain.llms import OpenAI` uses `langchain.llms` too, and `from google import genai`
+    # imports `google.genai` from a namespace the package doesn't own.
+    code = "from httpx.legacy import Old\nfrom google import genai\nc = genai.Client()\nc.models\n"
+    uses = snippet.uses_in(code, ("httpx", "google.genai"))
+    assert uses is not None
+    assert uses.lines["httpx.legacy"] == [1] and uses.lines["httpx.legacy.Old"] == [1]
+    assert uses.lines["google.genai"] == [2] and uses.call_lines["google.genai.Client"] == [3]
+    assert uses.lines[("google.genai.Client", "models")] == [4]
+    assert "google" not in uses.paths and "google.genai.genai" not in uses.paths
+
+
+def test_members_used_through_a_removed_class_are_each_reported(coverage):
+    # DT-CORE-69: the class is gone, and so is each method the project calls on what it built, at its own line.
+    def snap(version: str, legacy: bool) -> ApiSnapshot:
+        symbols = [SymbolRecord("httpx", "module", "httpx")]
+        if legacy:
+            symbols += [
+                SymbolRecord("httpx.legacy", "module", "httpx.legacy"),
+                SymbolRecord("httpx.legacy.Old", "class", "httpx.legacy.Old"),
+                SymbolRecord("httpx.legacy.Old.run", "function", "httpx.legacy.Old.run", []),
+            ]
+        return ApiSnapshot(
+            package="httpx", version=version, import_names=["httpx"], symbols={s.path: s for s in symbols}
+        )
+
+    store = IndexStore.memory()
+    store.rebuild_package(HTTPX, [snap("1.0", True), snap("2.0", False)], dict.fromkeys(["1.0", "2.0"]))
+    dt = DepTime(store, coverage)
+    code = {"a.py": "from httpx.legacy import Old\n\no = Old()\no.run()\n"}
+    res = check_upgrade(dt, "p", code, [_change("1.0", "2.0")])
+    got = {(b.path, b.kind): [loc.line for loc in b.locations] for b in res.checked[0].breaks}
+    assert got == {
+        ("httpx.legacy", "missing"): [1],
+        ("httpx.legacy.Old", "missing"): [1, 3],
+        ("httpx.legacy.Old.run", "missing"): [4],
+    }
+    md = to_markdown(res)
+    assert "- `httpx.legacy`: missing at 2.0." in md
+    assert (
+        "  - Missing with it: `httpx.legacy.Old` at `a.py:1`, `a.py:3`; `httpx.legacy.Old.run` at `a.py:4`."
+        in md
+    )
+    # Going the other way nothing is missing, and check_symbols on its own reads the same members.
+    assert check_upgrade(dt, "p", code, [_change("2.0", "1.0")]).breaks == 0
+    paths = [r.path for r in dt.check_symbols("httpx", "2.0", code=code["a.py"]).results]
+    assert paths == ["httpx.legacy", "httpx.legacy.Old", "httpx.legacy.Old.run"]
+
+
 def test_a_downgrade_flags_what_isnt_added_yet(dt):
     res = check_upgrade(dt, "proj", {"a.py": "from httpx import NewThing\n"}, [_change("0.27.2", "0.26.0")])
     (b,) = res.checked[0].breaks

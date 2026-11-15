@@ -85,13 +85,19 @@ class _Reader(ast.NodeVisitor):
                 self.bound[top] = top
 
     def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
-        if node.level or not node.module or not _within(node.module, self.roots):
+        if node.level or not node.module:
             return
+        if _within(node.module, self.roots):
+            # The module itself is a use too: `from langchain.llms import OpenAI` fails when `langchain.llms` is gone,
+            # and that is the line to fix (DT-CORE-69).
+            self.uses.add(node.module, line=node.lineno)
         for a in node.names:
             if a.name == "*":
-                self.uses.add(node.module, line=node.lineno)
                 continue
             path = f"{node.module}.{a.name}"
+            # `from google import genai` imports the package `google.genai` from a namespace it doesn't own.
+            if not _within(path, self.roots):
+                continue
             self.uses.add(path, line=node.lineno)
             self.bound[a.asname or a.name] = path
 
