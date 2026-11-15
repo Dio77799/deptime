@@ -24,6 +24,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-11-14
+
+A documentation release: the code is 0.1.13's, and every answer is the same.
+
+### Added
+- A comparison for the traceback score: the same 191 holdout tracebacks put to a language model with no tools,
+  under a prompt and scoring rule committed before the run. Three Claude models name the right package, name and
+  breaking release for 66% to 84%, beside DepTime's 87%; they name the change and its replacement more often than
+  DepTime, and the release less often. The README has the row, and `bench/model-alone/` the protocol, every reply
+  and the results (DT-QA-16)
+
+### Changed
+- The Claude Code plugin runs `uvx deptime==0.1.15`, pinned to the plugin's own version as Anthropic's plugin
+  directory requires, and its manifest names its icon. Its README says what the hint hook keeps on disk: a short
+  hash of each error line it has hinted at, per session, and no error text (DT-GTM-04)
+
 ## [0.1.14] - 2026-11-14
 
 A documentation release: the code is 0.1.13's, and every answer is the same.
@@ -369,7 +385,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.14...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.15...HEAD
+[0.1.15]: https://github.com/cschmertz/deptime/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/cschmertz/deptime/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/cschmertz/deptime/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/cschmertz/deptime/compare/v0.1.11...v0.1.12

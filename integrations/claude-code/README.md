@@ -8,7 +8,7 @@
 
 The first run downloads the prebuilt index (one file from this repo's GitHub Releases) in the background. After that it refreshes at most once a day.
 
-Failed Bash commands fire `PostToolUseFailure`, not `PostToolUse`, so the hook is registered for both.
+Failed Bash commands fire `PostToolUseFailure`, not `PostToolUse`, so the hook is registered for both. So that it suggests each error once, the hook keeps a short hash of each error line it has hinted at, per session, in the plugin's own data folder. It stores no error text and sends nothing.
 
 ## Install
 
