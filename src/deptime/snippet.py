@@ -22,19 +22,41 @@ class Uses:
     # How many arguments the calls to a path (or member) pass by position, the most any call does (DT-CORE-34); None
     # once a call spreads `*args` or `**kwargs`, which may cover any parameter. Only paths that are called.
     positional: dict[str | tuple[str, str], int | None] = field(default_factory=dict)
+    # Where each path (or member) is used, and where each keyword is passed to it: line numbers, in order (DT-CORE-58).
+    lines: dict[str | tuple[str, str], list[int]] = field(default_factory=dict)
+    kwarg_lines: dict[tuple[str | tuple[str, str], str], list[int]] = field(default_factory=dict)
+    call_lines: dict[str | tuple[str, str], list[int]] = field(default_factory=dict)  # where it is called
 
-    def add(self, path: str, kwargs: list[str] | None = None) -> None:
+    def _at(self, key: str | tuple[str, str], kwargs: list[str] | None, line: int | None) -> None:
+        if line is None:
+            return
+        seen = self.lines.setdefault(key, [])
+        if line not in seen:
+            seen.append(line)
+        for k in kwargs or ():
+            at = self.kwarg_lines.setdefault((key, k), [])
+            if line not in at:
+                at.append(line)
+
+    def add(self, path: str, kwargs: list[str] | None = None, line: int | None = None) -> None:
         known = self.paths.setdefault(path, [])
         known.extend(k for k in kwargs or () if k not in known)
+        self._at(path, kwargs, line)
 
-    def add_member(self, built_by: str, name: str, kwargs: list[str] | None = None) -> None:
+    def add_member(
+        self, built_by: str, name: str, kwargs: list[str] | None = None, line: int | None = None
+    ) -> None:
         known = self.members.setdefault((built_by, name), [])
         known.extend(k for k in kwargs or () if k not in known)
+        self._at((built_by, name), kwargs, line)
 
     def called(self, key: str | tuple[str, str], call: ast.Call) -> None:
         spread = any(isinstance(a, ast.Starred) for a in call.args) or any(
             k.arg is None for k in call.keywords
         )
+        at = self.call_lines.setdefault(key, [])
+        if call.lineno not in at:
+            at.append(call.lineno)
         if key in self.positional and self.positional[key] is None:
             return
         self.positional[key] = None if spread else max(self.positional.get(key) or 0, len(call.args))
@@ -55,7 +77,7 @@ class _Reader(ast.NodeVisitor):
         for a in node.names:
             if not _within(a.name, self.roots):
                 continue
-            self.uses.add(a.name)
+            self.uses.add(a.name, line=node.lineno)
             if a.asname:
                 self.bound[a.asname] = a.name
             else:
@@ -67,10 +89,10 @@ class _Reader(ast.NodeVisitor):
             return
         for a in node.names:
             if a.name == "*":
-                self.uses.add(node.module)
+                self.uses.add(node.module, line=node.lineno)
                 continue
             path = f"{node.module}.{a.name}"
-            self.uses.add(path)
+            self.uses.add(path, line=node.lineno)
             self.bound[a.asname or a.name] = path
 
     def _path(self, node: ast.expr) -> str | None:
@@ -121,10 +143,10 @@ class _Reader(ast.NodeVisitor):
     def visit_Call(self, node: ast.Call) -> None:
         path = self._path(node.func)
         if path is not None:
-            self.uses.add(path, self._kwargs(node))
+            self.uses.add(path, self._kwargs(node), node.lineno)
             self.uses.called(path, node)
         elif isinstance(node.func, ast.Attribute) and (built := self._built_by(node.func.value)):
-            self.uses.add_member(built, node.func.attr, self._kwargs(node))
+            self.uses.add_member(built, node.func.attr, self._kwargs(node), node.lineno)
             self.uses.called((built, node.func.attr), node)
         self.generic_visit(node)
 
@@ -132,17 +154,18 @@ class _Reader(ast.NodeVisitor):
         if isinstance(node.ctx, ast.Load):
             path = self._path(node)
             if path is not None:
-                self.uses.add(path)
+                self.uses.add(path, line=node.lineno)
                 return  # its parts are part of the path
             if built := self._built_by(node.value):
-                self.uses.add_member(built, node.attr)
+                self.uses.add_member(built, node.attr, line=node.lineno)
         self.generic_visit(node)
 
 
-def uses_in(code: str, roots: tuple[str, ...]) -> Uses | None:
-    """What `code` uses from the package whose import names are `roots`; None when it doesn't parse."""
+def uses_in(code: str, roots: tuple[str, ...], limit: int | None = MAX_CODE_CHARS) -> Uses | None:
+    """What `code` uses from the package whose import names are `roots`; None when it doesn't parse. `limit` caps the
+    characters read (None: all of it, for a project's own files)."""
     try:
-        tree = ast.parse(code[:MAX_CODE_CHARS])
+        tree = ast.parse(code if limit is None else code[:limit])
     except (SyntaxError, ValueError):
         return None
     reader = _Reader(roots)

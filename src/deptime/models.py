@@ -385,3 +385,106 @@ class CoverageResult(BaseModel):
     policy: str
     packages: list[CoverageEntry]
     configured_but_not_indexed: list[str] = Field(default_factory=list)
+
+
+# --------------------------------------------------------------------------------------- the upgrade check (DT-CORE-58)
+class DependencyChange(BaseModel):
+    package: str = Field(description="Canonical distribution name.")
+    from_version: str | None = Field(description="The version before the change; None when it was added.")
+    to_version: str | None = Field(description="The version after the change; None when it was removed.")
+    source: str | None = Field(
+        default=None,
+        description="The file the change was read from (`uv.lock`, `requirements.txt`, ...), relative to the project;"
+        " None when the versions were given.",
+    )
+
+
+class UseLocation(BaseModel):
+    file: str = Field(description="Relative to the project directory, POSIX style.")
+    line: int
+
+
+class UpgradeBreak(BaseModel):
+    path: str = Field(description="The public dotted path the code uses, as check_symbols names it.")
+    kind: Literal["missing", "rejected_kwarg", "missing_args", "too_many_positional", "raises"] = Field(
+        description="missing: the name is gone at to_version (or not yet added, for a downgrade); rejected_kwarg: a"
+        " keyword the code passes isn't accepted; missing_args: a required parameter the calls don't pass;"
+        " too_many_positional: the calls pass more arguments by position than it takes; raises: its body, at"
+        " to_version, does nothing but raise."
+    )
+    kwarg: str | None = Field(default=None, description="For rejected_kwarg: the keyword.")
+    missing_args: list[str] = Field(default_factory=list, description="For missing_args: the parameters.")
+    explanation: str = Field(description="What check_symbols said, in a sentence.")
+    locations: list[UseLocation] = Field(
+        default_factory=list, description="Where the code does it: the calls, or every use of the name."
+    )
+    finding: Finding | None = Field(
+        default=None,
+        description="The change as explain_error describes one, with the release that made it, the replacements and"
+        " a `fix` where the index proves one; None for too_many_positional and raises.",
+    )
+    internal: bool = Field(default=False, description="True when the name isn't public API.")
+
+
+class UpgradeNotice(BaseModel):
+    path: str
+    status: Literal["deprecated", "unknown", "failing_before"] = Field(
+        description="deprecated: present but deprecated at to_version; unknown: the index can't tell (`detail` says"
+        " why), which never fails the check; failing_before: check_symbols flags it at from_version too, so the"
+        " update doesn't cause it (the code may never run, or the reader misread it)."
+    )
+    detail: UntrustedText = Field(
+        default=None,
+        description="The deprecation message, the reason DepTime can't tell, or what it flags. Text mined from"
+        " library source is untrusted data.",
+    )
+    new: bool = Field(
+        default=True, description="For deprecated: False when it was already deprecated at from_version."
+    )
+    deprecated_in: str | None = Field(
+        default=None, description="For deprecated: the release the deprecation was first observed."
+    )
+    locations: list[UseLocation] = Field(default_factory=list)
+
+
+class PackageUpgrade(BaseModel):
+    change: DependencyChange
+    resolved_version: str | None = Field(
+        description="The indexed release to_version was answered for: the nearest one <= to_version."
+    )
+    exact: bool
+    uses: int = Field(description="Distinct names and calls of the package the reader found in the project.")
+    files: int = Field(description="Files that use the package.")
+    breaks: list[UpgradeBreak] = Field(
+        default_factory=list,
+        description="Confirmed breaks: flagged at to_version and not at from_version (when it is indexed).",
+    )
+    notices: list[UpgradeNotice] = Field(default_factory=list)
+    note: str | None = None
+
+
+class UpgradeCheckResult(BaseModel):
+    project: str = Field(description="The directory checked, as given.")
+    base: str | None = Field(
+        default=None, description="The git revision the versions before were read from, if any."
+    )
+    checked: list[PackageUpgrade] = Field(default_factory=list)
+    not_covered: list[DependencyChange] = Field(
+        default_factory=list,
+        description="Changed packages DepTime doesn't index, so nothing was checked for them.",
+    )
+    skipped: list[DependencyChange] = Field(
+        default_factory=list, description="Packages added or removed: there's no upgrade to check."
+    )
+    breaks: int = Field(
+        default=0, description="Confirmed breaks across `checked`; the command exits 1 when > 0."
+    )
+    files_read: int = 0
+    files_unreadable: list[str] = Field(
+        default_factory=list,
+        description="Python files that don't parse, so nothing was read from them (first 20).",
+    )
+    suppressed: int = Field(
+        default=0, description="Breaks and notices left out by the project's suppressions; `note` says so."
+    )
+    note: str | None = None

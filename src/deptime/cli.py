@@ -3,6 +3,7 @@
 Everyday use (local, private):
   deptime mcp                     run the MCP server over stdio for Claude Code / Cursor / Codex / VS Code
   deptime explain|history|check|diff|coverage
+  deptime check-upgrade [path]    what a dependency update breaks in a project's code
   deptime index pull|status       manage the prebuilt index (downloaded from GitHub Releases)
 Building the index yourself / CI:
   deptime ingest <pkg>|--all      analyse PyPI releases into a locally built index
@@ -17,6 +18,8 @@ import argparse
 import json
 import sys
 from pathlib import Path
+
+from packaging.utils import canonicalize_name
 
 from deptime.config import Settings, load_coverage
 from deptime.index.store import IndexStore
@@ -145,6 +148,69 @@ def cmd_diff(args: argparse.Namespace, settings: Settings) -> int:
         )
     )
     return 0
+
+
+def _upgrade_changes(args: argparse.Namespace, root: Path):
+    """The dependency changes to check, and the base revision they were read against (DT-CORE-66)."""
+    from deptime import lockfiles
+    from deptime.models import DependencyChange
+
+    if args.package:
+        if not args.to:
+            raise ValueError("--package needs --to VERSION")
+        name = canonicalize_name(args.package)
+        before, source = args.from_version, None
+        if before is None:
+            head = lockfiles.read_pins(root)
+            found = head.versions(name)
+            source = next((f for f in [*lockfiles.LOCKFILES, *found] if f in found), None)
+            before = found.get(source) if source else None
+            if before is None:
+                raise ValueError(
+                    f"no pinned version of {name} found in the project's files; pass --from VERSION"
+                )
+        return [DependencyChange(package=name, from_version=before, to_version=args.to, source=source)], None
+    base_rev = args.base or "HEAD"
+    base = lockfiles.read_pins(root, base_rev)
+    head = lockfiles.read_pins(root)
+    for problem in base.problems + head.problems:
+        _err(f"deptime: not read: {problem}")
+    own = lockfiles.project_name(root)
+    return [
+        DependencyChange(
+            package=c.package, from_version=c.from_version, to_version=c.to_version, source=c.source
+        )
+        for c in lockfiles.changes(base, head)
+        if c.package != own
+    ], base_rev
+
+
+def cmd_check_upgrade(args: argparse.Namespace, settings: Settings) -> int:
+    from deptime import suppressions, upgrade
+
+    root = Path(args.path).resolve()
+    if not root.is_dir():
+        _err(f"deptime: {args.path} is not a directory")
+        return 2
+    try:
+        changes, base = _upgrade_changes(args, root)
+    except (ValueError, OSError) as exc:
+        _err(f"deptime: {exc}")
+        return 2
+    dt = _dt(settings)
+    dt.suppressions = suppressions.load(root)
+    code = upgrade.read_code(root, upgrade.project_files(root))
+    result = upgrade.check_upgrade(dt, args.path, code, changes, base)
+    text = (
+        result.model_dump_json(indent=2, exclude_none=True) + "\n"
+        if args.format == "json"
+        else upgrade.to_markdown(result)
+    )
+    if args.output:
+        Path(args.output).write_text(text, encoding="utf-8")
+    else:
+        sys.stdout.write(text)
+    return 1 if result.breaks else 0
 
 
 def cmd_coverage(args: argparse.Namespace, settings: Settings) -> int:
@@ -304,6 +370,29 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--include-added", action="store_true")
     p.add_argument("--limit", type=int, default=200)
     p.set_defaults(func=cmd_diff)
+
+    p = sub.add_parser(
+        "check-upgrade",
+        help="what a dependency update breaks in a project's code (exit 1 on a confirmed break)",
+        description="Compare the project's pinned versions (uv.lock, poetry.lock, requirements*.txt, pyproject.toml)"
+        " at --base (default HEAD) with the working tree, or check one package with --package and --to, then check"
+        " every use of each changed covered package in the project's Python files at the new version.",
+    )
+    p.add_argument("path", nargs="?", default=".", help="the project directory (default: .)")
+    p.add_argument(
+        "--base", metavar="REV", help="git revision the old versions are read from (default: HEAD)"
+    )
+    p.add_argument("--package", help="check this package instead of reading changes from git")
+    p.add_argument("--to", metavar="VERSION", help="with --package: the new version")
+    p.add_argument(
+        "--from",
+        dest="from_version",
+        metavar="VERSION",
+        help="with --package: the old version (default: the project's pin)",
+    )
+    p.add_argument("--format", choices=["markdown", "json"], default="markdown")
+    p.add_argument("--output", metavar="FILE", help="write the report here instead of stdout")
+    p.set_defaults(func=cmd_check_upgrade)
 
     p = sub.add_parser("coverage", help="what is indexed")
     p.set_defaults(func=cmd_coverage)

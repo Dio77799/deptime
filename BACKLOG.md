@@ -96,17 +96,6 @@ In order. The first line of each phase is what it delivers.
 
 **Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
 code?" from a project directory.
-- [ ] **DT-CORE-66**: Read a dependency change from a project · `P1` `M`
-  - The packages and versions before and after, from `uv.lock`, `poetry.lock`, `requirements*.txt` or
-    `pyproject.toml` pins: either two revisions of the files (a pull request's base and head) or the current file
-    and a target version. Never imports or installs anything (Invariant 1).
-- [ ] **DT-CORE-58**: `deptime check-upgrade [path] [--base REV] [--package P --to V]` · `P1` `M` · deps: CORE-66
-  - Reads every `.py` file under the path with DepTime's own reader (`snippet.py`, not the benchmark's
-    independent `bench/holdout/uses.py`), groups the uses by covered package, and runs `check_symbols` at the new
-    version for each changed package. Reports, per break, the file and line, what's missing, the release that removed
-    it and the replacement candidates with evidence; uses answered `unknown` are listed apart and never fail it.
-    Markdown and JSON output; exit code 1 only on a confirmed break. Folds in **DT-CORE-59**: uses deprecated at the
-    new version are listed as warnings.
 - [ ] **DT-QA-21**: Score the command end to end on the holdout projects · `P1` `M` · deps: CORE-58
   - The six sets' pinned upgrades name each repository and commit: check them out, run `check-upgrade` with the
     set's `from` and `to`, and score its breaks against the probe's labels. Also how many of the set's labelled uses
@@ -148,6 +137,11 @@ code?" from a project directory.
 
 ## Done since 2026-11-13
 
+- [x] **DT-CORE-66**, **DT-CORE-58**, **DT-CORE-59** (2026-11-15): `deptime check-upgrade [path] [--base REV]
+  [--package P --to V]` reads the version change from `uv.lock`, `poetry.lock`, `requirements*.txt` or `pyproject.toml`
+  pins (git base against the working tree), reads the project with `snippet.py` and runs `check_symbols` at both
+  versions: a break is flagged at `to` and not at `from`, with its file and line and explain_error's finding;
+  deprecations are warnings; Markdown or JSON, exit 1 only on a break. Not yet released.
 - [x] **DT-CORE-67** (2026-11-15): `check_symbols` reads `timeout=` as `timeout` and leaves out `_` and empty names,
   saying so in `note`. DT-QA-23 measures what it does for a small model.
 - [x] **DT-CORE-63**, **DT-CORE-64** (2026-11-15): backticked keywords, a message continued on the next line, Django's
