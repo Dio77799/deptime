@@ -28,7 +28,7 @@ import httpx
 import openrouter
 
 HERE = Path(__file__).parent
-MAX_TOKENS = 8000
+MAX_TOKENS = 32000  # 8,000 in the protocol; raised after the trial (cheaper-models.md)
 ATTEMPTS = 3
 SPEND_CAP = 3.00  # dollars, per run of one test
 

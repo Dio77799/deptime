@@ -58,6 +58,12 @@ DepTime's first run.
 1. This protocol is committed and pushed.
 2. **A trial of ten questions** per model per test (`--limit 10`). If it shows the call or the parsing must change, the
    change is committed before going on and the results say so; otherwise its replies are the first ten of the run.
+
+   **The trial's change (committed before the runs):** DeepSeek V4.1 Flash reasons at length (a median of about 5,300
+   thinking tokens on the tracebacks), and in each test one of its ten trial replies reached the 8,000-token cap
+   before any answer, which would score a lack of room as a wrong answer. The cap is raised to 32,000 for every model,
+   and DeepSeek's trial is asked again under it. Qwen3.5 9B's trial replies stand: it answered without reasoning, in
+   under 100 tokens, far below either cap.
 3. The runs, then both graders write their results files.
 
 ```bash
