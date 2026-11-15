@@ -1,0 +1,4 @@
+{
+ "about": "Breaks settled by hand from the package's released source at `to` (README.md, \"Hand checks\"). Each names the break by audit.py's id, gives the verdict (true or false) and the file and line that show it.",
+ "checks": []
+}

@@ -1,0 +1,1497 @@
+{
+"envs": [
+{
+"id": "anthropic==0.3.11@2023-09-27",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2023-09-27",
+"requires": [
+"anthropic==0.3.11"
+],
+"uses": [
+{
+"key": "b6288c6c1bb9a4d7",
+"path": "anthropic.Anthropic.messages",
+"kind": "name",
+"via": "instance"
+}
+]
+},
+{
+"id": "anthropic==0.3.2@2023-07-31",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2023-07-31",
+"requires": [
+"anthropic==0.3.2"
+],
+"uses": [
+{
+"key": "b6288c6c1bb9a4d7",
+"path": "anthropic.Anthropic.messages",
+"kind": "name",
+"via": "instance"
+}
+]
+},
+{
+"id": "chromadb==0.6.3@2025-02-13",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2025-02-13",
+"requires": [
+"chromadb==0.6.3"
+],
+"uses": [
+{
+"key": "a030c1383f7d4454",
+"path": "chromadb.utils.embedding_functions.SentenceTransformerEmbeddingFunction",
+"kind": "name"
+}
+]
+},
+{
+"id": "crewai==1.15.39@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"crewai==1.15.39"
+],
+"uses": [
+{
+"key": "ced4915dd4cd157a",
+"path": "crewai.utilities.exceptions.LLMContextLengthExceededException",
+"kind": "name"
+}
+]
+},
+{
+"id": "django==5.2.4@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"django==5.2.4"
+],
+"uses": [
+{
+"key": "ef9e6cb1cb22e795",
+"path": "django.utils.translation.ugettext_lazy",
+"kind": "name"
+},
+{
+"key": "f0be412856a3af9e",
+"path": "django.conf.urls.url",
+"kind": "name"
+}
+]
+},
+{
+"id": "django==5.2@2025-05-02",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2025-05-02",
+"requires": [
+"django==5.2"
+],
+"uses": [
+{
+"key": "03c1d77bd446479b",
+"path": "django.utils.timezone.utc.localize",
+"kind": "name"
+},
+{
+"key": "3eea426ce1ff76b4",
+"path": "django.core.files.storage.get_storage_class",
+"kind": "name"
+},
+{
+"key": "f799b9317abf01f3",
+"path": "django.utils.timezone.utc",
+"kind": "name"
+}
+]
+},
+{
+"id": "django==6.1.3@2026-11-08",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-08",
+"requires": [
+"django==6.1.3"
+],
+"uses": [
+{
+"key": "2e8dd5228bcdf883",
+"path": "django.utils.encoding.force_text",
+"kind": "name"
+},
+{
+"key": "59d4399706a728f3",
+"path": "django.utils.translation.ugettext_noop",
+"kind": "name"
+},
+{
+"key": "a8ff69b8dcf36e8e",
+"path": "django.contrib.gis.admin.GeoModelAdmin",
+"kind": "name"
+},
+{
+"key": "ef9e6cb1cb22e795",
+"path": "django.utils.translation.ugettext_lazy",
+"kind": "name"
+},
+{
+"key": "f0be412856a3af9e",
+"path": "django.conf.urls.url",
+"kind": "name"
+},
+{
+"key": "f5a00f963c7a5e52",
+"path": "django.utils.translation.ugettext",
+"kind": "name"
+},
+{
+"key": "f799b9317abf01f3",
+"path": "django.utils.timezone.utc",
+"kind": "name"
+}
+]
+},
+{
+"id": "django==6.1.3@2026-11-09",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-09",
+"requires": [
+"django==6.1.3"
+],
+"uses": [
+{
+"key": "03c1d77bd446479b",
+"path": "django.utils.timezone.utc.localize",
+"kind": "name"
+},
+{
+"key": "3ee03f34439baff7",
+"path": "django.core.mail.EmailMultiAlternatives",
+"kind": "call",
+"npos": 5,
+"kwargs": [
+"bcc",
+"cc",
+"reply_to",
+"to"
+]
+},
+{
+"key": "3eea426ce1ff76b4",
+"path": "django.core.files.storage.get_storage_class",
+"kind": "name"
+},
+{
+"key": "f799b9317abf01f3",
+"path": "django.utils.timezone.utc",
+"kind": "name"
+}
+]
+},
+{
+"id": "fastapi==0.162.2@2026-11-09",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-09",
+"requires": [
+"fastapi==0.162.2"
+],
+"uses": [
+{
+"key": "fc4d7cfceb04b2da",
+"path": "fastapi.FastAPI",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"title",
+"description",
+"version",
+"terms_of_service",
+"contact",
+"openapi_tags",
+"bearer_scheme",
+"oauth_flows"
+]
+}
+]
+},
+{
+"id": "flask==3.1.1@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"flask==3.1.1"
+],
+"uses": [
+{
+"key": "3153fd1cd9a48e3a",
+"path": "flask.json.JSONEncoder",
+"kind": "name"
+},
+{
+"key": "67cec87871277e66",
+"path": "flask.helpers.safe_join",
+"kind": "name"
+},
+{
+"key": "b470230b2347f619",
+"path": "flask._request_ctx_stack",
+"kind": "name"
+},
+{
+"key": "cb8532f62efc652f",
+"path": "flask._request_ctx_stack.top",
+"kind": "name"
+},
+{
+"key": "ded15f8a600479cf",
+"path": "flask.Flask.before_first_request",
+"kind": "name",
+"via": "instance"
+}
+]
+},
+{
+"id": "huggingface-hub==0.14.1@2023-05-25",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2023-05-25",
+"requires": [
+"huggingface-hub==0.14.1"
+],
+"uses": [
+{
+"key": "60e046d5bd70085c",
+"path": "huggingface_hub.utils.OfflineModeIsEnabled",
+"kind": "name"
+},
+{
+"key": "7818b16af965db42",
+"path": "huggingface_hub.constants.HF_HOME",
+"kind": "name"
+},
+{
+"key": "f344253d6878a4d6",
+"path": "huggingface_hub.constants.HF_HUB_CACHE",
+"kind": "name"
+}
+]
+},
+{
+"id": "huggingface-hub==2.4.0@2026-11-08",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-08",
+"requires": [
+"huggingface-hub==2.4.0"
+],
+"uses": [
+{
+"key": "909f126ad6c26d9c",
+"path": "huggingface_hub.snapshot_download",
+"kind": "call",
+"npos": 1,
+"kwargs": [
+"allow_patterns",
+"repo_id",
+"repo_type",
+"revision",
+"force_download",
+"etag_timeout",
+"cache_dir",
+"local_dir",
+"local_dir_use_symlinks"
+]
+}
+]
+},
+{
+"id": "instructor==1.17.0@2026-10-09",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-10-09",
+"requires": [
+"instructor==1.17.0"
+],
+"uses": [
+{
+"key": "a6ea59fa939ff366",
+"path": "instructor.from_groq",
+"kind": "name"
+},
+{
+"key": "c5cfcad1ef2eef79",
+"path": "instructor.from_gemini",
+"kind": "name"
+},
+{
+"key": "efe31c85233fd5ba",
+"path": "instructor.from_anthropic",
+"kind": "name"
+}
+]
+},
+{
+"id": "marshmallow==4.0.0@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"marshmallow==4.0.0"
+],
+"uses": [
+{
+"key": "6568fa1920297e84",
+"path": "marshmallow.__version_info__",
+"kind": "name"
+},
+{
+"key": "7d62f1c866d31b7d",
+"path": "marshmallow.fields.String",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"required",
+"allow_none",
+"default",
+"missing"
+]
+},
+{
+"key": "cb980bc58d60fdd2",
+"path": "marshmallow.__version__.split",
+"kind": "name"
+},
+{
+"key": "d1f8b0b8cae64b71",
+"path": "marshmallow.fields.Str",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"required",
+"validate",
+"default"
+]
+}
+]
+},
+{
+"id": "matplotlib==3.10.3@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"matplotlib==3.10.3"
+],
+"uses": [
+{
+"key": "810a0434540b3278",
+"path": "matplotlib.pyplot.cm.RdBu_r",
+"kind": "name"
+},
+{
+"key": "9ea7632d6d42e514",
+"path": "matplotlib.pyplot.add_patch",
+"kind": "name"
+},
+{
+"key": "c1005447449def81",
+"path": "matplotlib.pyplot.cm.coolwarm",
+"kind": "name"
+}
+]
+},
+{
+"id": "mistralai==1.5.0@2025-02-27",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2025-02-27",
+"requires": [
+"mistralai==1.5.0"
+],
+"uses": [
+{
+"key": "f2ebe81eb52d4443",
+"path": "mistralai.Mistral.ocr",
+"kind": "name",
+"via": "instance"
+}
+]
+},
+{
+"id": "numpy==2.2.6@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"numpy==2.2.6"
+],
+"uses": [
+{
+"key": "33110b0477917744",
+"path": "numpy.int",
+"kind": "name"
+}
+]
+},
+{
+"id": "numpy==2.3.2@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"numpy==2.3.2"
+],
+"uses": [
+{
+"key": "03febf739e78daf3",
+"path": "numpy.ComplexWarning",
+"kind": "name"
+},
+{
+"key": "0aeca8c86d830510",
+"path": "numpy.product",
+"kind": "name"
+},
+{
+"key": "27f524b3faa3340d",
+"path": "numpy.str",
+"kind": "name"
+},
+{
+"key": "303f1e4789911bea",
+"path": "numpy.NaN",
+"kind": "name"
+},
+{
+"key": "33110b0477917744",
+"path": "numpy.int",
+"kind": "name"
+},
+{
+"key": "362d701c63c127a8",
+"path": "numpy.float",
+"kind": "name"
+},
+{
+"key": "733476f02a266008",
+"path": "numpy.float64.append",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "7a05b9fdd43557c9",
+"path": "numpy.Infinity",
+"kind": "name"
+},
+{
+"key": "8b6ab83524e9c462",
+"path": "numpy.asfarray",
+"kind": "name"
+},
+{
+"key": "bbb512743d3d8b50",
+"path": "numpy.Inf",
+"kind": "name"
+},
+{
+"key": "c8bc9ee8c38c8cb5",
+"path": "numpy.mat",
+"kind": "name"
+},
+{
+"key": "ce0dc24f25c4e1bd",
+"path": "numpy.math.factorial",
+"kind": "name"
+},
+{
+"key": "d8821a3a079e22f7",
+"path": "numpy.NINF",
+"kind": "name"
+},
+{
+"key": "ef89049ff9e5b39c",
+"path": "numpy.finfo.eps",
+"kind": "name",
+"via": "instance"
+}
+]
+},
+{
+"id": "openai-agents==0.24.0@2026-11-07",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-07",
+"requires": [
+"openai-agents==0.24.0"
+],
+"uses": [
+{
+"key": "927b8d0eeb5213d5",
+"path": "agents.sandbox.SandboxAgent",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"name",
+"model",
+"instructions",
+"developer_instructions",
+"default_manifest",
+"capabilities",
+"mcp_servers",
+"model_settings",
+"output_type"
+]
+}
+]
+},
+{
+"id": "openai==3.48.0@2026-11-10",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-10",
+"requires": [
+"openai==3.48.0"
+],
+"uses": [
+{
+"key": "845115e28ff3aedf",
+"path": "openai.ChatCompletion.create",
+"kind": "name"
+}
+]
+},
+{
+"id": "pandas==2.3.1@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"pandas==2.3.1"
+],
+"uses": [
+{
+"key": "36a42b7c894d306a",
+"path": "pandas.Int64Index",
+"kind": "name"
+},
+{
+"key": "bb026e747c569770",
+"path": "pandas.datetime",
+"kind": "name"
+},
+{
+"key": "be38d7b987dd120e",
+"path": "pandas.DataFrame.append",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "d2a813dd5150f8c9",
+"path": "pandas.DataFrame.v1",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "f0f685248fb6a3dd",
+"path": "pandas.DataFrame.from_items",
+"kind": "name"
+},
+{
+"key": "f62229ab4f738727",
+"path": "pandas.testing.assert_frame_equal",
+"kind": "call",
+"npos": 2,
+"kwargs": [
+"check_names",
+"check_less_precise"
+]
+},
+{
+"key": "fc9a17c5b31a0e47",
+"path": "pandas.datetime.now",
+"kind": "name"
+}
+]
+},
+{
+"id": "polars==1.25.2@2025-04-14",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2025-04-14",
+"requires": [
+"polars==1.25.2"
+],
+"uses": [
+{
+"key": "2876bb82fda5498c",
+"path": "polars.PartitionBy",
+"kind": "name"
+},
+{
+"key": "5b989aec16487fee",
+"path": "polars._typing.ArrowSchemaExportable",
+"kind": "name"
+},
+{
+"key": "5c04641d91adb1ac",
+"path": "polars.Float16",
+"kind": "name"
+},
+{
+"key": "81b019f07aa03d5a",
+"path": "polars._cpu_check.get_runtime_repr",
+"kind": "name"
+}
+]
+},
+{
+"id": "polars==2.1.0@2026-11-10",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-10",
+"requires": [
+"polars==2.1.0"
+],
+"uses": [
+{
+"key": "0c27123d8c00c4bb",
+"path": "polars.scan_csv",
+"kind": "call",
+"npos": 1,
+"kwargs": [
+"source",
+"file_cache_ttl",
+"raise_if_empty"
+]
+},
+{
+"key": "13f4527c2c5c4fc2",
+"path": "polars._utils.various.no_default",
+"kind": "name"
+}
+]
+},
+{
+"id": "pydantic-ai-slim==2.66.0@2026-11-08",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-08",
+"requires": [
+"pydantic-ai-slim==2.66.0"
+],
+"uses": [
+{
+"key": "1409ec40920e39ff",
+"path": "pydantic_ai.usage.RequestUsage",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"input_tokens",
+"output_tokens",
+"cache_read_tokens"
+]
+},
+{
+"key": "1cd852f878597c91",
+"path": "pydantic_ai.Agent.run_mcp_servers",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "273a52fe260f9644",
+"path": "pydantic_ai.ag_ui.StateDeps",
+"kind": "name"
+},
+{
+"key": "78dab4ce415fc09c",
+"path": "pydantic_ai.Agent.to_ag_ui",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "9a9239a42b5d3111",
+"path": "pydantic_ai.mcp.MCPServerHTTP",
+"kind": "name"
+},
+{
+"key": "a5cd28ae3213c3ac",
+"path": "pydantic_ai.mcp.MCPServerStdio",
+"kind": "name"
+},
+{
+"key": "a9ad1b76130a1a31",
+"path": "pydantic_ai.ag_ui",
+"kind": "name"
+},
+{
+"key": "ae3137f5fda1da37",
+"path": "pydantic_ai.models.gemini",
+"kind": "name"
+},
+{
+"key": "b7decf101e87722c",
+"path": "pydantic_ai.models.openai.OpenAIModel",
+"kind": "name"
+},
+{
+"key": "c5b3e4f6564b258d",
+"path": "pydantic_ai.models.gemini.GeminiModel",
+"kind": "name"
+},
+{
+"key": "f6f483325e44fbc3",
+"path": "pydantic_ai.Agent",
+"kind": "call",
+"npos": 1,
+"kwargs": [
+"deps_type",
+"system_prompt",
+"instrument",
+"tools",
+"retries",
+"model",
+"mcp_servers",
+"result_type",
+"name",
+"end_strategy",
+"model_settings",
+"result_retries",
+"result_tool_name",
+"result_tool_description"
+]
+}
+]
+},
+{
+"id": "pydantic-ai-slim==2.66.0@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"pydantic-ai-slim==2.66.0"
+],
+"uses": [
+{
+"key": "6bc9a8c6a2ef13c6",
+"path": "pydantic_ai.usage.RequestUsage",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"output_tokens"
+]
+}
+]
+},
+{
+"id": "pydantic==2.10.3@2025-01-02",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2025-01-02",
+"requires": [
+"pydantic==2.10.3"
+],
+"uses": [
+{
+"key": "4833f9cd260000d5",
+"path": "pydantic.create_model_from_typeddict",
+"kind": "name"
+}
+]
+},
+{
+"id": "pydantic==2.14.3@2026-11-09",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-09",
+"requires": [
+"pydantic==2.14.3"
+],
+"uses": [
+{
+"key": "4833f9cd260000d5",
+"path": "pydantic.create_model_from_typeddict",
+"kind": "name"
+}
+]
+},
+{
+"id": "pytest==8.4.1@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"pytest==8.4.1"
+],
+"uses": [
+{
+"key": "3990601fc3655656",
+"path": "pytest.load_fake_module",
+"kind": "name"
+},
+{
+"key": "f936ab1e1f7f4d4f",
+"path": "pytest.run",
+"kind": "name"
+}
+]
+},
+{
+"id": "scikit-learn==1.7.1@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"scikit-learn==1.7.1"
+],
+"uses": [
+{
+"key": "03b03b1798863b1f",
+"path": "sklearn.utils._get_column_indices",
+"kind": "name"
+},
+{
+"key": "1946fe0fbe40653b",
+"path": "sklearn.metrics.tests.test_ranking",
+"kind": "name"
+},
+{
+"key": "44ada4ef87deaa4e",
+"path": "sklearn.metrics._plot.base",
+"kind": "name"
+},
+{
+"key": "483875407333aecf",
+"path": "sklearn.conftest.pyplot.close",
+"kind": "name"
+},
+{
+"key": "5e6348bb4bd3725e",
+"path": "sklearn.metrics._plot.base._get_response",
+"kind": "name"
+},
+{
+"key": "71c178b0f4aaa138",
+"path": "sklearn.metrics.tests.test_ranking.make_prediction",
+"kind": "name"
+},
+{
+"key": "79df6403172fe971",
+"path": "sklearn.conftest",
+"kind": "name"
+},
+{
+"key": "acb550a4f2052713",
+"path": "sklearn.preprocessing.OneHotEncoder",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"n_values"
+]
+},
+{
+"key": "eeaa589b0860ae37",
+"path": "sklearn.conftest.pyplot",
+"kind": "name"
+},
+{
+"key": "f11a0164596967e6",
+"path": "sklearn.utils.check_matplotlib_support",
+"kind": "name"
+}
+]
+},
+{
+"id": "scikit-learn==1.9.1@2026-10-10",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-10-10",
+"requires": [
+"scikit-learn==1.9.1"
+],
+"uses": [
+{
+"key": "20d754a54a5b1808",
+"path": "sklearn.linear_model.LogisticRegression",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"max_iter",
+"multi_class"
+]
+}
+]
+},
+{
+"id": "sqlalchemy==2.0.29@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"sqlalchemy==2.0.29"
+],
+"uses": [
+{
+"key": "e2ebfc463c5b40aa",
+"path": "sqlalchemy.orm.relation",
+"kind": "name"
+}
+]
+},
+{
+"id": "streamlit==1.22.0@2023-05-27",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2023-05-27",
+"requires": [
+"streamlit==1.22.0"
+],
+"uses": [
+{
+"key": "00868439a9477807",
+"path": "streamlit.container",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"height",
+"border"
+]
+},
+{
+"key": "660347f7644a148c",
+"path": "streamlit.chat_input",
+"kind": "name"
+},
+{
+"key": "a937143d90dfc652",
+"path": "streamlit.chat_message",
+"kind": "name"
+},
+{
+"key": "d632823c34337b37",
+"path": "streamlit.image",
+"kind": "call",
+"npos": 1,
+"kwargs": [
+"caption",
+"use_container_width"
+]
+}
+]
+},
+{
+"id": "transformers==5.22.2@2026-11-07",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-07",
+"requires": [
+"transformers==5.22.2"
+],
+"uses": [
+{
+"key": "07b39e510c5d5a17",
+"path": "transformers.generation.flax_utils.SampleState.sequences",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "0b2087d699c6d861",
+"path": "transformers.modeling_flax_utils",
+"kind": "name"
+},
+{
+"key": "1241ec066dfb4023",
+"path": "transformers.modeling_flash_attention_utils.flash_attn_varlen_func",
+"kind": "name"
+},
+{
+"key": "1d58dfcc790208b0",
+"path": "transformers.generation.flax_utils",
+"kind": "name"
+},
+{
+"key": "50ff1a2818e73edc",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.flash_attn_varlen_func",
+"kind": "name"
+},
+{
+"key": "54ee47e401b1cc0b",
+"path": "transformers.generation.flax_utils.FlaxLogitsProcessorList",
+"kind": "name"
+},
+{
+"key": "63e64334df8f70e4",
+"path": "transformers.generation.flax_utils.SampleState.running_token",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "6f768328bfa90c66",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.SlidingWindowCache",
+"kind": "name"
+},
+{
+"key": "711e9ed947115fd8",
+"path": "transformers.generation.flax_utils.logger",
+"kind": "name"
+},
+{
+"key": "7487ff50b4d09d17",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl._flash_attention_forward",
+"kind": "name"
+},
+{
+"key": "7673970ec7e4ce79",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.apply_rotary_pos_emb_flashatt",
+"kind": "name"
+},
+{
+"key": "7bd03ec6f41314fe",
+"path": "transformers.generation.flax_utils.SampleState.is_sent_finished",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "7da28c53f322248d",
+"path": "transformers.generation.flax_utils.SampleState.prng_key",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "860cbb4e4ee03fc2",
+"path": "transformers.AutoModelForVision2Seq.from_pretrained",
+"kind": "name"
+},
+{
+"key": "8773f83ffe28d5cf",
+"path": "transformers.generation.flax_utils.SampleState.model_kwargs",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "8e3a01fce9587024",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.StaticCache",
+"kind": "name"
+},
+{
+"key": "8fa9b02c5114e3c3",
+"path": "transformers.generation.flax_utils.SampleState",
+"kind": "name"
+},
+{
+"key": "98311d473646949c",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.AttentionMaskConverter._ignore_causal_mask_sdpa",
+"kind": "name"
+},
+{
+"key": "a3d7b5820292890a",
+"path": "transformers.models.qwen2_vl.modeling_qwen2_vl.flash_attn_varlen_func",
+"kind": "name"
+},
+{
+"key": "a68f2e07446753b9",
+"path": "transformers.generation.flax_utils.SampleState.cur_len",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "a71db7943c5cca06",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.AttentionMaskConverter",
+"kind": "name"
+},
+{
+"key": "b2fc234a7b04774d",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.AttentionMaskConverter._unmask_unattended",
+"kind": "name"
+},
+{
+"key": "be66f5b2cab2596c",
+"path": "transformers.modeling_flax_outputs",
+"kind": "name"
+},
+{
+"key": "c229f572feb3253b",
+"path": "transformers.modeling_flax_utils.FlaxPreTrainedModel",
+"kind": "name"
+},
+{
+"key": "c6ce142cf7e64ab8",
+"path": "transformers.generation.flax_utils.FlaxSampleOutput",
+"kind": "name"
+},
+{
+"key": "ca18e066d67fef7d",
+"path": "transformers.AutoModelForVision2Seq",
+"kind": "name"
+},
+{
+"key": "cf418e92e0451263",
+"path": "transformers.modeling_flax_outputs.FlaxCausalLMOutput",
+"kind": "name"
+},
+{
+"key": "d8375d9b33f62ae8",
+"path": "transformers.modeling_flax_outputs.FlaxBaseModelOutput",
+"kind": "name"
+},
+{
+"key": "ee77013717e31ee5",
+"path": "transformers.modeling_flax_utils.ACT2FN",
+"kind": "name"
+},
+{
+"key": "f17bbd20cbe18065",
+"path": "transformers.generation.flax_utils.logger.warning",
+"kind": "name"
+}
+]
+},
+{
+"id": "transformers==5.22.2@2026-11-10",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-10",
+"requires": [
+"transformers==5.22.2"
+],
+"uses": [
+{
+"key": "0a231a053e703bf6",
+"path": "transformers.ViTHybridForImageClassification",
+"kind": "name"
+},
+{
+"key": "19bd0ebd887c4a00",
+"path": "transformers.ViTFeatureExtractor",
+"kind": "name"
+},
+{
+"key": "45c10f7be80e5076",
+"path": "transformers.ViTHybridImageProcessor",
+"kind": "name"
+},
+{
+"key": "46dfeea3c7e9521a",
+"path": "transformers.ViTFeatureExtractor.from_pretrained",
+"kind": "name"
+},
+{
+"key": "b09eb1721cc219c4",
+"path": "transformers.ViTHybridForImageClassification.from_pretrained",
+"kind": "name"
+},
+{
+"key": "eddc4bd9df4cda9d",
+"path": "transformers.CLIPTextConfig",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"vocab_size",
+"hidden_size",
+"intermediate_size",
+"num_hidden_layers",
+"num_attention_heads",
+"max_position_embeddings",
+"hidden_act",
+"layer_norm_eps",
+"dropout",
+"attention_dropout",
+"initializer_range",
+"initializer_factor",
+"pad_token_id",
+"bos_token_id",
+"eos_token_id",
+"model_type",
+"projection_dim",
+"torch_dtype",
+"transformers_version"
+]
+},
+{
+"key": "f8bf8dd3baae704c",
+"path": "transformers.ViTHybridImageProcessor.from_pretrained",
+"kind": "name"
+}
+]
+},
+{
+"id": "transformers==5.22.2@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"transformers==5.22.2"
+],
+"uses": [
+{
+"key": "de028009cd1d7c4d",
+"path": "transformers.trainer.ALL_LAYERNORM_LAYERS",
+"kind": "name"
+}
+]
+},
+{
+"id": "weaviate-client==4.24.1@2026-11-07",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-07",
+"requires": [
+"weaviate-client==4.24.1"
+],
+"uses": [
+{
+"key": "f924fb5a483ee2f8",
+"path": "weaviate.Client",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"url",
+"auth_client_secret"
+]
+}
+]
+},
+{
+"id": "weaviate-client==4.24.1@2026-11-09",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-09",
+"requires": [
+"weaviate-client==4.24.1"
+],
+"uses": [
+{
+"key": "f924fb5a483ee2f8",
+"path": "weaviate.Client",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"url",
+"auth_client_secret"
+]
+}
+]
+},
+{
+"id": "weaviate-client==4.24.1@2026-11-10",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-10",
+"requires": [
+"weaviate-client==4.24.1"
+],
+"uses": [
+{
+"key": "040ce94d6637eabd",
+"path": "weaviate.Client.schema",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "18bcbd99128ec600",
+"path": "weaviate.Client",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"url",
+"auth_client_secret",
+"additional_headers"
+]
+},
+{
+"key": "2b2a9eff7bf46321",
+"path": "weaviate.Client",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"url",
+"additional_headers"
+]
+},
+{
+"key": "f924fb5a483ee2f8",
+"path": "weaviate.Client",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"url",
+"auth_client_secret"
+]
+},
+{
+"key": "fbe0d44985abcadd",
+"path": "weaviate.Client.query",
+"kind": "name",
+"via": "instance"
+}
+]
+},
+{
+"id": "weaviate-client==4.24.1@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"weaviate-client==4.24.1"
+],
+"uses": [
+{
+"key": "08aa953f74d95d99",
+"path": "weaviate.client.Client",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"url",
+"auth_client_secret"
+]
+},
+{
+"key": "18bcbd99128ec600",
+"path": "weaviate.Client",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"url",
+"auth_client_secret",
+"additional_headers"
+]
+}
+]
+},
+{
+"id": "werkzeug==3.1.3@2025-08-01",
+"python": [
+"3.12"
+],
+"exclude_newer": "2025-08-01",
+"requires": [
+"werkzeug==3.1.3"
+],
+"uses": [
+{
+"key": "a5cd59c6e24add61",
+"path": "werkzeug.urls.url_decode",
+"kind": "name"
+}
+]
+}
+]
+}

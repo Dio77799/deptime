@@ -96,11 +96,13 @@ In order. The first line of each phase is what it delivers.
 
 **Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
 code?" from a project directory.
-- [ ] **DT-QA-24**: DT-QA-21 again after DT-CORE-69, reported as a second, in-sample run · `P1` `S` · deps: CORE-69
-  - Same protocol, sources and bar. Phase 3 starts if all four measures are met.
+- [ ] **DT-QA-25**: Are the clean upgrades' failures real? · `P1` `S` · deps: QA-24
+  - DT-QA-24 missed only "clean upgrades failed" (8.3%), which counts breaks on uses nobody labelled as false. The
+    probe checks each break reported on a clean upgrade; Phase 3 starts if at most 5% of clean upgrades fail with no
+    confirmed break (`bench/upgrade-check/audit/README.md`).
 
 **Phase 3, the GitHub Action (DT-GTM-06).** A check on Dependabot and Renovate pull requests.
-- [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, QA-24
+- [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, QA-25
   - On a pull request that changes a lockfile or requirements file: pull the index (cached), run `check-upgrade
     --base` against the base branch, write the report to the job summary with an annotation per broken line, and fail
     the check only on confirmed breaks. Dependabot's pull requests get a read-only token and no secrets, so it must
@@ -135,6 +137,9 @@ code?" from a project directory.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-24** (2026-11-15): DT-QA-21 again after DT-CORE-69, in-sample: breaks found 97.8%, working uses
+  flagged 0.04%, labelled uses read 99.9% (met); clean upgrades failed 8.3% (missed, unchanged)
+  (`bench/upgrade-check/results-2026-11-15-second.md`).
 - [x] **DT-CORE-69** (2026-11-15): `check-upgrade` and `check_symbols(code=)` read the module of `from X import Y`
   and `from google import genai`, and report each member used through a class gone at the new version, at its own
   lines; the Markdown report lists them under the missing module or class.
