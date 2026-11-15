@@ -1145,6 +1145,31 @@ class DepTime:
             return span["kind"] == "class"
         return any(s["kind"] == "class" for s in self.store.spans(name, path))
 
+    def _inherited_init_fields(
+        self,
+        name: str,
+        full: str,
+        ordinal: int,
+        span: sqlite3.Row,
+        init: sqlite3.Row | None,
+        kwargs: list[str],
+    ) -> list[str]:
+        """The keywords among `kwargs` that name an attribute of a class whose `__init__` it inherits (DT-CORE-70).
+        A constructor generated from fields (transformers 5's configs, `@dataclass` subclasses) takes them, though the
+        index records only the base's signature, so the answer is no rejection, with a note (Invariant 2)."""
+        assert self.store is not None
+        if span["kind"] != "class" or init is None or not kwargs:
+            return []
+        own, inherited = span["canonical"], init["canonical"]
+        if not own or not inherited or inherited == f"{own}.__init__":
+            return []
+        out = []
+        for k in kwargs:
+            attr = self.store.span_at(name, f"{full}.{k}", ordinal)
+            if attr is not None and attr["kind"] == "attribute":
+                out.append(k)
+        return out
+
     def _check_symbols(
         self, name: str, spec: PackageSpec, version: str, symbols: list[SymbolQuery], depth: int = 0
     ) -> CheckSymbolsResult:
@@ -1221,6 +1246,8 @@ class DepTime:
                 for k in q.kwargs
                 if params_raw is not None and not _accepts_kwarg(params_raw, k) and k not in by_param
             ]
+            fields = self._inherited_init_fields(name, full, row["ordinal"], span, callable_span, rejected)
+            rejected = [k for k in rejected if k not in fields]
             deprecated = (
                 span["deprecated"]
                 or (
@@ -1249,6 +1276,18 @@ class DepTime:
                 )
             else:
                 slots = None
+            if fields:
+                named = ", ".join(f"`{k}`" for k in fields)
+                hint = " ".join(
+                    h
+                    for h in (
+                        hint,
+                        f"{named} {'is a field' if len(fields) == 1 else 'are fields'} of the class, whose"
+                        " constructor is inherited and may be generated from its fields (as a dataclass's is), so"
+                        f" whether it takes {'it' if len(fields) == 1 else 'them'} can't be told.",
+                    )
+                    if h
+                )
             results.append(
                 SymbolCheck(
                     path=full,

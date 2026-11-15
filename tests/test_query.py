@@ -3335,3 +3335,39 @@ def test_a_class_deprecation_moved_to_its_init_isnt_new():
         ("hp.Repo.__init__", "0.21", None),
     ]
     assert dt._deprecation("hp", "hp.Repo") == ("<=0.19", old)
+
+
+def test_a_field_keyword_isnt_rejected_when_the_constructor_is_inherited(coverage):
+    # DT-CORE-70: transformers 5's configs inherit PreTrainedConfig.__init__ and take their fields as keywords through
+    # a generated constructor the index can't see. A class with its own __init__ is still checked.
+    def p(name: str) -> dict:
+        return {"name": name, "kind": "keyword-only", "default": "None", "annotation": None}
+
+    symbols = [
+        SymbolRecord("httpx", "module", "httpx"),
+        SymbolRecord("httpx.Base", "class", "httpx._b.Base"),
+        SymbolRecord("httpx.Base.__init__", "function", "httpx._b.Base.__init__", [p("name")]),
+        SymbolRecord("httpx.Cfg", "class", "httpx._c.Cfg"),
+        SymbolRecord("httpx.Cfg.__init__", "function", "httpx._b.Base.__init__", [p("name")]),
+        SymbolRecord("httpx.Cfg.size", "attribute", "httpx._c.Cfg.size"),
+        SymbolRecord("httpx.Own", "class", "httpx._o.Own"),
+        SymbolRecord("httpx.Own.__init__", "function", "httpx._o.Own.__init__", [p("name")]),
+        SymbolRecord("httpx.Own.size", "attribute", "httpx._o.Own.size"),
+    ]
+    snap = ApiSnapshot(
+        package="httpx", version="1.0", import_names=["httpx"], symbols={s.path: s for s in symbols}
+    )
+    store = IndexStore.memory()
+    store.rebuild_package(HTTPX, [snap], {"1.0": None})
+    dt = DepTime(store, coverage)
+    res = dt.check_symbols(
+        "httpx",
+        "1.0",
+        [
+            SymbolQuery(path="httpx.Cfg", kwargs=["size", "nope"]),
+            SymbolQuery(path="httpx.Own", kwargs=["size"]),
+        ],
+    )
+    cfg, own = res.results
+    assert cfg.rejected_kwargs == ["nope"] and "`size` is a field of the class" in (cfg.hint or "")
+    assert own.rejected_kwargs == ["size"] and own.hint is None

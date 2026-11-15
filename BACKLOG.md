@@ -97,11 +97,6 @@ In order. The first line of each phase is what it delivers.
 **Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
 code?" from a project directory.
 **Phase 3, the GitHub Action (DT-GTM-06).** A check on Dependabot and Renovate pull requests.
-- [ ] **DT-CORE-70**: Keywords of a class's own fields aren't rejected when its constructor is inherited · `P1` `S`
-  · deps: QA-25
-  - transformers 5's config classes inherit `PreTrainedConfig.__init__`, so `LlamaConfig(vocab_size=)` reads as a
-    rejected keyword although the generated constructor takes it (DT-QA-25's false breaks). Abstain instead, with a
-    note. No new false negatives on the six sets.
 - [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, CORE-70
   - On a pull request that changes a lockfile or requirements file: pull the index (cached), run `check-upgrade
     --base` against the base branch, write the report to the job summary with an annotation per broken line, and fail
@@ -137,6 +132,8 @@ code?" from a project directory.
 
 ## Done since 2026-11-13
 
+- [x] **DT-CORE-70** (2026-11-15): a keyword that names a field of a class whose `__init__` is inherited isn't
+  rejected, with a note: transformers 5's `LlamaConfig(vocab_size=)` and the other configs. No change on the six sets.
 - [x] **DT-QA-25** (2026-11-15): the probe on every break reported on a clean upgrade: 2.4% of clean upgrades
   (23/974) fail with no confirmed break (bar 5%, met), so Phase 3 starts. 6 of the 9 "false" upgrades are weaviate
   4's raising `Client`, which the probe can't see; the rest are DT-CORE-70, DT-DATA-51 and DT-DATA-78
