@@ -237,3 +237,16 @@ def test_cli_usage_errors(tmp_path, settings, monkeypatch, capsys):
     assert _cli(monkeypatch, settings, str(tmp_path), "--package", "httpx") == 2
     assert _cli(monkeypatch, settings, str(tmp_path), "--package", "httpx", "--to", "0.28.1") == 2
     assert "pass --from" in capsys.readouterr().err
+
+
+def test_a_spread_call_in_any_file_covers_every_parameter(dt):
+    """`httpx.request(*args)` in one file: the other file's call with no arguments doesn't count as missing them."""
+    code = {"a.py": "import httpx\nhttpx.request(*args)\n", "b.py": "import httpx\nhttpx.request()\n"}
+    for files in (code, dict(reversed(code.items()))):
+        res = check_upgrade(dt, "p", files, [_change("0.27.2", "0.28.1")])
+        assert res.breaks == 0, files
+
+
+def test_warnings_about_project_code_stay_quiet(dt, recwarn):
+    check_upgrade(dt, "p", {"a.py": 'import httpx\nx = "\\ "\n'}, [_change("0.27.2", "0.28.1")])
+    assert not [w for w in recwarn if issubclass(w.category, SyntaxWarning)]

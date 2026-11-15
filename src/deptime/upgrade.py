@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import os
 import subprocess
+import warnings
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -107,6 +108,14 @@ def read_code(root: Path, files: Iterable[str]) -> dict[str, str]:
     return code
 
 
+def uses_in(text: str, roots: tuple[str, ...]) -> snippet.Uses | None:
+    """A project file's uses, read whole; the warnings Python prints about other people's code (an invalid escape
+    sequence) stay quiet."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return snippet.uses_in(text, roots, limit=None)
+
+
 def own_modules(files: Iterable[str]) -> set[str]:
     """Top-level module names the project defines itself (`x.py`, `x/__init__.py`, `src/x/...`): an import of one is
     the project's own code, even when a covered package has the same name."""
@@ -139,7 +148,8 @@ class _Read:
         for (built_by, name), kwargs in found.members.items():
             total.add_member(built_by, name, kwargs)
         for key, count in found.positional.items():
-            if key in total.positional and (total.positional[key] is None or count is None):
+            # A call that spreads `*args` or `**kwargs` may cover any parameter, in this file or an earlier one.
+            if count is None or (key in total.positional and total.positional[key] is None):
                 total.positional[key] = None
             else:
                 total.positional[key] = max(total.positional.get(key) or 0, count or 0)
@@ -237,7 +247,7 @@ def check_upgrade(
             continue
         read = _Read()
         for rel, text in code.items():
-            found = snippet.uses_in(text, roots, limit=None)
+            found = uses_in(text, roots)
             if found is None:
                 unreadable.add(rel)
                 continue

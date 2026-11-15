@@ -23,12 +23,11 @@ sys.path.insert(0, str(HOLDOUT))
 from find_pinned import fetch_source  # noqa: E402  (the benchmark's own fetcher, never DepTime's reader)
 from score import _v, ask_check_symbols, rate  # noqa: E402
 
-from deptime import snippet  # noqa: E402
 from deptime.config import Settings, load_coverage  # noqa: E402
 from deptime.index.location import open_index  # noqa: E402
 from deptime.models import DependencyChange  # noqa: E402
 from deptime.query import DepTime  # noqa: E402
-from deptime.upgrade import _Read, check_upgrade, project_files, read_code  # noqa: E402
+from deptime.upgrade import _Read, check_upgrade, project_files, read_code, uses_in  # noqa: E402
 
 SETS = ("2026-11", "2026-11b", "2026-11c", "2026-11d", "2026-11e", "2026-11f")
 CALL_KINDS = {"missing_args", "too_many_positional", "raises"}
@@ -55,7 +54,7 @@ def read_paths(dt: DepTime, row: dict, code: dict[str, str]) -> set[str]:
     spec = dt._spec(row["package"])
     read = _Read()
     for rel, text in code.items():
-        if (found := snippet.uses_in(text, tuple(spec.import_names), limit=None)) is not None:
+        if (found := uses_in(text, tuple(spec.import_names))) is not None:
             read.merge(rel, found)
     queries, _ = dt._code_queries(spec.name, row["to"], [], read.uses)
     return {q.path for q in queries}
