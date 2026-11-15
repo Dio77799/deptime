@@ -106,6 +106,14 @@ uv run python bench/model-alone/upgrades/grade.py > bench/model-alone/upgrades/r
 - **The other five holdout sets.** DepTime's first runs on them are in their own results; asking them would be about
   six times the calls.
 
+## Addendum, 2026-11-15: Claude Haiku 5.5
+
+Written after Sonnet's run and before Haiku was asked. The same questions, prompt, call and scoring, one run, with the
+`haiku` alias (Claude Haiku 5.5, training cutoff June 2026). It asks whether a smaller, cheaper model, of the kind a
+team might run on every pull request, falls further behind DepTime than Sonnet does; on the tracebacks Haiku was 18 to
+21 points behind DepTime. Its replies go to `answers/haiku-run1.jsonl`, and `grade.py` scores every file there, so
+the results file is regenerated with both models.
+
 ## Result
 
 Added after the run; everything above is as it was committed before it. The run of 2026-11-15 is in
