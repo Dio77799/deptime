@@ -273,6 +273,39 @@ def _and(items: list[str], word: str = "and") -> str:
     return items[0] if len(items) == 1 else f"{', '.join(items[:-1])} {word} {items[-1]}"
 
 
+def _call_notation(queries: list[SymbolQuery]) -> tuple[list[SymbolQuery], str | None]:
+    """`kwargs` as a call's shape writes them (DT-CORE-67): `timeout=` is the keyword `timeout`, and a lone `_` (an
+    argument passed by position) or an empty string is no keyword, so it's left out. A caller that copied
+    `Client(_, timeout=)` would otherwise see `timeout=` and `_` rejected. The note says what was read."""
+    keywords: dict[str, None] = {}
+    dropped: dict[str, None] = {}
+    out = []
+    for q in queries:
+        kept = []
+        for raw in q.kwargs:
+            word = raw.strip()
+            if word in ("", "_"):
+                dropped[f"`{word}`" if word else "an empty name"] = None
+                continue
+            if word.endswith("=") and word[:-1].strip():
+                keywords[f"`{word}` as the keyword `{word[:-1].strip()}`"] = None
+                word = word[:-1].strip()
+            kept.append(word)
+        out.append(q if kept == q.kwargs else q.model_copy(update={"kwargs": kept}))
+    parts = []
+    if keywords:
+        parts.append(f"read {_and(list(keywords)[:5])}{' (and more)' if len(keywords) > 5 else ''}")
+    if dropped:
+        parts.append(
+            f"left out {_and(list(dropped))} from `kwargs`: a positional argument isn't a keyword (give their count"
+            " as `positional`)"
+        )
+    if not parts:
+        return out, None
+    note = "; ".join(parts)
+    return out, f"{note[0].upper()}{note[1:]}."
+
+
 def _never_seen_note(package: str, unseen: list[NeverSeenUse], lo: str, hi: str) -> str | None:
     """diff_versions' sentence on the used paths no indexed release has (DT-CORE-54)."""
     if not unseen:
@@ -788,7 +821,8 @@ class DepTime:
         """Each symbol, and with `code`, what the snippet uses from the package (DT-CORE-07), at `version`."""
         name = canonicalize_name(package)
         spec = self._spec(name)
-        queries, read = list(symbols or []), None
+        queries, notation = _call_notation(list(symbols or []))
+        read = None
         if code is not None:
             uses = snippet.uses_in(code, tuple(spec.import_names))
             if uses is None:
@@ -801,8 +835,8 @@ class DepTime:
                     queries = queries[:MAX_CODE_SYMBOLS]
         result = self._check_symbols(name, spec, version, queries)
         stand_in = self._stand_in_note(name, [result.resolved_version])
-        if read or stand_in:
-            result.note = " ".join(n for n in (read, result.note, stand_in) if n)
+        if read or notation or stand_in:
+            result.note = " ".join(n for n in (notation, read, result.note, stand_in) if n)
         return result
 
     def _unseen(
@@ -1595,6 +1629,7 @@ class DepTime:
         notes += [alias_notes[p] for p in sorted({f.package for f in findings}) if p in alias_notes]
         if signal.kind in {"unexpected_kwarg", "missing_argument", "too_many_positional"} and signal.owner:
             notes += self._owner_unknown_note(signal.owner, findings)
+            notes += self._module_unknown_note(signal, findings)
         if signal.kind == "import_name" and not signal.module and findings:
             notes.append(
                 f"The error names `{signal.name}` without its module (compiled code, or a trimmed message), so "
@@ -2567,6 +2602,35 @@ class DepTime:
             f"({_and([f'`{c}`' for c in classes])}); the findings list each, with the same versions and pin."
         ]
 
+    @staticmethod
+    def _module_unknown_note(signal: ErrorSignal, findings: list[Finding]) -> list[str]:
+        """An error that names a class several modules define, with nothing else in the text to say which module's
+        (DT-CORE-63): selenium's `WebDriver.__init__()` is the class of chrome, edge, ie and more, and a one-line
+        error leaves the order of equal findings to chance. Said when two or more classes changed the same way."""
+        if (
+            "." not in signal.owner
+            or signal.referenced_names
+            or any(f.code for f in signal.frames)
+            or not findings
+        ):
+            return []
+        top = findings[0]
+        tail = top.symbol.partition("(")[0].split(".")[-2:]
+        classes = [
+            f.symbol.partition("(")[0].rpartition(".")[0]
+            for f in findings
+            if (f.package, f.issue, f.last_version_with, f.first_version_with)
+            == (top.package, top.issue, top.last_version_with, top.first_version_with)
+            and f.symbol.partition("(")[0].split(".")[-2:] == tail
+        ]
+        if len(set(classes)) < 2:
+            return []
+        return [
+            f"The error names `{'.'.join(tail)}()` without its module, and {len(classes)} classes of that name changed"
+            f" the same way ({_and([f'`{c}`' for c in classes])}); the findings list each, with the same versions and"
+            " pin, and the first isn't more likely than the others."
+        ]
+
     def _through_reexports(
         self, findings: list[Finding], installed: dict[str, str], signal: ErrorSignal
     ) -> list[Finding]:
@@ -3325,6 +3389,33 @@ class DepTime:
             explanation=explanation + _before_index(rels),
         )
 
+    def _catch_all_removed(
+        self, base: dict, path: str, param: str, caught: list[sqlite3.Row], replacements: list[Replacement]
+    ) -> Finding:
+        """A keyword no release named, which a `**kwargs` took until a release dropped it (DT-CORE-64): mcp 1.12.3
+        replaced `FastMCP.__init__(**settings)` with named parameters, so `description` stopped binding. Removed, at
+        medium: what the catch-all did with it (used it, ignored it, rejected it later) isn't in the signature."""
+        name = base["package"]
+        last_ord = max(s["last_ordinal"] for s in caught)
+        last_with, first_without = self._version(name, last_ord), self._version(name, last_ord + 1)
+        span = max(caught, key=lambda s: s["last_ordinal"])
+        star = next(
+            (p["name"] for p in json.loads(span["params"] or "[]") if p["kind"] == "variadic keyword"),
+            "kwargs",
+        )
+        return Finding(
+            **base,
+            issue="param_removed",
+            last_version_with=last_with,
+            first_version_without=first_without,
+            replacements=replacements,
+            pin_to_restore=f"{name}<={last_with}",
+            confidence="medium",
+            explanation=f"{path} never named `{param}`, but up to {name} {last_with} it took any keyword through"
+            f" `**{star}`; {first_without} dropped `**{star}`, so `{param}` no longer binds. Whether the old release"
+            f" did anything with it isn't in its signature. Pin {name}<={last_with} or update the call.",
+        )
+
     def _param_finding(
         self,
         spec: PackageSpec,
@@ -3426,6 +3517,10 @@ class DepTime:
         if not had:
             if any(s["params"] is None for s in spans):
                 return None  # some releases have no known signature, so "never accepted" can't be shown
+            if current is not None and (
+                caught := [s for s in spans if s["last_ordinal"] < ordinal and _accepts(s, param)]
+            ):
+                return self._catch_all_removed(base, path, param, caught, replacements)
             ahead = self._ahead(name, resolved, exact)
             return Finding(
                 **base,

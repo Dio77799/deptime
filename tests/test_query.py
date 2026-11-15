@@ -426,6 +426,25 @@ def test_check_symbols(dt):
     assert old.status == "missing" and "0.26.0" in old.hint and "httpx.NewThing" in old.hint
 
 
+def test_check_symbols_reads_call_notation_in_kwargs(dt):
+    """DT-CORE-67: a caller that copies a call's shape (`Client(_, proxies=)`) into `kwargs` gets the keyword read as
+    `proxies` and the `_` left out, and the note says so; the field names stay as they are (Invariant 3)."""
+    res = dt.check_symbols(
+        "httpx",
+        "0.28.1",
+        [
+            SymbolQuery(path="httpx.Client", kwargs=["_", " proxies= ", "proxy=", "_", ""]),
+            SymbolQuery(path="httpx.Client", kwargs=["proxy"]),
+        ],
+    )
+    copied, plain = res.results
+    assert (copied.status, copied.rejected_kwargs) == ("present", ["proxies"])
+    assert (plain.status, plain.rejected_kwargs) == ("present", [])
+    assert "`proxies=` as the keyword `proxies`" in res.note and "`_`" in res.note
+    clean = dt.check_symbols("httpx", "0.28.1", [SymbolQuery(path="httpx.Client", kwargs=["proxy"])])
+    assert "keyword" not in (clean.note or "")
+
+
 def test_diff_versions_orders_by_severity_and_filters(dt):
     res = dt.diff_versions("httpx", "0.26.0", "0.28.1")
     assert res.events[0].kind == "removed"
@@ -1788,6 +1807,32 @@ def test_a_library_that_no_longer_accepts_a_keyword_names_the_class():
         "srv<=2.14.7",
     )
     assert [(r.target, r.source) for r in f.replacements] == [("srv.FastMCP.run_http_async", "error_message")]
+
+
+def test_a_keyword_that_went_with_a_removed_catch_all():
+    """DT-CORE-64: mcp 1.12.2's `FastMCP.__init__(**settings)` took any keyword; 1.12.3 named its parameters and
+    dropped `**settings`, so `description`, never a named parameter, stopped binding: removed, not never accepted."""
+    mod, cls = _rec("srv", "module"), _rec("srv.FastMCP", "class")
+    port = {"name": "port", "kind": "keyword-only", "default": "8000"}
+    old = _rec("srv.FastMCP.__init__", "function", [port, {"name": "settings", "kind": "variadic keyword"}])
+    new = _rec("srv.FastMCP.__init__", "function", [port])
+    base = {"srv": mod, "srv.FastMCP": cls}
+    snaps = [ApiSnapshot("srv", v, ["srv"], base | {old.path: old}) for v in ("1.12.1", "1.12.2")]
+    snaps.append(ApiSnapshot("srv", "1.12.3", ["srv"], base | {new.path: new}))
+    dt = _dt([(SRV, snaps)])
+    tb = "TypeError: FastMCP.__init__() got an unexpected keyword argument `description`"
+    f = dt.explain_error(tb, {"srv": "1.12.3"}).findings[0]
+    assert (f.symbol, f.issue, f.last_version_with, f.first_version_without, f.pin_to_restore) == (
+        "srv.FastMCP.__init__(description)",
+        "param_removed",
+        "1.12.2",
+        "1.12.3",
+        "srv<=1.12.2",
+    )
+    assert f.confidence == "medium" and "`**settings`" in f.explanation
+    # Never a named parameter and still taken by a catch-all, or never taken at all: as before.
+    always = [ApiSnapshot("srv", v, ["srv"], base | {new.path: new}) for v in ("1.0", "2.0")]
+    assert _dt([(SRV, always)]).explain_error(tb, {"srv": "2.0"}).findings[0].issue == "never_existed"
 
 
 NUMPY = PackageSpec(name="numpy", import_names=("numpy",), tier="B")

@@ -24,6 +24,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+### Fixed
+- `check_symbols` reads `kwargs` written as a call's shape: `timeout=` is the keyword `timeout`, and a lone `_` (an
+  argument passed by position) is left out instead of rejected. The `note` says what it read. A small model copied
+  that notation in 55 of its 315 calls in DT-QA-20, and the rejections fed its false alarms (DT-CORE-67)
+- `explain_error` reads three more errors as a web page shows them: a keyword in backticks, a `cannot import name`
+  message broken across two lines, and Django's `Module "x" does not define a "Y" attribute/class`. `X.init()`, a
+  Markdown-eaten `X.__init__()`, is also tried as `__init__`; when several classes of one name changed the same way
+  and nothing in the text says which, the `note` lists them (DT-CORE-63)
+- A keyword no release named, which a `**kwargs` took until a release dropped it, reads `param_removed` at that
+  release (at `medium`), not `never_existed`: mcp 1.12.3's `FastMCP(description=...)` (DT-CORE-64)
+
 ## [0.1.16] - 2026-11-15
 
 A documentation release: the code is 0.1.13's, and every answer is the same.

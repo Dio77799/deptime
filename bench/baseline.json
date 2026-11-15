@@ -1,14 +1,14 @@
 {
-  "index_built_at": "2026-11-11T12:34:05+00:00",
+  "index_built_at": "2026-11-13T12:18:01+00:00",
   "summary": {
     "cases": 401,
-    "known_gap_share": 3.0,
+    "known_gap_share": 2.2,
     "overall": {
-      "root_cause": 97.0,
-      "root_cause_and_boundary": 97.0,
-      "boundary": 97.0,
-      "replacement": 75.3,
-      "replacement_uncurated": 64.3
+      "root_cause": 97.8,
+      "root_cause_and_boundary": 97.8,
+      "boundary": 97.7,
+      "replacement": 75.8,
+      "replacement_uncurated": 64.8
     },
     "by_tier": {
       "-": {
@@ -21,19 +21,19 @@
       },
       "A": {
         "cases": 206,
-        "root_cause": 98.1,
-        "root_cause_and_boundary": 98.1,
-        "boundary": 98.0,
+        "root_cause": 98.5,
+        "root_cause_and_boundary": 98.5,
+        "boundary": 98.5,
         "replacement": 62.8,
         "replacement_uncurated": 53.8
       },
       "B": {
         "cases": 184,
-        "root_cause": 95.7,
-        "root_cause_and_boundary": 95.7,
-        "boundary": 95.7,
-        "replacement": 84.5,
-        "replacement_uncurated": 71.8
+        "root_cause": 96.7,
+        "root_cause_and_boundary": 96.7,
+        "boundary": 96.7,
+        "replacement": 85.4,
+        "replacement_uncurated": 72.8
       }
     },
     "by_origin": {
@@ -47,11 +47,11 @@
       },
       "reported": {
         "cases": 393,
-        "root_cause": 97.2,
-        "root_cause_and_boundary": 97.2,
-        "boundary": 97.2,
-        "replacement": 74.6,
-        "replacement_uncurated": 63.3
+        "root_cause": 98.0,
+        "root_cause_and_boundary": 98.0,
+        "boundary": 98.0,
+        "replacement": 75.1,
+        "replacement_uncurated": 63.8
       }
     }
   },
@@ -291,10 +291,10 @@
       "replacement_uncurated": null
     },
     "hold-django-encoding-smart-text-django-places": {
-      "root_cause": false,
-      "boundary": false,
-      "replacement": false,
-      "replacement_uncurated": false
+      "root_cause": true,
+      "boundary": true,
+      "replacement": true,
+      "replacement_uncurated": true
     },
     "dspy-teleprompt-mipro-removed": {
       "root_cause": true,
@@ -1155,8 +1155,8 @@
       "replacement_uncurated": true
     },
     "hold-mcp-fastmcp-init-description-python-sdk": {
-      "root_cause": false,
-      "boundary": false,
+      "root_cause": true,
+      "boundary": true,
       "replacement": null,
       "replacement_uncurated": null
     },
@@ -1953,8 +1953,8 @@
       "replacement_uncurated": true
     },
     "hold-redis-connection-hiredisparser-celery-8689": {
-      "root_cause": false,
-      "boundary": false,
+      "root_cause": true,
+      "boundary": true,
       "replacement": null,
       "replacement_uncurated": null
     },

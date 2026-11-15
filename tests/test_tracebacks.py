@@ -811,6 +811,11 @@ def test_adversarial_input_parses_in_linear_time():
         "dashes after an IPython frame": "File a.py:1\n"
         + "-" * n
         + "\nModuleNotFoundError: No module named 'a'",
+        "a long dotted owner before init": "TypeError: "
+        + "A." * (n // 2)
+        + "init() got an unexpected keyword argument 'x'",
+        "a long continued message": "ImportError: cannot import name 'x' from\n" + "a." * (n // 2),
+        "a long import_string module": 'ImportError: Module "' + "a." * (n // 2) + '" does not define a',
         "a long arrow line": "File a.py:1\n---> 1 " + "import a" + ", b" * (n // 3) + "\nValueError: v",
     }
     for name, text in inputs.items():
@@ -820,3 +825,62 @@ def test_adversarial_input_parses_in_linear_time():
             parse_traceback(text)
             best = min(best, time.perf_counter() - start)
         assert best < 0.25, name
+
+
+# DT-CORE-63: four errors as a web page shows them, from the 2026-11f holdout's misses.
+
+
+def test_a_keyword_in_backticks():
+    s = parse_traceback("TypeError: FastMCP.__init__() got an unexpected keyword argument `description`")
+    assert (s.kind, s.owner, s.kwarg) == ("unexpected_kwarg", "FastMCP.__init__", "description")
+    bare = parse_traceback("TypeError: got an unexpected keyword argument `description`")
+    assert (bare.kind, bare.kwarg) == ("unexpected_kwarg", "description")
+
+
+def test_a_message_continued_on_the_next_line():
+    s = parse_traceback(
+        'File "<projectpath>\\venv\\lib\\site-packages\\places\\fields.py", line 7, in <module>\n'
+        "    from django.utils.encoding import smart_text\n"
+        "ImportError: cannot import name 'smart_text' from \n"
+        "django.utils.encoding'(<projectpath>\\venv\\lib\\sitepackages\\django\\utils\\encoding.py)\n"
+    )
+    assert (s.kind, s.module, s.name, s.exception_type) == (
+        "import_name",
+        "django.utils.encoding",
+        "smart_text",
+        "ImportError",
+    )
+
+
+def test_init_with_its_underscores_eaten_by_markdown():
+    s = parse_traceback("TypeError: WebDriver.init() got an unexpected keyword argument 'service_log_path'")
+    assert (s.kind, s.owner, s.kwarg) == ("unexpected_kwarg", "WebDriver.init", "service_log_path")
+    assert s.forwarded_owners == ["WebDriver.__init__"]
+    # A function named init (`wandb.init()`, printed as `init()`) and a lower-case owner stay as they are.
+    for text in (
+        "init() got an unexpected keyword argument 'x'",
+        "run.init() got an unexpected keyword argument 'x'",
+    ):
+        assert parse_traceback(f"TypeError: {text}").forwarded_owners == []
+
+
+def test_django_import_string_message_after_its_frames():
+    s = parse_traceback(
+        "AttributeError: module 'redis.connection' has no attribute 'HiredisParser'\n"
+        '  File "django/utils/module_loading.py", line 30, in import_string\n'
+        "    return cached_import(module_path, class_name)\n"
+        '  File "django/utils/module_loading.py", line 16, in cached_import\n'
+        "    return getattr(module, class_name)\n"
+        "\n"
+        'ImportError: Module "redis.connection" does not define a "HiredisParser" attribute/class\n'
+        '  File "django_redis/pool.py", line 42, in make_connection_params\n'
+        '    "parser_class": self.get_parser_cls(),\n'
+        '  File "django/utils/module_loading.py", line 32, in import_string\n'
+        "    raise ImportError(\n"
+    )
+    assert (s.kind, s.module, s.name, s.exception_type) == (
+        "module_attribute",
+        "redis.connection",
+        "HiredisParser",
+        "ImportError",
+    )

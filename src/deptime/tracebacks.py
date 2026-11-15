@@ -73,19 +73,29 @@ FROM_IMPORT_RE = re.compile(r"^\s*from\s+(?P<mod>[\w.]+)\s+import\s+(?P<names>[\
 IMPORT_RE = re.compile(r"^\s*import\s+(?P<mods>[\w.]+(?:\s+as\s+\w+)?(?:\s*,\s*[\w.]+(?:\s+as\s+\w+)?)*)")
 
 CIRCULAR_RE = re.compile(r"partially initialized module '(?P<module>[\w.]+)'")
-IMPORT_NAME_RE = re.compile(r"cannot import name '(?P<name>[\w.]+)' from '(?P<module>[\w.]+)'")
+# The module's opening quote may be lost where a pasted message breaks across lines (DT-CORE-63).
+IMPORT_NAME_RE = re.compile(r"cannot import name '(?P<name>[\w.]+)' from '?(?P<module>[\w.]+)'")
 # The file of the module it imports from, which Python appends: for a standard module, its own library (DT-DATA-47).
 IMPORT_NAME_PATH_RE = re.compile(r"cannot import name '[\w.]+' from '[\w.]+' \((?P<file>[^()]+\.pyi?)\)")
 # Trimmed of its module, or from Cython-compiled code, which leaves out the quotes too (DT-CORE-37).
 BARE_IMPORT_NAME_RE = re.compile(r"cannot import name (?P<q>'?)(?P<name>\w+)(?P=q)\s*$")
+# Django's `import_string` for a module without the name, as django-redis reports a parser class (DT-CORE-63).
+IMPORT_STRING_RE = re.compile(
+    r'^Module "(?P<module>[\w.]+)" does not define a "(?P<name>\w+)" attribute/class'
+)
 NO_MODULE_RE = re.compile(r"No module named '(?P<module>[\w.]+)'")
 MODULE_ATTR_RE = re.compile(r"module '?(?P<module>[\w.]+)'? has no attribute '?(?P<name>\w+)'?")
 TYPE_ATTR_RE = re.compile(r"type object '(?P<owner>[\w.]+)' has no attribute '(?P<name>\w+)'")
 OBJ_ATTR_RE = re.compile(r"'(?P<owner>[\w.]+)' object has no attribute '(?P<name>\w+)'")
+# A web page may show the keyword in backticks instead of quotes (DT-CORE-63).
 UNEXPECTED_KW_RE = re.compile(
-    r"(?<![\w.])(?P<owner>[\w.]+)\(\) got an unexpected keyword argument '(?P<kwarg>\w+)'"
+    r"(?<![\w.])(?P<owner>[\w.]+)\(\) got an unexpected keyword argument (?P<q>['`])(?P<kwarg>\w+)(?P=q)"
 )
-BARE_KW_RE = re.compile(r"got an unexpected keyword argument '(?P<kwarg>\w+)'")  # no callable named
+BARE_KW_RE = re.compile(
+    r"got an unexpected keyword argument (?P<q>['`])(?P<kwarg>\w+)(?P=q)"
+)  # no callable named
+# `X.init()`: Markdown read `__init__`'s underscores as bold (DT-CORE-63). A class's name is CapWords.
+EATEN_INIT_RE = re.compile(r"^(?P<cls>(?:[\w.]*\.)?[A-Z]\w*)\.init$")
 # fastmcp 3's own message for a keyword it removed: "FastMCP() no longer accepts `log_level`. Pass ..." (DT-CORE-47).
 NO_LONGER_ACCEPTS_RE = re.compile(
     r"(?<![\w.])(?P<owner>[\w.]+)\(\) no longer accepts [`'\"]?(?P<kwarg>\w+)[`'\"]?"
@@ -452,6 +462,12 @@ def _signal_at(lines: list[str], exc_index: int, exc_type: str, exc_msg: str) ->
         _classify_library_removal(signal, exc_type, message_core)
     if signal.kind == "unknown":
         _classify(signal, message_core)
+    if signal.kind == "unknown" and (joined := _continued(message_core, continuation)) is not None:
+        _classify(signal, joined)
+        if signal.kind != "unknown":
+            signal.message = joined
+    if signal.kind == "unexpected_kwarg" and signal.owner and (m := EATEN_INIT_RE.match(signal.owner)):
+        signal.forwarded_owners.append(f"{m.group('cls')}.__init__")
     if signal.kind == "unexpected_kwarg" and signal.owner is None:
         _owner_from_call_site(signal, lines)
     if signal.owner == "__init__" and signal.kind in {
@@ -463,6 +479,15 @@ def _signal_at(lines: list[str], exc_index: int, exc_type: str, exc_msg: str) ->
     if signal.kind == "unexpected_kwarg":
         _owner_forwarded_kwargs(signal)
     return signal
+
+
+def _continued(message: str, continuation: list[str]) -> str | None:
+    """The message with the line after it, where a web page broke it in two (DT-CORE-63): `cannot import name 'x'
+    from` and, on the next line, `pkg.mod'(...)`. None when that line is empty or starts something else."""
+    nxt = continuation[0].strip() if continuation else ""
+    if not message or not nxt or nxt == TRACEBACK_HEADER or FRAME_RE.match(nxt) or EXC_LINE_RE.match(nxt):
+        return None
+    return f"{message} {nxt}"
 
 
 def _owner_forwarded_kwargs(signal: ErrorSignal) -> None:
@@ -564,7 +589,7 @@ def _classify(signal: ErrorSignal, msg: str) -> None:
         signal.module = imported[-1].removesuffix("." + m.group("name")) if imported else None
     elif m := NO_MODULE_RE.search(msg):
         signal.kind, signal.module = "module_missing", m.group("module")
-    elif m := MODULE_ATTR_RE.search(msg):
+    elif m := IMPORT_STRING_RE.match(msg) or MODULE_ATTR_RE.search(msg):
         signal.kind, signal.module, signal.name = "module_attribute", m.group("module"), m.group("name")
     elif m := TYPE_ATTR_RE.search(msg):
         signal.kind, signal.owner, signal.name = "class_attribute", m.group("owner"), m.group("name")

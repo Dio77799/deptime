@@ -94,16 +94,6 @@ What still needs a person, about once a month:
 
 In order. The first line of each phase is what it delivers.
 
-**Phase 1, quick wins (about one session).** Two query-side fixes, no cold build.
-- [ ] **DT-CORE-67**: `check_symbols` reads `timeout=` as the keyword `timeout`, and ignores a lone `_` in `kwargs`
-  · `P1` `S`
-  - From DT-QA-20: in 53 of Qwen3.5 9B's 315 `check_symbols` calls the model copied a use's `name=` and `_` into
-    keyword names, and the tool rejected them; 39 of its 96 false alarms sat in those conversations. Normalise the
-    input, say so in the result's `note`, and keep the field names (Invariant 3).
-- [ ] **DT-CORE-63** with **DT-CORE-64**: four pasted-traceback shapes, and a keyword a removed `**kwargs` took
-  · `P2` `S`
-  - Held items moved up by a user request. Detail and acceptance in the archive: a failing test per shape first.
-
 **Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
 code?" from a project directory.
 - [ ] **DT-CORE-66**: Read a dependency change from a project · `P1` `M`
@@ -158,6 +148,13 @@ code?" from a project directory.
 
 ## Done since 2026-11-13
 
+- [x] **DT-CORE-67** (2026-11-15): `check_symbols` reads `timeout=` as `timeout` and leaves out `_` and empty names,
+  saying so in `note`. DT-QA-23 measures what it does for a small model.
+- [x] **DT-CORE-63**, **DT-CORE-64** (2026-11-15): backticked keywords, a message continued on the next line, Django's
+  `import_string` message, `X.init()` tried as `X.__init__`, and a keyword a removed `**kwargs` took reads
+  `param_removed`. Three of 2026-11f's four cases now pass (the 191 holdout tracebacks: 184, in-sample); selenium's
+  finds the right release on three same-named `WebDriver` classes, which `note` lists, and stays a known gap: its
+  line names no browser.
 - [x] **DT-QA-20** (2026-11-15): Qwen3.5 9B with DepTime's five tools, protocol committed first. Tracebacks 86.4%
   (alone 18.8%, DepTime by itself 94.8% now); upgrades 82.2% of breaks found with 4.5% of working uses flagged (alone
   30.9% and 15.4%) (`bench/model-alone/with-tools/results-2026-11-15.md`).
