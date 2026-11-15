@@ -248,3 +248,8 @@ def test_a_long_tool_result_is_cut_and_says_so():
     long = SimpleNamespace(content=[SimpleNamespace(text="x" * 40000)], structured_content=None)
     text = with_tools.tool_text(long)
     assert len(text) < 31000 and text.endswith("more characters]")
+
+
+def test_an_answer_left_in_the_reasoning_is_the_last_json_object():
+    assert with_tools.last_json_object('a {"x": 1} b {"1": "works"} end') == '{"1": "works"}'
+    assert with_tools.last_json_object("no answer") is None

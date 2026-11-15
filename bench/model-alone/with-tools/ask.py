@@ -90,6 +90,19 @@ def tool_text(result) -> str:
     return text
 
 
+def last_json_object(text: str) -> str | None:
+    """The last JSON object in a text, as written there; None when there is none."""
+    decoder = json.JSONDecoder()
+    for start in reversed([i for i, ch in enumerate(text) if ch == "{"]):
+        try:
+            value, end = decoder.raw_decode(text, start)
+        except ValueError:
+            continue
+        if isinstance(value, dict):
+            return text[start:end]
+    return None
+
+
 def call_model(model: str, messages: list[dict], tools: list[dict]) -> dict:
     """One model call with ../ask_openrouter.py's retry rules; raises base.Paused when the service is busy."""
     attempt = waited = 0
@@ -122,6 +135,7 @@ async def converse(
 ) -> dict:
     messages: list[dict] = [{"role": "system", "content": system}, {"role": "user", "content": message}]
     calls, reply, cost, tokens_in, tokens_out, served, finish = [], "", 0.0, 0, 0, set(), None
+    from_reasoning = False
     started = time.monotonic()
     failed = None
     for round_ in range(MAX_ROUNDS):
@@ -138,8 +152,12 @@ async def converse(
         choice = response["choices"][0]
         finish = choice.get("finish_reason")
         msg = choice.get("message") or {}
-        reply = msg.get("content") or reply
         wanted = msg.get("tool_calls") or []
+        if (msg.get("content") or "").strip():
+            reply, from_reasoning = msg["content"], False
+        elif not wanted and (found := last_json_object(msg.get("reasoning") or "")):
+            # Some providers turn on the model's reasoning once tools are in play, and it ends its answer there.
+            reply, from_reasoning = found, True
         if not wanted:
             break
         messages.append({"role": "assistant", "content": msg.get("content") or "", "tool_calls": wanted})
@@ -165,6 +183,7 @@ async def converse(
         "model": model,
         "model_id": model,
         "reply": reply,
+        "reply_from_reasoning": from_reasoning,
         "tool_calls": calls,
         "rounds": sum(1 for m in messages if m["role"] == "assistant") + 1,
         "finish_reason": finish,

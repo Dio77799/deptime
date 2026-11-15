@@ -32,6 +32,12 @@ and reported whichever way it comes out.
   calls on tools and gave no answer. The 8th call is now offered no tools, so the model answers with what it has
   gathered, as agent loops usually end. The trial is asked again under it.
 
+  **The second trial's change (committed before the runs):** in that trial, 3 of 20 replies were empty although the
+  call finished normally. All came from one provider (Darkbloom), which turns on Qwen's reasoning once tools are in
+  play; Qwen then ended its answer inside the reasoning (`... {"1": "works", "2": "works", ...}`) and left the reply
+  empty. When the final message has no text and no tool call, the last JSON object in its reasoning is taken as the
+  reply, and the record says so (`reply_from_reasoning`). The trial is asked again under it.
+
 ## Scoring
 
 The model-alone graders, unchanged (`../grade.py`, `../upgrades/grade.py`), on these replies. `grade.py` adds:
