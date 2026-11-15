@@ -14,13 +14,13 @@
       "sizes": ["any"]
     }
   ],
-  "version": "0.1.16",
+  "version": "0.1.17",
   "packages": [
     {
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "deptime",
-      "version": "0.1.16",
+      "version": "0.1.17",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

@@ -24,6 +24,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+## [0.1.17] - 2026-11-15
+
+The first code change since 0.1.13: `explain_error` and `check_symbols` read more of what people and models send.
+
 ### Fixed
 - `check_symbols` reads `kwargs` written as a call's shape: `timeout=` is the keyword `timeout`, and a lone `_` (an
   argument passed by position) is left out instead of rejected. The `note` says what it read. A small model copied
@@ -34,6 +38,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
   and nothing in the text says which, the `note` lists them (DT-CORE-63)
 - A keyword no release named, which a `**kwargs` took until a release dropped it, reads `param_removed` at that
   release (at `medium`), not `never_existed`: mcp 1.12.3's `FastMCP(description=...)` (DT-CORE-64)
+
+### Changed
+- The Claude Code plugin runs `uvx deptime==0.1.17`
 
 ## [0.1.16] - 2026-11-15
 
@@ -412,7 +419,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.16...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.17...HEAD
+[0.1.17]: https://github.com/cschmertz/deptime/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/cschmertz/deptime/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/cschmertz/deptime/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/cschmertz/deptime/compare/v0.1.13...v0.1.14

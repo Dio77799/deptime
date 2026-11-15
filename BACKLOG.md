@@ -16,10 +16,10 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 ---
 
-## Current state: public alpha, v0.1.16
+## Current state: public alpha, v0.1.17
 
-- **Released:** 0.1.16 (2026-11-15) is on PyPI, the MCP Registry and GitHub. Like 0.1.14 and 0.1.15 it is a
-  documentation release, so the PyPI page shows the current README; the code is 0.1.13's (2026-11-11).
+- **Released:** 0.1.17 (2026-11-15) is on PyPI, the MCP Registry and GitHub: Phase 1's fixes (DT-CORE-63, -64,
+  -67), the first code change since 0.1.13.
 - **Index:** 53 packages and 6,800 releases on 2026-11-13 (`SNAPSHOT_FORMAT` 26, schema 2); `index.sqlite.xz` is
   51.0 MB and the `.gz` 78.5 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
