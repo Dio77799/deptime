@@ -523,3 +523,36 @@ def to_markdown(result: UpgradeCheckResult) -> str:
         " failing at the new version and not at the old one."
     )
     return "\n".join(lines) + "\n"
+
+
+# ------------------------------------------------------------------------------------------- GitHub annotations
+def _escape(text: str, prop: bool = False) -> str:
+    """A workflow command's data (or property value, `prop`): a newline in library text can't start a command."""
+    out = text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+    return out.replace(":", "%3A").replace(",", "%2C") if prop else out
+
+
+def _annotation(level: str, loc: UseLocation, prefix: str, title: str, message: str) -> str:
+    file = f"{prefix}/{loc.file}" if prefix else loc.file
+    return f"::{level} file={_escape(file, True)},line={loc.line},title={_escape(title, True)}::{_escape(message)}"
+
+
+def to_annotations(result: UpgradeCheckResult, prefix: str = "") -> str:
+    """GitHub Actions workflow commands (DT-GTM-06): an error on each line a break reaches, a warning on each line a
+    newly deprecated name is used. `prefix` is the project's directory relative to the repository's root."""
+    lines = []
+    for p in result.checked:
+        c = p.change
+        at = p.resolved_version or c.to_version or ""
+        for b in p.breaks:
+            title = f"DepTime: {c.package} {c.from_version} → {c.to_version} breaks {b.path}"
+            message = _break_line(b, at).removeprefix("- ").split(" At `", 1)[0].replace("`", "")
+            lines += [_annotation("error", loc, prefix, title, message) for loc in b.locations]
+        for x in p.notices:
+            if x.status == "deprecated" and x.new:
+                title = f"DepTime: {x.path} is deprecated in {c.package} {c.to_version}"
+                lines += [
+                    _annotation("warning", loc, prefix, title, untrusted_text(x.detail) or "")
+                    for loc in x.locations
+                ]
+    return "\n".join(lines) + ("\n" if lines else "")

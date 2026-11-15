@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import subprocess
 
-from deptime import cli, snippet
+from deptime import cli, snippet, upgrade
 from deptime.index.store import IndexStore
 from deptime.ingest.snapshot import ApiSnapshot, SymbolRecord
 from deptime.models import DependencyChange
@@ -299,3 +299,62 @@ def test_a_spread_call_in_any_file_covers_every_parameter(dt):
 def test_warnings_about_project_code_stay_quiet(dt, recwarn):
     check_upgrade(dt, "p", {"a.py": 'import httpx\nx = "\\ "\n'}, [_change("0.27.2", "0.28.1")])
     assert not [w for w in recwarn if issubclass(w.category, SyntaxWarning)]
+
+
+def test_annotations_mark_each_broken_line_and_cannot_inject_commands(
+    tmp_path, settings, monkeypatch, capsys
+):
+    # DT-GTM-06: an error per line a break reaches, paths from the repository's root; library text is a command's
+    # data, so a newline in it can't start another workflow command.
+    from deptime.models import PackageUpgrade, UpgradeCheckResult, UpgradeNotice, UseLocation
+
+    res = UpgradeCheckResult(
+        project="p",
+        checked=[
+            PackageUpgrade(
+                change=_change("1", "2"),
+                resolved_version="2",
+                exact=True,
+                uses=1,
+                files=1,
+                notices=[
+                    UpgradeNotice(
+                        path="httpx.x",
+                        status="deprecated",
+                        new=True,
+                        detail="old\n::error::injected, 100%",
+                        locations=[UseLocation(file="a,b.py", line=3)],
+                    )
+                ],
+            )
+        ],
+    )
+    (line,) = upgrade.to_annotations(res, "sub").splitlines()
+    assert line.startswith("::warning file=sub/a%2Cb.py,line=3,title=DepTime%3A httpx.x is deprecated")
+    # Whitespace in library text is collapsed first, and any newline left is escaped: nothing starts a new line.
+    assert upgrade._escape("a\r\nb") == "a%0D%0Ab"
+    assert line.endswith("::old ::error::injected, 100%25")
+
+    proj = tmp_path / "proj"
+    proj.mkdir()
+    (proj / "main.py").write_text(CODE)
+    (proj / "requirements.txt").write_text("httpx==0.27.2\n")
+    monkeypatch.chdir(tmp_path)
+    args = (
+        "proj",
+        "--package",
+        "httpx",
+        "--to",
+        "0.28.1",
+        "--output",
+        str(tmp_path / "r.md"),
+        "--annotations",
+    )
+    assert _cli(monkeypatch, settings, *args) == 1
+    (err,) = [x for x in capsys.readouterr().out.splitlines() if x.startswith("::")]
+    assert err.startswith(
+        "::error file=proj/main.py,line=3,title=DepTime%3A httpx 0.27.2 → 0.28.1 breaks httpx.Client::"
+    )
+    assert (
+        "httpx.Client(proxies=): the keyword isn't accepted at 0.28.1. Last in 0.27.2, gone in 0.28.1." in err
+    )

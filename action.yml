@@ -1,0 +1,89 @@
+name: DepTime upgrade check
+description: >-
+  On a dependency update, find the lines of your Python code the new versions break, from DepTime's index of each
+  release's API. Reads your code, never runs it; asks no model; needs no token.
+author: DepTime contributors
+branding:
+  icon: package
+  color: blue
+
+# DT-GTM-06. Runs `deptime check-upgrade` against the pull request's base: it reads the version changes from uv.lock,
+# poetry.lock, requirements*.txt or pyproject.toml, checks every use of each changed package DepTime covers, writes the
+# report to the job summary with an annotation on each broken line, and fails only on a confirmed break. It needs only
+# `contents: read`, so it works on Dependabot's pull requests, which get a read-only token and no secrets. To post the
+# report as a comment, see docs/github-action.md: a separate workflow_run job, never pull_request_target.
+
+inputs:
+  path:
+    description: The project's directory, relative to the repository's root.
+    default: "."
+  base:
+    description: >-
+      The git revision the old versions are read from. Default: the pull request's base commit, else the commit
+      before a push, else HEAD^.
+    default: ""
+  fail-on-break:
+    description: Fail the step when a break is found ("true" or "false"). Errors fail it either way.
+    default: "true"
+  deptime:
+    description: >-
+      What uvx installs DepTime from: a pinned release (the default, the release this action ships with) or a path.
+    default: "deptime==0.1.17"
+
+outputs:
+  result:
+    description: '"pass" when no break was found, "breaks" when one was.'
+    value: ${{ steps.check.outputs.result }}
+  report:
+    description: Path to the Markdown report.
+    value: ${{ steps.check.outputs.report }}
+
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      with:
+        enable-cache: false
+
+    - name: Pull DepTime's index
+      shell: bash
+      env:
+        DEPTIME_SPEC: ${{ inputs.deptime }}
+      run: uvx --from "$DEPTIME_SPEC" deptime index pull
+
+    - name: Fetch the base commit
+      id: base
+      shell: bash
+      env:
+        BASE: ${{ inputs.base || github.event.pull_request.base.sha || github.event.before }}
+      run: |
+        if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+          BASE="HEAD^"
+          git rev-parse --verify --quiet "$BASE^{commit}" >/dev/null || git fetch --quiet --no-tags --deepen=1 origin
+        elif ! git rev-parse --verify --quiet "$BASE^{commit}" >/dev/null; then
+          git fetch --quiet --no-tags --depth=1 origin "$BASE"
+        fi
+        echo "rev=$BASE" >> "$GITHUB_OUTPUT"
+
+    - name: Check the update
+      id: check
+      shell: bash
+      env:
+        DEPTIME_SPEC: ${{ inputs.deptime }}
+        PROJECT: ${{ inputs.path }}
+        BASE: ${{ steps.base.outputs.rev }}
+        FAIL_ON_BREAK: ${{ inputs.fail-on-break }}
+      run: |
+        report="$RUNNER_TEMP/deptime-report.md"
+        set +e
+        uvx --from "$DEPTIME_SPEC" deptime check-upgrade "$PROJECT" --base "$BASE" --output "$report" --annotations
+        code=$?
+        set -e
+        [ -f "$report" ] && cat "$report" >> "$GITHUB_STEP_SUMMARY"
+        echo "report=$report" >> "$GITHUB_OUTPUT"
+        case "$code" in
+          0) echo "result=pass" >> "$GITHUB_OUTPUT" ;;
+          1) echo "result=breaks" >> "$GITHUB_OUTPUT"
+             [ "$FAIL_ON_BREAK" = "false" ] || exit 1 ;;
+          *) exit "$code" ;;
+        esac

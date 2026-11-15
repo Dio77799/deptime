@@ -32,3 +32,12 @@ def test_registry_server_json_matches_the_release():
     assert server["version"] == __version__
     assert [p["version"] for p in server["packages"]] == [__version__]
     assert re.findall(r"mcp-name: (\S+) ", README.read_text(encoding="utf-8")) == [server["name"]]
+
+
+def test_the_action_runs_this_release_and_keeps_inputs_out_of_scripts():
+    """The GitHub Action (DT-GTM-06) installs the release it ships with, so a release moves its pin; and every input
+    reaches a script through `env:`, never `${{ }}` inside `run:`, where a value would become shell code."""
+    action = (ROOT / "action.yml").read_text(encoding="utf-8")
+    assert re.findall(r'default: "deptime==([^"]+)"', action) == [__version__]
+    runs = re.findall(r"run: \|\n((?:        .*\n|\n)+)|run: (.*)", action)
+    assert runs and all("${{" not in block + line for block, line in runs)

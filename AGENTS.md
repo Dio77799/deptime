@@ -68,6 +68,7 @@ The default home is `$XDG_CACHE_HOME/deptime`, else `~/.cache/deptime` (override
 - Covered packages: `src/deptime/coverage.toml` (ships in the wheel; set correct `import_names`)
 - README demo: `uv run python tools/demo_svg.py` redraws `docs/assets/demo-*.svg` from the real answer; never edit them by hand
 - README numbers: four first-run figures and the two model-alone rows in "How well it works"; every other score goes in `bench/README.md`
+- GitHub Action: `action.yml` at the root (its `deptime==` pin follows `__version__`, `tests/test_docs.py`), dogfooded by `.github/workflows/upgrade-check.yml`; usage in `docs/github-action.md`
 - Curated migration hints: `src/deptime/curated.toml` (ships in the wheel; each must pass the checks in its header, ADR 0006)
 
 ## Verified external APIs
@@ -83,4 +84,5 @@ The default home is `$XDG_CACHE_HOME/deptime`, else `~/.cache/deptime` (override
   - takes the listing's icon from `plugin.json`'s `icon` field (`./.claude-plugin/icon.png`, 1024 px, from `docs/assets/deptime-icon.svg`); the docs don't say whether it can change after the first submission;
   - shows the plugin's README as the listing, which must say what the plugin runs, sends and fetches.
   Failed Bash commands fire `PostToolUseFailure`.
+- **GitHub Actions and Dependabot (checked 2026-11-15):** a `pull_request` run Dependabot triggers gets a read-only `GITHUB_TOKEN` and no secrets; a `workflow_run` run it triggers can have write permissions. `gh pr comment --edit-last --create-if-none` (gh 2.89).
 - **Claude Code instruction files (2.1.322):** with no `CLAUDE.md`, a project's `AGENTS.md` loads in its place (the `instructionFiles` setting); the import in `CLAUDE.md` also covers older versions and setups that turn that off.

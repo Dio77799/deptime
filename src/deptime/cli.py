@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -210,6 +211,9 @@ def cmd_check_upgrade(args: argparse.Namespace, settings: Settings) -> int:
         Path(args.output).write_text(text, encoding="utf-8")
     else:
         sys.stdout.write(text)
+    if args.annotations:
+        prefix = os.path.relpath(root, Path.cwd()).replace(os.sep, "/")
+        sys.stdout.write(upgrade.to_annotations(result, "" if prefix == "." else prefix))
     return 1 if result.breaks else 0
 
 
@@ -392,6 +396,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--format", choices=["markdown", "json"], default="markdown")
     p.add_argument("--output", metavar="FILE", help="write the report here instead of stdout")
+    p.add_argument(
+        "--annotations",
+        action="store_true",
+        help="also print a GitHub Actions annotation for each line a break reaches (paths relative to the working"
+        " directory)",
+    )
     p.set_defaults(func=cmd_check_upgrade)
 
     p = sub.add_parser("coverage", help="what is indexed")

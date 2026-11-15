@@ -97,13 +97,6 @@ In order. The first line of each phase is what it delivers.
 **Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
 code?" from a project directory.
 **Phase 3, the GitHub Action (DT-GTM-06).** A check on Dependabot and Renovate pull requests.
-- [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, CORE-70
-  - On a pull request that changes a lockfile or requirements file: pull the index (cached), run `check-upgrade
-    --base` against the base branch, write the report to the job summary with an annotation per broken line, and fail
-    the check only on confirmed breaks. Dependabot's pull requests get a read-only token and no secrets, so it must
-    work without writing a comment; an optional comment goes through a separate `workflow_run` job, never
-    `pull_request_target` with the pull request's code checked out.
-  - Runs on DepTime's own Dependabot pull requests first (httpx, pydantic, mcp and others are covered packages).
 - [ ] **DT-QA-22**: A fresh set of real update pull requests · `P1` `M` · deps: GTM-06
   - Recent Dependabot and Renovate pull requests in public repositories that bump a covered package, collected by a
     rule fixed in advance and labelled by the probe, scored once: the first measure on updates nobody designed a fix
@@ -132,6 +125,10 @@ code?" from a project directory.
 
 ## Done since 2026-11-13
 
+- [x] **DT-GTM-06** (2026-11-15): `action.yml`, a composite action: pulls the index, runs `check-upgrade --base`
+  against the pull request's base with `--annotations` (an error on each broken line), writes the report to the job
+  summary, fails only on a break; `contents: read` only. Dogfooded on DepTime's own dependency updates
+  (`upgrade-check.yml`); the optional comment through `workflow_run` is in `docs/github-action.md`.
 - [x] **DT-CORE-70** (2026-11-15): a keyword that names a field of a class whose `__init__` is inherited isn't
   rejected, with a note: transformers 5's `LlamaConfig(vocab_size=)` and the other configs. No change on the six sets.
 - [x] **DT-QA-25** (2026-11-15): the probe on every break reported on a clean upgrade: 2.4% of clean upgrades
