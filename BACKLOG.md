@@ -1,8 +1,9 @@
 # DepTime backlog
 
-**Maintenance mode since 2026-11-13.** DepTime does what its alpha set out to do, and the index rebuilds itself twice
-a day. Work now starts from a reported wrong answer or a failed scheduled check, not from a schedule. Everything done
-before that date, with its measurements, is in [docs/backlog-archive.md](docs/backlog-archive.md), which is frozen.
+**Active again since 2026-11-15: the upgrade check.** Maintenance mode ran from 2026-11-13. It ended when the
+model comparisons (DT-QA-16 to DT-QA-20) showed where DepTime adds the most: deciding, with no model in the loop,
+which of a project's code a dependency update breaks. Everything done before 2026-11-13, with its measurements, is in
+[docs/backlog-archive.md](docs/backlog-archive.md), which is frozen.
 
 **How to read this**
 - **IDs** look like `DT-<EPIC>-NN` and are referenced from the docs and code. Put the ID in commit messages and PR
@@ -41,36 +42,40 @@ before that date, with its measurements, is in [docs/backlog-archive.md](docs/ba
 | **M2 Distribution** | Registries, plugin, snippets, demo GIF, 5 rename-map pages | Registries, plugin, pages and the demo done; the hosting is below |
 | **M3 Optional hosted** | Public endpoint for web clients | Not planned |
 
-## Why maintenance mode
+## Why the upgrade check
 
-Six holdout sets were scored between 2026-11-07 and 2026-11-11, each after the fixes designed from the one before.
+On the 2026-11f holdout's upgrades (2,265 uses of covered packages in 171 upgrades of real projects, labelled by
+running them; first runs, abstentions counted as not flagged):
 
-| First run on | 2026-11 | 11b | 11c | 11d | 11e | 11f |
-|---|---|---|---|---|---|---|
-| Tracebacks right (`explain_error`) | 88.6% | 91.9% | 88.6% | 86.7% | 85.7% | 76.9% |
-| Working code flagged (`check_symbols`) | 3.8% | 1.5% | 0.5% | 0.9% | 0.05% | 0.1% |
+| Who decides | Breaks found | Working code flagged | Clean upgrades with a false alarm |
+|---|---|---|---|
+| DepTime by itself (`check_symbols`) | 96.7% | 0.1% | 0 of 144 |
+| Claude Sonnet 5.5 alone | 90.8% | 0.2% | 0 of 144 |
+| DeepSeek V4.1 Flash alone | 80.9% | 2.7% | 18 of 144 |
+| Qwen3.5 9B alone | 30.9% | 15.4% | 74 of 144 |
+| Qwen3.5 9B with DepTime's tools | 82.2% | 4.5% | 25 of 144 |
 
-- The false-positive rate fell and stayed down on code the fixes had never seen.
-- The traceback score didn't rise. Each set of 26 to 37 tracebacks found new rare shapes and added 6 to 12 items.
-- Each extraction fix adds a reader for one more thing a library does at import time, and a cold build.
-
-So accuracy work on rare shapes stops here. The tool keeps answering at the level above, says `unknown` where it can't
-tell, and gets fixed where someone shows it is wrong.
+- DepTime by itself already answers at the level a check on pull requests needs, offline, free and the same every
+  time. No command runs it over a whole project yet.
+- A model in the loop costs precision: Qwen with the tools re-decided uses DepTime had right. So the check decides
+  with DepTime alone, and a model only drafts the fix afterwards, in the user's own agent (ADR 0006: no model inside
+  DepTime).
+- The traceback work of maintenance mode stands: first runs on six unseen sets stayed between 77% and 92% while each
+  set found new rare shapes, so accuracy work on rare shapes still waits for a report.
 
 ## Rules
 
-1. **No new holdout sets.** The six sets, the benchmark and the golden tests stay as regression checks in CI. This
-   closes DT-QA-13.
-2. **A report comes first.** An item below is worked on when someone reports the wrong answer it causes (the "wrong
-   answer" issue form), or when a scheduled check fails. The report becomes a benchmark case before the fix.
-3. **Abstain before adding a reader.** Where the index can't follow what a library does, the order is: an `unknown` or
-   `not_covered` answer with the reason (Invariant 2); then a `[[package.served]]` entry in `coverage.toml`; new
-   extraction code only for a shape several packages share.
-4. **Batch extraction changes.** Fixes that need a `SNAPSHOT_FORMAT` bump wait for each other and share one cold
-   build. Query-side fixes don't need one.
-5. **Release when a fix lands,** not on a schedule.
-6. **No hosted instance,** and no new packages unless one is asked for (the coverage issue form). `deptime serve`
-   stays for self-hosting ([docs/05](docs/05-self-hosting.md)).
+1. **A protocol before every first score.** Each new measurement is fixed and committed before its first scored run,
+   as DT-QA-16 to DT-QA-20 were, and reported whichever way it comes out.
+2. **New holdouts only for the upgrade check** (DT-QA-22). The six traceback and use sets stay as regression checks;
+   DT-QA-13 stays closed.
+3. **A report comes first for the long tail.** Held items move up when someone reports the wrong answer they cause,
+   or a scheduled check fails; the report becomes a benchmark case before the fix.
+4. **Abstain before adding a reader.** `unknown` or `not_covered` with the reason first (Invariant 2); then a
+   `[[package.served]]` entry in `coverage.toml`; new extraction code only for a shape several packages share.
+5. **Batch extraction changes.** Fixes that need a `SNAPSHOT_FORMAT` bump share one cold build.
+6. **Release when a feature lands.** No hosted instance ([docs/05](docs/05-self-hosting.md) stays for self-hosting),
+   and no model call inside DepTime (ADR 0006).
 
 ## Upkeep
 
@@ -87,7 +92,69 @@ What still needs a person, about once a month:
 
 ## To do
 
-Nothing. The upkeep above is all the project needs.
+In order. The first line of each phase is what it delivers.
+
+**Phase 1, quick wins (about one session).** Two query-side fixes, no cold build.
+- [ ] **DT-CORE-67**: `check_symbols` reads `timeout=` as the keyword `timeout`, and ignores a lone `_` in `kwargs`
+  · `P1` `S`
+  - From DT-QA-20: in 53 of Qwen3.5 9B's 315 `check_symbols` calls the model copied a use's `name=` and `_` into
+    keyword names, and the tool rejected them; 39 of its 96 false alarms sat in those conversations. Normalise the
+    input, say so in the result's `note`, and keep the field names (Invariant 3).
+- [ ] **DT-CORE-63** with **DT-CORE-64**: four pasted-traceback shapes, and a keyword a removed `**kwargs` took
+  · `P2` `S`
+  - Held items moved up by a user request. Detail and acceptance in the archive: a failing test per shape first.
+
+**Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
+code?" from a project directory.
+- [ ] **DT-CORE-66**: Read a dependency change from a project · `P1` `M`
+  - The packages and versions before and after, from `uv.lock`, `poetry.lock`, `requirements*.txt` or
+    `pyproject.toml` pins: either two revisions of the files (a pull request's base and head) or the current file
+    and a target version. Never imports or installs anything (Invariant 1).
+- [ ] **DT-CORE-58**: `deptime check-upgrade [path] [--base REV] [--package P --to V]` · `P1` `M` · deps: CORE-66
+  - Reads every `.py` file under the path with DepTime's own reader (`snippet.py`, not the benchmark's
+    independent `bench/holdout/uses.py`), groups the uses by covered package, and runs `check_symbols` at the new
+    version for each changed package. Reports, per break, the file and line, what's missing, the release that removed
+    it and the replacement candidates with evidence; uses answered `unknown` are listed apart and never fail it.
+    Markdown and JSON output; exit code 1 only on a confirmed break. Folds in **DT-CORE-59**: uses deprecated at the
+    new version are listed as warnings.
+- [ ] **DT-QA-21**: Score the command end to end on the holdout projects · `P1` `M` · deps: CORE-58
+  - The six sets' pinned upgrades name each repository and commit: check them out, run `check-upgrade` with the
+    set's `from` and `to`, and score its breaks against the probe's labels. Also how many of the set's labelled uses
+    DepTime's reader finds. Protocol first, with the bar written in it.
+
+**Phase 3, the GitHub Action (DT-GTM-06).** A check on Dependabot and Renovate pull requests.
+- [ ] **DT-GTM-06**: `action.yml` for update pull requests · `P1` `M` · deps: CORE-58, QA-21
+  - On a pull request that changes a lockfile or requirements file: pull the index (cached), run `check-upgrade
+    --base` against the base branch, write the report to the job summary with an annotation per broken line, and fail
+    the check only on confirmed breaks. Dependabot's pull requests get a read-only token and no secrets, so it must
+    work without writing a comment; an optional comment goes through a separate `workflow_run` job, never
+    `pull_request_target` with the pull request's code checked out.
+  - Runs on DepTime's own Dependabot pull requests first (httpx, pydantic, mcp and others are covered packages).
+- [ ] **DT-QA-22**: A fresh set of real update pull requests · `P1` `M` · deps: GTM-06
+  - Recent Dependabot and Renovate pull requests in public repositories that bump a covered package, collected by a
+    rule fixed in advance and labelled by the probe, scored once: the first measure on updates nobody designed a fix
+    from.
+
+**Phase 4, the fix (the model's part, outside DepTime).**
+- [ ] **DT-CORE-68**: A `check_upgrade` MCP tool · `P2` `S` · deps: CORE-58
+  - One call, one answer, as `explain_error` is for a traceback: the package, the two versions and the code (or a
+    path), returning each break with its replacement. A new tool name, so the contract only grows (Invariant 3).
+- [ ] **DT-GTM-07**: "Fix what DepTime found": the plugin and the report hand an agent the confirmed breaks · `P2` `S`
+  · deps: CORE-68
+  - The Action's report ends with a block an agent can act on, and the Claude Code plugin gains a command that runs
+    `check_upgrade` and asks the agent to fix exactly those lines. The model writes the fix; DepTime decides what is
+    broken.
+- [ ] **DT-QA-23**: Qwen3.5 9B with the new tools on the upgrade checks · `P2` `S` · deps: CORE-67, CORE-68
+  - DT-QA-20's upgrade half again, with `check_upgrade` offered: does one answer per upgrade keep DepTime's
+    precision? Protocol first.
+
+**Phase 5, release.**
+- [ ] **DT-OSS-16**: Release 0.2.0 with the command, the Action and the tool · `P1` `S` · deps: GTM-06, QA-21
+  - README: the check leads "What it does", with DT-QA-21's numbers (and DT-QA-22's once scored).
+- [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
+  - A review of every tool parameter, result field and CLI option (last chance to rename without a major version);
+    the GUI clients checked or listed as not covered (DT-SPIKE-05, DT-SPIKE-07); the 1.0 promise in CHANGELOG.md's
+    versioning section (what's frozen, how something is retired, supported Pythons, what the index promises).
 
 ## Done since 2026-11-13
 
@@ -157,7 +224,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 | DT-DATA-75 | Names in compiled extension modules read `missing` (scikit-learn's `tree._tree`) | extraction |
 | DT-DATA-51 | Names computed at import time read absent (instructor's provider factories, chromadb's embedding functions) | extraction |
 | DT-DATA-77 | A keyword only a decorator takes reads `never_existed` (huggingface_hub's `use_auth_token`) | extraction |
-| DT-CORE-64 | A keyword that went with a removed `**kwargs` reads `never_existed` (mcp's `FastMCP(description)`) | query |
 | DT-DATA-78 | openai 1.0's removed resources point to response types of the same name | curated hints, pairing rule |
 | DT-DATA-73 | matplotlib 3.10's `cm.ScalarMappable` reads private, so its members read missing | extraction |
 | DT-DATA-71 | Names a module only imports read public through a membership-test shim (instructor's `hooks`) | extraction |
@@ -178,7 +244,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 
 | ID | Gap | Fix is in |
 |---|---|---|
-| DT-CORE-63 | Four shapes of a traceback as a web page pastes it | query (parser) |
 | DT-CORE-49 | A callable that only raises its own message | query |
 | DT-CORE-65 | An attribute missing on an instance of the project's own subclass | query |
 | DT-DATA-68 | Private methods' parameters, and the members of classes in internal modules | extraction |
@@ -201,16 +266,9 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 - **DT-DATA-74** (hundreds of packages instead of 53): the build time and the checks grow with it.
 - Parked as before: an npm/TypeScript index, a bulk dataset export, MCP resources for rename maps.
 
-## If active development resumes
+## Later
 
-In this order:
-
-1. **Measure first:** DT-QA-05's pilot, if it hasn't been run.
-2. **Whole-project checks:** DT-CORE-59 (a project's deprecation report), DT-CORE-58 (a dependency change checked
-   before it lands), DT-GTM-06 (the same as a GitHub Action on update pull requests) and DT-CORE-57 (code checked as
-   it is written). The upgrade checks are the tool's strongest results, and no command runs them over a whole
-   project yet.
-3. **A runtime floor for dynamic packages (DT-DATA-81, proposed):** ADR 0002 keeps a sandboxed runtime probe in
-   reserve for packages that static reading can't follow. A name that probe sees in a recent release would read
-   `unknown` at worst, never `missing`, in place of one more static reader per idiom. It needs ADR 0002 revisited
-   first.
+- **DT-CORE-57**: check code as it is written (a Claude Code hook after each edit), once `check-upgrade` and its
+  reader are measured.
+- **DT-DATA-81** (proposed): a sandboxed runtime floor for dynamic packages, so a name that runs reads `unknown` at
+  worst, never `missing`. Needs ADR 0002 and Invariant 1 revisited first.

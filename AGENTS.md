@@ -6,8 +6,10 @@ DepTime is an open-source (MIT), **local-first** MCP server. It answers "what ch
 
 Read `README.md` first. The plan is in `BACKLOG.md`; put its IDs (e.g. `DT-CORE-05`) in commit messages.
 
-**Maintenance mode (since 2026-11-13).** Read the rules in `BACKLOG.md` before starting work:
-- work starts from a reported wrong answer or a failed scheduled check, and no new holdout sets are collected;
+**Active development (since 2026-11-15): the upgrade check.** Read "Why the upgrade check" and the rules in
+`BACKLOG.md` before starting work:
+- every new measurement gets a protocol committed before its first scored run;
+- the long tail of held accuracy items still waits for a reported wrong answer;
 - answer `unknown` or add a `[[package.served]]` entry before writing new extraction code;
 - keep `BACKLOG.md` short: one line per change, with measurements in `bench/**/results-*.md` and commit bodies.
 
