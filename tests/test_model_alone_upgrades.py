@@ -149,7 +149,7 @@ def test_a_rate_limit_pauses_the_run_and_stores_nothing(monkeypatch):
 
     def limited(*args, **kwargs):
         calls.append(1)
-        return {"error": {"code": 429, "message": "rate limited"}}
+        return {"error": {"code": 503, "message": "overloaded"}}
 
     monkeypatch.setattr(ask_openrouter.openrouter, "chat", limited)
     monkeypatch.setattr(ask_openrouter.time, "sleep", lambda s: None)

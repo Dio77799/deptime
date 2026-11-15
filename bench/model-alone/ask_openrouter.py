@@ -18,6 +18,7 @@ also stops itself when its spend passes SPEND_CAP dollars, by OpenRouter's own c
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import sys
 import time
@@ -33,15 +34,21 @@ ATTEMPTS = 3
 SPEND_CAP = 3.00  # dollars, per run of one test
 
 
+def _module(path: Path, name: str):
+    """A test's own module, loaded by its path: both folders have an ask.py, so `import ask` could find either."""
+    sys.path.insert(0, str(path.parent))  # for that module's own imports (boundaries, cases)
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def questions(test: str) -> tuple[str, Path, list[tuple[str, str]]]:
     """The system prompt, the answers folder, and (id, message) in the fixed order of the Claude runs."""
     if test == "tracebacks":
-        import ask
-
+        ask = _module(HERE / "ask.py", "traceback_ask")
         return ask.SYSTEM_PROMPT, ask.ANSWERS, [(c["id"], ask.user_message(c)) for c in ask.ordered_cases()]
-    sys.path.insert(0, str(HERE / "upgrades"))
-    import cases
-
+    cases = _module(HERE / "upgrades" / "cases.py", "upgrade_cases")
     prompt = (HERE / "upgrades" / "system-prompt.txt").read_text(encoding="utf-8").strip()
     return (
         prompt,
@@ -74,7 +81,10 @@ class Paused(Exception):
     an account setting. Nothing is stored for the question, and the same command resumes the run later."""
 
 
-RATE_LIMIT_WAITS = (15, 30, 60, 120)  # seconds between tries while OpenRouter answers 429
+RATE_LIMIT_WAITS = (15, 30, 60, 120)  # seconds between tries while OpenRouter answers one of BUSY_CODES
+# A rate limit, or a provider overloaded or unreachable: about the service, not the question (502, 503 added after
+# the free trials met "Service temporarily overloaded", before any model that answered them was asked).
+BUSY_CODES = {429, 502, 503}
 PAUSE_CODES = {401, 402, 403, 404}  # the key, credit, or a data policy that rules out every provider
 
 
@@ -96,9 +106,9 @@ def ask_one(case_id: str, message: str, model: str, system: str) -> dict:
         except (httpx.HTTPError, ValueError) as caught:
             error = caught
         status = _status(error, response)
-        if status == 429:
+        if status in BUSY_CODES:
             if waited == len(RATE_LIMIT_WAITS):
-                raise Paused(f"rate limited (429) after {sum(RATE_LIMIT_WAITS)} s of waiting")
+                raise Paused(f"busy (HTTP {status}) after {sum(RATE_LIMIT_WAITS)} s of waiting")
             time.sleep(RATE_LIMIT_WAITS[waited])
             waited += 1
             continue  # a rate limit isn't one of the question's attempts

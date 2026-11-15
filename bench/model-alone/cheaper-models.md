@@ -64,6 +64,12 @@ DepTime's first run.
    before any answer, which would score a lack of room as a wrong answer. The cap is raised to 32,000 for every model,
    and DeepSeek's trial is asked again under it. Qwen3.5 9B's trial replies stand: it answered without reasoning, in
    under 100 tokens, far below either cap.
+
+   **The free models' trial (committed before any of their runs):** OpenRouter's free endpoints answered 429, "rate
+   limited upstream" (a pool every user shares, not this account's limit), and Nemotron 503, "Service temporarily
+   overloaded". A provider that is overloaded or unreachable (502, 503) is now treated like a rate limit: wait, try
+   again, and pause with nothing stored if it lasts. No reply was stored by either: the trials paused before any
+   answer. The free models are asked whenever their pools allow, in any order.
 3. The runs, then both graders write their results files.
 
 ```bash
