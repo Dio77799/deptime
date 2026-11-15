@@ -28,6 +28,10 @@ and reported whichever way it comes out.
 - **The conversation** ends when the model answers without a tool call, or after 8 model calls; its last text is the
   reply. Every tool call and its arguments are kept with the reply.
 
+  **The trial's change (committed before the runs):** in each test, one of the ten trial conversations spent all 8
+  calls on tools and gave no answer. The 8th call is now offered no tools, so the model answers with what it has
+  gathered, as agent loops usually end. The trial is asked again under it.
+
 ## Scoring
 
 The model-alone graders, unchanged (`../grade.py`, `../upgrades/grade.py`), on these replies. `grade.py` adds:

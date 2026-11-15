@@ -10,7 +10,7 @@ instructions; each call it makes runs in this process, through DepTime's MCP ser
 on the local index, offline. Its last message without a tool call is its reply, scored by the unchanged graders.
 
 The system prompt is the model-alone one with one sentence changed (`--prompts` writes both; README.md has the
-change). A conversation ends after MAX_ROUNDS model calls; the last text, if any, is the reply. A model call is retried
+change). The last of at most MAX_ROUNDS model calls is offered no tools, so the model answers with what it has. A model call is retried
 as ../ask_openrouter.py retries one: busy answers wait and pause the run; other failures are tried three times, after
 which the question's reply is what it has (empty if nothing), scored as it stands.
 """
@@ -124,8 +124,9 @@ async def converse(
     calls, reply, cost, tokens_in, tokens_out, served, finish = [], "", 0.0, 0, 0, set(), None
     started = time.monotonic()
     failed = None
-    for _ in range(MAX_ROUNDS):
-        response = await asyncio.to_thread(call_model, model, messages, tools)
+    for round_ in range(MAX_ROUNDS):
+        offered = tools if round_ < MAX_ROUNDS - 1 else []  # the last call has no tools, so it must answer
+        response = await asyncio.to_thread(call_model, model, messages, offered)
         if "failed" in response:
             failed = response["failed"]
             break
