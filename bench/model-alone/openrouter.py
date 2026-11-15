@@ -49,21 +49,27 @@ def check() -> dict:
     return response.json().get("data") or {}
 
 
-def chat(model: str, system: str, user: str, max_tokens: int = 4000) -> dict:
-    """One completion, no tools. Returns OpenRouter's JSON reply (choices, usage, model)."""
-    response = httpx.post(
-        f"{API}/chat/completions",
-        headers=_headers(),
-        json={
-            "model": model,
-            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-            "max_tokens": max_tokens,
-            "usage": {"include": True},  # OpenRouter's own count of the call's cost
-        },
-        timeout=TIMEOUT_SECONDS,
-    )
+def complete(
+    model: str, messages: list[dict], tools: list[dict] | None = None, max_tokens: int = 4000
+) -> dict:
+    """One completion over a whole conversation, with the tools offered if any. Returns OpenRouter's JSON reply."""
+    body: dict = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "usage": {"include": True},  # OpenRouter's own count of the call's cost
+    }
+    if tools:
+        body["tools"] = tools
+    response = httpx.post(f"{API}/chat/completions", headers=_headers(), json=body, timeout=TIMEOUT_SECONDS)
     response.raise_for_status()
     return response.json()
+
+
+def chat(model: str, system: str, user: str, max_tokens: int = 4000) -> dict:
+    """One completion, no tools. Returns OpenRouter's JSON reply (choices, usage, model)."""
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    return complete(model, messages, max_tokens=max_tokens)
 
 
 def main() -> int:

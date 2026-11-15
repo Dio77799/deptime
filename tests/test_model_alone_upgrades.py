@@ -172,3 +172,79 @@ def test_a_rate_limit_then_an_answer_counts_as_one_attempt(monkeypatch):
     monkeypatch.setattr(ask_openrouter.openrouter, "chat", lambda *a, **k: next(replies))
     monkeypatch.setattr(ask_openrouter.time, "sleep", lambda s: None)
     assert ask_openrouter.ask_one("u1", "message", "m", "system")["reply"] == "{}"
+
+
+with_tools = _load_from(HERE.parent / "with-tools", "ask", prefix="with_tools_")
+
+
+def test_the_with_tools_prompts_change_one_sentence():
+    for test in ("tracebacks", "upgrades"):
+        alone, _, _ = ask_openrouter.questions(test)
+        prompt = with_tools.prompt_path(test).read_text(encoding="utf-8")
+        assert with_tools.NO_TOOLS in alone and with_tools.NO_TOOLS not in prompt
+        assert prompt.startswith(alone.replace(with_tools.NO_TOOLS, with_tools.WITH_TOOLS))
+        assert "DepTime's own instructions:" in prompt
+
+
+class _FakeClient:
+    def __init__(self):
+        self.called = []
+
+    async def call_tool(self, name, args):
+        self.called.append((name, args))
+        from types import SimpleNamespace
+
+        return SimpleNamespace(
+            content=[SimpleNamespace(text='{"findings": []}')], structured_content=None, is_error=False
+        )
+
+
+def test_a_conversation_runs_the_tools_and_ends_on_an_answer(monkeypatch):
+    import asyncio
+
+    replies = iter(
+        [
+            {
+                "choices": [
+                    {
+                        "finish_reason": "tool_calls",
+                        "message": {
+                            "content": None,
+                            "tool_calls": [
+                                {
+                                    "id": "c1",
+                                    "function": {"name": "explain_error", "arguments": '{"traceback": "x"}'},
+                                }
+                            ],
+                        },
+                    }
+                ],
+                "usage": {"cost": 0.001, "prompt_tokens": 10, "completion_tokens": 5},
+            },
+            {
+                "choices": [{"finish_reason": "stop", "message": {"content": '{"package": "httpx"}'}}],
+                "usage": {"cost": 0.002},
+            },
+        ]
+    )
+    seen = []
+
+    def fake_call(model, messages, tools):
+        seen.append([m["role"] for m in messages])
+        return next(replies)
+
+    monkeypatch.setattr(with_tools, "call_model", fake_call)
+    client = _FakeClient()
+    rec = asyncio.run(with_tools.converse(client, [], "m", "system", "c", "question"))
+    assert client.called == [("explain_error", {"traceback": "x"})]
+    assert seen[1] == ["system", "user", "assistant", "tool"]
+    assert rec["reply"] == '{"package": "httpx"}' and rec["tool_calls"][0]["ok"]
+    assert abs(rec["cost"] - 0.003) < 1e-9 and "failed" not in rec
+
+
+def test_a_long_tool_result_is_cut_and_says_so():
+    from types import SimpleNamespace
+
+    long = SimpleNamespace(content=[SimpleNamespace(text="x" * 40000)], structured_content=None)
+    text = with_tools.tool_text(long)
+    assert len(text) < 31000 and text.endswith("more characters]")

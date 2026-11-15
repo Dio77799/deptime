@@ -122,6 +122,9 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     names most of these changes, so what counts is whether an agent does better with the tool. The pilot is as
     designed in the archive: about 20 covered tasks × 2 arms × 3 runs, success by each task's own tests, the pass
     bar written down before the run. One run, reported in the README whichever way it comes out.
+- [ ] **DT-QA-20**: A small model with DepTime's tools · `P2` `S`
+  - Qwen3.5 9B asked both model-alone tests again with DepTime's five MCP tools available, one run, protocol
+    committed first (`bench/model-alone/with-tools/`): does it get DepTime's answers through?
 - [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
   - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
     error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered
