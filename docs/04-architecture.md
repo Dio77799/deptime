@@ -51,7 +51,7 @@ DepTime is **local-first** ([ADR 0007](adr/0007-open-source-local-first.md)). Th
 | `deptime/index/schema.sql`, `store.py` | SQLite schema (span encoding), atomic per-package rebuild, read queries |
 | `deptime/index/distribution.py` | `pack` (publish), `download`/`ensure_index` (consume), background refresh with hot swap |
 | `deptime/tracebacks.py` | Traceback → `ErrorSignal` (stdlib only, capped input) |
-| `deptime/query.py` | `DepTime`: the five tools; deterministic; `set_store` for hot swaps |
+| `deptime/query.py` | `DepTime`: the six tools; deterministic; `set_store` for hot swaps |
 | `deptime/server/mcp_app.py` | `MCPServer` + tool registrations (names and descriptions are product copy) |
 | `deptime/server/http_app.py`, `metering.py` | Hosted mode: `/mcp`, `/v1/*`, `/healthz`, anonymous rate limits |
 | `deptime/cli.py` | `mcp`, `explain`, `history`, `check`, `diff`, `coverage`, `index pull|status|pack`, `ingest`, `serve` |

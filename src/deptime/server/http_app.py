@@ -59,6 +59,15 @@ def _dispatch(dt: DepTime, tool: str, body: dict[str, Any]) -> BaseModel:
             bool(body.get("include_added", False)),
             int(body.get("limit", 200)),
         )
+    if tool == "check_upgrade":
+        code, files = body.get("code"), body.get("files")
+        return dt.check_upgrade(
+            body["package"],
+            body["from_version"],
+            body.get("to_version"),
+            code if isinstance(code, str) else None,
+            {str(k): v for k, v in files.items() if isinstance(v, str)} if isinstance(files, dict) else None,
+        )
     if tool == "coverage":
         return dt.coverage_report()
     raise KeyError(tool)

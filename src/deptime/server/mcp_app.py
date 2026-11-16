@@ -1,4 +1,4 @@
-"""The MCP surface: five read-only tools over the DepTime query layer.
+"""The MCP surface: six read-only tools over the DepTime query layer.
 
 Tool names, descriptions and parameter docs are product copy: agents decide whether to call a tool from
 these strings alone. Keep them concrete, keep the "when to call" first, and re-run the benchmark when editing.
@@ -21,8 +21,9 @@ from deptime.models import (
     ExplainResult,
     SymbolHistory,
     SymbolQuery,
+    UpgradeCheckResult,
 )
-from deptime.query import DepTime
+from deptime.query import MAX_UPGRADE_CHARS, DepTime
 from deptime.tracebacks import MAX_ACCEPTED_CHARS, MAX_INPUT_CHARS
 
 INSTRUCTIONS = """\
@@ -31,7 +32,8 @@ analysis of every indexed release (no docs scraping, no LLM guesses). Use it whe
 - a third-party import or call fails with ImportError, ModuleNotFoundError, AttributeError, or TypeError
   (unexpected/missing keyword argument): call `explain_error` with the traceback and `pip freeze` output;
 - you are about to use an API you remember from training data: call `check_symbols` with the installed version;
-- you are upgrading a dependency: call `diff_versions` (from may be a date such as your training cutoff).
+- you are upgrading a dependency: call `check_upgrade` with the code that uses it for the lines the new version
+  breaks, or `diff_versions` for every change in the range (from may be a date such as your training cutoff).
 Call `coverage` to see which packages and versions are indexed. Answers include evidence and confidence;
 "never_existed" means no indexed release ever had that name; at low confidence the name may be created at
 runtime or predate the earliest indexed release, so read its explanation before calling it misremembered.
@@ -192,6 +194,50 @@ def build_mcp(
         ] = 200,
     ) -> DiffResult:
         return deptime.diff_versions(package, from_version, to_version, used_symbols, include_added, limit)
+
+    @mcp.tool(
+        name="check_upgrade",
+        title="What a dependency update breaks in your code",
+        description=(
+            "Call this before or after updating a dependency: pass the package, the version you have, the version you "
+            "are moving to, and the code that uses the package (a snippet, or several files by path). Returns each use "
+            "the new version breaks, with its file and line: a removed name, a keyword no longer accepted, a newly "
+            "required argument, or a call that only raises, with the release that changed it and the replacement. A "
+            "break is reported only when the new version fails and the old one doesn't; deprecations are warnings, and "
+            "uses DepTime can't tell about are listed apart, never as breaks. One package per call; for a whole project, "
+            "`deptime check-upgrade` reads the version changes from its lockfiles."
+        ),
+        annotations=READ_ONLY,
+    )
+    def check_upgrade(
+        package: Annotated[str, Field(max_length=100, description=PACKAGE_HELP)],
+        from_version: Annotated[
+            str, Field(max_length=50, description="The version the code works with now, e.g. '0.27.2'.")
+        ],
+        to_version: Annotated[
+            str | None,
+            Field(
+                max_length=50, description="The version to update to; defaults to the newest indexed release."
+            ),
+        ] = None,
+        code: Annotated[
+            str | None,
+            Field(
+                max_length=MAX_UPGRADE_CHARS,
+                description="Python code that uses the package, read with `ast` (never run); its uses are reported "
+                "at file `<code>`.",
+            ),
+        ] = None,
+        files: Annotated[
+            dict[str, str] | None,
+            Field(
+                max_length=2_000,
+                description="Several Python files instead of, or as well as, `code`: relative path -> source. Paths "
+                f"name the uses in the answer. Up to {MAX_UPGRADE_CHARS:,} characters across all of them.",
+            ),
+        ] = None,
+    ) -> UpgradeCheckResult:
+        return deptime.check_upgrade(package, from_version, to_version, code, files)
 
     @mcp.tool(
         name="coverage",

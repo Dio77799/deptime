@@ -33,6 +33,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
   that made the change and the replacement; uses deprecated at the new version are warnings, and uses DepTime can't
   tell about, or that fail at the old version too, are listed apart. Markdown or JSON; exit code 1 only on a break.
   Nothing is installed, imported or run, and no model is asked (DT-CORE-58, DT-CORE-66, DT-CORE-59)
+- A sixth MCP tool, `check_upgrade(package, from_version, to_version?, code?, files?)`: the same check for one
+  package as one call, on the code an agent passes (a snippet, or files by path), for clients with no shell. Also
+  `POST /v1/check-upgrade` (DT-CORE-68)
 
 ## [0.1.17] - 2026-11-15
 

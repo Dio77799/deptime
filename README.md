@@ -99,6 +99,7 @@ That's the real answer from the published index, trimmed. The full answer also q
 | `symbol_history(package, path)` | Before trusting an API you remember |
 | `check_symbols(package, version, symbols[{path, kwargs}])` | Pre-flight check of the symbols and kwargs you're about to use |
 | `diff_versions(package, from_version \| date, to_version?, used_symbols?)` | Upgrading, or "what changed since my training cutoff?" |
+| `check_upgrade(package, from_version, to_version?, code? \| files?)` | Updating a dependency: the lines of your code the new version breaks |
 | `coverage()` | What's indexed (53 fast-moving packages: AI/agent stack + libraries with known breaking changes; [list](https://github.com/cschmertz/deptime/blob/main/docs/coverage.md)) |
 
 Every answer carries evidence and a confidence level. The contracts are in [docs/03-product-spec.md](https://github.com/cschmertz/deptime/blob/main/docs/03-product-spec.md).

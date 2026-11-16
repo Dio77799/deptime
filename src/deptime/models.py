@@ -464,7 +464,9 @@ class PackageUpgrade(BaseModel):
 
 
 class UpgradeCheckResult(BaseModel):
-    project: str = Field(description="The directory checked, as given.")
+    project: str = Field(
+        description="The directory checked, as given; `<code>` for code passed to the check_upgrade tool."
+    )
     base: str | None = Field(
         default=None, description="The git revision the versions before were read from, if any."
     )
@@ -477,7 +479,7 @@ class UpgradeCheckResult(BaseModel):
         default_factory=list, description="Packages added or removed: there's no upgrade to check."
     )
     breaks: int = Field(
-        default=0, description="Confirmed breaks across `checked`; the command exits 1 when > 0."
+        default=0, description="Confirmed breaks across `checked`; `deptime check-upgrade` exits 1 when > 0."
     )
     files_read: int = 0
     files_unreadable: list[str] = Field(

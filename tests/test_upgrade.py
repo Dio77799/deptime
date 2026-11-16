@@ -358,3 +358,30 @@ def test_annotations_mark_each_broken_line_and_cannot_inject_commands(
     assert (
         "httpx.Client(proxies=): the keyword isn't accepted at 0.28.1. Last in 0.27.2, gone in 0.28.1." in err
     )
+
+
+def test_the_check_upgrade_tool_answers_one_package_in_one_call(dt):
+    """DT-CORE-68: the MCP tool's query: code and files, the newest release by default, and what it leaves out."""
+    res = dt.check_upgrade(
+        "HTTPX", "0.27.2", "0.28.1", code=CODE, files={"svc/api.py": "import httpx\nhttpx.get('u')\n"}
+    )
+    assert res.project == "<code>" and res.files_read == 2 and res.breaks == 1
+    (b,) = res.checked[0].breaks
+    assert (b.kind, b.kwarg, [(loc.file, loc.line) for loc in b.locations]) == (
+        "rejected_kwarg",
+        "proxies",
+        [("<code>", 3)],
+    )
+    latest = dt.check_upgrade("httpx", "0.27.2", code=CODE)
+    assert latest.checked[0].change.to_version == "0.28.1" and "newest indexed release, 0.28.1" in latest.note
+    assert "No code was passed" in dt.check_upgrade("httpx", "0.27.2", "0.28.1").note
+    other = dt.check_upgrade("not-indexed-pkg", "1.0", "2.0", code="import x\n")
+    assert other.not_covered[0].package == "not-indexed-pkg" and not other.checked
+
+
+def test_the_check_upgrade_tool_reads_up_to_its_limit(dt, monkeypatch):
+    from deptime import query
+
+    monkeypatch.setattr(query, "MAX_UPGRADE_CHARS", len(CODE) + 5)
+    res = dt.check_upgrade("httpx", "0.27.2", "0.28.1", code=CODE, files={"b.py": CODE})
+    assert res.files_read == 1 and res.breaks == 1 and "1 file left out" in res.note

@@ -23,7 +23,7 @@ DepTime is **free and open source (MIT)** and **runs locally** (`uvx deptime mcp
 |---|---|---|
 | Coding agents (Claude Code, Codex, Cursor, Copilot agent) mid-task | "This import/call just failed. Why, and what's the fix?" | `explain_error` |
 | Coding agents writing new code from memory | "Does this API (and these kwargs) exist in the version installed here?" | `check_symbols`, `symbol_history` |
-| Upgrade bots (Dependabot/Renovate PR fixers) | "What breaks for *my* usage between v1 and v2?" | `diff_versions` with `used_symbols` |
+| Upgrade bots (Dependabot/Renovate PR fixers) | "What breaks for *my* usage between v1 and v2?" | `check_upgrade`, `deptime check-upgrade`, the GitHub Action; `diff_versions` with `used_symbols` |
 | Humans (secondary) | The same questions, from a terminal or curl | `deptime` CLI, `/v1/*` |
 
 ## How it runs
@@ -113,6 +113,12 @@ All tools are read-only and idempotent, and return structured output (pydantic m
 - `from_version` can be a date (`YYYY-MM-DD`), which covers "everything since my training cutoff."
 - `used_symbols` filters the results to your own usage: changes on those paths and below, a class member's at the path given (not at the class that defines it), and a parent module or class removed, moved or retyped in the range (or added there, for code written against `to`), with the used paths it takes in `affects` (DT-CORE-33). A used class whose own `__init__` becomes deprecated, as `check_symbols` reads it, gets a `deprecated` event of its own with `detail.via` `__init__`, unless the class said the same in the release before (DT-CORE-53); `symbol_history` lists it too.
 - A used path that no indexed release has, so no event can name it, is listed in `never_seen` when `check_symbols` reads it `missing` at one end of the range or both, with those ends in `missing_in`, and `note` says so (DT-CORE-54): langgraph 0.0.37's own `checkpoint.memory` has no `InMemorySaver`, which 0.3's comes from langgraph-checkpoint (`unknown` there). Not one a listed event's `affects` already takes; a project's suppression of the path, or of `never_existed`, leaves it out.
+
+### `check_upgrade(package, from_version, to_version?, code?, files?) → UpgradeCheckResult`
+
+- What updating one package breaks in the code given (DT-CORE-68): `deptime check-upgrade`'s check as one call, for an agent or a client with no shell. `code` is one snippet, reported at file `<code>`; `files` maps relative paths to sources. Up to 2,000,000 characters are read across both; files past that are left out and `note` says so. No filesystem path is taken: the hosted server would read its own disk.
+- Each use is checked with `check_symbols` at `to_version` (default: the newest indexed release) and at `from_version`. A break (`breaks`) is flagged at `to` and not at `from`: a name missing, a keyword not accepted, a required argument not passed, more arguments by position than it takes, or a call to a callable that only raises, with its locations and explain_error's finding (the release that changed it, the replacements, a `fix` where the index proves one). Deprecations at `to`, uses the index can't tell about (`unknown`) and uses flagged at both ends (`failing_before`) are `notices`, never breaks.
+- A package DepTime doesn't index comes back in `not_covered`. The local server applies the project's suppressions, as `deptime check-upgrade` does.
 
 ### `coverage() → CoverageResult` (never rate-limited)
 

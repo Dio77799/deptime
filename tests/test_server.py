@@ -22,6 +22,7 @@ async def test_mcp_tools_listed_and_callable(dt):
             "symbol_history",
             "check_symbols",
             "diff_versions",
+            "check_upgrade",
             "coverage",
         }
         assert all(t.annotations and t.annotations.read_only_hint for t in tools.tools)
@@ -30,6 +31,16 @@ async def test_mcp_tools_listed_and_callable(dt):
         )
         assert not result.is_error
         assert result.structured_content["findings"][0]["issue"] == "param_removed"
+        result = await client.call_tool(
+            "check_upgrade",
+            {
+                "package": "httpx",
+                "from_version": "0.27.2",
+                "to_version": "0.28.1",
+                "files": {"app.py": "import httpx\nhttpx.Client(proxies='http://p')\n"},
+            },
+        )
+        assert not result.is_error and result.structured_content["breaks"] == 1
 
 
 @pytest.mark.anyio
@@ -93,6 +104,19 @@ def test_http_health_and_rest(settings):
         assert body["findings"][0]["symbol"] == "httpx.Client.__init__(proxies)"
         assert http.get("/v1/coverage").json()["packages"][0]["package"] == "httpx"
         assert http.post("/v1/nope", json={}).status_code == 400
+
+
+def test_rest_check_upgrade(settings):
+    with TestClient(create_app(settings)) as http:
+        up = http.post(
+            "/v1/check-upgrade",
+            json={
+                "package": "httpx",
+                "from_version": "0.27.2",
+                "code": "import httpx\nhttpx.Client(proxies=1)\n",
+            },
+        ).json()
+        assert up["breaks"] == 1 and up["checked"][0]["change"]["to_version"] == "0.28.1"
 
 
 @pytest.mark.anyio

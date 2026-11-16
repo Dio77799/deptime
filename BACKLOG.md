@@ -102,9 +102,6 @@ every bar on real ones; its wrong answers and misses first:
   - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project).
 
 **Phase 4, the fix (the model's part, outside DepTime).**
-- [ ] **DT-CORE-68**: A `check_upgrade` MCP tool · `P2` `S` · deps: CORE-58
-  - One call, one answer, as `explain_error` is for a traceback: the package, the two versions and the code (or a
-    path), returning each break with its replacement. A new tool name, so the contract only grows (Invariant 3).
 - [ ] **DT-GTM-07**: "Fix what DepTime found": the plugin and the report hand an agent the confirmed breaks · `P2` `S`
   · deps: CORE-68
   - The Action's report ends with a block an agent can act on, and the Claude Code plugin gains a command that runs
@@ -124,6 +121,9 @@ every bar on real ones; its wrong answers and misses first:
 
 ## Done since 2026-11-13
 
+- [x] **DT-CORE-68** (2026-11-16): a sixth MCP tool, `check_upgrade(package, from_version, to_version?, code?,
+  files?)`, and `POST /v1/check-upgrade`: `check-upgrade`'s check for one package as one call. Code, not a path:
+  the hosted server would read its own disk.
 - [x] **DT-DATA-51**, the `global` shape (2026-11-16): names a top-level function the module calls at import binds
   through `global` and imports are the module's: sqlalchemy 2.x's `orm.collections.attribute_mapped_collection` and
   six more. With DT-CORE-72 and DT-DATA-82, `SNAPSHOT_FORMAT` 27. instructor's and chromadb's shapes stay held.

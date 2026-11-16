@@ -58,12 +58,15 @@ from deptime.models import (
     SymbolCheck,
     SymbolHistory,
     SymbolQuery,
+    UpgradeCheckResult,
 )
 from deptime.tracebacks import ErrorSignal, imported_modules, parse_traceback
 from deptime.untrusted import instruction_like, untrusted_text
 
 MAX_DIFF_EVENTS = 500
 MAX_CODE_SYMBOLS = 300  # names read from a snippet that check_symbols checks (DT-CORE-07)
+MAX_UPGRADE_CHARS = 2_000_000  # code check_upgrade reads in one call, across `code` and `files` (DT-CORE-68)
+CODE_LABEL = "<code>"  # the file name check_upgrade gives `code` in its answer
 # The `package` of a finding about the standard library (DT-DATA-06).
 PYTHON = "python"
 MAX_FINDINGS_PER_PACKAGE = 5
@@ -1315,6 +1318,55 @@ class DepTime:
                 else ""
             ),
         )
+
+    def check_upgrade(
+        self,
+        package: str,
+        from_version: str,
+        to_version: str | None = None,
+        code: str | None = None,
+        files: dict[str, str] | None = None,
+    ) -> UpgradeCheckResult:
+        """What updating `package` from `from_version` to `to_version` (default: the newest indexed release) breaks in
+        the code given (DT-CORE-68): `deptime check-upgrade`'s check for one package, as one call. Files past
+        MAX_UPGRADE_CHARS in total are left out, and `note` says so."""
+        from deptime import upgrade
+        from deptime.models import DependencyChange
+
+        name = canonicalize_name(package)
+        given: dict[str, str] = {}
+        if code is not None:
+            given[CODE_LABEL] = code
+        given.update((k, v) for k, v in (files or {}).items() if k != CODE_LABEL)
+        kept: dict[str, str] = {}
+        total, left_out = 0, 0
+        for rel, text in given.items():
+            if total + len(text) > MAX_UPGRADE_CHARS:
+                left_out += 1
+                continue
+            kept[rel] = text
+            total += len(text)
+        if not self._indexed(name):
+            change = DependencyChange(package=name, from_version=from_version, to_version=to_version)
+            return UpgradeCheckResult(
+                project=CODE_LABEL, not_covered=[change], note=self._not_indexed_note(name)
+            )
+        assert self.store is not None
+        to = to_version or self.store.releases(name)[-1]["version"]
+        change = DependencyChange(package=name, from_version=from_version, to_version=to)
+        result = upgrade.check_upgrade(self, CODE_LABEL, kept, [change])
+        notes = [result.note] if result.note else []
+        if not given:
+            notes.append("No code was passed, so no use was checked; pass `code` or `files`.")
+        if left_out:
+            notes.append(
+                f"{left_out} file{'' if left_out == 1 else 's'} left out: one call reads up to"
+                f" {MAX_UPGRADE_CHARS:,} characters of code."
+            )
+        if to_version is None:
+            notes.append(f"to_version wasn't given, so the newest indexed release, {to}, was checked.")
+        result.note = " ".join(notes) or None
+        return result
 
     def diff_versions(
         self,
