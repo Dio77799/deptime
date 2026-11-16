@@ -101,9 +101,6 @@ every bar on real ones; its wrong answers and misses first:
 - [ ] **DT-DATA-82**: A fallback defined only when an import fails reads `raises` · `P1` `S`
   - dspy 3.4.1's `GEPA` raises ImportError only where gepa can't install; elsewhere the class is imported. DT-QA-22's
     one working use flagged, and one of its two false failures. A wrong answer, so worked on now.
-- [ ] **DT-CORE-72**: Keywords an inherited `__init__(**kwargs)` sets read rejected · `P1` `S`
-  - pydantic-ai 2's `RequestUsage(input_tokens=)`: a `@dataclass(init=False)` whose base's `__init__` sets every
-    keyword as an attribute. DT-QA-22's other false failure.
 - [ ] **DT-DATA-51** (from Held): Names computed at import time read absent · `P1` `M`
   - Now a false break on a real update: sqlalchemy 2.1 binds `orm.collections.attribute_mapped_collection` with
     `global` in a function run at import (DT-QA-22). Detail in the archive.
@@ -133,6 +130,9 @@ every bar on real ones; its wrong answers and misses first:
 
 ## Done since 2026-11-13
 
+- [x] **DT-CORE-72** (2026-11-16): a `@dataclass(init=False)` class keeps the constructor it inherits. griffe made
+  one up taking only its dataclass bases' fields, so pydantic-ai 2's `RequestUsage(input_tokens=)` read rejected
+  where `UsageBase.__init__` takes `**kwargs`. Extraction, in the next `SNAPSHOT_FORMAT` batch.
 - [x] **DT-CORE-71** (2026-11-15): `check-upgrade` reads `requirements*.txt` and `requirements/*.txt` in any
   directory, leaving out virtual environments, build output and hidden directories; the Action's documented trigger
   paths match them. DT-QA-22's 7 unread subdirectory updates are read (in-sample, no break reported, as labelled).

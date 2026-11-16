@@ -3117,6 +3117,27 @@ def test_a_build_leaves_no_griffe_objects_alive(tmp_path):
     assert live() == before
 
 
+def test_a_dataclass_without_init_keeps_the_constructor_it_inherits(tmp_path):
+    # DT-CORE-72: griffe made up `__init__(self)` for pydantic-ai 2's `@dataclass(init=False) RequestUsage`, which
+    # hid `UsageBase.__init__(self, *, details=None, **kwargs)`, so `RequestUsage(input_tokens=1)` read rejected.
+    files = {
+        "usage/__init__.py": (
+            "from dataclasses import dataclass\nfrom typing import Any\n\n\n"
+            "@dataclass(repr=False, kw_only=True)\nclass UsageBase:\n    input_tokens: int = 0\n\n"
+            "    def __init__(self, *, details=None, **kwargs: Any):\n        pass\n\n\n"
+            "@dataclass(init=False, repr=False)\nclass RequestUsage(UsageBase):\n    pass\n\n\n"
+            "@dataclass\nclass Generated(UsageBase):\n    extra: int = 1\n"
+        )
+    }
+    snap = build_snapshot("usage", "1.0", ["usage"], _write(tmp_path, files))
+
+    def params(path):
+        return [p["name"] for p in snap.symbols[f"usage.{path}.__init__"].params]
+
+    assert params("RequestUsage") == ["details", "kwargs"]
+    assert params("Generated") == ["extra", "input_tokens"]  # `@dataclass` alone still generates one
+
+
 def test_snapshot_roundtrip(tmp_path):
     snap = build_snapshot("fakepkg", "1.0.0", ["fakepkg"], _write(tmp_path / "src"))
     out = tmp_path / "s.json.gz"

@@ -4370,6 +4370,43 @@ def _modules_of(mod: griffe.Module):
             yield from _modules_of(sub)  # type: ignore[arg-type]
 
 
+def _classes_of(owner: griffe.Module | griffe.Class):
+    for cls in owner.classes.values():
+        if not cls.is_alias:
+            yield cls
+            yield from _classes_of(cls)  # type: ignore[arg-type]
+
+
+def _init_false(cls: griffe.Class) -> bool:
+    """`@dataclass(init=False)`, matched as griffe's dataclasses extension matches the decorator."""
+    for dec in cls.decorators:
+        value = dec.value
+        if isinstance(value, griffe.ExprCall) and value.canonical_path == "dataclasses.dataclass":
+            return any(
+                isinstance(arg, griffe.ExprKeyword) and arg.name == "init" and str(arg.value) == "False"
+                for arg in value.arguments
+            )
+    return False
+
+
+def keep_inherited_inits(mod: griffe.Module) -> None:
+    """Drop the `__init__` griffe's dataclasses extension makes up for a `@dataclass(init=False)` class (DT-CORE-72).
+    The extension skips such a class's own fields but still adds an `__init__` taking only its dataclass bases'
+    fields, which hides the constructor the class really inherits: pydantic-ai 2's `RequestUsage` read as taking
+    no keywords, where it inherits `UsageBase.__init__(self, *, details=None, **kwargs)`. Made up means line 0."""
+    for module in _modules_of(mod):
+        for cls in _classes_of(module):
+            init = cls.members.get("__init__")
+            if (
+                init is not None
+                and not init.is_alias
+                and init.is_function
+                and not init.lineno
+                and _init_false(cls)
+            ):
+                cls.del_member("__init__")
+
+
 def _sorted_py_modules(self: griffe_finder.ModuleFinder, path: Path):
     """griffe's `ModuleFinder._filter_py_modules`, walking folders and files in sorted order (DT-DATA-30): unsorted,
     modules loaded in the file system's order, APFS's on macOS and ext4's on CI, and a few numpy re-exports resolved
@@ -4821,7 +4858,7 @@ def build_snapshot(
     paths = [str(search_path), *(str(root) for root, _ in siblings)]
 
     def load(name: str, where: list[str]) -> griffe.Object | griffe.Alias:
-        return griffe.load(
+        loaded = griffe.load(
             name,
             search_paths=where,
             modules_collection=shared[0],
@@ -4836,6 +4873,9 @@ def build_snapshot(
                 _RuntimeElse(), _OverloadsOnly(), _Rebound(), _ImportStructure()
             ),
         )
+        if isinstance(loaded, griffe.Module):
+            keep_inherited_inits(loaded)
+        return loaded
 
     try:
         for root, names in siblings:
