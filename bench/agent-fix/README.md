@@ -52,6 +52,13 @@ check-upgrade` and denied for everything else.
 **The task** (A and C): "This project uses {package} {from}. Updating it to {to} breaks some of its code. Change the
 code so that it works with {package} {to}." Nothing else: no file, line or name is pointed to.
 
+**How the agent is started** (settled by the trial, `run.py`): `claude --print --restricted --permission-mode dontAsk`
+with `--tools` and `--allowedTools` as above, `--plugin-dir integrations/claude-code` in B and C,
+`ENABLE_CLAUDEAI_MCP_SERVERS=false` and `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`. `--restricted` ignores the maintainer's
+settings and keeps the file tools inside the task's copy, so no session can read this directory's labels; the
+claude.ai connectors and auto memory are off. In the trial, B's check ran and read the old pin itself, a compound
+Bash command was denied, and A tried Bash and was told it has none.
+
 Order: a fixed seed shuffles the tasks for each run; within a task the arms run back to back in a shuffled order. A
 session that ends on an error of the service (a rate limit, an outage), not the agent's own stop, is run again from a
 fresh copy, at most twice, and each rerun is recorded. A session that hits the time limit is scored as it stands.
@@ -65,9 +72,12 @@ the fixed tree, with the import roots of any module first imported on a line the
 own modules and the standard library), so a move to a sibling package (`langchain_text_splitters`) is read too.
 
 **Ground truth.** `../holdout/probe.py`, unchanged, on each use that is new in a fixed tree (a kind, path and shape
-the task's tree doesn't have), in the set's own environment for the package at `to` (`envs.json`: the same Python and
+the task's tree doesn't have), and on each use on a line the agent added that the task's set doesn't label `works` or
+`breaks` (a fix that moves onto a use the project already makes elsewhere is checked too), in the set's own environment for the package at `to` (`envs.json`: the same Python and
 date cutoff), through `.github/workflows/holdout.yml`, sandboxed. A use **works**, **breaks** or **can't tell** by
-`../holdout/labels.py`'s `works()`, the rule the labels came from.
+`../holdout/labels.py`'s `works()`, the rule the labels came from. Uses no set ever labels, whatever the probe says
+(a member of an object built by a call that isn't a class, a keyword only `**kwargs` takes, a member read off an
+instance that the probe doesn't find on the class), are left out of a replacement's judgement below.
 
 **Each confirmed break** is then
 
@@ -75,7 +85,8 @@ date cutoff), through `.github/workflows/holdout.yml`, sandboxed. A use **works*
 - **removed** if not, and at each of its lines the agent's change deleted the line, commented it out or replaced it
   with no code (`pass`, `...`, `raise NotImplementedError`), or deleted the file;
 - **fixed** if not, the change at its lines adds code, and every new use on those added lines works;
-- **broken by the fix** if a new use on those added lines breaks;
+- **broken by the fix** if a new use on those added lines breaks (another confirmed break still there is judged on
+  its own, not here);
 - **can't tell** otherwise: a new use there can't be told, or the added code uses no package the reader sees.
 
 **Hand checks**, as DT-QA-25 and the holdout make them (`../upgrade-check/audit/README.md`): a `can't tell` may be
@@ -127,11 +138,11 @@ what they called, with C's own measures. Sessions that fetched the task's own re
 ```bash
 uv run python bench/agent-fix/run.py tasks                 # build the task repositories and tasks.json
 uv run python bench/agent-fix/run.py trial                 # the two trial tasks, not scored
-uv run python bench/agent-fix/run.py run --arm A --run 1   # and so on: A1, A2, B1, B2, C1
+uv run python bench/agent-fix/run.py run --run 1           # A1, B1 and C1, interleaved; then --run 2: A2 and B2
 uv run python bench/agent-fix/score.py envs                # the probe's environments for the new uses
 # push to a spike/holdout branch with SET: bench/agent-fix in holdout.yml; then
 gh run download <run id> -p 'holdout-*' -D <empty dir>
-uv run python bench/agent-fix/score.py hand                # the blinded hand-check file
+uv run python bench/agent-fix/score.py hand <that dir>     # hand-todo.json: the blinded hand checks
 uv run python bench/agent-fix/score.py score <that dir> --out bench/agent-fix/results-<date>.md
 ```
 
