@@ -1,0 +1,13 @@
+{
+ "about": "Breaks the probe couldn't settle (a call break found by binding, or a keyword only **kwargs takes), checked by hand against the released wheel's source at `to` (README.md, \"Every break, checked\"). Only where a check can change a pull request's verdict: within one, they stop at the first break confirmed true.",
+ "checks": [
+  {"break": "30bdc3675922bfcc", "verdict": "true", "evidence": "gradio 6.16.0 gradio/components/gallery.py: Gallery.__init__ (line 78) has no `show_download_button` and no **kwargs; `buttons` (line 110) replaces it"},
+  {"break": "788318b9562df98b", "verdict": "true", "evidence": "gradio 6.16.0 gradio/components/gallery.py: Gallery.__init__ (line 78) has no `show_download_button` and no **kwargs"},
+  {"break": "7c344e8aed35f728", "verdict": "true", "evidence": "httpx 0.28.1 httpx/_client.py: AsyncClient.__init__ (lines 1353-1375) has no `app` and no **kwargs"},
+  {"break": "208bee15cc2f5028", "verdict": "true", "evidence": "httpx 0.28.1 httpx/_client.py: AsyncClient.__init__ (lines 1353-1375) has no `app` and no **kwargs"},
+  {"break": "ca869c9017b3ba29", "verdict": "true", "evidence": "marshmallow 4.4.0 marshmallow/fields.py: Str = String (line 2141), no __init__ of its own; Field.__init__ (line 180) takes load_default/dump_default, no `default`, no **kwargs"},
+  {"break": "46ffaaa1580bc897", "verdict": "true", "evidence": "sqlalchemy 2.1.8 sqlalchemy/sql/schema.py: MetaData.reflect(self, bind: Union[Engine, Connection], ...) (line 6559); `bind` has no default and the call passes no argument"},
+  {"break": "a7cb361aa17f2fa2", "verdict": "false", "evidence": "pydantic-ai-slim 2.63.0 pydantic_ai/usage.py: RequestUsage (line 308, @dataclass(init=False)) inherits UsageBase.__init__(self, *, details=None, **kwargs) (line 168), which sets each keyword as an attribute; `input_tokens` is a field (line 90), so RequestUsage(input_tokens=...) works"},
+  {"break": "a35e259104a3b8b4", "verdict": "false", "evidence": "pydantic-ai-slim 2.63.0 pydantic_ai/usage.py: as above, UsageBase.__init__'s **kwargs sets `output_tokens`, a field of UsageBase"}
+ ]
+}

@@ -96,11 +96,22 @@ In order. The first line of each phase is what it delivers.
 
 **Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
 code?" from a project directory.
-**Phase 3, the GitHub Action (DT-GTM-06).** A check on Dependabot and Renovate pull requests.
-- [ ] **DT-QA-22**: A fresh set of real update pull requests · `P1` `M` · deps: GTM-06
-  - Recent Dependabot and Renovate pull requests in public repositories that bump a covered package, collected by a
-    rule fixed in advance and labelled by the probe, scored once: the first measure on updates nobody designed a fix
-    from.
+**Phase 3, the GitHub Action (DT-GTM-06, done).** A check on Dependabot and Renovate pull requests. DT-QA-22 met
+every bar on real ones; its wrong answers and misses first:
+- [ ] **DT-CORE-71**: `check-upgrade` reads requirements files in subdirectories · `P1` `S`
+  - 7 of DT-QA-22's 16 unread updates: Dependabot updates `python-backend/requirements.txt` with no directory in the
+    title, so the Action runs at the root, where only `requirements*.txt` and `requirements/` are read.
+- [ ] **DT-DATA-82**: A fallback defined only when an import fails reads `raises` · `P1` `S`
+  - dspy 3.4.1's `GEPA` raises ImportError only where gepa can't install; elsewhere the class is imported. DT-QA-22's
+    one working use flagged, and one of its two false failures. A wrong answer, so worked on now.
+- [ ] **DT-CORE-72**: Keywords an inherited `__init__(**kwargs)` sets read rejected · `P1` `S`
+  - pydantic-ai 2's `RequestUsage(input_tokens=)`: a `@dataclass(init=False)` whose base's `__init__` sets every
+    keyword as an attribute. DT-QA-22's other false failure.
+- [ ] **DT-DATA-51** (from Held): Names computed at import time read absent · `P1` `M`
+  - Now a false break on a real update: sqlalchemy 2.1 binds `orm.collections.attribute_mapped_collection` with
+    `global` in a function run at import (DT-QA-22). Detail in the archive.
+- [ ] **DT-CORE-73**: Members of a name that became an alias read `unknown` · `P2` `S`
+  - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project).
 
 **Phase 4, the fix (the model's part, outside DepTime).**
 - [ ] **DT-CORE-68**: A `check_upgrade` MCP tool · `P2` `S` · deps: CORE-58
@@ -117,7 +128,7 @@ code?" from a project directory.
 
 **Phase 5, release.**
 - [ ] **DT-OSS-16**: Release 0.2.0 with the command, the Action and the tool · `P1` `S` · deps: GTM-06, QA-21
-  - README: the check leads "What it does", with DT-QA-21's numbers (and DT-QA-22's once scored).
+  - README: the check leads "What it does", with DT-QA-22's first-run numbers on real update pull requests.
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
   - A review of every tool parameter, result field and CLI option (last chance to rename without a major version);
     the GUI clients checked or listed as not covered (DT-SPIKE-05, DT-SPIKE-07); the 1.0 promise in CHANGELOG.md's
@@ -125,6 +136,10 @@ code?" from a project directory.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-22** (2026-11-16): the check on 264 real Dependabot and Renovate update pull requests (247 projects),
+  protocol committed first: all five bars met. Updates read 93.9%, breaks found 95.8% (46/48), working uses
+  flagged 1 of 3,291, pull requests failed with no confirmed break 0.8% (2/264), labelled uses read 99.6%; every pull
+  request with a break fails (13/13) (`bench/upgrade-check/prs/results-2026-11-16.md`).
 - [x] **DT-GTM-06** (2026-11-15): `action.yml`, a composite action: pulls the index, runs `check-upgrade --base`
   against the pull request's base with `--annotations` (an error on each broken line), writes the report to the job
   summary, fails only on a break; `contents: read` only. Dogfooded on DepTime's own dependency updates
@@ -221,7 +236,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 | ID | Gap | Fix is in |
 |---|---|---|
 | DT-DATA-75 | Names in compiled extension modules read `missing` (scikit-learn's `tree._tree`) | extraction |
-| DT-DATA-51 | Names computed at import time read absent (instructor's provider factories, chromadb's embedding functions, matplotlib's `cm` colormaps) | extraction |
 | DT-DATA-77 | A keyword only a decorator takes reads `never_existed` (huggingface_hub's `use_auth_token`) | extraction |
 | DT-DATA-78 | openai 1.0's removed resources point to response types of the same name; `ChatCompletion.create` reads missing where a proxy raises | curated hints, pairing rule |
 | DT-DATA-73 | matplotlib 3.10's `cm.ScalarMappable` reads private, so its members read missing | extraction |
