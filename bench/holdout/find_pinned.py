@@ -96,7 +96,11 @@ def pin_in(text: str, package: str) -> str | None:
     return None
 
 
-def fetch_source(repo: str, sha: str, dest: Path) -> None:
+KEEP = (".py", ".txt", ".toml", ".cfg")
+
+
+def fetch_source(repo: str, sha: str, dest: Path, keep: tuple[str, ...] = KEEP) -> None:
+    """The repository's tarball at `sha` into `dest`, keeping only files whose names end in `keep`."""
     if dest.exists():
         return
     data = fetch(f"https://codeload.github.com/{repo}/tar.gz/{sha}", 300)
@@ -107,7 +111,7 @@ def fetch_source(repo: str, sha: str, dest: Path) -> None:
     part.mkdir(parents=True)
     with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tf:
         for m in tf.getmembers():
-            if not m.isfile() or not m.name.endswith((".py", ".txt", ".toml", ".cfg")):
+            if not m.isfile() or not m.name.endswith(keep):
                 continue
             rel = Path(*Path(m.name).parts[1:])
             if rel.is_absolute() or ".." in rel.parts or not rel.parts:
