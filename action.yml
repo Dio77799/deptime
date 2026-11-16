@@ -28,7 +28,7 @@ inputs:
   deptime:
     description: >-
       What uvx installs DepTime from: a pinned release (the default, the release this action ships with) or a path.
-    default: "deptime==0.2.2"
+    default: "deptime==0.2.3"
 
 outputs:
   result:

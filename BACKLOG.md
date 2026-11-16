@@ -16,11 +16,11 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 ---
 
-## Current state: public alpha, v0.2.2
+## Current state: public alpha, v0.2.3
 
-- **Released:** 0.2.2 (2026-11-16) is on PyPI, the MCP Registry and GitHub: the upgrade check, as a command
-  (`check-upgrade`), a GitHub Action, an MCP tool (`check_upgrade`) and a Claude Code plugin command. 0.2.2 reworks
-  the plugin's fix command and the report's agent block (DT-GTM-08).
+- **Released:** 0.2.3 (2026-11-16) is on PyPI, the MCP Registry and GitHub: the upgrade check, as a command
+  (`check-upgrade`), a GitHub Action, an MCP tool (`check_upgrade`) and a Claude Code plugin command. 0.2.3 reworks
+  the plugin's fix command again from DT-QA-26 (DT-GTM-09).
 - **Index:** 53 packages and 6,816 releases on 2026-11-16 (`SNAPSHOT_FORMAT` 27, schema 2); `index.sqlite.xz` is
   51.3 MB and the `.gz` 79.1 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold

@@ -24,6 +24,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-11-16
+
+The Claude Code plugin's fix command, reworked again from DT-QA-26, and streamlit's top-level calls checked again;
+nothing in the contract changed.
+
+### Changed
+
+- `/deptime:fix-upgrade` (Claude Code plugin) rewrites a break that has no replacement from the new version's source
+  or release notes, leaving it only when the new version can't do what the code did, and fixes any other break it
+  finds; `check-upgrade`'s "For a coding agent" block says the same, and now also shows when the only uses left are
+  ones DepTime can't tell about (DT-GTM-09).
+
+### Fixed
+
+- streamlit 1.33 and later: `st.pyplot`, `st.button`, `st.write` and 100 other top-level names, bound through an
+  annotated module-level instance, read as attributes with no signature, so `check_symbols` and `check-upgrade`
+  didn't check their calls. They take the method's signature again from the next index build (`SNAPSHOT_FORMAT` 28,
+  DT-DATA-83).
+
 ## [0.2.2] - 2026-11-16
 
 The Claude Code plugin's fix command, reworked from DT-QA-05; nothing in the contract changed.
@@ -475,7 +494,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/cschmertz/deptime/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/cschmertz/deptime/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/cschmertz/deptime/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/cschmertz/deptime/compare/v0.1.17...v0.2.0
