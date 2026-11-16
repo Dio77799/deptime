@@ -97,7 +97,9 @@ In order. The first line of each phase is what it delivers.
 Phases 2 and 3 (the command and the GitHub Action) shipped in 0.2.0. DT-QA-22 met every bar on real update pull
 requests; its three wrong answers have fixes in the next index (DT-CORE-72, DT-DATA-82, DT-DATA-51), and one miss is left:
 - [ ] **DT-CORE-73**: Members of a name that became an alias read `unknown` · `P2` `S`
-  - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project).
+  - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project). In 2.0
+    `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
+    `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
 
 **Phase 4, the fix (the model's part, outside DepTime).**
 - [ ] **DT-QA-23**: Qwen3.5 9B with the new tools on the upgrade checks · `P2` `S` · deps: CORE-67, CORE-68
