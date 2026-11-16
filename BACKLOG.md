@@ -103,7 +103,17 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
     `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
 
-**Phase 4, the fix (the model's part, outside DepTime).** Nothing left: DT-GTM-07 and DT-QA-23 are done.
+**Phase 4, the fix (the model's part, outside DepTime).** The tool and the hand-off shipped (DT-CORE-68, DT-GTM-07);
+DT-QA-23 couldn't test them on real code. Before 1.0 freezes the hand-off:
+- [ ] **DT-QA-05**: Does an agent fix an update's breaks better with DepTime's hand-off? · `P1` `M` · deps: CORE-74,
+  CORE-75
+  - Tasks: real updates whose break is confirmed by running it: DT-QA-22's 13 failing-for-a-reason pull requests and
+    the 2026-11f holdout's 27 broken upgrades, each as a repository at the new version. Two arms, same agent
+    (Claude Code, `claude -p`), same prompt ("this dependency update broke the code; fix it"): alone, and with the
+    plugin's `/deptime:fix-upgrade`. Success: the confirmed breaks no longer fail (the audit's probe on each use),
+    and no line DepTime didn't report is changed, where a project's own tests can't run. Bar, protocol and runs per
+    arm fixed before the first run; reported in the README whichever way it comes out. Also answers DT-SPIKE-06
+    (does the agent call DepTime unprompted) in the alone-with-plugin-installed arm, if the protocol includes it.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
@@ -204,12 +214,6 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 
 One-off measurements and finishing touches. None is needed for upkeep, and none starts a series.
 
-- [ ] **DT-QA-05** with **DT-SPIKE-06**: does an agent fix more dependency breakages with DepTime, and does it call
-  it unprompted? · `P2` `L` (pilot `M`)
-  - The one question the benchmarks don't answer, and the one DT-QA-16's result points to: a model alone already
-    names most of these changes, so what counts is whether an agent does better with the tool. The pilot is as
-    designed in the archive: about 20 covered tasks × 2 arms × 3 runs, success by each task's own tests, the pass
-    bar written down before the run. One run, reported in the README whichever way it comes out.
 - [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
   - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
     error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered
