@@ -44,7 +44,7 @@ BOTS = {
     "dependabot": 'is:pr is:public author:app/dependabot "Bump {name} from" in:title',
     "renovate": 'is:pr is:public author:app/renovate "dependency {name} to" in:title',
 }
-_PREFIX = r"^(?:\[[^\]]+\]\s*)?(?:[\w-]+(?:\([^)]*\))?!?:\s*)?"
+_PREFIX = r"^(?:\[[^\]]+\]\s*)?(?:[^:]{1,40}:\s*)?"  # `[Security] `, then any short prefix ending in `:`
 DEPENDABOT = re.compile(_PREFIX + r"[Bb]ump (\S+) from (\S+) to (\S+?)(?: in (\S+))?\s*$")
 RENOVATE = re.compile(_PREFIX + r"[Uu]pdate dependency (\S+) to v?\S+(?:\s.*)?$")
 _TICKED = re.compile(r"`([^`]+)`\s*(?:->|→)\s*`([^`]+)`")

@@ -28,8 +28,10 @@ are merged by creation time, newest first, and read up to 1,000 results each (Gi
 **qualifies** when, checked in this order:
 
 1. **One package, named:** the title is a single-package update of this package (`Bump <name> from <a> to <b>[ in
-   /<dir>]` after an optional `type(scope):` prefix; `Update dependency <name> to v<b>`, likewise), not a group
-   update. The versions are Dependabot's title's, or the row for the package in Renovate's table in the body
+   /<dir>]` after an optional prefix of up to 40 characters ending in `:`, such as `chore(deps):` or `chore
+   (dependencies):`; `Update dependency <name> to v<b>`, likewise), not a group update. (The prefix rule was
+   `type(scope):` until the first package's collection showed `chore (dependencies):`; widened before anything was
+   scored.) The versions are Dependabot's title's, or the row for the package in Renovate's table in the body
    (`` `==1.2.3` -> `==1.3.0` ``); a range there (`^1.2`, `>=1.2`) doesn't qualify.
 2. **Indexed releases:** both versions are final releases, the old one older, and both are in DepTime's published
    index on the day of collection (`deptime index pull`).
