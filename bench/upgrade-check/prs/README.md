@@ -52,7 +52,8 @@ breaks are there and most update pull requests aren't major; each stratum is rep
 `in /<dir>` (the repository's root when there is none); for Renovate, the deepest directory holding every Python
 manifest it changes, or that directory's parent when its name starts with `requirements`.
 
-`selection.json` records the searches, the cutoff and every candidate read with the reason it was skipped.
+`selection.json` records the searches, the cutoff and every candidate read with the reason it was skipped; those
+passed over only because their stratum was already full are counted per package (`stratum_full`).
 
 ### What a case holds (`upgrades.jsonl`)
 

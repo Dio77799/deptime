@@ -16,6 +16,7 @@ import json
 import re
 import sys
 import time
+from collections import Counter
 from pathlib import Path, PurePosixPath
 
 from packaging.utils import canonicalize_name
@@ -324,9 +325,27 @@ def main() -> int:
         "min_uses": MIN_USES,
         "excluded": f"forks; DepTime's own repository; repositories in a holdout set: {', '.join(SETS)}",
         "kept": [u["id"] for u in state["upgrades"]],
-        "log": state["log"],
+        # Candidates passed over only because their stratum was already full are counted, not listed.
+        "stratum_full": dict(
+            sorted(
+                Counter(
+                    e["package"] for e in state["log"] if str(e.get("skipped")).endswith("stratum full")
+                ).items()
+            )
+        ),
+        "log": [
+            {
+                k: e[k]
+                for k in ("package", "url", "from", "to", "stratum", "dir", "skipped", "kept", "error")
+                if k in e
+            }
+            for e in state["log"]
+            if not str(e.get("skipped")).endswith("stratum full")
+        ],
     }
-    (HERE / "selection.json").write_text(json.dumps(selection, indent=1) + "\n", encoding="utf-8")
+    head = json.dumps({k: v for k, v in selection.items() if k != "log"}, indent=1)[:-2]
+    log = ",\n".join("  " + json.dumps(e) for e in selection["log"])
+    (HERE / "selection.json").write_text(f'{head},\n "log": [\n{log}\n ]\n}}\n', encoding="utf-8")
     (HERE / "upgrades.jsonl").write_text(
         "".join(json.dumps(u) + "\n" for u in state["upgrades"]), encoding="utf-8"
     )
