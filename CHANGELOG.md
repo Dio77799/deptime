@@ -24,6 +24,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-16
+
+Two fixes to the upgrade check; nothing in the contract changed.
+
 ### Changed
 - `check-upgrade` reads `uv.lock` and `poetry.lock` in any directory, as it does requirements files, so an update to
   one project of a monorepo (`backend/uv.lock`) is checked; a lockfile's own project isn't read as a dependency. The
@@ -459,7 +463,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/cschmertz/deptime/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/cschmertz/deptime/compare/v0.1.17...v0.2.0
 [0.1.17]: https://github.com/cschmertz/deptime/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/cschmertz/deptime/compare/v0.1.15...v0.1.16

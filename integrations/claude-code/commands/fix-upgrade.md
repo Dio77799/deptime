@@ -1,15 +1,15 @@
 ---
 description: Find what a dependency update breaks in this project's Python code with DepTime, then fix exactly those lines
 argument-hint: "[package version] (empty: compare the lockfiles at HEAD with the working tree)"
-allowed-tools: Bash(uvx deptime==0.2.0 check-upgrade:*)
+allowed-tools: Bash(uvx deptime==0.2.1 check-upgrade:*)
 ---
 
 DepTime decides what the update breaks; you write the fix. Don't re-decide its answer, and don't change code it
 didn't report.
 
 1. Run the check from the project's root. Arguments: `$ARGUMENTS`
-   - With a package and a version: `uvx deptime==0.2.0 check-upgrade . --package <package> --to <version> --format json`
-   - With none: `uvx deptime==0.2.0 check-upgrade . --format json`. It compares the pinned versions at `HEAD`
+   - With a package and a version: `uvx deptime==0.2.1 check-upgrade . --package <package> --to <version> --format json`
+   - With none: `uvx deptime==0.2.1 check-upgrade . --format json`. It compares the pinned versions at `HEAD`
      (`uv.lock`, `poetry.lock`, `pyproject.toml`, `requirements*.txt`) with the working tree, so update the lockfile
      first. On a branch, add `--base <the branch's base>`.
 2. Exit code 0: no break. Say so, list any new deprecations briefly, and stop. Exit code 2: show the error and stop.
