@@ -24,6 +24,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-11-16
+
+The Claude Code plugin's fix command, reworked from DT-QA-05; nothing in the contract changed.
+
 ### Changed
 
 - `check-upgrade`'s "For a coding agent" block lists the uses DepTime can't tell about and asks the agent to check
@@ -471,7 +475,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/cschmertz/deptime/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/cschmertz/deptime/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/cschmertz/deptime/compare/v0.1.17...v0.2.0
 [0.1.17]: https://github.com/cschmertz/deptime/compare/v0.1.16...v0.1.17

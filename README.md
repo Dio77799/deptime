@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7 # pin to a commit in your own workflows
-      - uses: cschmertz/deptime@v0.2.1
+      - uses: cschmertz/deptime@v0.2.2
 ```
 
 From a terminal, `uvx deptime check-upgrade` compares the pinned versions at `HEAD` with your working tree, or `--package httpx --to 0.28.1` checks one update. An agent can call the `check_upgrade` tool with the code instead, and the Claude Code plugin's `/deptime:fix-upgrade` runs the check and has Claude fix the lines it reports as broken and check the ones it can't tell about. A break is a use the index shows failing at the new version and not at the old one; the report ends with a block a coding agent can act on.
