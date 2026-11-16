@@ -12,6 +12,7 @@ asked anything (ADR 0006): the answer is the index's.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import warnings
 from collections.abc import Iterable
@@ -454,6 +455,62 @@ def _fold(breaks: list[UpgradeBreak]) -> list[tuple[UpgradeBreak, list[UpgradeBr
     ]
 
 
+_PLAIN = re.compile(r"[^\w.,=() /-]")
+MAX_HANDOFF_LINES = 60
+
+
+def _plain(text: str) -> str:
+    """A path, keyword or version as plain characters: the hand-off block carries no text from library source."""
+    return _PLAIN.sub("", text)[:200]
+
+
+def _handoff(result: UpgradeCheckResult) -> list[str]:
+    """The block an agent can act on (DT-GTM-07): each confirmed break with every line it reaches and the index's
+    proven fix or best replacement, as plain names. The model writes the fix; DepTime has decided what is broken."""
+    items: list[str] = []
+    for p in result.checked:
+        at = p.resolved_version or p.change.to_version or ""
+        for b, under in _fold(p.breaks):
+            locs = [*b.locations, *(loc for u in under for loc in u.locations)]
+            use = f"{b.path}({b.kwarg}=)" if b.kind == "rejected_kwarg" else b.path
+            what = {
+                "missing": "gone",
+                "rejected_kwarg": "keyword not accepted",
+                "missing_args": "now requires " + ", ".join(b.missing_args),
+                "too_many_positional": "takes fewer arguments by position",
+                "raises": "only raises",
+            }[b.kind]
+            step = f"{_plain(use)}: {_plain(what)} in {p.change.package} {_plain(at)}"
+            f = b.finding
+            if f is not None and f.fix is not None:
+                step += f"; the index proves {_plain(f.fix.old)} -> {_plain(f.fix.new)}"
+            elif f is not None and f.replacements:
+                step += f"; try {_plain(f.replacements[0].target)}"
+            where = ", ".join(f"{_plain(loc.file)}:{loc.line}" for loc in locs) or "(no line recorded)"
+            items.append(f"- {where}: {step}")
+    if not items:
+        return []
+    shown = items[:MAX_HANDOFF_LINES]
+    if len(items) > len(shown):
+        shown.append(
+            f"- and {len(items) - len(shown)} more: run `deptime check-upgrade --format json` for all"
+        )
+    return [
+        "<details><summary>For a coding agent</summary>",
+        "",
+        "```text",
+        "DepTime confirmed these uses break with this update (failing at the new version, not at the old).",
+        "Fix exactly these lines, and nothing else for this update: deprecations and uses DepTime can't tell"
+        " about are not breaks.",
+        *shown,
+        "Then run deptime check-upgrade again: it should find no breaks.",
+        "```",
+        "",
+        "</details>",
+        "",
+    ]
+
+
 def to_markdown(result: UpgradeCheckResult) -> str:
     lines = ["## DepTime upgrade check", ""]
     n = result.breaks
@@ -518,6 +575,7 @@ def to_markdown(result: UpgradeCheckResult) -> str:
         lines += [f"Not covered by DepTime's index, so not checked: {_md(names)}.", ""]
     if result.note:
         lines += [_md(result.note), ""]
+    lines += _handoff(result)
     lines.append(
         "DepTime reads the code and the index; it runs nothing and asks no model. A break is a use the index shows"
         " failing at the new version and not at the old one."
