@@ -18,7 +18,7 @@
 
 </div>
 
-Python libraries rename and remove things between releases. Code that worked last year, or code an AI model learned from, then fails with an `ImportError`, an `AttributeError` or "unexpected keyword argument". DepTime tells a coding agent **what changed, in which release, and what to use instead**, in one call.
+Python libraries rename and remove things between releases. Code that worked last year, or code an AI model learned from, then fails with an `ImportError`, an `AttributeError` or "unexpected keyword argument". DepTime tells a coding agent **what changed, in which release, and what to use instead**, in one call. It also checks a dependency update against your code and names **each line the new version breaks**: on a pull request, from a terminal, or in one call.
 
 <p align="center">
 <picture>
@@ -31,7 +31,30 @@ Python libraries rename and remove things between releases. Code that worked las
 - **Local and free.** Open source (MIT). Your code and errors never leave your machine.
 - **Says when it doesn't know.** For a package it doesn't cover, or a name it can't follow, the answer is "not covered" or `unknown`, never a guess.
 
-> **Status:** alpha, in maintenance mode. The tools are complete for the packages they cover, the index rebuilds itself twice a day, and fixes follow [reported wrong answers](https://github.com/cschmertz/deptime/issues/new/choose). Known gaps are listed in [BACKLOG.md](https://github.com/cschmertz/deptime/blob/main/BACKLOG.md).
+> **Status:** alpha. 0.2.0 adds the upgrade check below. The index rebuilds itself twice a day, and fixes follow [reported wrong answers](https://github.com/cschmertz/deptime/issues/new/choose). Known gaps are listed in [BACKLOG.md](https://github.com/cschmertz/deptime/blob/main/BACKLOG.md).
+
+## Check a dependency update
+
+On a pull request from Dependabot, Renovate or a person, the GitHub Action finds the lines of your Python code the new versions break, annotates each one, and fails the check only on a confirmed break ([docs](https://github.com/cschmertz/deptime/blob/main/docs/github-action.md)):
+
+```yaml
+# .github/workflows/upgrade-check.yml
+on:
+  pull_request:
+    paths: ["uv.lock", "poetry.lock", "pyproject.toml", "**/requirements*.txt", "**/requirements/**"]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7 # pin to a commit in your own workflows
+      - uses: cschmertz/deptime@v0.2.0
+```
+
+From a terminal, `uvx deptime check-upgrade` compares the pinned versions at `HEAD` with your working tree, or `--package httpx --to 0.28.1` checks one update. An agent can call the `check_upgrade` tool with the code instead, and the Claude Code plugin's `/deptime:fix-upgrade` runs the check and has Claude fix exactly the lines it reports. A break is a use the index shows failing at the new version and not at the old one; the report ends with a block a coding agent can act on.
+
+**On 264 real Dependabot and Renovate update pull requests** (247 projects, scored once before any fix, [results](https://github.com/cschmertz/deptime/blob/main/bench/upgrade-check/prs/results-2026-11-16.md)), the check failed all 13 whose update breaks the project's code, found 46 of the 48 breaking uses, and flagged 1 of 3,291 uses that still work. 2 of the 264 failed with no real break.
 
 ## Install
 
@@ -45,7 +68,7 @@ claude mcp add deptime -- uvx deptime mcp
 
 On first launch DepTime downloads its prebuilt index (one file from this repo's GitHub Releases) in the background, then checks for a newer one at most once a day. Set `DEPTIME_OFFLINE=1` to never touch the network. Each index carries a signed record of the CI run that built it; `deptime index pull --verify` checks it ([SECURITY.md](https://github.com/cschmertz/deptime/blob/main/SECURITY.md#verifying-the-index)).
 
-Claude Code users can also install the plugin in [`integrations/claude-code`](https://github.com/cschmertz/deptime/tree/main/integrations/claude-code) with `/plugin marketplace add cschmertz/deptime`, then `/plugin install deptime@deptime`. It adds a skill and a local hook that suggests DepTime when a Python version-change error appears in a command's output.
+Claude Code users can also install the plugin in [`integrations/claude-code`](https://github.com/cschmertz/deptime/tree/main/integrations/claude-code) with `/plugin marketplace add cschmertz/deptime`, then `/plugin install deptime@deptime`. It adds a skill, the `/deptime:fix-upgrade` command, and a local hook that suggests DepTime when a Python version-change error appears in a command's output.
 
 **First launch timing out?** `uvx` installs DepTime the first time a client starts it. On macOS with an x86_64 `uv` (an Intel Mac, or Intel Homebrew on Apple silicon), one dependency, `cryptography`, has no prebuilt wheel and is compiled, which can take longer than a client waits for a server to start. Run `uvx deptime --help` once beforehand.
 
@@ -131,7 +154,7 @@ Every set, every later re-run and each miss is in [bench/README.md](https://gith
 
 - **It covers the packages on its [list](https://github.com/cschmertz/deptime/blob/main/docs/coverage.md), not all of PyPI,** and every release of each minor series active since 2023. For anything else the answer is "not covered".
 - **It reads source without running it.** A name that only exists once the library is running (built by compiled code, or computed at import time) can read as `unknown`, or occasionally as missing.
-- **It sees names, parameters and deprecations, not behaviour.** A function that keeps its signature but changes what it does is invisible to it.
+- **It sees names, parameters and deprecations, not behaviour.** A function that keeps its signature but changes what it does is invisible to it, so a clean upgrade check doesn't replace your tests.
 - **Python only.**
 
 ## How it works
@@ -153,6 +176,7 @@ uvx deptime history httpx Client.__init__
 uvx deptime check httpx 0.28.1 'httpx.Client:proxies,proxy'
 uvx deptime diff httpx 0.27.2 0.28.1
 uvx deptime diff pydantic 2024-06-01              # everything since a date
+uvx deptime check-upgrade                         # what the lockfile change breaks; exit 1 on a break
 uvx deptime index status | pull
 ```
 

@@ -16,10 +16,10 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 ---
 
-## Current state: public alpha, v0.1.17
+## Current state: public alpha, v0.2.0
 
-- **Released:** 0.1.17 (2026-11-15) is on PyPI, the MCP Registry and GitHub: Phase 1's fixes (DT-CORE-63, -64,
-  -67), the first code change since 0.1.13.
+- **Released:** 0.2.0 (2026-11-16) is on PyPI, the MCP Registry and GitHub: the upgrade check, as a command
+  (`check-upgrade`), a GitHub Action, an MCP tool (`check_upgrade`) and a Claude Code plugin command.
 - **Index:** 53 packages and 6,800 releases on 2026-11-13 (`SNAPSHOT_FORMAT` 26, schema 2); `index.sqlite.xz` is
   51.0 MB and the `.gz` 78.5 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
@@ -94,26 +94,17 @@ What still needs a person, about once a month:
 
 In order. The first line of each phase is what it delivers.
 
-**Phase 2, the command (DT-CORE-66, DT-CORE-58).** `deptime check-upgrade` answers "what does this update break in my
-code?" from a project directory.
-**Phase 3, the GitHub Action (DT-GTM-06, done).** A check on Dependabot and Renovate pull requests. DT-QA-22 met
-every bar on real ones; its wrong answers and misses first:
+Phases 2 and 3 (the command and the GitHub Action) shipped in 0.2.0. DT-QA-22 met every bar on real update pull
+requests; its three wrong answers have fixes in the next index (DT-CORE-72, DT-DATA-82, DT-DATA-51), and one miss is left:
 - [ ] **DT-CORE-73**: Members of a name that became an alias read `unknown` · `P2` `S`
   - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project).
 
 **Phase 4, the fix (the model's part, outside DepTime).**
-- [ ] **DT-GTM-07**: "Fix what DepTime found": the plugin and the report hand an agent the confirmed breaks · `P2` `S`
-  · deps: CORE-68
-  - The Action's report ends with a block an agent can act on, and the Claude Code plugin gains a command that runs
-    `check_upgrade` and asks the agent to fix exactly those lines. The model writes the fix; DepTime decides what is
-    broken.
 - [ ] **DT-QA-23**: Qwen3.5 9B with the new tools on the upgrade checks · `P2` `S` · deps: CORE-67, CORE-68
   - DT-QA-20's upgrade half again, with `check_upgrade` offered: does one answer per upgrade keep DepTime's
     precision? Protocol first.
 
-**Phase 5, release.**
-- [ ] **DT-OSS-16**: Release 0.2.0 with the command, the Action and the tool · `P1` `S` · deps: GTM-06, QA-21
-  - README: the check leads "What it does", with DT-QA-22's first-run numbers on real update pull requests.
+**Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
   - A review of every tool parameter, result field and CLI option (last chance to rename without a major version);
     the GUI clients checked or listed as not covered (DT-SPIKE-05, DT-SPIKE-07); the 1.0 promise in CHANGELOG.md's
@@ -121,6 +112,10 @@ every bar on real ones; its wrong answers and misses first:
 
 ## Done since 2026-11-13
 
+- [x] **DT-OSS-16** (2026-11-16): 0.2.0 released with the command, the Action, the tool and the plugin command; the
+  README's new "Check a dependency update" section carries DT-QA-22's first-run numbers.
+- [x] **DT-GTM-07** (2026-11-16): the report's "For a coding agent" block (plain names only) and the plugin's
+  `/deptime:fix-upgrade`, which runs `check-upgrade` and asks Claude to fix exactly the lines it reports.
 - [x] **DT-CORE-68** (2026-11-16): a sixth MCP tool, `check_upgrade(package, from_version, to_version?, code?,
   files?)`, and `POST /v1/check-upgrade`: `check-upgrade`'s check for one package as one call. Code, not a path:
   the hosted server would read its own disk.

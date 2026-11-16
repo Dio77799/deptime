@@ -4,6 +4,7 @@
 |---|---|---|
 | MCP server | `.mcp.json` | Runs DepTime locally over stdio with `uvx`, pinned to this plugin's version. No account, no key, no data leaves your machine. |
 | Skill | `skills/deptime/SKILL.md` | Teaches when and how to use `explain_error`, `check_symbols` and `diff_versions` |
+| Command | `commands/fix-upgrade.md` | `/deptime:fix-upgrade [package version]` runs `uvx deptime==<this plugin's version> check-upgrade` in the project, then asks Claude to fix exactly the lines it reports as broken and run it again. It reads the project's files and lockfiles locally; nothing is sent |
 | Hook | `hooks/hooks.json` → `scripts/suggest_deptime.py` | After a Bash command prints a Python version-change error, adds a one-line hint to call `explain_error` (local, no network) |
 
 The first run downloads the prebuilt index (one file from this repo's GitHub Releases) in the background. After that it refreshes at most once a day.

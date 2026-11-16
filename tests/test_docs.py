@@ -24,6 +24,10 @@ def test_the_plugin_runs_this_release_and_names_its_icon():
     assert manifest["version"] == __version__
     assert (server["command"], server["args"]) == ("uvx", [f"deptime=={__version__}", "mcp"])
     assert (plugin / manifest["icon"]).is_file()
+    # The fix-upgrade command (DT-GTM-07) runs the same release; every `deptime==` in it is that release.
+    command = (plugin / "commands" / "fix-upgrade.md").read_text(encoding="utf-8")
+    pins = re.findall(r"deptime==([\w.]+)", command)
+    assert pins and set(pins) == {__version__}
 
 
 def test_registry_server_json_matches_the_release():

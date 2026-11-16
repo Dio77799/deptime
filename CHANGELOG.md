@@ -24,18 +24,38 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-16
+
+The upgrade check: what a dependency update breaks in a project's code, decided by the index alone, with no model
+in the loop. A minor release because the contract grows by a tool, a CLI command and their result model; nothing
+was renamed or removed. On 264 real Dependabot and Renovate pull requests, scored once before any fix, it failed
+all 13 whose update breaks the project's code and flagged 1 of 3,291 working uses
+(`bench/upgrade-check/prs/results-2026-11-16.md`).
+
 ### Added
 - `deptime check-upgrade [path]`: what a dependency update breaks in a project's code. It reads the versions before
   and after from `uv.lock`, `poetry.lock`, `pyproject.toml` or `requirements*.txt` pins (requirements files in any
   directory; a git revision, `--base`, against the working tree; or `--package P --to V`), reads every Python file
-  with DepTime's own reader, and checks
-  each use of a changed covered package at the new version. Each break comes with its file and line, the release
-  that made the change and the replacement; uses deprecated at the new version are warnings, and uses DepTime can't
-  tell about, or that fail at the old version too, are listed apart. Markdown or JSON; exit code 1 only on a break.
+  with DepTime's own reader, and checks each use of a changed covered package at the new version. Each break comes
+  with its file and line, the release that made the change and the replacement; uses deprecated at the new version
+  are warnings, and uses DepTime can't tell about, or that fail at the old version too, are listed apart. Markdown
+  or JSON; exit code 1 only on a break.
   Nothing is installed, imported or run, and no model is asked (DT-CORE-58, DT-CORE-66, DT-CORE-59)
 - A sixth MCP tool, `check_upgrade(package, from_version, to_version?, code?, files?)`: the same check for one
   package as one call, on the code an agent passes (a snippet, or files by path), for clients with no shell. Also
   `POST /v1/check-upgrade` (DT-CORE-68)
+- A GitHub Action (`uses: cschmertz/deptime@v0.2.0`, `action.yml`): runs the check on a pull request against its
+  base, annotates each broken line, writes the report to the job summary and fails only on a break. It needs
+  `contents: read` and no secrets, so it works on Dependabot's pull requests (`docs/github-action.md`, DT-GTM-06)
+- When there's a break, the report ends with a "For a coding agent" block: each broken line and the index's proven
+  fix or best replacement, as plain names. The Claude Code plugin's `/deptime:fix-upgrade` runs the check and asks
+  Claude to fix exactly those lines, then runs it again (DT-GTM-07)
+
+### Changed (index, published by the build, not by this release)
+- A `@dataclass(init=False)` class keeps the constructor it inherits (pydantic-ai 2's `RequestUsage(input_tokens=)`
+  read rejected); a class or function defined only when an import fails isn't read as only raising (dspy 3.4.1's
+  `GEPA`); names a module binds through `global` in a function it runs at import are found (sqlalchemy 2.x's
+  `orm.collections.attribute_mapped_collection`). `SNAPSHOT_FORMAT` 27 (DT-CORE-72, DT-DATA-82, DT-DATA-51)
 
 ## [0.1.17] - 2026-11-15
 
@@ -432,7 +452,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.1.17...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/cschmertz/deptime/compare/v0.1.17...v0.2.0
 [0.1.17]: https://github.com/cschmertz/deptime/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/cschmertz/deptime/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/cschmertz/deptime/compare/v0.1.14...v0.1.15
