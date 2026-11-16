@@ -3,6 +3,7 @@
   uv run python bench/model-alone/with-tools/ask.py --prompts                write the two system prompts
   uv run python bench/model-alone/with-tools/ask.py --test tracebacks --model qwen/qwen3.5-9b --run 1 --limit 10
   uv run python bench/model-alone/with-tools/ask.py --test upgrades --model qwen/qwen3.5-9b --run 1
+  ... --dir bench/model-alone/check-upgrade                                 prompts and replies there (DT-QA-23)
 
 The questions, order and answer format are the model-alone runs' (../ask_openrouter.py). The model is offered
 DepTime's five tools as its MCP server lists them, names, descriptions and schemas unchanged, and the server's own
@@ -61,18 +62,18 @@ openrouter = _module(ALONE / "openrouter.py", "openrouter")
 base = _module(ALONE / "ask_openrouter.py", "ask_openrouter")
 
 
-def prompt_path(test: str) -> Path:
-    return HERE / f"system-prompt-{test}.txt"
+def prompt_path(test: str, folder: Path = HERE) -> Path:
+    return folder / f"system-prompt-{test}.txt"
 
 
-def write_prompts() -> None:
+def write_prompts(folder: Path = HERE) -> None:
     for test in ("tracebacks", "upgrades"):
         alone, _, _ = base.questions(test)
         assert alone.count(NO_TOOLS) == 1, test
         text = (
             alone.replace(NO_TOOLS, WITH_TOOLS) + "\n\nDepTime's own instructions:\n" + INSTRUCTIONS.strip()
         )
-        prompt_path(test).write_text(text + "\n", encoding="utf-8")
+        prompt_path(test, folder).write_text(text + "\n", encoding="utf-8")
 
 
 def as_function(tool) -> dict:
@@ -205,9 +206,9 @@ async def run(args) -> int:
         print("no index; run `deptime index pull` first", file=sys.stderr)
         return 2
     dt = DepTime(store, load_coverage(settings.coverage_file), settings.index_path)
-    system = prompt_path(args.test).read_text(encoding="utf-8").strip()
+    system = prompt_path(args.test, args.dir).read_text(encoding="utf-8").strip()
     _, _, todo = base.questions(args.test)
-    out_dir = HERE / args.test
+    out_dir = args.dir / args.test
     out_dir.mkdir(exist_ok=True)
     out = out_dir / f"{args.model.split('/')[-1].replace(':', '-')}-run{args.run}.jsonl"
     have, spent = set(), 0.0
@@ -263,9 +264,15 @@ def main() -> int:
     parser.add_argument("--run", type=int, default=1)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--jobs", type=int, default=4)
+    parser.add_argument(
+        "--dir",
+        type=Path,
+        default=HERE,
+        help="the folder for the prompts and replies (default: this one, DT-QA-20)",
+    )
     args = parser.parse_args()
     if args.prompts:
-        write_prompts()
+        write_prompts(args.dir)
         return 0
     if not (args.test and args.model):
         parser.error("--test and --model are needed")
