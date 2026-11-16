@@ -3,8 +3,10 @@
 Read as text, never installed or imported (Invariant 1). A project's pins come from, in this order:
 
 - `uv.lock` or `poetry.lock`: the resolved version of every package (`[[package]]` tables);
-- `requirements*.txt` (at the root and under `requirements/`), following `-r` includes inside the project: lines
-  that pin one version with `==` (or `===`);
+- `requirements*.txt` and the `.txt` files under a `requirements/` directory, at any depth (DT-CORE-71: Dependabot
+  updates `backend/requirements.txt` with no directory in its title), following `-r` includes inside the project:
+  lines that pin one version with `==` (or `===`). Virtual environments, build output and hidden directories are left
+  out;
 - `pyproject.toml`: `[project]` dependencies, optional dependencies and `[dependency-groups]` pinned with `==`, and
   Poetry's dependencies written as an exact version (`"1.2.3"`, `"==1.2.3"`, `{version = "1.2.3"}`).
 
@@ -14,6 +16,7 @@ checking either out. A range (`>=1.2`) is not a pin and is skipped: the version 
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import tomllib
@@ -26,7 +29,15 @@ from packaging.version import InvalidVersion, Version
 
 LOCKFILES = ("uv.lock", "poetry.lock")
 MAX_INCLUDES = 20  # `-r` files followed from one requirements file
-_REQ_GLOBS = ("requirements*.txt", "requirements/*.txt", "requirements/**/*.txt")
+_SKIP_DIRS = {
+    "node_modules",
+    "site-packages",
+    "__pycache__",
+    "venv",
+    "env",
+    "build",
+    "dist",
+}  # and any `.name`
 _POETRY_EXACT = re.compile(r"^\s*(?:==\s*)?v?(\d[\w.!+-]*)\s*$")
 
 
@@ -85,12 +96,12 @@ class Tree:
         """Paths relative to the project root, POSIX style."""
         if self._listing is None:
             if self.rev is None:
-                self._listing = sorted(
-                    p.relative_to(self.root).as_posix()
-                    for g in ("*", "requirements/**/*")
-                    for p in self.root.glob(g)
-                    if p.is_file()
-                )
+                found = []
+                for top, dirs, names in os.walk(self.root):
+                    dirs[:] = [d for d in dirs if not _skipped(d)]
+                    rel = Path(top).relative_to(self.root)
+                    found += [(rel / n).as_posix() for n in names]
+                self._listing = sorted(found)
             else:
                 # Paths relative to the project directory, which may be a subdirectory of the repository.
                 out = self._git("ls-tree", "-r", "--name-only", "--full-tree", self.rev, "--", ".")
@@ -107,6 +118,18 @@ class Tree:
         if rel not in self.files():
             return None
         return self._git("show", f"{self.rev}:./{rel}")
+
+
+def _skipped(directory: str) -> bool:
+    return directory.startswith(".") or directory in _SKIP_DIRS
+
+
+def _is_requirements(rel: str) -> bool:
+    """`requirements*.txt`, or a `.txt` file under a `requirements/` directory, outside skipped directories."""
+    *dirs, name = rel.split("/")
+    if any(_skipped(d) for d in dirs) or not name.endswith(".txt"):
+        return False
+    return name.startswith("requirements") or "requirements" in dirs
 
 
 def _version(raw: str) -> str | None:
@@ -217,10 +240,7 @@ def read_pins(root: Path, rev: str | None = None) -> Pins:
                 pins.by_file[lock] = _lock_pins(tree.read(lock) or "")
             except (tomllib.TOMLDecodeError, OSError) as exc:
                 pins.problems.append(f"{lock}: {type(exc).__name__}: {exc}")
-    reqs = sorted(
-        {f for f in files for g in _REQ_GLOBS if PurePosixPath(f).match(g)},
-        key=lambda f: (f.count("/"), f),
-    )
+    reqs = sorted((f for f in files if _is_requirements(f)), key=lambda f: (f.count("/"), f))
     for rel in reqs:
         try:
             found = _requirements(tree, rel, set())

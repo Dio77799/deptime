@@ -98,9 +98,6 @@ In order. The first line of each phase is what it delivers.
 code?" from a project directory.
 **Phase 3, the GitHub Action (DT-GTM-06, done).** A check on Dependabot and Renovate pull requests. DT-QA-22 met
 every bar on real ones; its wrong answers and misses first:
-- [ ] **DT-CORE-71**: `check-upgrade` reads requirements files in subdirectories · `P1` `S`
-  - 7 of DT-QA-22's 16 unread updates: Dependabot updates `python-backend/requirements.txt` with no directory in the
-    title, so the Action runs at the root, where only `requirements*.txt` and `requirements/` are read.
 - [ ] **DT-DATA-82**: A fallback defined only when an import fails reads `raises` · `P1` `S`
   - dspy 3.4.1's `GEPA` raises ImportError only where gepa can't install; elsewhere the class is imported. DT-QA-22's
     one working use flagged, and one of its two false failures. A wrong answer, so worked on now.
@@ -136,6 +133,9 @@ every bar on real ones; its wrong answers and misses first:
 
 ## Done since 2026-11-13
 
+- [x] **DT-CORE-71** (2026-11-15): `check-upgrade` reads `requirements*.txt` and `requirements/*.txt` in any
+  directory, leaving out virtual environments, build output and hidden directories; the Action's documented trigger
+  paths match them. DT-QA-22's 7 unread subdirectory updates are read (in-sample, no break reported, as labelled).
 - [x] **DT-QA-22** (2026-11-16): the check on 264 real Dependabot and Renovate update pull requests (247 projects),
   protocol committed first: all five bars met. Updates read 93.9%, breaks found 95.8% (46/48), working uses
   flagged 1 of 3,291, pull requests failed with no confirmed break 0.8% (2/264), labelled uses read 99.6%; every pull

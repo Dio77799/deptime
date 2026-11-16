@@ -26,8 +26,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ### Added
 - `deptime check-upgrade [path]`: what a dependency update breaks in a project's code. It reads the versions before
-  and after from `uv.lock`, `poetry.lock`, `requirements*.txt` or `pyproject.toml` pins (a git revision, `--base`,
-  against the working tree; or `--package P --to V`), reads every Python file with DepTime's own reader, and checks
+  and after from `uv.lock`, `poetry.lock`, `pyproject.toml` or `requirements*.txt` pins (requirements files in any
+  directory; a git revision, `--base`, against the working tree; or `--package P --to V`), reads every Python file
+  with DepTime's own reader, and checks
   each use of a changed covered package at the new version. Each break comes with its file and line, the release
   that made the change and the replacement; uses deprecated at the new version are warnings, and uses DepTime can't
   tell about, or that fail at the old version too, are listed apart. Markdown or JSON; exit code 1 only on a break.

@@ -185,3 +185,34 @@ def test_a_revision_is_read_without_checking_it_out(repo):
 def test_an_unknown_revision_is_an_error(repo):
     with pytest.raises(OSError):
         read_pins(repo, "no-such-rev")
+
+
+def test_requirements_in_subdirectories_are_read_at_any_depth(tmp_path):
+    """DT-CORE-71: Dependabot updates `python-backend/requirements.txt` with no directory in the title, and the Action
+    runs at the root. Virtual environments, build output and hidden directories are left out."""
+    _write(
+        tmp_path,
+        {
+            "python-backend/requirements.txt": "openai==1.40.0\n",
+            "tests/requirements-sdk.txt": "pytest==8.0.0\n",
+            "services/api/requirements/prod.txt": "httpx==0.27.2\n",
+            "docs/notes.txt": "httpx==0.1.0\n",  # neither named nor placed as a requirements file
+            ".venv/lib/requirements.txt": "httpx==0.1.0\n",
+            "venv/requirements.txt": "httpx==0.1.0\n",
+            "node_modules/x/requirements.txt": "httpx==0.1.0\n",
+            ".github/requirements.txt": "httpx==0.1.0\n",
+        },
+    )
+    assert read_pins(tmp_path).by_file == {
+        "python-backend/requirements.txt": {"openai": "1.40.0"},
+        "tests/requirements-sdk.txt": {"pytest": "8.0.0"},
+        "services/api/requirements/prod.txt": {"httpx": "0.27.2"},
+    }
+
+
+def test_a_subdirectory_requirements_update_is_read_from_the_repository_root(repo):
+    """The same at a git revision: the root project sees the change to `svc/requirements.txt`."""
+    (repo / "svc" / "requirements.txt").write_text("httpx==0.28.1\n")
+    base, head = read_pins(repo, "HEAD"), read_pins(repo)
+    assert base.by_file == {"svc/requirements.txt": {"httpx": "0.27.2"}}
+    assert changes(base, head) == [Change("httpx", "0.27.2", "0.28.1", "svc/requirements.txt")]

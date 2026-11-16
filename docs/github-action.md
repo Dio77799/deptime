@@ -11,7 +11,7 @@ It's available from DepTime 0.2.0.
 name: upgrade-check
 on:
   pull_request:
-    paths: ["uv.lock", "poetry.lock", "requirements*.txt", "pyproject.toml"]
+    paths: ["uv.lock", "poetry.lock", "pyproject.toml", "**/requirements*.txt", "**/requirements/**"]
 permissions:
   contents: read
 jobs:
@@ -27,7 +27,8 @@ jobs:
 1. Installs DepTime with `uvx`, pinned to the release the action ships with.
 2. Downloads DepTime's index (about 50 MB) from this repository's GitHub releases, and checks its checksum.
 3. Reads the version changes between the pull request's base commit and its head, from `uv.lock`, `poetry.lock`,
-   `requirements*.txt` or `pyproject.toml` pins. It fetches the base commit if the checkout doesn't have it.
+   `pyproject.toml` or `requirements*.txt` pins (requirements files in any directory, `requirements/*.txt` too). It
+   fetches the base commit if the checkout doesn't have it.
 4. For each changed package that DepTime covers, it reads every use of that package in the project's Python files and
    checks each one against the index at the new version. A use fails the check when the index shows it failing at the
    new version and not at the old one: a removed name, a keyword that's no longer accepted, an argument that's now
