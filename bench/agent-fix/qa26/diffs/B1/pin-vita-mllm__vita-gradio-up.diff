@@ -1,0 +1,29 @@
+diff --git a/web_demo/web_ability_demo.py b/web_demo/web_ability_demo.py
+index a94264e..16575fb 100644
+--- a/web_demo/web_ability_demo.py
++++ b/web_demo/web_ability_demo.py
+@@ -436,13 +436,13 @@ def _launch_demo(llm, model_config, sampling_params, tokenizer, feature_extracto
+         with gr.Row():
+             with gr.Column(scale=2):
+                 addfile_btn = gr.UploadButton("📁 Upload (上传文件[视频,图片])", file_types=["video", "image"])
+-                video_input = gr.Video(sources=[ "webcam"], height=400, width=700, container=True, interactive=True, show_download_button=True, label="📹 Video Recording (视频录制)")
++                video_input = gr.Video(sources=[ "webcam"], height=400, width=700, container=True, interactive=True, buttons=["download"], label="📹 Video Recording (视频录制)")
+ 
+ 
+         
+             with gr.Column(scale=1):
+                 empty_bin = gr.Button("🧹 Clear History (清除历史)")
+-                record_btn = gr.Audio(sources=[ "microphone","upload"], type="filepath", label="🎤 Record or Upload Audio (录音或上传音频)", show_download_button=True, waveform_options=gr.WaveformOptions(sample_rate=16000))
++                record_btn = gr.Audio(sources=[ "microphone","upload"], type="filepath", label="🎤 Record or Upload Audio (录音或上传音频)", buttons=["download"], waveform_options=gr.WaveformOptions(sample_rate=16000))
+                 audio_output = gr.Audio(
+                     label="Output Audio",
+                     value=None,
+@@ -486,7 +486,7 @@ def _launch_demo(llm, model_config, sampling_params, tokenizer, feature_extracto
+         debug=True,
+         server_name="0.0.0.0",
+         server_port=server_port,
+-        show_api=False,
++        footer_links=["gradio", "settings"],
+         show_error=False,
+         auth=('123','123'),
+         )

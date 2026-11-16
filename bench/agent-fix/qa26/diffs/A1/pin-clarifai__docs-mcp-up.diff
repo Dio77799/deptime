@@ -1,0 +1,72 @@
+diff --git a/code_snippets/runners-examples/web-search.py b/code_snippets/runners-examples/web-search.py
+index d7a56ed..019e2eb 100644
+--- a/code_snippets/runners-examples/web-search.py
++++ b/code_snippets/runners-examples/web-search.py
+@@ -6,7 +6,7 @@ from urllib.parse import urlparse, parse_qs, unquote
+ 
+ import httpx  # type: ignore
+ from bs4 import BeautifulSoup  # type: ignore
+-from mcp.server.fastmcp import FastMCP, Context  # type: ignore
++from mcp.server.mcpserver import MCPServer, Context  # type: ignore
+ 
+ USER_AGENT = (
+     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+@@ -139,8 +139,8 @@ async def fetch_page(url: str, timeout: int = 20) -> PageCache:
+     print(f"[fetch_page] Extracted {len(lines)} lines")
+     return PageCache(url=url, text_lines=lines)
+ 
+-# ---------------- FastMCP Server (in-process) ----------------
+-mcp = FastMCP(
++# ---------------- MCP Server (in-process) ----------------
++mcp = MCPServer(
+     name="duckduckgo-browser",
+     instructions=r"""
+ Tool for browsing.
+@@ -150,7 +150,6 @@ Cite information from the tool using the following format:
+ Do not quote more than 10 words directly from the tool output.
+ sources=web
+ """.strip(),
+-    port=8001,
+ )
+ 
+ @mcp.tool(
+@@ -298,17 +297,17 @@ def web_browsing_prompt(task_type: str) -> str:
+ from clarifai.runners.models.mcp_class import MCPModelClass
+ 
+ class MyBrowserSearchToolClass(MCPModelClass):
+-    def get_server(self) -> FastMCP:
++    def get_server(self) -> MCPServer:
+         return mcp
+ 
+ # Main function to run the MCP server
+ if __name__ == "__main__":
+-    import asyncio
+     import sys
+-    
+-    # Simple approach - just run the server
++
++    # Simple approach - just run the server.
++    # In mcp 2.x, transport settings such as `port` are passed to run(), and run() is synchronous.
+     try:
+-        asyncio.run(mcp.run())
++        mcp.run(transport="streamable-http", port=8001)
+     except KeyboardInterrupt:
+         print("Server stopped by user", file=sys.stderr)
+         sys.exit(0)
+diff --git a/code_snippets/runners-examples/web-search_requirements.txt b/code_snippets/runners-examples/web-search_requirements.txt
+index 5370034..a0c34b9 100644
+--- a/code_snippets/runners-examples/web-search_requirements.txt
++++ b/code_snippets/runners-examples/web-search_requirements.txt
+@@ -1,8 +1,8 @@
+ clarifai==11.7.5
+ anyio==4.9.0
+-mcp==1.9.0
+-fastmcp==2.3.4
++mcp==2.3.0
++fastmcp==4.2.0
+ requests>=2.31.0
+ beautifulsoup4==4.12.2
+ lxml>=4.9.3
+-ddgs
+\ No newline at end of file
++ddgs

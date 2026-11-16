@@ -1,0 +1,92 @@
+diff --git a/llm/inference.py b/llm/inference.py
+index 3e589f1..ea57c76 100644
+--- a/llm/inference.py
++++ b/llm/inference.py
+@@ -67,7 +67,7 @@ def run_llm(
+ 
+     try:
+         if model_type == 'mistral':    
+-            completion = client.chat(
++            completion = client.chat.complete(
+                 model=model,
+                 messages=[ChatMessage(role="user", content=input_prompt)],
+                 temperature=temp,
+diff --git a/llm/run_LLM.py b/llm/run_LLM.py
+index 699150c..11c041b 100644
+--- a/llm/run_LLM.py
++++ b/llm/run_LLM.py
+@@ -16,7 +16,7 @@ from utils.io import save_object, load_object
+ 
+ # ================== MODEL & API IMPORTS ==================
+ from transformers import AutoModelForCausalLM, AutoTokenizer
+-from mistralai.client import MistralClient
++from mistralai.client import Mistral
+ from openai import OpenAI
+ from llm.inference import run_llm
+ 
+@@ -95,14 +95,14 @@ def main(args):
+         api_key = os.getenv("MISTRAL_API_KEY")
+         if not api_key:
+             raise ValueError("Missing API key. Please set MISTRAL_API_KEY in your .env file.")
+-        CLIENT=MistralClient(api_key=api_key)
++        CLIENT=Mistral(api_key=api_key)
+         
+     elif args.model_type == 'mistral':
+         model = args.model_api #this could be ministral-8b-2410, open-mistral-nemo-2407, mistral-large-2407, etc.
+         api_key = os.getenv("MISTRAL_API_KEY")
+         if not api_key:
+             raise ValueError("Missing API key. Please set MISTRAL_API_KEY in your .env file.")
+-        CLIENT=MistralClient(api_key=api_key)
++        CLIENT=Mistral(api_key=api_key)
+         
+     elif args.model_type in ['gpt', 'gpt_reasoning']:
+         model = args.model_api #this could be gpt-4o-2024-05-13, gpt-4o-mini-2024-07-18, etc.
+diff --git a/llm/run_RAGLLM.py b/llm/run_RAGLLM.py
+index 36861e0..b6c9e51 100644
+--- a/llm/run_RAGLLM.py
++++ b/llm/run_RAGLLM.py
+@@ -22,7 +22,7 @@ from context_retriever.hybrid_search import retrieve_context_hybrid
+ # ================== MODEL & API IMPORTS ==================
+ import torch
+ from transformers import AutoModelForCausalLM, AutoTokenizer
+-from mistralai.client import MistralClient
++from mistralai.client import Mistral
+ from openai import OpenAI
+ from llm.inference import run_llm
+ 
+@@ -209,7 +209,7 @@ def main(args):
+         api_key = os.getenv("MISTRAL_API_KEY")
+         if not api_key:
+             raise ValueError("Missing API key. Please set MISTRAL_API_KEY in your .env file.")
+-        _CLIENT=MistralClient(api_key=api_key)
++        _CLIENT=Mistral(api_key=api_key)
+         
+     elif args.model_type == 'mistral':
+         _MODEL = args.model_api #this could be ministral-8b-2410, open-mistral-nemo-2407, mistral-large-2407, etc.
+@@ -217,7 +217,7 @@ def main(args):
+         api_key = os.getenv("MISTRAL_API_KEY")
+         if not api_key:
+             raise ValueError("Missing API key. Please set MISTRAL_API_KEY in your .env file.")
+-        _CLIENT=MistralClient(api_key=api_key)
++        _CLIENT=Mistral(api_key=api_key)
+         
+     elif args.model_type in ['gpt', 'gpt_reasoning']:
+         _MODEL = args.model_api #this could be gpt-4o-2024-05-13, gpt-4o-mini-2024-07-18, etc.
+diff --git a/utils/embedding.py b/utils/embedding.py
+index fdcaa71..ac00b16 100644
+--- a/utils/embedding.py
++++ b/utils/embedding.py
+@@ -5,10 +5,10 @@ import numpy as np
+ # Get text embeddings
+ def get_text_embedding(input, CLIENT, model_embed):
+     if model_embed == 'mistral-embed':
+-        embeddings_batch_response = CLIENT.embeddings(
++        embeddings_batch_response = CLIENT.embeddings.create(
+             model=model_embed,
+-            input=input
+-        )    
++            inputs=input
++        )
+     else:
+         embeddings_batch_response = CLIENT.embeddings.create(
+             model=model_embed,

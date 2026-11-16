@@ -1,0 +1,312 @@
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson2/app.py b/2024/01/AutomatedTestingforLLMOps/Lesson2/app.py
+index 3a9c914..f7aa094 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson2/app.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson2/app.py
+@@ -1,6 +1,6 @@
+-from langchain.prompts                import ChatPromptTemplate
+-from langchain.chat_models            import ChatOpenAI
+-from langchain.schema.output_parser   import StrOutputParser
++from langchain_core.prompts           import ChatPromptTemplate
++from langchain_openai                 import ChatOpenAI
++from langchain_core.output_parsers    import StrOutputParser
+ 
+ delimiter = "####"
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson2/dev_requirements.txt b/2024/01/AutomatedTestingforLLMOps/Lesson2/dev_requirements.txt
+index 764df58..56be0f1 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson2/dev_requirements.txt
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson2/dev_requirements.txt
+@@ -7,7 +7,7 @@ asttokens==2.4.0
+ async-timeout==4.0.3
+ attrs==23.1.0
+ backcall==0.2.0
+-certifi==2023.7.22
++certifi>=2026.10.19
+ cffi==1.16.0
+ charset-normalizer==3.3.0
+ comm==0.1.4
+@@ -38,15 +38,17 @@ jupyterlab==4.0.8
+ jupyterlab-pygments==0.2.2
+ jupyterlab-widgets==3.0.9
+ jupyterlab_server==2.25.1
+-langchain==0.0.326
+-langsmith==0.0.54
++langchain==1.4.9
++langchain-core>=1.8.0
++langchain-openai>=1.8.0
++langsmith>=0.14.9
+ marshmallow==3.20.1
+ matplotlib-inline==0.1.6
+ multidict==6.0.4
+ mypy-extensions==1.0.0
+ nest-asyncio==1.5.8
+ numpy==1.26.1
+-openai==0.28.1
++openai>=2.45.0
+ packaging==23.2
+ pandas==2.1.4
+ parso==0.8.3
+@@ -59,8 +61,7 @@ psutil==5.9.6
+ ptyprocess==0.7.0
+ pure-eval==0.2.2
+ pycparser==2.21
+-pydantic==2.4.2
+-pydantic_core==2.10.1
++pydantic>=2.7.4,<3.0.0
+ PyGithub==2.1.1
+ Pygments==2.16.1
+ PyJWT==2.8.0
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py b/2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py
+index 29e79c5..8ff929a 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py
+@@ -1,8 +1,8 @@
+ from app import assistant_chain
+ from app import system_message
+-from langchain.prompts                import ChatPromptTemplate
+-from langchain.chat_models            import ChatOpenAI
+-from langchain.schema.output_parser   import StrOutputParser
++from langchain_core.prompts           import ChatPromptTemplate
++from langchain_openai                 import ChatOpenAI
++from langchain_core.output_parsers    import StrOutputParser
+ 
+ import os
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson3/app.py b/2024/01/AutomatedTestingforLLMOps/Lesson3/app.py
+index 3b7914a..fa8c3fe 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson3/app.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson3/app.py
+@@ -1,6 +1,6 @@
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ delimiter = "####"
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson3/dev_requirements.txt b/2024/01/AutomatedTestingforLLMOps/Lesson3/dev_requirements.txt
+index 764df58..56be0f1 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson3/dev_requirements.txt
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson3/dev_requirements.txt
+@@ -7,7 +7,7 @@ asttokens==2.4.0
+ async-timeout==4.0.3
+ attrs==23.1.0
+ backcall==0.2.0
+-certifi==2023.7.22
++certifi>=2026.10.19
+ cffi==1.16.0
+ charset-normalizer==3.3.0
+ comm==0.1.4
+@@ -38,15 +38,17 @@ jupyterlab==4.0.8
+ jupyterlab-pygments==0.2.2
+ jupyterlab-widgets==3.0.9
+ jupyterlab_server==2.25.1
+-langchain==0.0.326
+-langsmith==0.0.54
++langchain==1.4.9
++langchain-core>=1.8.0
++langchain-openai>=1.8.0
++langsmith>=0.14.9
+ marshmallow==3.20.1
+ matplotlib-inline==0.1.6
+ multidict==6.0.4
+ mypy-extensions==1.0.0
+ nest-asyncio==1.5.8
+ numpy==1.26.1
+-openai==0.28.1
++openai>=2.45.0
+ packaging==23.2
+ pandas==2.1.4
+ parso==0.8.3
+@@ -59,8 +61,7 @@ psutil==5.9.6
+ ptyprocess==0.7.0
+ pure-eval==0.2.2
+ pycparser==2.21
+-pydantic==2.4.2
+-pydantic_core==2.10.1
++pydantic>=2.7.4,<3.0.0
+ PyGithub==2.1.1
+ Pygments==2.16.1
+ PyJWT==2.8.0
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py b/2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py
+index 34da071..e136e3a 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py
+@@ -1,7 +1,7 @@
+ from app import assistant_chain
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ import pytest
+ 
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson4/app.py b/2024/01/AutomatedTestingforLLMOps/Lesson4/app.py
+index 71cf33f..3f12c9f 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson4/app.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson4/app.py
+@@ -1,6 +1,6 @@
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ 
+ def read_file_into_string(file_path):
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson4/dev_requirements.txt b/2024/01/AutomatedTestingforLLMOps/Lesson4/dev_requirements.txt
+index 764df58..56be0f1 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson4/dev_requirements.txt
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson4/dev_requirements.txt
+@@ -7,7 +7,7 @@ asttokens==2.4.0
+ async-timeout==4.0.3
+ attrs==23.1.0
+ backcall==0.2.0
+-certifi==2023.7.22
++certifi>=2026.10.19
+ cffi==1.16.0
+ charset-normalizer==3.3.0
+ comm==0.1.4
+@@ -38,15 +38,17 @@ jupyterlab==4.0.8
+ jupyterlab-pygments==0.2.2
+ jupyterlab-widgets==3.0.9
+ jupyterlab_server==2.25.1
+-langchain==0.0.326
+-langsmith==0.0.54
++langchain==1.4.9
++langchain-core>=1.8.0
++langchain-openai>=1.8.0
++langsmith>=0.14.9
+ marshmallow==3.20.1
+ matplotlib-inline==0.1.6
+ multidict==6.0.4
+ mypy-extensions==1.0.0
+ nest-asyncio==1.5.8
+ numpy==1.26.1
+-openai==0.28.1
++openai>=2.45.0
+ packaging==23.2
+ pandas==2.1.4
+ parso==0.8.3
+@@ -59,8 +61,7 @@ psutil==5.9.6
+ ptyprocess==0.7.0
+ pure-eval==0.2.2
+ pycparser==2.21
+-pydantic==2.4.2
+-pydantic_core==2.10.1
++pydantic>=2.7.4,<3.0.0
+ PyGithub==2.1.1
+ Pygments==2.16.1
+ PyJWT==2.8.0
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson4/save_eval_artifacts.py b/2024/01/AutomatedTestingforLLMOps/Lesson4/save_eval_artifacts.py
+index ba880aa..1af549b 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson4/save_eval_artifacts.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson4/save_eval_artifacts.py
+@@ -2,9 +2,9 @@ import pandas as pd
+ from app import assistant_chain, quiz_bank
+ from IPython.display import display, HTML
+ 
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ eval_system_prompt = """You are an assistant that evaluates how well the quiz assistant
+     creates quizzes for a user by looking at the set of facts available to the assistant.
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson4/test_hallucinations.py b/2024/01/AutomatedTestingforLLMOps/Lesson4/test_hallucinations.py
+index f43fa03..429d74d 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson4/test_hallucinations.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson4/test_hallucinations.py
+@@ -1,8 +1,8 @@
+ from app import assistant_chain, quiz_bank
+ 
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ 
+ def create_eval_chain(context, agent_response):
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson5/app.py b/2024/01/AutomatedTestingforLLMOps/Lesson5/app.py
+index 2dae50e..517d5d6 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson5/app.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson5/app.py
+@@ -1,6 +1,6 @@
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ delimiter = "####"
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson5/dev_requirements.txt b/2024/01/AutomatedTestingforLLMOps/Lesson5/dev_requirements.txt
+index f5485c5..5449c98 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson5/dev_requirements.txt
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson5/dev_requirements.txt
+@@ -7,7 +7,7 @@ asttokens==2.4.0
+ async-timeout==4.0.3
+ attrs==23.1.0
+ backcall==0.2.0
+-certifi==2023.7.22
++certifi>=2026.10.19
+ cffi==1.16.0
+ charset-normalizer==3.3.0
+ comm==0.1.4
+@@ -28,15 +28,17 @@ jsonpatch==1.33
+ jsonpointer==2.4
+ jupyter_client==8.4.0
+ jupyter_core==5.4.0
+-langchain==0.0.326
+-langsmith==0.0.54
++langchain==1.4.9
++langchain-core>=1.8.0
++langchain-openai>=1.8.0
++langsmith>=0.14.9
+ marshmallow==3.20.1
+ matplotlib-inline==0.1.6
+ multidict==6.0.4
+ mypy-extensions==1.0.0
+ nest-asyncio==1.5.8
+ numpy==1.26.1
+-openai==0.28.1
++openai>=2.45.0
+ packaging==23.2
+ parso==0.8.3
+ pexpect==4.8.0
+@@ -48,8 +50,7 @@ psutil==5.9.6
+ ptyprocess==0.7.0
+ pure-eval==0.2.2
+ pycparser==2.21
+-pydantic==2.4.2
+-pydantic_core==2.10.1
++pydantic>=2.7.4,<3.0.0
+ PyGithub==2.1.1
+ Pygments==2.16.1
+ PyJWT==2.8.0
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson5/test_release_evals.py b/2024/01/AutomatedTestingforLLMOps/Lesson5/test_release_evals.py
+index 46929e1..00334f4 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson5/test_release_evals.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson5/test_release_evals.py
+@@ -1,8 +1,8 @@
+ # note, you will need to run the cell to write the app file for these imports to work.
+ from app import system_message, quiz_information_bank, assistant_chain
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ 
+ def create_eval_chain(agent_response):

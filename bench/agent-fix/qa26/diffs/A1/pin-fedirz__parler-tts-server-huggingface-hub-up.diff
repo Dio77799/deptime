@@ -1,0 +1,33 @@
+diff --git a/parler_tts_server/main.py b/parler_tts_server/main.py
+index 8e54cf1..7aef627 100644
+--- a/parler_tts_server/main.py
++++ b/parler_tts_server/main.py
+@@ -78,7 +78,7 @@ def health() -> Response:
+ 
+ @app.get("/v1/models", response_model=list[Model])
+ def get_models() -> list[Model]:
+-    models = list(huggingface_hub.list_models(model_name="parler-tts"))
++    models = list(huggingface_hub.list_models(search="parler-tts", expand=["createdAt"]))
+     models = [
+         Model(
+             id=model.id,
+@@ -94,7 +94,7 @@ def get_models() -> list[Model]:
+ 
+ @app.get("/v1/models/{model_name:path}", response_model=Model)
+ def get_model(model_name: str) -> Model:
+-    models = list(huggingface_hub.list_models(model_name=model_name))
++    models = list(huggingface_hub.list_models(search=model_name, expand=["createdAt"]))
+     if len(models) == 0:
+         raise HTTPException(status_code=404, detail="Model doesn't exists")
+     exact_match: ModelInfo | None = None
+diff --git a/server_requirements.txt b/server_requirements.txt
+index 88b8430..16ac321 100644
+--- a/server_requirements.txt
++++ b/server_requirements.txt
+@@ -1,5 +1,5 @@
+ fastapi~=0.111.0
+ uvicorn~=0.29.0
+ pydantic-settings~=2.2.1
+-huggingface-hub==0.23.1
++huggingface-hub==2.4.0
+ openai==1.31.0

@@ -1,0 +1,119 @@
+diff --git a/mcp/mcpServers/mcpServer_demo_stdio.py b/mcp/mcpServers/mcpServer_demo_stdio.py
+index 4b25ae3..a86ee8e 100644
+--- a/mcp/mcpServers/mcpServer_demo_stdio.py
++++ b/mcp/mcpServers/mcpServer_demo_stdio.py
+@@ -1,9 +1,9 @@
+ # server.py
+ import httpx
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ # Create an MCP server
+-mcp = FastMCP("Demo")
++mcp = MCPServer("Demo")
+ 
+ 
+ @mcp.tool()
+diff --git a/mcp/mcpServers/mcpServer_weather_sse.py b/mcp/mcpServers/mcpServer_weather_sse.py
+index 0784876..c7b779b 100644
+--- a/mcp/mcpServers/mcpServer_weather_sse.py
++++ b/mcp/mcpServers/mcpServer_weather_sse.py
+@@ -34,9 +34,9 @@ MCP SSE Weather Service (FastMCP 实现版)
+ 最后更新: 2025-03-31
+ """
+ import httpx
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+-mcp = FastMCP("WeatherServer", port=8001)
++mcp = MCPServer("WeatherServer")
+ 
+ 
+ @mcp.tool()
+@@ -83,6 +83,8 @@ if __name__ == "__main__":
+     show_client_help(host="localhost" if host == "0.0.0.0" else host, port=port)
+ 
+     # 启动SSE服务（假设FastMCP支持host/port参数）
++    # mcp 2.x: host/port are passed to run() instead of the constructor
+     mcp.run(
+         transport="sse",
++        port=8001,
+     )
+diff --git a/mcp/mcpServers/weather.py b/mcp/mcpServers/weather.py
+index 3011af1..9109803 100644
+--- a/mcp/mcpServers/weather.py
++++ b/mcp/mcpServers/weather.py
+@@ -14,11 +14,11 @@ from typing import TypedDict
+ 
+ from pydantic import BaseModel, Field
+ 
+-from mcp.server.fastmcp import FastMCP
+-from mcp.shared.memory import create_connected_server_and_client_session as client_session
++from mcp.client import Client
++from mcp.server.mcpserver import MCPServer
+ 
+ # Create server
+-mcp = FastMCP("Weather Service")
++mcp = MCPServer("Weather Service")
+ 
+ 
+ # Example 1: Using a Pydantic model for structured output
+@@ -157,36 +157,36 @@ if __name__ == "__main__":
+         print("Testing Weather Service Tools (via MCP protocol)\n")
+         print("=" * 80)
+ 
+-        async with client_session(mcp._mcp_server) as client:
++        async with Client(mcp) as client:
+             # Test get_weather
+             result = await client.call_tool("get_weather", {"city": "London"})
+             print("\nWeather in London:")
+-            print(json.dumps(result.structuredContent, indent=2))
++            print(json.dumps(result.structured_content, indent=2))
+ 
+             # Test get_weather_summary
+             result = await client.call_tool("get_weather_summary", {"city": "Paris"})
+             print("\nWeather summary for Paris:")
+-            print(json.dumps(result.structuredContent, indent=2))
++            print(json.dumps(result.structured_content, indent=2))
+ 
+             # Test get_weather_metrics
+             result = await client.call_tool("get_weather_metrics", {"cities": ["Tokyo", "Sydney", "Mumbai"]})
+             print("\nWeather metrics:")
+-            print(json.dumps(result.structuredContent, indent=2))
++            print(json.dumps(result.structured_content, indent=2))
+ 
+             # Test get_weather_alerts
+             result = await client.call_tool("get_weather_alerts", {"region": "California"})
+             print("\nWeather alerts for California:")
+-            print(json.dumps(result.structuredContent, indent=2))
++            print(json.dumps(result.structured_content, indent=2))
+ 
+             # Test get_temperature
+             result = await client.call_tool("get_temperature", {"city": "Berlin", "unit": "fahrenheit"})
+             print("\nTemperature in Berlin:")
+-            print(json.dumps(result.structuredContent, indent=2))
++            print(json.dumps(result.structured_content, indent=2))
+ 
+             # Test get_weather_stats
+             result = await client.call_tool("get_weather_stats", {"city": "Seattle", "days": 30})
+             print("\nWeather stats for Seattle (30 days):")
+-            print(json.dumps(result.structuredContent, indent=2))
++            print(json.dumps(result.structured_content, indent=2))
+ 
+             # Also show the text content for comparison
+             print("\nText content for last result:")
+@@ -204,11 +204,11 @@ if __name__ == "__main__":
+             print(f"\nTool: {tool.name}")
+             print(f"Description: {tool.description}")
+             print("Input Schema:")
+-            print(json.dumps(tool.inputSchema, indent=2))
++            print(json.dumps(tool.input_schema, indent=2))
+ 
+-            if tool.outputSchema:
++            if tool.output_schema:
+                 print("Output Schema:")
+-                print(json.dumps(tool.outputSchema, indent=2))
++                print(json.dumps(tool.output_schema, indent=2))
+             else:
+                 print("Output Schema: None (returns unstructured content)")
+ 

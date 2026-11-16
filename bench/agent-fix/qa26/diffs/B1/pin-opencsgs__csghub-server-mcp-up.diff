@@ -1,0 +1,20 @@
+diff --git a/docker/spaces/templates/mcp_server/app.py b/docker/spaces/templates/mcp_server/app.py
+index c1907f7..8f99969 100644
+--- a/docker/spaces/templates/mcp_server/app.py
++++ b/docker/spaces/templates/mcp_server/app.py
+@@ -1,7 +1,7 @@
+ import requests
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+-mcp = FastMCP(name="Echo", host="0.0.0.0", port=8000, log_level="INFO")
++mcp = MCPServer(name="Echo", log_level="INFO")
+ 
+ @mcp.resource(uri="datasource://sites", description="List supported websites")
+ def get_sources() -> str:
+@@ -25,4 +25,4 @@ def get_prompt(num: int) -> str:
+     return f"Please find the top {num} models by download count."
+ 
+ if __name__ == "__main__":
+-    mcp.run(transport='streamable-http')
++    mcp.run(transport='streamable-http', host="0.0.0.0", port=8000)

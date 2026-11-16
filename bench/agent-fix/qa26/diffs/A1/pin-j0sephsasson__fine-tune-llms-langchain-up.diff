@@ -1,0 +1,78 @@
+diff --git a/docker-requirements.txt b/docker-requirements.txt
+index 0019844..c0384da 100644
+--- a/docker-requirements.txt
++++ b/docker-requirements.txt
+@@ -1,6 +1,9 @@
+-llama-index==0.4.40
+-langchain==0.0.123
++llama-index-core==0.14.26
++llama-index-llms-langchain==0.10.0
++llama-index-embeddings-openai==0.8.0
++langchain==1.4.9
++langchain-openai==1.8.0
+ boto3==1.26.100
+ python-dotenv==0.21.0
+ PyPDF2==3.0.1
+-docx2txt==0.8
+\ No newline at end of file
++docx2txt==0.8
+diff --git a/llm/query.py b/llm/query.py
+index 432e52a..1e86029 100644
+--- a/llm/query.py
++++ b/llm/query.py
+@@ -1,12 +1,19 @@
+ import os
++import json
+ from dotenv import load_dotenv
+-from llama_index import GPTSimpleVectorIndex
++from llama_index.core import StorageContext, load_index_from_storage
++from llama_index.llms.langchain import LangChainLLM
++from langchain_openai import ChatOpenAI
+ 
+ load_dotenv()
+ 
+ os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_KEY')
+ 
+ def query_llm(prompt, index_file="indexdata/index.json"):
+-    loaded_index = GPTSimpleVectorIndex.load_from_disk(index_file)
+-    result = loaded_index.query(prompt)
++    with open(index_file) as f:
++        storage_context = StorageContext.from_dict(json.load(f))
++    loaded_index = load_index_from_storage(storage_context)
++
++    llm = LangChainLLM(llm=ChatOpenAI(temperature=0.7, model='gpt-3.5-turbo'))
++    result = loaded_index.as_query_engine(llm=llm).query(prompt)
+     return result
+diff --git a/llm/tune.py b/llm/tune.py
+index 07e12dd..c8aec40 100644
+--- a/llm/tune.py
++++ b/llm/tune.py
+@@ -1,7 +1,9 @@
+ import os
++import json
+ from dotenv import load_dotenv
+-from llama_index import SimpleDirectoryReader, GPTSimpleVectorIndex, LLMPredictor
+-from langchain.chat_models import ChatOpenAI
++from llama_index.core import SimpleDirectoryReader, VectorStoreIndex
++from llama_index.llms.langchain import LangChainLLM
++from langchain_openai import ChatOpenAI
+ 
+ load_dotenv()
+ 
+@@ -10,10 +12,12 @@ os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_KEY')
+ def tune_llm(input_directory="sourcedata", output_file="indexdata/index.json"):
+     loaded_content = SimpleDirectoryReader(input_directory).load_data()
+ 
+-    llm_predictor = LLMPredictor(llm=ChatOpenAI(temperature=0.7, model_name='gpt-3.5-turbo'))
+-    output_index = GPTSimpleVectorIndex(loaded_content, llm_predictor=llm_predictor)
++    llm = LangChainLLM(llm=ChatOpenAI(temperature=0.7, model='gpt-3.5-turbo'))
++    output_index = VectorStoreIndex.from_documents(loaded_content, llm=llm)
+ 
+     # Create the output directory if it doesn't exist
+     os.makedirs(os.path.dirname(output_file), exist_ok=True)
+ 
+-    output_index.save_to_disk(output_file)
+\ No newline at end of file
++    # Serialize the whole index into a single JSON file (the S3 flow expects one file)
++    with open(output_file, 'w') as f:
++        json.dump(output_index.storage_context.to_dict(), f)

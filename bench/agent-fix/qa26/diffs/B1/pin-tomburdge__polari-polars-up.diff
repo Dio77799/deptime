@@ -1,0 +1,38 @@
+diff --git a/polari/__init__.py b/polari/__init__.py
+index 52cb1a9..b2dcf50 100644
+--- a/polari/__init__.py
++++ b/polari/__init__.py
+@@ -6,17 +6,12 @@ from typing import TYPE_CHECKING, List
+ import polars as pl
+ from polars.plugins import register_plugin_function
+ 
+-from polari.utils import parse_into_expr, parse_version
++from polari.utils import parse_into_expr
+ 
+ if TYPE_CHECKING:
+-    from polars.type_aliases import IntoExpr
++    from polars._typing import IntoExpr
+ 
+-if parse_version(pl.__version__) < parse_version("0.20.16"):
+-    from polars.utils.udfs import _get_shared_lib_location
+-
+-    lib: str | Path = _get_shared_lib_location(__file__)
+-else:
+-    lib = Path(__file__).parent
++lib: str | Path = Path(__file__).parent
+ 
+ # more plugin ideas: units converter. runtime_units (or other)
+ # polars faker: creates fake data with rust faker crate
+diff --git a/polari/utils.py b/polari/utils.py
+index fa5332e..19a0e56 100644
+--- a/polari/utils.py
++++ b/polari/utils.py
+@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Sequence
+ import polars as pl
+ 
+ if TYPE_CHECKING:
+-    from polars.type_aliases import IntoExpr, PolarsDataType
++    from polars._typing import IntoExpr, PolarsDataType
+ 
+ 
+ def parse_into_expr(

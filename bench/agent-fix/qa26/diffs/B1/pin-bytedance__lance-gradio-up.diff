@@ -1,0 +1,49 @@
+diff --git a/common/gradio_utils/render.py b/common/gradio_utils/render.py
+index aa48976..57d55d5 100644
+--- a/common/gradio_utils/render.py
++++ b/common/gradio_utils/render.py
+@@ -338,7 +338,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+             inputs=[task, aspect_ratio, resolution],
+             outputs=[height, width, real_size],
+             queue=False,
+-            show_api=False,
++            api_visibility="undocumented",
+         )
+         # real_size is hidden and derived from task/resolution/aspect_ratio.
+         # Do not attach a .change handler here: dynamic Dropdown choices can briefly
+@@ -349,7 +349,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+             inputs=[task, aspect_ratio, resolution],
+             outputs=[real_size, height, width],
+             queue=False,
+-            show_api=False,
++            api_visibility="undocumented",
+         )
+ 
+         for example_button, example_prompt, _, _ in video_generation_example_buttons + image_generation_example_buttons:
+@@ -358,7 +358,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+                 inputs=[task],
+                 outputs=[prompt, system_prompt, aspect_ratio, height, width, num_frames, resolution, real_size],
+                 queue=False,
+-                show_api=False,
++                api_visibility="undocumented",
+             )
+ 
+         for example_button, example_prompt, example_video, example_image in (
+@@ -373,7 +373,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+                 inputs=[task],
+                 outputs=[prompt, input_video, input_image, system_prompt, aspect_ratio, height, width, num_frames, resolution, real_size],
+                 queue=False,
+-                show_api=False,
++                api_visibility="undocumented",
+             )
+ 
+         run_button.click(
+@@ -381,7 +381,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+             inputs=[],
+             outputs=[status],
+             queue=False,
+-            show_api=False,
++            api_visibility="undocumented",
+         ).then(
+             fn=run_task_fn,
+             inputs=[

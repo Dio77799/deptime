@@ -1,0 +1,340 @@
+diff --git a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py
+index 62c4fe5..2b870b1 100644
+--- a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py
++++ b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py
+@@ -1,6 +1,6 @@
+ import chromadb
+ 
+-from langchain.text_splitter import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
+ import numpy as np
+ from pypdf import PdfReader
+ from tqdm import tqdm
+diff --git a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py
+index 62c4fe5..2b870b1 100644
+--- a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py
++++ b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py
+@@ -1,6 +1,6 @@
+ import chromadb
+ 
+-from langchain.text_splitter import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
+ import numpy as np
+ from pypdf import PdfReader
+ from tqdm import tqdm
+diff --git a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py
+index 62c4fe5..2b870b1 100644
+--- a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py
++++ b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py
+@@ -1,6 +1,6 @@
+ import chromadb
+ 
+-from langchain.text_splitter import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
+ import numpy as np
+ from pypdf import PdfReader
+ from tqdm import tqdm
+diff --git a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson4/helper_utils.py b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson4/helper_utils.py
+index 62c4fe5..2b870b1 100644
+--- a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson4/helper_utils.py
++++ b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson4/helper_utils.py
+@@ -1,6 +1,6 @@
+ import chromadb
+ 
+-from langchain.text_splitter import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
+ import numpy as np
+ from pypdf import PdfReader
+ from tqdm import tqdm
+diff --git a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson5/helper_utils.py b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson5/helper_utils.py
+index 62c4fe5..2b870b1 100644
+--- a/2024/01/AdvancedRetrievalforAIwithChroma/Lesson5/helper_utils.py
++++ b/2024/01/AdvancedRetrievalforAIwithChroma/Lesson5/helper_utils.py
+@@ -1,6 +1,6 @@
+ import chromadb
+ 
+-from langchain.text_splitter import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
+ import numpy as np
+ from pypdf import PdfReader
+ from tqdm import tqdm
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson2/app.py b/2024/01/AutomatedTestingforLLMOps/Lesson2/app.py
+index 3a9c914..f7aa094 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson2/app.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson2/app.py
+@@ -1,6 +1,6 @@
+-from langchain.prompts                import ChatPromptTemplate
+-from langchain.chat_models            import ChatOpenAI
+-from langchain.schema.output_parser   import StrOutputParser
++from langchain_core.prompts           import ChatPromptTemplate
++from langchain_openai                 import ChatOpenAI
++from langchain_core.output_parsers    import StrOutputParser
+ 
+ delimiter = "####"
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py b/2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py
+index 29e79c5..8ff929a 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py
+@@ -1,8 +1,8 @@
+ from app import assistant_chain
+ from app import system_message
+-from langchain.prompts                import ChatPromptTemplate
+-from langchain.chat_models            import ChatOpenAI
+-from langchain.schema.output_parser   import StrOutputParser
++from langchain_core.prompts           import ChatPromptTemplate
++from langchain_openai                 import ChatOpenAI
++from langchain_core.output_parsers    import StrOutputParser
+ 
+ import os
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson3/app.py b/2024/01/AutomatedTestingforLLMOps/Lesson3/app.py
+index 3b7914a..fa8c3fe 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson3/app.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson3/app.py
+@@ -1,6 +1,6 @@
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ delimiter = "####"
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py b/2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py
+index 34da071..e136e3a 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py
+@@ -1,7 +1,7 @@
+ from app import assistant_chain
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ import pytest
+ 
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson4/app.py b/2024/01/AutomatedTestingforLLMOps/Lesson4/app.py
+index 71cf33f..3f12c9f 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson4/app.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson4/app.py
+@@ -1,6 +1,6 @@
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ 
+ def read_file_into_string(file_path):
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson4/save_eval_artifacts.py b/2024/01/AutomatedTestingforLLMOps/Lesson4/save_eval_artifacts.py
+index ba880aa..1af549b 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson4/save_eval_artifacts.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson4/save_eval_artifacts.py
+@@ -2,9 +2,9 @@ import pandas as pd
+ from app import assistant_chain, quiz_bank
+ from IPython.display import display, HTML
+ 
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ eval_system_prompt = """You are an assistant that evaluates how well the quiz assistant
+     creates quizzes for a user by looking at the set of facts available to the assistant.
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson4/test_hallucinations.py b/2024/01/AutomatedTestingforLLMOps/Lesson4/test_hallucinations.py
+index f43fa03..429d74d 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson4/test_hallucinations.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson4/test_hallucinations.py
+@@ -1,8 +1,8 @@
+ from app import assistant_chain, quiz_bank
+ 
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ 
+ def create_eval_chain(context, agent_response):
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson5/app.py b/2024/01/AutomatedTestingforLLMOps/Lesson5/app.py
+index 2dae50e..517d5d6 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson5/app.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson5/app.py
+@@ -1,6 +1,6 @@
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ delimiter = "####"
+ 
+diff --git a/2024/01/AutomatedTestingforLLMOps/Lesson5/test_release_evals.py b/2024/01/AutomatedTestingforLLMOps/Lesson5/test_release_evals.py
+index 46929e1..00334f4 100644
+--- a/2024/01/AutomatedTestingforLLMOps/Lesson5/test_release_evals.py
++++ b/2024/01/AutomatedTestingforLLMOps/Lesson5/test_release_evals.py
+@@ -1,8 +1,8 @@
+ # note, you will need to run the cell to write the app file for these imports to work.
+ from app import system_message, quiz_information_bank, assistant_chain
+-from langchain.prompts import ChatPromptTemplate
+-from langchain.chat_models import ChatOpenAI
+-from langchain.schema.output_parser import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
+ 
+ 
+ def create_eval_chain(agent_response):
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L2/helper.py b/2025/09/BuildingandEvaluatingDataAgents/L2/helper.py
+index 5a0d55a..0728f8f 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L2/helper.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L2/helper.py
+@@ -35,7 +35,7 @@ from snowflake.core.cortex.lite_agent_service import AgentRunRequest
+ from pydantic import BaseModel, PrivateAttr
+ from langchain_openai import ChatOpenAI
+ from langchain_tavily import TavilySearch
+-from langchain.schema import HumanMessage
++from langchain_core.messages import HumanMessage
+ from langgraph.graph import MessagesState, START, StateGraph, END
+ from langgraph.types import Command
+ from langgraph.prebuilt import create_react_agent
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L2/prompts.py b/2025/09/BuildingandEvaluatingDataAgents/L2/prompts.py
+index e357061..9b9663e 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L2/prompts.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L2/prompts.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, Any, List
+-from langchain.schema import HumanMessage  # type: ignore[import-not-found]
++from langchain_core.messages import HumanMessage  # type: ignore[import-not-found]
+ import json
+ from typing import Optional
+ from langgraph.graph import MessagesState
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L3/helper.py b/2025/09/BuildingandEvaluatingDataAgents/L3/helper.py
+index 5a0d55a..0728f8f 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L3/helper.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L3/helper.py
+@@ -35,7 +35,7 @@ from snowflake.core.cortex.lite_agent_service import AgentRunRequest
+ from pydantic import BaseModel, PrivateAttr
+ from langchain_openai import ChatOpenAI
+ from langchain_tavily import TavilySearch
+-from langchain.schema import HumanMessage
++from langchain_core.messages import HumanMessage
+ from langgraph.graph import MessagesState, START, StateGraph, END
+ from langgraph.types import Command
+ from langgraph.prebuilt import create_react_agent
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L3/prompts.py b/2025/09/BuildingandEvaluatingDataAgents/L3/prompts.py
+index e357061..9b9663e 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L3/prompts.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L3/prompts.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, Any, List
+-from langchain.schema import HumanMessage  # type: ignore[import-not-found]
++from langchain_core.messages import HumanMessage  # type: ignore[import-not-found]
+ import json
+ from typing import Optional
+ from langgraph.graph import MessagesState
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L4/helper.py b/2025/09/BuildingandEvaluatingDataAgents/L4/helper.py
+index 5a0d55a..0728f8f 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L4/helper.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L4/helper.py
+@@ -35,7 +35,7 @@ from snowflake.core.cortex.lite_agent_service import AgentRunRequest
+ from pydantic import BaseModel, PrivateAttr
+ from langchain_openai import ChatOpenAI
+ from langchain_tavily import TavilySearch
+-from langchain.schema import HumanMessage
++from langchain_core.messages import HumanMessage
+ from langgraph.graph import MessagesState, START, StateGraph, END
+ from langgraph.types import Command
+ from langgraph.prebuilt import create_react_agent
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L4/prompts.py b/2025/09/BuildingandEvaluatingDataAgents/L4/prompts.py
+index e357061..9b9663e 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L4/prompts.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L4/prompts.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, Any, List
+-from langchain.schema import HumanMessage  # type: ignore[import-not-found]
++from langchain_core.messages import HumanMessage  # type: ignore[import-not-found]
+ import json
+ from typing import Optional
+ from langgraph.graph import MessagesState
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L5/helper.py b/2025/09/BuildingandEvaluatingDataAgents/L5/helper.py
+index 5a0d55a..0728f8f 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L5/helper.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L5/helper.py
+@@ -35,7 +35,7 @@ from snowflake.core.cortex.lite_agent_service import AgentRunRequest
+ from pydantic import BaseModel, PrivateAttr
+ from langchain_openai import ChatOpenAI
+ from langchain_tavily import TavilySearch
+-from langchain.schema import HumanMessage
++from langchain_core.messages import HumanMessage
+ from langgraph.graph import MessagesState, START, StateGraph, END
+ from langgraph.types import Command
+ from langgraph.prebuilt import create_react_agent
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L5/prompts.py b/2025/09/BuildingandEvaluatingDataAgents/L5/prompts.py
+index e357061..9b9663e 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L5/prompts.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L5/prompts.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, Any, List
+-from langchain.schema import HumanMessage  # type: ignore[import-not-found]
++from langchain_core.messages import HumanMessage  # type: ignore[import-not-found]
+ import json
+ from typing import Optional
+ from langgraph.graph import MessagesState
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L6/helper.py b/2025/09/BuildingandEvaluatingDataAgents/L6/helper.py
+index 5a0d55a..0728f8f 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L6/helper.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L6/helper.py
+@@ -35,7 +35,7 @@ from snowflake.core.cortex.lite_agent_service import AgentRunRequest
+ from pydantic import BaseModel, PrivateAttr
+ from langchain_openai import ChatOpenAI
+ from langchain_tavily import TavilySearch
+-from langchain.schema import HumanMessage
++from langchain_core.messages import HumanMessage
+ from langgraph.graph import MessagesState, START, StateGraph, END
+ from langgraph.types import Command
+ from langgraph.prebuilt import create_react_agent
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/L6/prompts.py b/2025/09/BuildingandEvaluatingDataAgents/L6/prompts.py
+index e357061..9b9663e 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/L6/prompts.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/L6/prompts.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, Any, List
+-from langchain.schema import HumanMessage  # type: ignore[import-not-found]
++from langchain_core.messages import HumanMessage  # type: ignore[import-not-found]
+ import json
+ from typing import Optional
+ from langgraph.graph import MessagesState
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/helper.py b/2025/09/BuildingandEvaluatingDataAgents/helper.py
+index 5a0d55a..0728f8f 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/helper.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/helper.py
+@@ -35,7 +35,7 @@ from snowflake.core.cortex.lite_agent_service import AgentRunRequest
+ from pydantic import BaseModel, PrivateAttr
+ from langchain_openai import ChatOpenAI
+ from langchain_tavily import TavilySearch
+-from langchain.schema import HumanMessage
++from langchain_core.messages import HumanMessage
+ from langgraph.graph import MessagesState, START, StateGraph, END
+ from langgraph.types import Command
+ from langgraph.prebuilt import create_react_agent
+diff --git a/2025/09/BuildingandEvaluatingDataAgents/prompts.py b/2025/09/BuildingandEvaluatingDataAgents/prompts.py
+index e357061..9b9663e 100644
+--- a/2025/09/BuildingandEvaluatingDataAgents/prompts.py
++++ b/2025/09/BuildingandEvaluatingDataAgents/prompts.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, Any, List
+-from langchain.schema import HumanMessage  # type: ignore[import-not-found]
++from langchain_core.messages import HumanMessage  # type: ignore[import-not-found]
+ import json
+ from typing import Optional
+ from langgraph.graph import MessagesState

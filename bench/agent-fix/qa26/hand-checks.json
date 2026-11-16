@@ -1,0 +1,1404 @@
+{
+ "note": "Uses settled from each package's released source (newest release before the environment's date cutoff, or the version it installs), read as text in a scratch directory; nothing imported. Settled from the blinded hand-todo.json only. Breaks settled from the blinded hand-todo.json and each session's diff, printed by check id without the arm or run. The 11 uses marked blind: false (one session, A1 on pin-googlecloudplatform__nl2sql-studio-langchain-up) were checked knowing their session: they surfaced only after a scorer correction (Poetry's bare exact pin) found by reading that session's verdict line.",
+ "uses": [
+  {
+   "env": "fastmcp==4.1.6@2026-11-10",
+   "key": "3ec01c32e18408c4",
+   "path": "mcp.types.Icon",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "mcp 2.3.0 mcp/types/__init__.py re-exports mcp_types (Requires-Dist mcp-types==2.3.0); mcp-types 2.3.0 __init__.py:301 'Icon', _types.py:248 Icon(MCPModel) fields src, mime_type, sizes; MCPModel populate_by_name=True :48"
+  },
+  {
+   "env": "flask==3.1.3@2026-03-21",
+   "key": "f4bfcf6212a0006a",
+   "path": "wtforms.validators.DataRequired",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "wtforms 3.2.1 validators.py:259 DataRequired(message=None)"
+  },
+  {
+   "env": "gradio==6.31.0@2026-11-09",
+   "key": "40ff5ae4df425008",
+   "path": "gradio.Chatbot",
+   "kind": "call",
+   "verdict": "breaks",
+   "evidence": "gradio 6.31.0 components/chatbot.py:228 Chatbot.__init__ has no `type` parameter and no **kwargs; the updateable wrapper (component_meta.py:173-196) passes every keyword to it, so type= raises TypeError"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "bf69089d707f3de9",
+   "path": "langchain_qdrant",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "b8ef02984347d0cb",
+   "path": "langchain_qdrant.Qdrant",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "418d5534ce288ebf",
+   "path": "langchain_qdrant.Qdrant.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "71e8971220340c80",
+   "path": "langchain_qdrant.Qdrant.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "ac4856905e50025d",
+   "path": "langchain_qdrant.Qdrant.from_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "2cd67ec3cc39aaaf",
+   "path": "langchain_qdrant.QdrantVectorStore",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "63f7b136f9d498c1",
+   "path": "langchain_qdrant.QdrantVectorStore.from_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "b5d55a192dd884d6",
+   "path": "langchain_qdrant.QdrantVectorStore.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "e88d194657dc4070",
+   "path": "langchain_qdrant.QdrantVectorStore.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "fa75f60ec9670ed9",
+   "path": "langchain_qdrant.QdrantVectorStore.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21; as DT-QA-05's hand check): Qdrant vectorstores.py:60 and QdrantVectorStore qdrant.py:36; from_documents(documents, embedding, **kwargs) is langchain-core 1.4.8's VectorStore (vectorstores/base.py:787) -> from_texts(**kwargs) (:814), which takes collection_name, url, prefer_grpc, path (vectorstores.py:1193; qdrant.py:339)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "53c3ef70fc8e68ee",
+   "path": "langchain_classic.agents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/__init__.py; agent_types.py:15 AgentType with ZERO_SHOT_REACT_DESCRIPTION :18, OPENAI_MULTI_FUNCTIONS :54; agents/agent.py:1012 AgentExecutor"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "a4a5e1af187f2988",
+   "path": "langchain_classic.agents.AgentExecutor",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/__init__.py; agent_types.py:15 AgentType with ZERO_SHOT_REACT_DESCRIPTION :18, OPENAI_MULTI_FUNCTIONS :54; agents/agent.py:1012 AgentExecutor"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "84ad2fc2c7373400",
+   "path": "langchain_classic.agents.AgentType",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/__init__.py; agent_types.py:15 AgentType with ZERO_SHOT_REACT_DESCRIPTION :18, OPENAI_MULTI_FUNCTIONS :54; agents/agent.py:1012 AgentExecutor"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "5076c6839afb1ef9",
+   "path": "langchain_classic.agents.AgentType.OPENAI_MULTI_FUNCTIONS",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/__init__.py; agent_types.py:15 AgentType with ZERO_SHOT_REACT_DESCRIPTION :18, OPENAI_MULTI_FUNCTIONS :54; agents/agent.py:1012 AgentExecutor"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "950db5a133783c76",
+   "path": "langchain_classic.agents.initialize_agent",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/initialize.py:24 initialize_agent(tools, llm, agent, callback_manager, agent_path, agent_kwargs, *, tags, **kwargs); the rest go to AgentExecutor (agents/agent.py:1012 fields return_intermediate_steps; memory, verbose are Chain fields chains/base.py:75, :88)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "b04a0677c064cc61",
+   "path": "langchain_classic.agents.initialize_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/initialize.py:24 initialize_agent(tools, llm, agent, callback_manager, agent_path, agent_kwargs, *, tags, **kwargs); the rest go to AgentExecutor (agents/agent.py:1012 fields return_intermediate_steps; memory, verbose are Chain fields chains/base.py:75, :88)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "a78a3a5099d61753",
+   "path": "langchain_classic.callbacks",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) callbacks/streaming_aiter.py:14 AsyncIteratorCallbackHandler(self), aiter(self) :59"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "34d9482b85a9daf9",
+   "path": "langchain_classic.callbacks.AsyncIteratorCallbackHandler",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) callbacks/streaming_aiter.py:14 AsyncIteratorCallbackHandler(self), aiter(self) :59"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "afe3c3b5f8c224e1",
+   "path": "langchain_classic.callbacks.AsyncIteratorCallbackHandler",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) callbacks/streaming_aiter.py:14 AsyncIteratorCallbackHandler(self), aiter(self) :59"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "5954ba784c7f7be6",
+   "path": "langchain_classic.callbacks.AsyncIteratorCallbackHandler.aiter",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) callbacks/streaming_aiter.py:14 AsyncIteratorCallbackHandler(self), aiter(self) :59"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "66959587157e5594",
+   "path": "langchain_classic.callbacks.AsyncIteratorCallbackHandler.aiter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) callbacks/streaming_aiter.py:14 AsyncIteratorCallbackHandler(self), aiter(self) :59"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "b75f208f804a9ca7",
+   "path": "langchain_classic.chains",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py; chains/sql_database/prompt.py PROMPT :24, DECIDER_PROMPT :37, SQL_PROMPTS :270"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "12530f39b52df326",
+   "path": "langchain_classic.chains.ConversationChain",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py:28 lazy -> conversation/base.py:23 ConversationChain(LLMChain): llm is LLMChain's field (llm.py:45), verbose Chain's (chains/base.py:88)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "ad091e6542658cd7",
+   "path": "langchain_classic.chains.ConversationChain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py:28 lazy -> conversation/base.py:23 ConversationChain(LLMChain): llm is LLMChain's field (llm.py:45), verbose Chain's (chains/base.py:88)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "3c47bf38c6c7e639",
+   "path": "langchain_classic.chains.LLMChain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py:50 lazy -> llm.py:45 LLMChain; from_string(cls, llm, template) :410"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "755b03c11bda9780",
+   "path": "langchain_classic.chains.LLMChain.from_string",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py:50 lazy -> llm.py:45 LLMChain; from_string(cls, llm, template) :410"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "ebff42d14fca0b59",
+   "path": "langchain_classic.chains.LLMChain.from_string",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py:50 lazy -> llm.py:45 LLMChain; from_string(cls, llm, template) :410"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "a5124c1e25db2da9",
+   "path": "langchain_classic.embeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) embeddings/cache.py:108 CacheBackedEmbeddings; from_bytes_store(cls, underlying_embeddings, document_embedding_cache, *, namespace, ...) :288"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "d8437057cf067f70",
+   "path": "langchain_classic.embeddings.CacheBackedEmbeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) embeddings/cache.py:108 CacheBackedEmbeddings; from_bytes_store(cls, underlying_embeddings, document_embedding_cache, *, namespace, ...) :288"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "5a4252be46312a41",
+   "path": "langchain_classic.embeddings.CacheBackedEmbeddings.from_bytes_store",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) embeddings/cache.py:108 CacheBackedEmbeddings; from_bytes_store(cls, underlying_embeddings, document_embedding_cache, *, namespace, ...) :288"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "63473d99658fd496",
+   "path": "langchain_classic.embeddings.CacheBackedEmbeddings.from_bytes_store",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) embeddings/cache.py:108 CacheBackedEmbeddings; from_bytes_store(cls, underlying_embeddings, document_embedding_cache, *, namespace, ...) :288"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "95e9579bc367c7a8",
+   "path": "langchain_classic.smith",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) smith/__init__.py"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "3b7de22ea3671e0c",
+   "path": "langchain_classic.smith.RunEvalConfig",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) smith/__init__ -> smith/evaluation/config.py:84 RunEvalConfig(BaseModel), field evaluators"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "5c5d9d89cc053534",
+   "path": "langchain_classic.smith.RunEvalConfig",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) smith/__init__ -> smith/evaluation/config.py:84 RunEvalConfig(BaseModel), field evaluators"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "3a48fbd40dd44be3",
+   "path": "langchain_classic.smith.RunEvalConfig.Criteria",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) smith/evaluation/config.py:123 nested class Criteria"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "80d4820d7bd95dd4",
+   "path": "langchain_classic.smith.RunEvalConfig.Criteria",
+   "kind": "call",
+   "verdict": "breaks",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) smith/evaluation/config.py:123 `class Criteria(SingleKeyEvalConfig)`, a pydantic v2 model (ConfigDict, :119) with no __init__ anywhere in the file's EvalConfig chain (:34, :57): a positional argument raises TypeError"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "118872cf301c71b0",
+   "path": "langchain_classic.smith.run_on_dataset",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) smith/evaluation/runner_utils.py:1512 run_on_dataset(client, dataset_name, llm_or_chain_factory, *, evaluation, ..., **kwargs); other keywords only warn (:1650 warn_deprecated, no raise)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "d723eb9505911b19",
+   "path": "langchain_classic.smith.run_on_dataset",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) smith/evaluation/runner_utils.py:1512 run_on_dataset(client, dataset_name, llm_or_chain_factory, *, evaluation, ..., **kwargs); other keywords only warn (:1650 warn_deprecated, no raise)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "b15ae2dc41a22165",
+   "path": "langchain_classic.storage",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) storage/file_system.py:12 LocalFileStore(root_path, *, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "7732ef7694a65b6b",
+   "path": "langchain_classic.storage.LocalFileStore",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) storage/file_system.py:12 LocalFileStore(root_path, *, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "889868619adbf4fa",
+   "path": "langchain_classic.storage.LocalFileStore",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) storage/file_system.py:12 LocalFileStore(root_path, *, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-07",
+   "key": "2435a4beefd03a34",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.7.4 (2026-11-04) chat_models/base.py:2928 ChatOpenAI(BaseChatOpenAI): model_name Field(alias='model') :805, temperature :808, populate_by_name=True :1306, so model= and model_name= both bind"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "53c3ef70fc8e68ee",
+   "path": "langchain_classic.agents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/__init__.py; agent_types.py:15 AgentType with ZERO_SHOT_REACT_DESCRIPTION :18, OPENAI_MULTI_FUNCTIONS :54; agents/agent.py:1012 AgentExecutor"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "950db5a133783c76",
+   "path": "langchain_classic.agents.initialize_agent",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/initialize.py:24 initialize_agent(tools, llm, agent, callback_manager, agent_path, agent_kwargs, *, tags, **kwargs); the rest go to AgentExecutor (agents/agent.py:1012 fields return_intermediate_steps; memory, verbose are Chain fields chains/base.py:75, :88)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "a6be51d4f167d1ea",
+   "path": "langchain_classic.agents.initialize_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/initialize.py:24 initialize_agent(tools, llm, agent, callback_manager, agent_path, agent_kwargs, *, tags, **kwargs); the rest go to AgentExecutor (agents/agent.py:1012 fields return_intermediate_steps; memory, verbose are Chain fields chains/base.py:75, :88)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "9636f4962c9afb16",
+   "path": "langchain_classic.indexes",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) indexes/vectorstore.py:193 VectorstoreIndexCreator(BaseModel) fields embedding, text_splitter; from_loaders(self, loaders) :208"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "339f8d85ca1156fa",
+   "path": "langchain_classic.indexes.VectorstoreIndexCreator",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) indexes/vectorstore.py:193 VectorstoreIndexCreator(BaseModel) fields embedding, text_splitter; from_loaders(self, loaders) :208"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "fde9c08f39a00908",
+   "path": "langchain_classic.indexes.VectorstoreIndexCreator",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) indexes/vectorstore.py:193 VectorstoreIndexCreator(BaseModel) fields embedding, text_splitter; from_loaders(self, loaders) :208"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "7b32c13c0523e232",
+   "path": "langchain_classic.indexes.VectorstoreIndexCreator.from_loaders",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) indexes/vectorstore.py:193 VectorstoreIndexCreator(BaseModel) fields embedding, text_splitter; from_loaders(self, loaders) :208"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "ac184dbd49639a22",
+   "path": "langchain_classic.indexes.VectorstoreIndexCreator.from_loaders",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) indexes/vectorstore.py:193 VectorstoreIndexCreator(BaseModel) fields embedding, text_splitter; from_loaders(self, loaders) :208"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "4f7257604cdf6eaa",
+   "path": "langchain_classic.memory",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) memory/buffer.py:24 ConversationBufferMemory: memory_key its field, output_key BaseChatMemory's (chat_memory.py:42)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "83eb9ea0db05333a",
+   "path": "langchain_classic.memory.ConversationBufferMemory",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) memory/buffer.py:24 ConversationBufferMemory: memory_key its field, output_key BaseChatMemory's (chat_memory.py:42)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "c47d76c9a665726f",
+   "path": "langchain_classic.memory.ConversationBufferMemory",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) memory/buffer.py:24 ConversationBufferMemory: memory_key its field, output_key BaseChatMemory's (chat_memory.py:42)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "352a3e095bdb5ed4",
+   "path": "langchain_community.llms.utils",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/utils.py:7 enforce_stop_tokens(text, stop)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "a399e7e26777397f",
+   "path": "langchain_community.llms.utils.enforce_stop_tokens",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/utils.py:7 enforce_stop_tokens(text, stop)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-08",
+   "key": "f50e0232f3c04c60",
+   "path": "langchain_community.llms.utils.enforce_stop_tokens",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/utils.py:7 enforce_stop_tokens(text, stop)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-09",
+   "key": "b75f208f804a9ca7",
+   "path": "langchain_classic.chains",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py; chains/sql_database/prompt.py PROMPT :24, DECIDER_PROMPT :37, SQL_PROMPTS :270"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-09",
+   "key": "b239a1b4a4ff2e66",
+   "path": "langchain_classic.chains.ConversationalRetrievalChain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py:30 lazy -> conversational_retrieval/base.py:263"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-09",
+   "key": "92794c6f0941119d",
+   "path": "langchain_text_splitters",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:91 RecursiveCharacterTextSplitter(**kwargs) -> base.py:62 TextSplitter.__init__(chunk_size, chunk_overlap, ...); split_documents :146"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-09",
+   "key": "71e9205781eb92ac",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:91 RecursiveCharacterTextSplitter(**kwargs) -> base.py:62 TextSplitter.__init__(chunk_size, chunk_overlap, ...); split_documents :146"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-09",
+   "key": "c637e83bced4a390",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:91 RecursiveCharacterTextSplitter(**kwargs) -> base.py:62 TextSplitter.__init__(chunk_size, chunk_overlap, ...); split_documents :146"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-09",
+   "key": "6af8b06080e3870f",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:91 RecursiveCharacterTextSplitter(**kwargs) -> base.py:62 TextSplitter.__init__(chunk_size, chunk_overlap, ...); split_documents :146"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-09",
+   "key": "a8283c9643efb37b",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:91 RecursiveCharacterTextSplitter(**kwargs) -> base.py:62 TextSplitter.__init__(chunk_size, chunk_overlap, ...); split_documents :146"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "de9584b7ceee27fe",
+   "path": "langchain_classic.agents.agent_types",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/__init__.py; agent_types.py:15 AgentType with ZERO_SHOT_REACT_DESCRIPTION :18, OPENAI_MULTI_FUNCTIONS :54; agents/agent.py:1012 AgentExecutor"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "bc223d200c3f09d6",
+   "path": "langchain_classic.agents.agent_types.AgentType",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/__init__.py; agent_types.py:15 AgentType with ZERO_SHOT_REACT_DESCRIPTION :18, OPENAI_MULTI_FUNCTIONS :54; agents/agent.py:1012 AgentExecutor"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "777ae055c86fbd10",
+   "path": "langchain_classic.agents.agent_types.AgentType.ZERO_SHOT_REACT_DESCRIPTION",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) agents/__init__.py; agent_types.py:15 AgentType with ZERO_SHOT_REACT_DESCRIPTION :18, OPENAI_MULTI_FUNCTIONS :54; agents/agent.py:1012 AgentExecutor"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "0a2b0a3199c27eb2",
+   "path": "langchain_classic.chains.sql_database",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py; chains/sql_database/prompt.py PROMPT :24, DECIDER_PROMPT :37, SQL_PROMPTS :270"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "5f2bda676371133c",
+   "path": "langchain_classic.chains.sql_database.prompt",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py; chains/sql_database/prompt.py PROMPT :24, DECIDER_PROMPT :37, SQL_PROMPTS :270"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "d34a6b65b85168f1",
+   "path": "langchain_classic.chains.sql_database.prompt.DECIDER_PROMPT",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py; chains/sql_database/prompt.py PROMPT :24, DECIDER_PROMPT :37, SQL_PROMPTS :270"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "a21a2d7811a738fd",
+   "path": "langchain_classic.chains.sql_database.prompt.PROMPT",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py; chains/sql_database/prompt.py PROMPT :24, DECIDER_PROMPT :37, SQL_PROMPTS :270"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "ef410994b4c056aa",
+   "path": "langchain_classic.chains.sql_database.prompt.SQL_PROMPTS",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) chains/__init__.py; chains/sql_database/prompt.py PROMPT :24, DECIDER_PROMPT :37, SQL_PROMPTS :270"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "90ea0f5a3f5b866f",
+   "path": "langchain_classic.output_parsers",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) output_parsers/structured.py:18 ResponseSchema fields name, description; StructuredOutputParser :37, from_response_schemas(cls, response_schemas) :44"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "9d1aaca06eecdcd8",
+   "path": "langchain_classic.output_parsers.ResponseSchema",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) output_parsers/structured.py:18 ResponseSchema fields name, description; StructuredOutputParser :37, from_response_schemas(cls, response_schemas) :44"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "de98201d8036a059",
+   "path": "langchain_classic.output_parsers.ResponseSchema",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) output_parsers/structured.py:18 ResponseSchema fields name, description; StructuredOutputParser :37, from_response_schemas(cls, response_schemas) :44"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "25691b45a2e2d4d8",
+   "path": "langchain_classic.output_parsers.StructuredOutputParser",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) output_parsers/structured.py:18 ResponseSchema fields name, description; StructuredOutputParser :37, from_response_schemas(cls, response_schemas) :44"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "2b33c08465ad33a3",
+   "path": "langchain_classic.output_parsers.StructuredOutputParser.from_response_schemas",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) output_parsers/structured.py:18 ResponseSchema fields name, description; StructuredOutputParser :37, from_response_schemas(cls, response_schemas) :44"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "5e7734fd90d9da20",
+   "path": "langchain_classic.output_parsers.StructuredOutputParser.from_response_schemas",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10) output_parsers/structured.py:18 ResponseSchema fields name, description; StructuredOutputParser :37, from_response_schemas(cls, response_schemas) :44"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "bbc605aea63cd0f9",
+   "path": "langchain_community.agent_toolkits",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) agent_toolkits/__init__.py:152,:162 lazy -> sql/toolkit.py:24 SQLDatabaseToolkit fields db, llm; sql/base.py:46 create_sql_agent(llm, toolkit, agent_type, ..., top_k, max_iterations, ..., early_stopping_method, verbose, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "00434b9f51e5cfe7",
+   "path": "langchain_community.agent_toolkits.SQLDatabaseToolkit",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) agent_toolkits/__init__.py:152,:162 lazy -> sql/toolkit.py:24 SQLDatabaseToolkit fields db, llm; sql/base.py:46 create_sql_agent(llm, toolkit, agent_type, ..., top_k, max_iterations, ..., early_stopping_method, verbose, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "de443e4358dba5eb",
+   "path": "langchain_community.agent_toolkits.SQLDatabaseToolkit",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) agent_toolkits/__init__.py:152,:162 lazy -> sql/toolkit.py:24 SQLDatabaseToolkit fields db, llm; sql/base.py:46 create_sql_agent(llm, toolkit, agent_type, ..., top_k, max_iterations, ..., early_stopping_method, verbose, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "095ca925cfe4ef5e",
+   "path": "langchain_community.agent_toolkits.create_sql_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) agent_toolkits/__init__.py:152,:162 lazy -> sql/toolkit.py:24 SQLDatabaseToolkit fields db, llm; sql/base.py:46 create_sql_agent(llm, toolkit, agent_type, ..., top_k, max_iterations, ..., early_stopping_method, verbose, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "b0df6002fe972ca5",
+   "path": "langchain_community.agent_toolkits.create_sql_agent",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) agent_toolkits/__init__.py:152,:162 lazy -> sql/toolkit.py:24 SQLDatabaseToolkit fields db, llm; sql/base.py:46 create_sql_agent(llm, toolkit, agent_type, ..., top_k, max_iterations, ..., early_stopping_method, verbose, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "6d9136dd9a98ae2c",
+   "path": "langchain_community.embeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) embeddings/__init__.py:409 lazy -> vertexai.py:28 VertexAIEmbeddings(model_name=..., ...) all defaulted"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "2a9a63a18ac50e3c",
+   "path": "langchain_community.embeddings.VertexAIEmbeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) embeddings/__init__.py:409 lazy -> vertexai.py:28 VertexAIEmbeddings(model_name=..., ...) all defaulted"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "8b46337ff55e9df4",
+   "path": "langchain_community.embeddings.VertexAIEmbeddings",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) embeddings/__init__.py:409 lazy -> vertexai.py:28 VertexAIEmbeddings(model_name=..., ...) all defaulted"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "5669daa0e1f5c90c",
+   "path": "langchain_community.llms",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/__init__.py"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "3b4d35b7e3e4741c",
+   "path": "langchain_community.llms.VertexAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/__init__.py:840 -> llms/vertexai.py:211 VertexAI (deprecated, :206); model_name :214, temperature :132 and max_output_tokens :134 on _VertexAICommon"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "6ed549465f15dce1",
+   "path": "langchain_community.llms.VertexAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/__init__.py:840 -> llms/vertexai.py:211 VertexAI (deprecated, :206); model_name :214, temperature :132 and max_output_tokens :134 on _VertexAICommon"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "2860599a3e68a879",
+   "path": "langchain_community.llms.google_palm",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/google_palm.py:63 GooglePalm"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "deb729f67a24b346",
+   "path": "langchain_community.llms.google_palm.GooglePalm",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/google_palm.py:63 GooglePalm"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "2a9944a7ed6201cb",
+   "path": "langchain_community.llms.vertexai",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/vertexai.py:211 VertexAI"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "916f4e916c6cf2a4",
+   "path": "langchain_community.llms.vertexai.VertexAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) llms/vertexai.py:211 VertexAI"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "446577bb6251ec1f",
+   "path": "langchain_community.utilities",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) utilities/__init__.py:273 lazy -> sql_database.py:83 SQLDatabase(engine, schema, metadata, ignore_tables, ..., view_support, ...); _get_sample_rows(self, table) :445; self._metadata set in __init__ :161"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "9232d7307b9bb156",
+   "path": "langchain_community.utilities.SQLDatabase",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) utilities/__init__.py:273 lazy -> sql_database.py:83 SQLDatabase(engine, schema, metadata, ignore_tables, ..., view_support, ...); _get_sample_rows(self, table) :445; self._metadata set in __init__ :161"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "be08d76b5dcb83c1",
+   "path": "langchain_community.utilities.SQLDatabase",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) utilities/__init__.py:273 lazy -> sql_database.py:83 SQLDatabase(engine, schema, metadata, ignore_tables, ..., view_support, ...); _get_sample_rows(self, table) :445; self._metadata set in __init__ :161"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "be8687fe838f95ea",
+   "path": "langchain_community.utilities.SQLDatabase",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) utilities/__init__.py:273 lazy -> sql_database.py:83 SQLDatabase(engine, schema, metadata, ignore_tables, ..., view_support, ...); _get_sample_rows(self, table) :445; self._metadata set in __init__ :161"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "af1debc893ba25f7",
+   "path": "langchain_community.utilities.SQLDatabase._get_sample_rows",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) utilities/__init__.py:273 lazy -> sql_database.py:83 SQLDatabase(engine, schema, metadata, ignore_tables, ..., view_support, ...); _get_sample_rows(self, table) :445; self._metadata set in __init__ :161"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "fde07b0e03856f35",
+   "path": "langchain_community.utilities.SQLDatabase._get_sample_rows",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) utilities/__init__.py:273 lazy -> sql_database.py:83 SQLDatabase(engine, schema, metadata, ignore_tables, ..., view_support, ...); _get_sample_rows(self, table) :445; self._metadata set in __init__ :161"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "78c5c9712a07445d",
+   "path": "langchain_community.utilities.SQLDatabase._metadata",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) utilities/__init__.py:273 lazy -> sql_database.py:83 SQLDatabase(engine, schema, metadata, ignore_tables, ..., view_support, ...); _get_sample_rows(self, table) :445; self._metadata set in __init__ :161"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "df7034c7d470ba91",
+   "path": "langchain_community.vectorstores",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) vectorstores/__init__.py:374 lazy -> chroma.py:54 Chroma (deprecated); from_documents :853; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever fields search_type :970, search_kwargs :973"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "e42fa75f17933b99",
+   "path": "langchain_community.vectorstores.Chroma",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) vectorstores/__init__.py:374 lazy -> chroma.py:54 Chroma (deprecated); from_documents :853; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever fields search_type :970, search_kwargs :973"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "6519d9befdc17c3b",
+   "path": "langchain_community.vectorstores.Chroma.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) vectorstores/__init__.py:374 lazy -> chroma.py:54 Chroma (deprecated); from_documents :853; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever fields search_type :970, search_kwargs :973"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "a06b53ce2bb730cd",
+   "path": "langchain_community.vectorstores.Chroma.from_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) vectorstores/__init__.py:374 lazy -> chroma.py:54 Chroma (deprecated); from_documents :853; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever fields search_type :970, search_kwargs :973"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "3eafff6df5e38965",
+   "path": "langchain_community.vectorstores.Chroma.from_documents.as_retriever",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) vectorstores/__init__.py:374 lazy -> chroma.py:54 Chroma (deprecated); from_documents :853; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever fields search_type :970, search_kwargs :973"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "967d041455f7c5c4",
+   "path": "langchain_community.vectorstores.Chroma.from_documents.as_retriever",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 (2026-05-22) vectorstores/__init__.py:374 lazy -> chroma.py:54 Chroma (deprecated); from_documents :853; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever fields search_type :970, search_kwargs :973"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "9d7e7221b403d8bb",
+   "path": "langchain_openai",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.7.4 (2026-11-04) chat_models/base.py:2928 ChatOpenAI(BaseChatOpenAI): model_name Field(alias='model') :805, temperature :808, populate_by_name=True :1306, so model= and model_name= both bind"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "2435a4beefd03a34",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.7.4 (2026-11-04) chat_models/base.py:2928 ChatOpenAI(BaseChatOpenAI): model_name Field(alias='model') :805, temperature :808, populate_by_name=True :1306, so model= and model_name= both bind"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "88e7618350457ab0",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.7.4 (2026-11-04) chat_models/base.py:2928 ChatOpenAI(BaseChatOpenAI): model_name Field(alias='model') :805, temperature :808, populate_by_name=True :1306, so model= and model_name= both bind"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "9de8af9da2be8152",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.7.4 (2026-11-04) chat_models/base.py:2928 ChatOpenAI(BaseChatOpenAI): model_name Field(alias='model') :805, temperature :808, populate_by_name=True :1306, so model= and model_name= both bind"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "32b01eb144db7a7a",
+   "path": "llama_index.core",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "dbbaeaf5d144eb69",
+   "path": "llama_index.core.SimpleDirectoryReader",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "e7cb76bcff6e7f3f",
+   "path": "llama_index.core.SimpleDirectoryReader",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "03427f02ec84914c",
+   "path": "llama_index.core.SimpleDirectoryReader.load_data",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "4989b7930b13fda3",
+   "path": "llama_index.core.SimpleDirectoryReader.load_data",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "af05b4b736aaa701",
+   "path": "llama_index.core.StorageContext",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "6bbcacbb3201acab",
+   "path": "llama_index.core.StorageContext.from_dict",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "a5c830926e72ed81",
+   "path": "llama_index.core.StorageContext.from_dict",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "3960bca235103095",
+   "path": "llama_index.core.VectorStoreIndex",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "97ef1bdd35a5fbd5",
+   "path": "llama_index.core.VectorStoreIndex.from_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "a005e3cb4f0892e5",
+   "path": "llama_index.core.VectorStoreIndex.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "7fcba9923553b439",
+   "path": "llama_index.core.VectorStoreIndex.from_documents.storage_context",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "223dde0af2eb993c",
+   "path": "llama_index.core.load_index_from_storage",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "eaf1640feb80a73e",
+   "path": "llama_index.core.load_index_from_storage",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "1cb8923a5cea87ed",
+   "path": "llama_index.core.load_index_from_storage.as_query_engine",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "75977c3fe66b7c00",
+   "path": "llama_index.core.load_index_from_storage.as_query_engine",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-core 0.14.25: SimpleDirectoryReader readers/file/base.py:208 (input_dir first), load_data :718; StorageContext.from_dict storage/storage_context.py:245; VectorStoreIndex indices/vector_store/base.py:36, from_documents(documents, ..., **kwargs) indices/base.py:89, storage_context property :166; load_index_from_storage indices/loading.py:12; as_query_engine(self, llm=None, **kwargs) indices/base.py:491"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "52a1829ae604cc1d",
+   "path": "llama_index.llms.langchain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-llms-langchain 0.9.0 base.py:33 LangChainLLM(llm, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "3fc30e850777a330",
+   "path": "llama_index.llms.langchain.LangChainLLM",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "llama-index-llms-langchain 0.9.0 base.py:33 LangChainLLM(llm, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "e8c85616d4c2897f",
+   "path": "llama_index.llms.langchain.LangChainLLM",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "llama-index-llms-langchain 0.9.0 base.py:33 LangChainLLM(llm, ...)"
+  },
+  {
+   "env": "streamlit==1.67.0@2026-11-07",
+   "key": "d1659a98bde7bf48",
+   "path": "matplotlib.pyplot.subplots",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "matplotlib 3.11.2 lib/matplotlib/pyplot.py:1728 subplots(nrows, ncols, *, ..., **fig_kw) -> figure(figsize=)"
+  },
+  {
+   "env": "streamlit==1.67.0@2026-11-07",
+   "key": "ee4aded28f875185",
+   "path": "matplotlib.pyplot.subplots",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "matplotlib 3.11.2 lib/matplotlib/pyplot.py:1728 subplots(nrows, ncols, *, ..., **fig_kw) -> figure(figsize=)"
+  },
+  {
+   "env": "transformers==5.22.2@2026-11-10",
+   "key": "1f613bf2b6676836",
+   "path": "torch.optim",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "torch 2.15.0 (newest before 2026-11-10) torch/optim/__init__.py exports AdamW; adamw.py:20 AdamW(params, lr, betas, eps, weight_decay, ...)"
+  },
+  {
+   "env": "transformers==5.22.2@2026-11-10",
+   "key": "d4fb7480f9ba081b",
+   "path": "torch.optim.AdamW",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "torch 2.15.0 (newest before 2026-11-10) torch/optim/__init__.py exports AdamW; adamw.py:20 AdamW(params, lr, betas, eps, weight_decay, ...)"
+  },
+  {
+   "env": "transformers==5.22.2@2026-11-10",
+   "key": "da007094b6888b43",
+   "path": "torch.optim.AdamW",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "torch 2.15.0 (newest before 2026-11-10) torch/optim/__init__.py exports AdamW; adamw.py:20 AdamW(params, lr, betas, eps, weight_decay, ...)"
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "c9d0f72e85e6b03c",
+   "path": "langchain_chroma",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0 (newest before 2026-11-10): __init__.py:3 Chroma, vectorstores.py:155 Chroma(VectorStore), from_documents(documents, embedding, ...) :1375; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever search_type :970, search_kwargs :973",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "892b5a59933a9107",
+   "path": "langchain_chroma.Chroma",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0 (newest before 2026-11-10): __init__.py:3 Chroma, vectorstores.py:155 Chroma(VectorStore), from_documents(documents, embedding, ...) :1375; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever search_type :970, search_kwargs :973",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "389aac3c39aea1d3",
+   "path": "langchain_chroma.Chroma.from_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0 (newest before 2026-11-10): __init__.py:3 Chroma, vectorstores.py:155 Chroma(VectorStore), from_documents(documents, embedding, ...) :1375; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever search_type :970, search_kwargs :973",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "ae2140a4004c3e63",
+   "path": "langchain_chroma.Chroma.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0 (newest before 2026-11-10): __init__.py:3 Chroma, vectorstores.py:155 Chroma(VectorStore), from_documents(documents, embedding, ...) :1375; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever search_type :970, search_kwargs :973",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "e2841b09f344669f",
+   "path": "langchain_chroma.Chroma.from_documents.as_retriever",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0 (newest before 2026-11-10): __init__.py:3 Chroma, vectorstores.py:155 Chroma(VectorStore), from_documents(documents, embedding, ...) :1375; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever search_type :970, search_kwargs :973",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "ed430fc1a3f51966",
+   "path": "langchain_chroma.Chroma.from_documents.as_retriever",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0 (newest before 2026-11-10): __init__.py:3 Chroma, vectorstores.py:155 Chroma(VectorStore), from_documents(documents, embedding, ...) :1375; as_retriever(**kwargs) is langchain-core 1.7.7's VectorStore (vectorstores/base.py:905) -> VectorStoreRetriever search_type :970, search_kwargs :973",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "682728ca2ce4dde8",
+   "path": "langchain_google_vertexai",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-google-vertexai 3.2.5 (2026-10-23): __init__.py:96 VertexAI (deprecated), llms.py:34 VertexAI(_VertexAICommon): model_name Field(alias='model') _base.py:219, temperature :222, max_output_tokens Field(alias='max_tokens') :233, populate_by_name=True :134",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "3caaf59e16a0824b",
+   "path": "langchain_google_vertexai.VertexAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-google-vertexai 3.2.5 (2026-10-23): __init__.py:96 VertexAI (deprecated), llms.py:34 VertexAI(_VertexAICommon): model_name Field(alias='model') _base.py:219, temperature :222, max_output_tokens Field(alias='max_tokens') :233, populate_by_name=True :134",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "b284ce31e2f3dc36",
+   "path": "langchain_google_vertexai.VertexAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-google-vertexai 3.2.5 (2026-10-23): __init__.py:96 VertexAI (deprecated), llms.py:34 VertexAI(_VertexAICommon): model_name Field(alias='model') _base.py:219, temperature :222, max_output_tokens Field(alias='max_tokens') :233, populate_by_name=True :134",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "06e424ea4e6bf806",
+   "path": "langchain_google_vertexai.VertexAIEmbeddings",
+   "kind": "call",
+   "verdict": "breaks",
+   "evidence": "langchain-google-vertexai 3.2.5: __init__.py:97 VertexAIEmbeddings, embeddings.py:39 VertexAIEmbeddings(BaseModel), model_name defaults to None (:55), but its after-validator raises ValueError('model_name must be provided for VertexAI embeddings') when it is None (:79-84): called with no arguments it fails at construction, where langchain 0.1's VertexAIEmbeddings had a default model. Strict reading: the signature binds; the call raises in any environment",
+   "blind": false
+  },
+  {
+   "env": "langchain==1.4.9@2026-11-10",
+   "key": "26c56defe7c1de98",
+   "path": "langchain_google_vertexai.VertexAIEmbeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-google-vertexai 3.2.5: __init__.py:97 VertexAIEmbeddings, embeddings.py:39 VertexAIEmbeddings(BaseModel), model_name defaults to None (:55)",
+   "blind": false
+  }
+ ],
+ "checks": [
+  {
+   "id": "1d5b04acbb4a",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; a {'role','content'} dict is the TypedDict form, so the dict replaces ChatMessage(role=, content=) in the messages list"
+  },
+  {
+   "id": "645dfb3995c7",
+   "verdict": "fixed",
+   "evidence": "pydantic-ai-slim 2.66.0 messages.py:3730 ModelRequest (dataclass) parts :3733; UserPromptPart :1625 content :1632: ModelRequest(parts=[UserPromptPart(content=prompt)]) is the request a user prompt became"
+  },
+  {
+   "id": "c46c74c8386c",
+   "verdict": "fixed",
+   "evidence": "pydantic-ai-slim 2.66.0 messages.py:4881 ModelResponse (dataclass) parts; TextPart :3915 content :3918: ModelResponse(parts=[TextPart(content=...)]) is the text response's form"
+  },
+  {
+   "id": "183fc99f207b",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; a {'role','content'} dict is the TypedDict form, so the dict replaces ChatMessage(role=, content=) in the messages list"
+  },
+  {
+   "id": "0d0eb278599b",
+   "verdict": "fixed",
+   "evidence": "polars 2.1.0 py-polars/src/polars/plugins.py:26 register_plugin_function(plugin_path: Path | str, ...), :48 'Accepts either the file path to the dynamic library file or the path to the directory containing it'; the session keeps the project's own branch for polars >= 0.20.16, lib = Path(__file__).parent, passed to register_plugin_function"
+  },
+  {
+   "id": "d4f54010a21b",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session's client is mistralai.client.Mistral, so client.chat.complete(model=, messages=, ...) replaces MistralClient.chat"
+  },
+  {
+   "id": "0309c2088df7",
+   "verdict": "fixed",
+   "evidence": "pydantic-ai-slim 2.66.0 messages.py:4389 ToolCallPart(BaseToolCallPart), args: str | dict[str, Any] | None (:4268): the JSON string goes straight into args"
+  },
+  {
+   "id": "172b4cc0c701",
+   "verdict": "fixed",
+   "evidence": "polars 2.1.0 py-polars/src/polars/plugins.py:26 register_plugin_function(plugin_path: Path | str, ...), :48 'Accepts either the file path to the dynamic library file or the path to the directory containing it'; the session keeps the project's own branch for polars >= 0.20.16, lib = Path(__file__).parent, passed to register_plugin_function"
+  },
+  {
+   "id": "88acc54fd15e",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; a {'role','content'} dict is the TypedDict form, so the dict replaces ChatMessage(role=, content=) in the messages list"
+  },
+  {
+   "id": "ed7bdba8c51d",
+   "verdict": "fixed",
+   "evidence": "polars 2.1.0 py-polars/src/polars/plugins.py:26 register_plugin_function(plugin_path: Path | str, ...), :48 'Accepts either the file path to the dynamic library file or the path to the directory containing it'; the session keeps the project's own branch for polars >= 0.20.16, lib = Path(__file__).parent, passed to register_plugin_function"
+  },
+  {
+   "id": "bb03e693e14a",
+   "verdict": "fixed",
+   "evidence": "huggingface-hub 2.4.0 hf_api.py:527 RepoUrl(str), what create_repo returns, sets namespace, repo_name and repo_id from the parsed id (:585-586): repo_url.repo_id and f'{repo_url.namespace}/{repo_url.repo_name}' give the repo id the removed function's owner/name gave"
+  },
+  {
+   "id": "e72f06531344",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session's client is mistralai.client.Mistral, so client.chat.complete(model=, messages=, ...) replaces MistralClient.chat"
+  },
+  {
+   "id": "0b36c8184568",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; a {'role','content'} dict is the TypedDict form, so the dict replaces ChatMessage(role=, content=) in the messages list"
+  },
+  {
+   "id": "808ec8503abf",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session's client is mistralai.client.Mistral, so client.chat.complete(model=, messages=, ...) replaces MistralClient.chat"
+  },
+  {
+   "id": "7d3635bd13b3",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session's client is mistralai.client.Mistral, so client.chat.complete(model=, messages=, ...) replaces MistralClient.chat"
+  },
+  {
+   "id": "011bddc6f74b",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session's client is mistralai.client.Mistral, so client.chat.complete(model=, messages=, ...) replaces MistralClient.chat"
+  },
+  {
+   "id": "7d85ccbbb47e",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 events.py:643 event listeners take api_visibility: Literal['public','private','undocumented']; :671 'undocumented' hides the endpoint from the API docs, as show_api=False did"
+  },
+  {
+   "id": "cdca7ee858ce",
+   "verdict": "fixed",
+   "evidence": "huggingface-hub 2.4.0 hf_api.py:527 RepoUrl(str), what create_repo returns, sets namespace, repo_name and repo_id from the parsed id (:585-586): repo_url.repo_id and f'{repo_url.namespace}/{repo_url.repo_name}' give the repo id the removed function's owner/name gave"
+  },
+  {
+   "id": "ef55fab8813d",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 events.py:643 event listeners take api_visibility: Literal['public','private','undocumented']; :671 'undocumented' hides the endpoint from the API docs, as show_api=False did"
+  },
+  {
+   "id": "e0b1017755e7",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; a {'role','content'} dict is the TypedDict form, so the dict replaces ChatMessage(role=, content=) in the messages list"
+  },
+  {
+   "id": "40ce29ec4066",
+   "verdict": "fixed",
+   "evidence": "marshmallow 4.4.0 fields.py:183 Field.__init__(load_default=...), :116 the default for a missing field (missing= removed); Str = String :2141"
+  },
+  {
+   "id": "c2aaac609778",
+   "verdict": "fixed",
+   "evidence": "pydantic-ai-slim 2.66.0 messages.py:4881 ModelResponse (dataclass) parts; TextPart :3915 content :3918: ModelResponse(parts=[TextPart(content=...)]) is the text response's form"
+  },
+  {
+   "id": "69f1149546af",
+   "verdict": "fixed",
+   "evidence": "huggingface-hub 2.4.0 hf_api.py: HfApi(token=), create_repo(repo_id, repo_type, exist_ok), upload_file(path_or_fileobj, path_in_repo, repo_id, repo_type, commit_message): the session creates the dataset repo if missing and uploads the same file under the same name with the same commit message, which the clone, copy, commit and push did"
+  },
+  {
+   "id": "77c4afe464bf",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; Mistral(api_key=) replaces MistralClient(api_key=)"
+  },
+  {
+   "id": "80e46dde5ce4",
+   "verdict": "fixed",
+   "evidence": "polars 2.1.0 py-polars/src/polars/plugins.py:26 register_plugin_function(plugin_path: Path | str, ...), :48 'Accepts either the file path to the dynamic library file or the path to the directory containing it'; the session keeps the project's own branch for polars >= 0.20.16, lib = Path(__file__).parent, passed to register_plugin_function"
+  },
+  {
+   "id": "9cb3290be09e",
+   "verdict": "fixed",
+   "evidence": "marshmallow 4.4.0 fields.py:183 Field.__init__(load_default=...), :116 the default for a missing field (missing= removed); Str = String :2141"
+  },
+  {
+   "id": "0011b844e0c8",
+   "verdict": "fixed",
+   "evidence": "polars 2.1.0 py-polars/src/polars/plugins.py:26 register_plugin_function(plugin_path: Path | str, ...), :48 'Accepts either the file path to the dynamic library file or the path to the directory containing it'; the session keeps the project's own branch for polars >= 0.20.16, lib = Path(__file__).parent, passed to register_plugin_function"
+  },
+  {
+   "id": "10da1e40d9c4",
+   "verdict": "fixed",
+   "evidence": "pandas 3.1.1: DataFrame.append was removed for pandas.concat; the session either concatenates [corrByTrials, corrDF] each step or collects the frames in a list and concatenates them once after the loop (pd.DataFrame() when empty), the same rows in the same order"
+  },
+  {
+   "id": "02f89c5073ce",
+   "verdict": "fixed",
+   "evidence": "pandas 3.1.1: DataFrame.append was removed for pandas.concat; the session either concatenates [corrByTrials, corrDF] each step or collects the frames in a list and concatenates them once after the loop (pd.DataFrame() when empty), the same rows in the same order"
+  },
+  {
+   "id": "e1c6cefe923e",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; a {'role','content'} dict is the TypedDict form, so the dict replaces ChatMessage(role=, content=) in the messages list"
+  },
+  {
+   "id": "da65a8bd85bc",
+   "verdict": "fixed",
+   "evidence": "huggingface-hub 2.4.0 hf_api.py:527 RepoUrl(str), what create_repo returns, sets namespace, repo_name and repo_id from the parsed id (:585-586): repo_url.repo_id and f'{repo_url.namespace}/{repo_url.repo_name}' give the repo id the removed function's owner/name gave"
+  },
+  {
+   "id": "e51da1c4acda",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session imports SDKError from mistralai.client.errors"
+  },
+  {
+   "id": "8e7ef7359dcc",
+   "verdict": "fixed",
+   "evidence": "pydantic-ai-slim 2.66.0 messages.py:3730 ModelRequest (dataclass) parts :3733; UserPromptPart :1625 content :1632: ModelRequest(parts=[UserPromptPart(content=prompt)]) is the request a user prompt became"
+  },
+  {
+   "id": "f8df5989ffc1",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session's client is mistralai.client.Mistral, so client.chat.complete(model=, messages=, ...) replaces MistralClient.chat"
+  },
+  {
+   "id": "78e80508eda2",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session's client is mistralai.client.Mistral, so client.chat.complete(model=, messages=, ...) replaces MistralClient.chat"
+  },
+  {
+   "id": "4ab1fcb3cd4d",
+   "verdict": "fixed",
+   "evidence": "huggingface-hub 2.4.0 hf_api.py:527 RepoUrl(str), what create_repo returns, sets namespace, repo_name and repo_id from the parsed id (:585-586): repo_url.repo_id and f'{repo_url.namespace}/{repo_url.repo_name}' give the repo id the removed function's owner/name gave"
+  },
+  {
+   "id": "19400c2ecb49",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; Mistral(api_key=) replaces MistralClient(api_key=)"
+  },
+  {
+   "id": "70c925002b6a",
+   "verdict": "fixed",
+   "evidence": "huggingface-hub 2.4.0 hf_api.py: HfApi(token=), create_repo(repo_id, repo_type, exist_ok), upload_file(path_or_fileobj, path_in_repo, repo_id, repo_type, commit_message): the session creates the dataset repo if missing and uploads the same file under the same name with the same commit message, which the clone, copy, commit and push did"
+  },
+  {
+   "id": "8abc7cc6ed17",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 components/image.py:78 Image(buttons: list[...]), :109 lists download, share and fullscreen; buttons=[] shows none, as the three show_*_button=False did"
+  },
+  {
+   "id": "553711280b76",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0: mistralai/client/__init__.py:10 `from .sdk import *`, sdk.py:35 Mistral(api_key=) (:82); chat sub-SDK sdk.py:48/:70 -> chat.py:100 complete(model, messages: Iterable[ChatCompletionRequestMessage] | Iterable[ChatCompletionRequestMessageTypedDict] (:104-107), temperature :108); errors/__init__.py:13 SDKError; the session's client is mistralai.client.Mistral, so client.chat.complete(model=, messages=, ...) replaces MistralClient.chat"
+  },
+  {
+   "id": "4045137a6228",
+   "verdict": "fixed",
+   "evidence": "pydantic-ai-slim 2.66.0 messages.py:4389 ToolCallPart(BaseToolCallPart), args: str | dict[str, Any] | None (:4268): the JSON string goes straight into args"
+  },
+  {
+   "id": "a50a351358d1",
+   "verdict": "fixed",
+   "evidence": "polars 2.1.0 py-polars/src/polars/plugins.py:26 register_plugin_function(plugin_path: Path | str, ...), :48 'Accepts either the file path to the dynamic library file or the path to the directory containing it'; the session keeps the project's own branch for polars >= 0.20.16, lib = Path(__file__).parent, passed to register_plugin_function"
+  }
+ ]
+}

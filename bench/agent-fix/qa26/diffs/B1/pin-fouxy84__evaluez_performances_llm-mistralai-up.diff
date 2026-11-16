@@ -1,0 +1,165 @@
+diff --git a/MistralChat.py b/MistralChat.py
+index 608369b..7b54dad 100644
+--- a/MistralChat.py
++++ b/MistralChat.py
+@@ -2,8 +2,8 @@
+ import streamlit as st
+ import os
+ import logging
+-from mistralai.client import MistralClient
+-from mistralai.models.chat_completion import ChatMessage
++from mistralai.client import Mistral
++from mistralai.client.models import UserMessage
+ from dotenv import load_dotenv
+ 
+ # --- Importations depuis vos modules ---
+@@ -31,7 +31,7 @@ if not api_key:
+     st.stop()
+ 
+ try:
+-    client = MistralClient(api_key=api_key)
++    client = Mistral(api_key=api_key)
+     logging.info("Client Mistral initialisé.")
+ except Exception as e:
+     st.error(f"Erreur lors de l'initialisation du client Mistral : {e}")
+@@ -86,7 +86,7 @@ if "messages" not in st.session_state:
+ 
+ # --- Fonctions ---
+ 
+-def generer_reponse(prompt_messages: list[ChatMessage]) -> str:
++def generer_reponse(prompt_messages: list[UserMessage]) -> str:
+     """
+     Envoie le prompt (qui inclut maintenant le contexte) à l'API Mistral.
+     """
+@@ -98,7 +98,7 @@ def generer_reponse(prompt_messages: list[ChatMessage]) -> str:
+         # Log le contenu du prompt (peut être long) - commenter si trop verbeux
+         # logging.debug(f"Prompt envoyé à l'API: {prompt_messages}")
+ 
+-        response = client.chat(
++        response = client.chat.complete(
+             model=model,
+             messages=prompt_messages,
+             temperature=0.1, # Température basse pour des réponses factuelles basées sur le contexte
+@@ -166,7 +166,7 @@ if prompt := st.chat_input(f"Posez votre question sur la {NAME}..."):
+     # Créer la liste de messages pour l'API (juste le prompt système/utilisateur combiné)
+     messages_for_api = [
+         # On pourrait séparer system et user, mais Mistral gère bien un long message user structuré
+-        ChatMessage(role="user", content=final_prompt_for_llm)
++        UserMessage(role="user", content=final_prompt_for_llm)
+     ]
+ 
+     # === Fin de la logique RAG ===
+diff --git a/evaluate_ragas.py b/evaluate_ragas.py
+index 72c8eea..2d5265f 100644
+--- a/evaluate_ragas.py
++++ b/evaluate_ragas.py
+@@ -99,8 +99,8 @@ import logfire
+ 
+ from utils.config import MISTRAL_API_KEY, MODEL_NAME
+ from utils.vector_store import VectorStoreManager
+-from mistralai.client import MistralClient
+-from mistralai.models.chat_completion import ChatMessage
++from mistralai.client import Mistral
++from mistralai.client.models import UserMessage
+ from dotenv import load_dotenv
+ import os
+ from ragas.llms import LangchainLLMWrapper
+@@ -229,7 +229,7 @@ class RAGEvaluator:
+ 
+     def __init__(self):
+         self.vs = VectorStoreManager()
+-        self.client = MistralClient(api_key=MISTRAL_API_KEY)
++        self.client = Mistral(api_key=MISTRAL_API_KEY)
+         self.db = SessionLocal()
+         self.sql_tool = create_sql_tool(self.db)
+ 
+@@ -257,9 +257,9 @@ class RAGEvaluator:
+         return rag.answer
+ 
+     def get_embedding(self, text: str):
+-        response = self.client.embeddings(
++        response = self.client.embeddings.create(
+             model="mistral-embed",
+-            input=[text]
++            inputs=[text]
+         )
+         return np.array(response.data[0].embedding).astype("float32").reshape(1, -1)
+ 
+@@ -287,9 +287,9 @@ class RAGEvaluator:
+ 
+             prompt = f"Contexte:\n{chr(10).join(contexts)}\n\nQuestion: {q}\nRéponse:"
+             print('envoie requête au modèle...')
+-            response = self.client.chat(
++            response = self.client.chat.complete(
+                 model=MODEL_NAME,
+-                messages=[ChatMessage(role="user", content=prompt)],
++                messages=[UserMessage(role="user", content=prompt)],
+                 temperature=0.1
+             )
+             print('Réponse reçue du modèle...')
+diff --git a/utils/vector_store.py b/utils/vector_store.py
+index 6950dc3..76d29d8 100644
+--- a/utils/vector_store.py
++++ b/utils/vector_store.py
+@@ -5,8 +5,8 @@ import faiss
+ import numpy as np
+ import logging
+ from typing import List, Dict, Tuple, Optional, Any
+-from mistralai.client import MistralClient
+-from mistralai.exceptions import MistralAPIException
++from mistralai.client import Mistral
++from mistralai.client.errors import SDKError
+ from langchain.text_splitter import RecursiveCharacterTextSplitter
+ from langchain_core.documents import Document # Utilisé pour le format attendu par le splitter
+ 
+@@ -50,7 +50,7 @@ class VectorStoreManager:
+     def __init__(self):
+         self.index: Optional[faiss.Index] = None
+         self.document_chunks: List[Dict[str, any]] = []
+-        self.mistral_client = MistralClient(api_key=MISTRAL_API_KEY)
++        self.mistral_client = Mistral(api_key=MISTRAL_API_KEY)
+         self._load_index_and_chunks()
+ 
+     def _load_index_and_chunks(self):
+@@ -145,9 +145,9 @@ def _generate_embeddings(self, chunks: List[DocumentChunk]) -> Optional[np.ndarr
+ 
+             logging.info(f"  Traitement du lot {batch_num}/{total_batches} ({len(texts_to_embed)} chunks)")
+             try:
+-                response = self.mistral_client.embeddings(
++                response = self.mistral_client.embeddings.create(
+                     model=EMBEDDING_MODEL,
+-                    input=texts_to_embed
++                    inputs=texts_to_embed
+                 )
+                 batch_embeddings = [data.embedding for data in response.data]
+ 
+@@ -166,7 +166,7 @@ def _generate_embeddings(self, chunks: List[DocumentChunk]) -> Optional[np.ndarr
+                         embedding = [0.0] * len(embedding) if embedding else [0.0] * 1024
+ 
+                 all_embeddings.extend(batch_embeddings)
+-            except MistralAPIException as e:
++            except SDKError as e:
+                 logging.error(f"Erreur API Mistral lors de la génération d'embeddings (lot {batch_num}): {e}")
+                 logging.error(f"  Détails: Status Code={e.status_code}, Message={e.message}")
+             except Exception as e:
+@@ -290,9 +290,9 @@ def search(self, query_text: str, k: int = 5, min_score: float = None) -> List[D
+         logging.info(f"Recherche des {k} chunks les plus pertinents pour: '{query_text}'")
+         try:
+             # 1. Générer l'embedding de la requête
+-            response = self.mistral_client.embeddings(
++            response = self.mistral_client.embeddings.create(
+                 model=EMBEDDING_MODEL,
+-                input=[query_text] # La requête doit être une liste
++                inputs=[query_text] # La requête doit être une liste
+             )
+             query_embedding = np.array([response.data[0].embedding]).astype('float32')
+ 
+@@ -349,7 +349,7 @@ def search(self, query_text: str, k: int = 5, min_score: float = None) -> List[D
+ 
+             return results
+ 
+-        except MistralAPIException as e:
++        except SDKError as e:
+             logging.error(f"Erreur API Mistral lors de la génération de l'embedding de la requête: {e}")
+             logging.error(f"  Détails: Status Code={e.status_code}, Message={e.message}")
+             return []

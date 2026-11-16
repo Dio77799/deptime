@@ -1,0 +1,139 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index f0f1776..6f81960 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -22,7 +22,7 @@ classifiers = [
+ ]
+ dependencies = [
+     "ydb>=3.26.7",
+-    "mcp>=1.6.0,<2",  # 2.x renamed FastMCP to MCPServer and changed the API
++    "mcp>=2.3.0,<3",  # 2.x renamed FastMCP to MCPServer (mcp.server.mcpserver)
+ ]
+ 
+ [project.optional-dependencies]
+diff --git a/requirements.txt b/requirements.txt
+index 0b8e580..5ac9820 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,2 +1,2 @@
+ ydb>=3.21.9
+-mcp==1.12.4
++mcp==2.3.0
+diff --git a/tests/integration/conftest.py b/tests/integration/conftest.py
+index af9c28c..f7474d4 100644
+--- a/tests/integration/conftest.py
++++ b/tests/integration/conftest.py
+@@ -8,7 +8,7 @@ import time
+ from urllib.parse import urlparse
+ 
+ import pytest
+-from mcp.types import CallToolRequest, CallToolRequestParams
++from mcp.client import Client
+ 
+ from tests.docker_utils import start_ydb_container, stop_container, wait_for_port
+ from ydb_mcp.server import YDBMCPServer
+@@ -70,13 +70,9 @@ async def read_only_server(ydb_server):
+ 
+ async def call_tool(server: YDBMCPServer, tool_name: str, **params) -> dict:
+     """Call a registered tool through MCP and return its parsed result."""
+-    handler = server._mcp_server.request_handlers[CallToolRequest]
+-    request = CallToolRequest(
+-        method="tools/call",
+-        params=CallToolRequestParams(name=tool_name, arguments=params),
+-    )
+-    result = (await handler(request)).root
++    async with Client(server) as client:
++        result = await client.call_tool(tool_name, params)
+     text = result.content[0].text
+-    if result.isError:
++    if result.is_error:
+         return {"error": text}
+     return json.loads(text)
+diff --git a/tests/test_server.py b/tests/test_server.py
+index dcc1ede..9c5e731 100644
+--- a/tests/test_server.py
++++ b/tests/test_server.py
+@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
+ 
+ import pytest
+ import ydb
+-from mcp.types import CallToolRequest, CallToolRequestParams
++from mcp.client import Client
+ 
+ from ydb_mcp.params import _build_ydb_params, _parse_params_str
+ from ydb_mcp.serialization import _process_result_set, _stringify_keys
+@@ -543,12 +543,8 @@ class TestGenericToolHandlers:
+         return await tools[name].fn(**kwargs)
+ 
+     async def _call_protocol_tool(self, server, name, **kwargs):
+-        handler = server._mcp_server.request_handlers[CallToolRequest]
+-        request = CallToolRequest(
+-            method="tools/call",
+-            params=CallToolRequestParams(name=name, arguments=kwargs),
+-        )
+-        return (await handler(request)).root
++        async with Client(server) as client:
++            return await client.call_tool(name, kwargs)
+ 
+     async def test_ydb_query_success(self, server):
+         server.execute = AsyncMock(return_value=[{"columns": ["n"], "rows": [[1]]}])
+@@ -573,7 +569,7 @@ class TestGenericToolHandlers:
+ 
+         result = await self._call_protocol_tool(server, tool_name, **arguments)
+ 
+-        assert result.isError is True
++        assert result.is_error is True
+         assert "database unavailable" in result.content[0].text
+ 
+     async def test_ydb_query_with_params(self, server):
+@@ -583,7 +579,7 @@ class TestGenericToolHandlers:
+ 
+     async def test_ydb_query_with_params_invalid_json(self, server):
+         result = await self._call_protocol_tool(server, "ydb_query_with_params", sql="SELECT $x", params="bad json")
+-        assert result.isError is True
++        assert result.is_error is True
+ 
+     async def test_ydb_explain(self, server):
+         server.explain = AsyncMock(return_value={"plan": {}})
+@@ -624,5 +620,5 @@ class TestGenericToolHandlers:
+ 
+         result = await self._call_protocol_tool(server, "ydb_describe_path", path="/local/missing")
+ 
+-        assert result.isError is True
++        assert result.is_error is True
+         assert "Path '/local/missing' not found" in result.content[0].text
+diff --git a/ydb_mcp/server.py b/ydb_mcp/server.py
+index e165bc1..d92746e 100644
+--- a/ydb_mcp/server.py
++++ b/ydb_mcp/server.py
+@@ -7,7 +7,7 @@ from typing import Any
+ 
+ import ydb
+ import ydb.aio
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ from .params import _build_ydb_params
+ from .serialization import _process_result_set, _stringify_keys
+@@ -43,7 +43,7 @@ def _load_root_certificates(root_certificates: str | bytes | os.PathLike | None)
+     return pem
+ 
+ 
+-class YDBMCPServer(FastMCP):
++class YDBMCPServer(MCPServer):
+     """MCP server for YDB database.
+ 
+     Control which built-in tools are registered via ``generic_tools``:
+diff --git a/ydb_mcp/tools.py b/ydb_mcp/tools.py
+index 6875cd2..454d4ac 100644
+--- a/ydb_mcp/tools.py
++++ b/ydb_mcp/tools.py
+@@ -25,7 +25,7 @@ class YDBGenericTool(str, Enum):
+ 
+ 
+ def register_generic_tools(server: "YDBMCPServer", enabled: set[YDBGenericTool]) -> None:
+-    """Register the built-in YDB tools with the FastMCP server.
++    """Register the built-in YDB tools with the MCPServer.
+ 
+     :param enabled: set of tools to register; empty set registers nothing.
+     """

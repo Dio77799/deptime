@@ -1,0 +1,276 @@
+diff --git a/superbuilder/mcp/mcp_servers/mcp_google_flight/requirements.txt b/superbuilder/mcp/mcp_servers/mcp_google_flight/requirements.txt
+index 3f3b81e..7a3b04b 100644
+--- a/superbuilder/mcp/mcp_servers/mcp_google_flight/requirements.txt
++++ b/superbuilder/mcp/mcp_servers/mcp_google_flight/requirements.txt
+@@ -1,4 +1,4 @@
+-mcp==1.30.0
++mcp==2.3.0
+ fastapi>=0.68.0
+ uvicorn>=0.15.0
+ python-dotenv>=0.19.0
+diff --git a/superbuilder/mcp/mcp_servers/mcp_google_flight/server.py b/superbuilder/mcp/mcp_servers/mcp_google_flight/server.py
+index 29619f5..5d50e7d 100644
+--- a/superbuilder/mcp/mcp_servers/mcp_google_flight/server.py
++++ b/superbuilder/mcp/mcp_servers/mcp_google_flight/server.py
+@@ -9,7 +9,7 @@ import subprocess
+ import json
+ import logging
+ from pathlib import Path
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from typing import List, Dict, Optional, Any
+ from serpapi import GoogleSearch
+ from rich.logging import RichHandler
+@@ -466,7 +466,11 @@ def _run_server_in_thread(port, protocol):
+             print(format_message('server_start'))
+         else:
+             print(format_message('server_start', port=port))
+-        mcp.run(transport="streamable-http" if protocol == "http" else protocol)
++        # In mcp 2.x, HTTP transport settings (port) are passed to run(), not the constructor
++        if protocol == 'stdio':
++            mcp.run(transport="stdio")
++        else:
++            mcp.run(transport="streamable-http" if protocol == "http" else "sse", port=port)
+     except Exception as e:
+         print(format_message('server_error', error=str(e)))
+     finally:
+@@ -487,11 +491,8 @@ def start_server(port=None, protocol=None):
+         port = None
+     
+     if (protocol == 'stdio' and mcp is None) or (protocol != 'stdio' and port != google_flight_PORT):
+-        # Create fresh FastMCP instance with current port and protocol
+-        if protocol == 'stdio':
+-            mcp = FastMCP("google_flight")
+-        else:
+-            mcp = FastMCP("google_flight", port=port)
++        # Create fresh MCPServer instance (port is passed to run() in mcp 2.x)
++        mcp = MCPServer("google_flight")
+         # Register all tools with the new instance
+         register_tools()
+         
+@@ -800,11 +801,8 @@ Examples:
+         if current_protocol == 'stdio':
+             current_port = None
+             
+-        # Initialize FastMCP with the final port and protocol values
+-        if current_protocol == 'stdio':
+-            mcp = FastMCP("google_flight")
+-        else:
+-            mcp = FastMCP("google_flight", port=current_port)
++        # Initialize MCPServer (port is passed to run() in mcp 2.x)
++        mcp = MCPServer("google_flight")
+         # Register all tools with the MCP instance
+         register_tools(verbose=not args.json)      
+             
+diff --git a/superbuilder/mcp/mcp_servers/mcp_google_hotel/requirements.txt b/superbuilder/mcp/mcp_servers/mcp_google_hotel/requirements.txt
+index c8f332c..32969de 100644
+--- a/superbuilder/mcp/mcp_servers/mcp_google_hotel/requirements.txt
++++ b/superbuilder/mcp/mcp_servers/mcp_google_hotel/requirements.txt
+@@ -1,4 +1,4 @@
+-mcp==1.30.0
++mcp==2.3.0
+ fastapi>=0.68.0
+ uvicorn>=0.15.0
+ python-dotenv>=0.19.0
+diff --git a/superbuilder/mcp/mcp_servers/mcp_google_hotel/server.py b/superbuilder/mcp/mcp_servers/mcp_google_hotel/server.py
+index 2f0b5a2..daa58b0 100644
+--- a/superbuilder/mcp/mcp_servers/mcp_google_hotel/server.py
++++ b/superbuilder/mcp/mcp_servers/mcp_google_hotel/server.py
+@@ -9,7 +9,7 @@ import subprocess
+ import json
+ import logging
+ from pathlib import Path
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from typing import List, Dict, Optional, Any
+ from serpapi import GoogleSearch
+ from rich.logging import RichHandler
+@@ -357,7 +357,11 @@ def _run_server_in_thread(port, protocol):
+             print(format_message('server_start'))
+         else:
+             print(format_message('server_start', port=port))
+-        mcp.run(transport="streamable-http" if protocol == "http" else protocol)
++        # In mcp 2.x, HTTP transport settings (port) are passed to run(), not the constructor
++        if protocol == 'stdio':
++            mcp.run(transport="stdio")
++        else:
++            mcp.run(transport="streamable-http" if protocol == "http" else "sse", port=port)
+     except Exception as e:
+         print(format_message('server_error', error=str(e)))
+     finally:
+@@ -378,11 +382,8 @@ def start_server(port=None, protocol=None):
+         port = None
+     
+     if (protocol == 'stdio' and mcp is None) or (protocol != 'stdio' and port != google_hotel_PORT):
+-        # Create fresh FastMCP instance with current port and protocol
+-        if protocol == 'stdio':
+-            mcp = FastMCP("google_hotel")
+-        else:
+-            mcp = FastMCP("google_hotel", port=port)
++        # Create fresh MCPServer instance (port is passed to run() in mcp 2.x)
++        mcp = MCPServer("google_hotel")
+         # Register all tools with the new instance
+         register_tools()
+         
+@@ -691,11 +692,8 @@ Examples:
+         if current_protocol == 'stdio':
+             current_port = None
+             
+-        # Initialize FastMCP with the final port and protocol values
+-        if current_protocol == 'stdio':
+-            mcp = FastMCP("google_hotel")
+-        else:
+-            mcp = FastMCP("google_hotel", port=current_port)
++        # Initialize MCPServer (port is passed to run() in mcp 2.x)
++        mcp = MCPServer("google_hotel")
+         # Register all tools with the MCP instance
+         register_tools(verbose=not args.json)      
+             
+diff --git a/superbuilder/mcp/mcp_servers/mcp_math/requirements.txt b/superbuilder/mcp/mcp_servers/mcp_math/requirements.txt
+index c2a3cb2..c94b206 100644
+--- a/superbuilder/mcp/mcp_servers/mcp_math/requirements.txt
++++ b/superbuilder/mcp/mcp_servers/mcp_math/requirements.txt
+@@ -1,4 +1,4 @@
+-mcp==1.30.0
++mcp==2.3.0
+ fastapi>=0.68.0
+ uvicorn>=0.15.0
+ python-dotenv>=0.19.0
+diff --git a/superbuilder/mcp/mcp_servers/mcp_math/server.py b/superbuilder/mcp/mcp_servers/mcp_math/server.py
+index eb87276..fc6d592 100644
+--- a/superbuilder/mcp/mcp_servers/mcp_math/server.py
++++ b/superbuilder/mcp/mcp_servers/mcp_math/server.py
+@@ -7,7 +7,7 @@ import time
+ import socket
+ import subprocess
+ from pathlib import Path
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ # Message templates
+ SERVER_MESSAGES = {
+@@ -165,7 +165,11 @@ def _run_server_in_thread(port, protocol):
+             print(format_message('server_start'))
+         else:
+             print(format_message('server_start', port=port))
+-        mcp.run(transport="streamable-http" if protocol == "http" else protocol)
++        # In mcp 2.x, HTTP transport settings (port) are passed to run(), not the constructor
++        if protocol == 'stdio':
++            mcp.run(transport="stdio")
++        else:
++            mcp.run(transport="streamable-http" if protocol == "http" else "sse", port=port)
+     except Exception as e:
+         print(format_message('server_error', error=str(e)))
+     finally:
+@@ -186,11 +190,8 @@ def start_server(port=None, protocol=None):
+         port = None
+     
+     if (protocol == 'stdio' and mcp is None) or (protocol != 'stdio' and port != math_PORT):
+-        # Create fresh FastMCP instance with current port and protocol
+-        if protocol == 'stdio':
+-            mcp = FastMCP("math")
+-        else:
+-            mcp = FastMCP("math", port=port)
++        # Create fresh MCPServer instance (port is passed to run() in mcp 2.x)
++        mcp = MCPServer("math")
+         # Register all tools with the new instance
+         register_tools()
+         
+@@ -496,11 +497,8 @@ Examples:
+         if current_protocol == 'stdio':
+             current_port = None
+             
+-        # Initialize FastMCP with the final port and protocol values
+-        if current_protocol == 'stdio':
+-            mcp = FastMCP("math")
+-        else:
+-            mcp = FastMCP("math", port=current_port)
++        # Initialize MCPServer (port is passed to run() in mcp 2.x)
++        mcp = MCPServer("math")
+         # Register all tools with the MCP instance
+         register_tools(verbose=not args.json)      
+             
+diff --git a/superbuilder/mcp/mcp_servers/mcp_mind_map/requirements.txt b/superbuilder/mcp/mcp_servers/mcp_mind_map/requirements.txt
+index 5b7f89f..436059a 100644
+--- a/superbuilder/mcp/mcp_servers/mcp_mind_map/requirements.txt
++++ b/superbuilder/mcp/mcp_servers/mcp_mind_map/requirements.txt
+@@ -1,4 +1,4 @@
+-mcp==1.30.0
++mcp==2.3.0
+ fastapi>=0.68.0
+ uvicorn>=0.15.0
+ python-dotenv>=0.19.0
+diff --git a/superbuilder/mcp/mcp_servers/mcp_mind_map/server.py b/superbuilder/mcp/mcp_servers/mcp_mind_map/server.py
+index 954c69c..8588c8b 100644
+--- a/superbuilder/mcp/mcp_servers/mcp_mind_map/server.py
++++ b/superbuilder/mcp/mcp_servers/mcp_mind_map/server.py
+@@ -10,7 +10,7 @@ import tempfile
+ import shutil
+ import atexit
+ from pathlib import Path
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ # Message templates
+ SERVER_MESSAGES = {
+@@ -231,7 +231,11 @@ def _run_server_in_thread(port, protocol):
+             print(format_message('server_start'))
+         else:
+             print(format_message('server_start', port=port))
+-        mcp.run(transport="streamable-http" if protocol == "http" else protocol)
++        # In mcp 2.x, HTTP transport settings (port) are passed to run(), not the constructor
++        if protocol == 'stdio':
++            mcp.run(transport="stdio")
++        else:
++            mcp.run(transport="streamable-http" if protocol == "http" else "sse", port=port)
+     except Exception as e:
+         print(format_message('server_error', error=str(e)))
+     finally:
+@@ -252,11 +256,8 @@ def start_server(port=None, protocol=None):
+         port = None
+     
+     if (protocol == 'stdio' and mcp is None) or (protocol != 'stdio' and port != mind_map_PORT):
+-        # Create fresh FastMCP instance with current port and protocol
+-        if protocol == 'stdio':
+-            mcp = FastMCP("mind_map")
+-        else:
+-            mcp = FastMCP("mind_map", port=port)
++        # Create fresh MCPServer instance (port is passed to run() in mcp 2.x)
++        mcp = MCPServer("mind_map")
+         # Register all tools with the new instance
+         register_tools()
+         
+@@ -555,9 +556,9 @@ Examples:
+         # If no command provided, assume MCP client mode - start directly in stdio
+         if args.command is None:
+             # MCP client mode - initialize and run directly
+-            mcp = FastMCP("mind_map")
++            mcp = MCPServer("mind_map")
+             register_tools(verbose=False)
+-            # FastMCP.run() will handle stdio communication
++            # MCPServer.run() will handle stdio communication
+             mcp.run()
+             sys.exit(0)
+         
+@@ -574,18 +575,15 @@ Examples:
+         if current_protocol == 'stdio':
+             current_port = None
+             
+-        # Initialize FastMCP with the final port and protocol values
+-        if current_protocol == 'stdio':
+-            mcp = FastMCP("mind_map")
+-        else:
+-            mcp = FastMCP("mind_map", port=current_port)
++        # Initialize MCPServer (port is passed to run() in mcp 2.x)
++        mcp = MCPServer("mind_map")
+         # Register all tools with the MCP instance
+         register_tools(verbose=not args.json)      
+             
+         if args.command == "start":
+             # For stdio protocol, run directly on main thread (not in background thread)
+             if current_protocol == 'stdio':
+-                # Run FastMCP stdio server directly - this will block until terminated
++                # Run MCPServer stdio server directly - this will block until terminated
+                 mcp.run()
+                 sys.exit(0)
+             

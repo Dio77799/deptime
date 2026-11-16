@@ -1,0 +1,98 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index d1e3530..c04f62a 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -54,7 +54,7 @@ dependencies = [
+     "markdown==3.6",
+     "markdown-to-json==2.1.1",
+     "minio==7.2.4",
+-    "mistralai==0.4.2",
++    "mistralai==3.7.0",
+     "nltk==3.9.1",
+     "numpy>=1.26.0,<2.0.0",
+     "ollama==0.2.1",
+diff --git a/rag/llm/chat_model.py b/rag/llm/chat_model.py
+index 918f456..bf38dcc 100644
+--- a/rag/llm/chat_model.py
++++ b/rag/llm/chat_model.py
+@@ -684,8 +684,8 @@ class MiniMaxChat(Base):
+ class MistralChat(Base):
+ 
+     def __init__(self, key, model_name, base_url=None):
+-        from mistralai.client import MistralClient
+-        self.client = MistralClient(api_key=key)
++        from mistralai.client import Mistral
++        self.client = Mistral(api_key=key)
+         self.model_name = model_name
+ 
+     def chat(self, system, history, gen_conf):
+@@ -695,7 +695,7 @@ class MistralChat(Base):
+             if k not in ["temperature", "top_p", "max_tokens"]:
+                 del gen_conf[k]
+         try:
+-            response = self.client.chat(
++            response = self.client.chat.complete(
+                 model=self.model_name,
+                 messages=history,
+                 **gen_conf)
+@@ -718,11 +718,12 @@ class MistralChat(Base):
+         ans = ""
+         total_tokens = 0
+         try:
+-            response = self.client.chat_stream(
++            response = self.client.chat.stream(
+                 model=self.model_name,
+                 messages=history,
+                 **gen_conf)
+-            for resp in response:
++            for event in response:
++                resp = event.data
+                 if not resp.choices or not resp.choices[0].delta.content:
+                     continue
+                 ans += resp.choices[0].delta.content
+diff --git a/rag/llm/embedding_model.py b/rag/llm/embedding_model.py
+index 17bb84e..0249118 100644
+--- a/rag/llm/embedding_model.py
++++ b/rag/llm/embedding_model.py
+@@ -446,8 +446,8 @@ class InfinityEmbed(Base):
+ class MistralEmbed(Base):
+     def __init__(self, key, model_name="mistral-embed",
+                  base_url=None):
+-        from mistralai.client import MistralClient
+-        self.client = MistralClient(api_key=key)
++        from mistralai.client import Mistral
++        self.client = Mistral(api_key=key)
+         self.model_name = model_name
+ 
+     def encode(self, texts: list):
+@@ -456,14 +456,14 @@ class MistralEmbed(Base):
+         ress = []
+         token_count = 0
+         for i in range(0, len(texts), batch_size):
+-            res = self.client.embeddings(input=texts[i:i + batch_size],
+-                                        model=self.model_name)
++            res = self.client.embeddings.create(inputs=texts[i:i + batch_size],
++                                                model=self.model_name)
+             ress.extend([d.embedding for d in res.data])
+             token_count += self.total_token_count(res)
+         return np.array(ress), token_count
+ 
+     def encode_queries(self, text):
+-        res = self.client.embeddings(input=[truncate(text, 8196)],
++        res = self.client.embeddings.create(inputs=[truncate(text, 8196)],
+                                             model=self.model_name)
+         return np.array(res.data[0].embedding), self.total_token_count(res)
+ 
+diff --git a/requirements.txt b/requirements.txt
+index 1c3bde0..13bedff 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -43,7 +43,7 @@ json-repair==0.35.0
+ markdown==3.6
+ markdown-to-json==2.1.1
+ minio==7.2.4
+-mistralai==0.4.2
++mistralai==3.7.0
+ nltk==3.9.1
+ numpy>=1.26.0,<2.0.0
+ ollama==0.2.1

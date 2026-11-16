@@ -1,0 +1,106 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 25,
+  "duration_ms": 77390,
+  "total_cost_usd": 0.17429109999999998,
+  "usage": {
+   "input_tokens": 28,
+   "cache_creation_input_tokens": 17676,
+   "cache_read_input_tokens": 203146,
+   "output_tokens": 4984,
+   "output_tokens_details": {
+    "thinking_tokens": 547
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 17676,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 725,
+     "cache_read_input_tokens": 22939,
+     "cache_creation_input_tokens": 514,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 514
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.57,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.28,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 5,
+  "Read": 3,
+  "Bash": 1,
+  "Glob": 1,
+  "WebFetch": 9,
+  "WebSearch": 1,
+  "Edit": 4
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://github.com/mistralai/client-python/blob/main/MIGRATION.md",
+  "https://docs.mistral.ai/resources/migration-guides",
+  "https://pypi.org/pypi/mistralai/json",
+  "https://raw.githubusercontent.com/mistralai/client-python/main/MIGRATION.md",
+  "https://github.com/mistralai/client-python",
+  "https://pypi.org/project/mistralai/3.7.0/",
+  "https://raw.githubusercontent.com/mistralai/client-python/main/src/mistralai/client/errors/__init__.py",
+  "https://raw.githubusercontent.com/mistralai/client-python/main/src/mistralai/client/__init__.py",
+  "https://raw.githubusercontent.com/mistralai/client-python/main/src/mistralai/client/models/__init__.py"
+ ],
+ "denied": 0,
+ "task": "pin-brunov21__aicore-mistralai-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 78.0,
+ "service_error": false
+}

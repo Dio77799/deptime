@@ -1,0 +1,109 @@
+diff --git a/src/beyondllm/embeddings/finetune.py b/src/beyondllm/embeddings/finetune.py
+index 1d676d3..0ddd75e 100644
+--- a/src/beyondllm/embeddings/finetune.py
++++ b/src/beyondllm/embeddings/finetune.py
+@@ -1,6 +1,6 @@
+-from llama_index.core.node_parser import SimpleNodeParser
++from llama_index.core.node_parser import SentenceSplitter
+ from beyondllm.embeddings.utils import generate_qa_embedding_pairs, resolve_embed_model
+-from llama_index.core.evaluation import EmbeddingQAFinetuneDataset
++from beyondllm.embeddings.qa_dataset import EmbeddingQAFinetuneDataset
+ from llama_index.core import  SimpleDirectoryReader
+ from dataclasses import dataclass, field
+ 
+@@ -15,7 +15,7 @@ class FineTuneEmbeddings:
+         return docs
+ 
+     def load_corpus(self, docs, for_training=False, verbose=False):
+-        parser = SimpleNodeParser.from_defaults()
++        parser = SentenceSplitter.from_defaults()
+         split_index = int(len(docs) * 0.7)
+ 
+         if for_training:
+@@ -46,8 +46,8 @@ class FineTuneEmbeddings:
+             if user_agree.lower() == 'y':
+                 import subprocess
+                 import sys
+-                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-finetuning==0.1.5"])
+-                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-embeddings-huggingface==0.2.0"])
++                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-finetuning"])
++                subprocess.check_call([sys.executable, "-m", "pip", "install", "llama-index-embeddings-huggingface"])
+                 
+                 from llama_index.finetuning import SentenceTransformersFinetuneEngine
+             else:
+diff --git a/src/beyondllm/embeddings/qa_dataset.py b/src/beyondllm/embeddings/qa_dataset.py
+new file mode 100644
+index 0000000..5610921
+--- /dev/null
++++ b/src/beyondllm/embeddings/qa_dataset.py
+@@ -0,0 +1,44 @@
++"""Embedding QA fine-tuning dataset.
++
++llama-index-core no longer exports ``EmbeddingQAFinetuneDataset`` (it was removed from
++``llama_index.core.evaluation``), so a small compatible container is defined here.
++"""
++import json
++from typing import Dict, List
++
++from pydantic import BaseModel
++
++
++class EmbeddingQAFinetuneDataset(BaseModel):
++    """Embedding QA finetuning dataset.
++
++    Attributes:
++        queries (Dict[str, str]): Dict id -> query.
++        corpus (Dict[str, str]): Dict id -> string.
++        relevant_docs (Dict[str, List[str]]): Dict query id -> list of doc ids.
++    """
++
++    queries: Dict[str, str]
++    corpus: Dict[str, str]
++    relevant_docs: Dict[str, List[str]]
++    mode: str = "text"
++
++    @property
++    def query_docid_pairs(self) -> List[tuple]:
++        """Get query, relevant doc ids."""
++        return [
++            (query, self.relevant_docs[query_id])
++            for query_id, query in self.queries.items()
++        ]
++
++    def save_json(self, path: str) -> None:
++        """Save json."""
++        with open(path, "w") as f:
++            json.dump(self.model_dump() if hasattr(self, "model_dump") else self.dict(), f, indent=4)
++
++    @classmethod
++    def from_json(cls, path: str) -> "EmbeddingQAFinetuneDataset":
++        """Load json."""
++        with open(path) as f:
++            data = json.load(f)
++        return cls(**data)
+diff --git a/src/beyondllm/embeddings/utils.py b/src/beyondllm/embeddings/utils.py
+index 44eb39f..0d63e9b 100644
+--- a/src/beyondllm/embeddings/utils.py
++++ b/src/beyondllm/embeddings/utils.py
+@@ -3,7 +3,7 @@ import re
+ import uuid
+ 
+ from llama_index.core.schema import MetadataMode, TextNode
+-from llama_index.core.evaluation import EmbeddingQAFinetuneDataset
++from beyondllm.embeddings.qa_dataset import EmbeddingQAFinetuneDataset
+ import os
+ from typing import TYPE_CHECKING, List, Optional, Union
+ 
+diff --git a/src/beyondllm/retrievers/utils.py b/src/beyondllm/retrievers/utils.py
+index ccf8179..cdc9b91 100644
+--- a/src/beyondllm/retrievers/utils.py
++++ b/src/beyondllm/retrievers/utils.py
+@@ -8,7 +8,7 @@ from typing import List
+ from tqdm import tqdm
+ 
+ from llama_index.core.schema import MetadataMode, TextNode
+-from llama_index.core.evaluation import EmbeddingQAFinetuneDataset
++from beyondllm.embeddings.qa_dataset import EmbeddingQAFinetuneDataset
+ 
+ DEFAULT_QA_GENERATE_PROMPT_TMPL = """\
+ Context information is below.

@@ -1,0 +1,220 @@
+diff --git a/docs/requirements.txt b/docs/requirements.txt
+index bc8c84e..a997afb 100644
+--- a/docs/requirements.txt
++++ b/docs/requirements.txt
+@@ -8,7 +8,7 @@ lxml==4.9.1
+ matplotlib==3.6.2
+ #numexpr==2.6.8
+ numpy==1.23.5
+-pandas==1.5.2
++pandas==3.1.1
+ python-dateutil==2.8.2
+ rpy2==3.5.6
+ scipy==1.9.3
+diff --git a/pygcam/RESPolicy.py b/pygcam/RESPolicy.py
+index c280f9e..447c1a3 100644
+--- a/pygcam/RESPolicy.py
++++ b/pygcam/RESPolicy.py
+@@ -650,12 +650,13 @@ def validate(scenario, csv_path, useGcamUSA):
+ 
+         fraction[region] = rec_total[region] / elec_total[region]
+ 
+-    result = None
++    frames = []
+     for region in regions:
+         df = pd.DataFrame(round(fraction[region] * 100, 2)).T
+         df['region'] = region
+-        result = df if result is None else result.append(df)
++        frames.append(df)
+ 
++    result = pd.concat(frames)
+     result.set_index('region', inplace=True)
+     print('{}:\n{}'.format(scenario, result))
+ 
+diff --git a/pygcam/chart.py b/pygcam/chart.py
+index d8e2f42..cef6dfc 100644
+--- a/pygcam/chart.py
++++ b/pygcam/chart.py
+@@ -12,6 +12,7 @@ from .matplotlibFix import plt
+ from matplotlib.ticker import FuncFormatter
+ 
+ import numpy as np
++import pandas as pd
+ import seaborn as sns
+ import shlex
+ 
+@@ -133,12 +134,12 @@ def plotUnstackedRegionComparison(df, categoryCol, valueCol=None, region=None,
+     other = df.query('region not in %s' % regions)
+ 
+     grp = other.groupby(categoryCol)
+-    otherSums = grp.sum()
++    otherSums = grp.sum(numeric_only=True)
+     otherSums.reset_index(inplace=True)
+     otherSums[regionCol] = otherRegion
+ 
+     grp = reg.groupby(categoryCol)
+-    regSum = grp.sum()
++    regSum = grp.sum(numeric_only=True)
+     regSum.reset_index(inplace=True)
+     regSum[regionCol] = region
+ 
+@@ -147,7 +148,7 @@ def plotUnstackedRegionComparison(df, categoryCol, valueCol=None, region=None,
+     totals = regSum.set_index(categoryCol) + otherSums.set_index(categoryCol)
+     totals[regionCol] = 'Total'
+     totals.reset_index(inplace=True)
+-    world = regSum.append(otherSums).append(totals)
++    world = pd.concat([regSum, otherSums, totals])
+ 
+     ax = sns.barplot(x=regionCol, y=plotCol, hue=categoryCol, data=world, ci=None)
+ 
+diff --git a/pygcam/constraints.py b/pygcam/constraints.py
+index 348496f..a0f88fb 100644
+--- a/pygcam/constraints.py
++++ b/pygcam/constraints.py
+@@ -347,9 +347,10 @@ def genDeltaConstraints(**kwargs):
+         # 2020, 2025, but not 2010 or 2015. So we add any missing columns here.
+         missingCols = list(set(yearCols) - set(purposeGrownDF.columns))
+         if len(missingCols) > 0:
+-            purposeGrownDF = pd.concat([purposeGrownDF, pd.DataFrame(columns=missingCols)])
++            # Add the missing columns (filled with NaN, as float) after the existing ones
++            purposeGrownDF = purposeGrownDF.reindex(columns=list(purposeGrownDF.columns) + missingCols)
+ 
+-        purposeGrownDF.fillna(0, inplace=True)
++        purposeGrownDF = purposeGrownDF.fillna(0)
+         purposeGrownUSA  = purposeGrownDF.query(US_REGION_QUERY)[yearCols]
+ 
+         xml = _generateConstraintXML('regional-biomass-constraint', biomassConstraint, policyType=biomassPolicyType,
+diff --git a/pygcam/mcs/LHS.py b/pygcam/mcs/LHS.py
+index f2199e7..fa6d491 100644
+--- a/pygcam/mcs/LHS.py
++++ b/pygcam/mcs/LHS.py
+@@ -154,7 +154,9 @@ def lhsAmend(df, rvList, trials, shuffle=True):
+     for rv in rvList:
+         values = rv.ppf(getPercentiles(trials))  # extract values from the RV for these percentiles
+         if not isinstance(values, np.ndarray):
+-            values = values.values               # convert pandas Series if needed
++            # Convert pandas Series (or other sequence) to a writable ndarray. A copy is required since,
++            # under copy-on-write, Series.values is read-only and we may shuffle the values below.
++            values = np.array(values)
+ 
+         if shuffle:
+             np.random.shuffle(values)            # randomize the stratified samples
+diff --git a/pygcam/mcs/analysis.py b/pygcam/mcs/analysis.py
+index 0bab968..d1ef985 100644
+--- a/pygcam/mcs/analysis.py
++++ b/pygcam/mcs/analysis.py
+@@ -400,7 +400,7 @@ def plotGroupSensitivityResults(varName, data, filename=None, extra=None, maxVar
+     along with contribution from unsubscripted ones. For example, we sum
+     the contributions for "ETA[1,5]" and "ETA[1,6]" into "ETA".
+     '''
+-    totals = pd.Series(name='totals')
++    totals = pd.Series(name='totals', dtype=float)
+ 
+     for idx, row in data.iterrows():
+         # Lop off bracketed indices at first '['.
+@@ -500,7 +500,7 @@ def readParameterValues(simId, trials):
+ 
+     for row, col, value, trialNum, pname in paramValues:
+         key = makeKey(pname, row, col)
+-        inputDF[key][trialNum] = value
++        inputDF.loc[trialNum, key] = value     # chained assignment doesn't work under copy-on-write
+ 
+     return inputDF
+ 
+@@ -818,7 +818,7 @@ class Analysis(object):
+         data['value'] = data.normalized * data.sign     # normalized squares with signs restored
+ 
+         # Sort descending by normalized values (all are positive from squaring)
+-        data.sort(columns=['normalized'], ascending=False, inplace=True)
++        data.sort_values(by=['normalized'], ascending=False, inplace=True)
+ 
+         varName = resultSeries.name
+ 
+diff --git a/pygcam/mcs/explorer.py b/pygcam/mcs/explorer.py
+index 0b57522..ae75891 100644
+--- a/pygcam/mcs/explorer.py
++++ b/pygcam/mcs/explorer.py
+@@ -380,18 +380,19 @@ class McsData(object):
+         topParams = list(fullDF[:paramsToShow].index)
+ 
+         colsToDrop = set(inputsDF.columns) - set(topParams)
+-        inputsDF = inputsDF.drop(colsToDrop, axis=1, inplace=False) # not inplace since it's a slice of the original
++        inputsDF = inputsDF.drop(list(colsToDrop), axis=1, inplace=False) # not inplace since it's a slice of the original
+ 
+         trialSteps = list(range(CORR_STEP, len(results), CORR_STEP))    # produce corrDF for increments of 100 trials
+         trialSteps.append(len(results))                                 # final value is for however many trials there were
+ 
+-        corrByTrials = pd.DataFrame()
++        corrDFs = []
+ 
+         for count in trialSteps:
+             corrDF = getCorrDF(inputsDF[:count], results[:count])
+             corrDF['count'] = count
+-            corrByTrials = corrByTrials.append(corrDF)
++            corrDFs.append(corrDF)
+ 
++        corrByTrials = pd.concat(corrDFs) if corrDFs else pd.DataFrame()
+         corrByTrials.reset_index(inplace=True)
+         return corrByTrials
+ 
+@@ -458,7 +459,7 @@ class McsData(object):
+             squared = corrDF.spearman ** 2
+             corrDF['normalized'] = squared / squared.sum()
+             corrDF['sign'] = 1
+-            corrDF.ix[(corrDF.spearman < 0), 'sign'] = -1
++            corrDF.loc[(corrDF.spearman < 0), 'sign'] = -1
+             corrDF['value'] = corrDF.normalized * corrDF.sign     # normalized squares with signs restored
+             plotColumn = 'value'
+             title = 'Normalized rank correlation'
+diff --git a/pygcam/mcs/tsplotModified.py b/pygcam/mcs/tsplotModified.py
+index ecb39a0..422c55b 100644
+--- a/pygcam/mcs/tsplotModified.py
++++ b/pygcam/mcs/tsplotModified.py
+@@ -200,7 +200,7 @@ def tsplot(data, time=None, unit=None, condition=None, value=None,
+     for c, (cond, df_c) in enumerate(data.groupby(condition, sort=False)):
+ 
+         df_c = df_c.pivot(index=unit, columns=time, values=value)
+-        x = df_c.columns.values.astype(np.float)
++        x = df_c.columns.to_numpy().astype(float)
+         # Bootstrap the data for confidence intervals
+         #boot_data = algo.bootstrap(df_c.values, n_boot=n_boot,
+         #                           axis=0, func=estimator)
+diff --git a/pygcam/query.py b/pygcam/query.py
+index 02101d9..dc13cf9 100644
+--- a/pygcam/query.py
++++ b/pygcam/query.py
+@@ -78,7 +78,7 @@ def interpolateYears(df, startYear=0, inplace=False):
+     yearCols = [str(y) for y in years]       # convert back to strings, now sorted
+ 
+     nonYearCols = list(set(df.columns) - set(yearCols))
+-    result = df.reindex(nonYearCols + yearCols, axis=1, copy=(not inplace))
++    result = df.reindex(nonYearCols + yearCols, axis=1)    # `copy` kwarg is deprecated; copy-on-write makes it moot
+     return result
+ 
+ def readCsv(filename, skiprows=1, years=None, interpolate=False, startYear=0, cache=False):
+diff --git a/pygcam/utils.py b/pygcam/utils.py
+index 611b860..fbf39c1 100644
+--- a/pygcam/utils.py
++++ b/pygcam/utils.py
+@@ -601,10 +601,8 @@ def printSeries(series, label, header='', asStr=False):
+ 
+     df.columns = [label]
+ 
+-    oldPrecision = pd.get_option('precision')
+-    pd.set_option('precision', 5)
+-    s = "%s\n%s" % (header, df.T)
+-    pd.set_option('precision', oldPrecision)
++    with pd.option_context('display.precision', 5):
++        s = "%s\n%s" % (header, df.T)
+ 
+     if asStr:
+         return s
+diff --git a/rtd.requirements.txt b/rtd.requirements.txt
+index 80415a5..5c81428 100644
+--- a/rtd.requirements.txt
++++ b/rtd.requirements.txt
+@@ -1,3 +1,3 @@
+ python==3.9.15
+-pandas==1.5.2
++pandas==3.1.1
+ scipy==1.9.3

@@ -1,0 +1,60 @@
+diff --git a/kag/examples/baidu_map_mcp/map.py b/kag/examples/baidu_map_mcp/map.py
+index f9c08ea..0c8c529 100644
+--- a/kag/examples/baidu_map_mcp/map.py
++++ b/kag/examples/baidu_map_mcp/map.py
+@@ -3,10 +3,10 @@ import os
+ import copy
+ import httpx
+ 
+-from mcp.server.fastmcp import FastMCP, Context
++from mcp.server.mcpserver import MCPServer, Context
+ 
+ # 创建MCP服务器实例
+-mcp = FastMCP("mcp-server-baidu-maps")
++mcp = MCPServer("mcp-server-baidu-maps")
+ # 设置API密钥，用于调用百度地图API，获取方式请参考：https://lbsyun.baidu.com/apiconsole/key
+ api_key = os.getenv("BAIDU_MAPS_API_KEY")
+ print(os.environ)
+diff --git a/kag/examples/google_web_search_mcp/google_web_search_server.py b/kag/examples/google_web_search_mcp/google_web_search_server.py
+index 6191f67..27bb5c1 100644
+--- a/kag/examples/google_web_search_mcp/google_web_search_server.py
++++ b/kag/examples/google_web_search_mcp/google_web_search_server.py
+@@ -1,7 +1,7 @@
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ # 创建MCP服务器实例
+-mcp = FastMCP("mcp-server-web-search")
++mcp = MCPServer("mcp-server-web-search")
+ 
+ 
+ @mcp.tool()
+diff --git a/kag/mcp/server/kag_mcp_server.py b/kag/mcp/server/kag_mcp_server.py
+index 6682644..da288aa 100644
+--- a/kag/mcp/server/kag_mcp_server.py
++++ b/kag/mcp/server/kag_mcp_server.py
+@@ -86,13 +86,9 @@ class KagMcpServer(object):
+             raise ModuleNotFoundError(message)
+ 
+     def _create_mcp_server(self) -> None:
+-        from mcp.server.fastmcp import FastMCP  # noqa
++        from mcp.server.mcpserver import MCPServer  # noqa
+ 
+-        if self._transport == "sse":
+-            mcp_server = FastMCP(self._default_server_name, port=self._port)
+-        else:
+-            mcp_server = FastMCP(self._default_server_name)
+-        self._mcp_server = mcp_server
++        self._mcp_server = MCPServer(self._default_server_name)
+         self._add_mcp_tools()
+ 
+     def _add_mcp_tools(self) -> None:
+@@ -158,7 +154,7 @@ class KagMcpServer(object):
+ 
+     def serve(self) -> None:
+         if self._transport == "sse":
+-            self._mcp_server.run(transport="sse")
++            self._mcp_server.run(transport="sse", port=self._port)
+         elif self._transport == "stdio":
+             self._mcp_server.run(transport="stdio")
+         else:

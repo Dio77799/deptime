@@ -1,0 +1,39 @@
+diff --git a/matcha/app.py b/matcha/app.py
+index d68fbaa..75961a2 100644
+--- a/matcha/app.py
++++ b/matcha/app.py
+@@ -168,7 +168,7 @@ def main():
+         processed_text = gr.State(value=None)
+         processed_text_len = gr.State(value=None)
+ 
+-        with gr.Box():
++        with gr.Group():
+             with gr.Row():
+                 gr.Markdown(description, scale=3)
+                 with gr.Column():
+@@ -176,8 +176,8 @@ def main():
+                     html = '<br><iframe width="560" height="315" src="https://www.youtube.com/embed/xmvJkz3bqw0?si=jN7ILyDsbPwJCGoa" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>'
+                     gr.HTML(html)
+ 
+-        with gr.Box():
+-            radio_options = list(RADIO_OPTIONS.keys())
++        with gr.Group():
++            radio_options =list(RADIO_OPTIONS.keys())
+             model_type = gr.Radio(
+                 radio_options, value=radio_options[0], label="Choose a Model", interactive=True, container=False
+             )
+@@ -220,12 +220,12 @@ def main():
+ 
+                 synth_btn = gr.Button("Synthesise")
+ 
+-        with gr.Box():
++        with gr.Group():
+             with gr.Row():
+                 gr.Markdown("### Phonetised text")
+                 phonetised_text = gr.Textbox(interactive=False, scale=10, label="Phonetised text")
+ 
+-        with gr.Box():
++        with gr.Group():
+             with gr.Row():
+                 mel_spectrogram = gr.Image(interactive=False, label="mel spectrogram")
+ 

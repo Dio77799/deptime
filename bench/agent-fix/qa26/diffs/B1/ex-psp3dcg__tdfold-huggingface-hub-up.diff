@@ -1,0 +1,479 @@
+diff --git a/examples/community/checkpoint_merger.py b/examples/community/checkpoint_merger.py
+index b6e4182..10684e5 100644
+--- a/examples/community/checkpoint_merger.py
++++ b/examples/community/checkpoint_merger.py
+@@ -150,8 +150,6 @@ class CheckpointMergerPipeline(DiffusionPipeline):
+             cached_folder = snapshot_download(
+                 pretrained_model_name_or_path,
+                 cache_dir=cache_dir,
+-                resume_download=resume_download,
+-                proxies=proxies,
+                 local_files_only=local_files_only,
+                 use_auth_token=use_auth_token,
+                 revision=revision,
+diff --git a/examples/dreambooth/train_dreambooth.py b/examples/dreambooth/train_dreambooth.py
+index 84351fb..b215438 100644
+--- a/examples/dreambooth/train_dreambooth.py
++++ b/examples/dreambooth/train_dreambooth.py
+@@ -23,7 +23,7 @@ from diffusers import AutoencoderKL, DDPMScheduler, DiffusionPipeline, UNet2DCon
+ from diffusers.optimization import get_scheduler
+ from diffusers.utils import check_min_version
+ from diffusers.utils.import_utils import is_xformers_available
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ from PIL import Image
+ from torchvision import transforms
+ from tqdm.auto import tqdm
+@@ -436,7 +436,7 @@ class PromptDataset(Dataset):
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/dreambooth/train_dreambooth_flax.py b/examples/dreambooth/train_dreambooth_flax.py
+index 0d235e2..2259939 100644
+--- a/examples/dreambooth/train_dreambooth_flax.py
++++ b/examples/dreambooth/train_dreambooth_flax.py
+@@ -27,7 +27,7 @@ from diffusers.utils import check_min_version
+ from flax import jax_utils
+ from flax.training import train_state
+ from flax.training.common_utils import shard
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ from jax.experimental.compilation_cache import compilation_cache as cc
+ from PIL import Image
+ from torchvision import transforms
+@@ -310,7 +310,7 @@ class PromptDataset(Dataset):
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/research_projects/colossalai/train_dreambooth_colossalai.py b/examples/research_projects/colossalai/train_dreambooth_colossalai.py
+index b37adf7..77406ca 100644
+--- a/examples/research_projects/colossalai/train_dreambooth_colossalai.py
++++ b/examples/research_projects/colossalai/train_dreambooth_colossalai.py
+@@ -20,7 +20,7 @@ from colossalai.utils import get_current_device
+ from colossalai.utils.model.colo_init_context import ColoInitContext
+ from diffusers import AutoencoderKL, DDPMScheduler, DiffusionPipeline, UNet2DConditionModel
+ from diffusers.optimization import get_scheduler
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ from PIL import Image
+ from torchvision import transforms
+ from tqdm.auto import tqdm
+@@ -346,7 +346,7 @@ class PromptDataset(Dataset):
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/research_projects/dreambooth_inpaint/train_dreambooth_inpaint.py b/examples/research_projects/dreambooth_inpaint/train_dreambooth_inpaint.py
+index 16cd0b7..c15eb39 100644
+--- a/examples/research_projects/dreambooth_inpaint/train_dreambooth_inpaint.py
++++ b/examples/research_projects/dreambooth_inpaint/train_dreambooth_inpaint.py
+@@ -25,7 +25,7 @@ from diffusers import (
+ )
+ from diffusers.optimization import get_scheduler
+ from diffusers.utils import check_min_version
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ from PIL import Image, ImageDraw
+ from torchvision import transforms
+ from tqdm.auto import tqdm
+@@ -388,7 +388,7 @@ class PromptDataset(Dataset):
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/research_projects/intel_opts/textual_inversion/textual_inversion_bf16.py b/examples/research_projects/intel_opts/textual_inversion/textual_inversion_bf16.py
+index 4a7540a..bbde352 100644
+--- a/examples/research_projects/intel_opts/textual_inversion/textual_inversion_bf16.py
++++ b/examples/research_projects/intel_opts/textual_inversion/textual_inversion_bf16.py
+@@ -21,7 +21,7 @@ from diffusers import AutoencoderKL, DDPMScheduler, PNDMScheduler, StableDiffusi
+ from diffusers.optimization import get_scheduler
+ from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
+ from diffusers.utils import check_min_version
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ 
+ # TODO: remove and import from diffusers.utils when the new version of diffusers is released
+ from packaging import version
+@@ -355,7 +355,7 @@ class TextualInversionDataset(Dataset):
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/text_to_image/train_text_to_image.py b/examples/text_to_image/train_text_to_image.py
+index 841849d..0c923e1 100644
+--- a/examples/text_to_image/train_text_to_image.py
++++ b/examples/text_to_image/train_text_to_image.py
+@@ -23,7 +23,7 @@ from diffusers import AutoencoderKL, DDPMScheduler, StableDiffusionPipeline, UNe
+ from diffusers.optimization import get_scheduler
+ from diffusers.utils import check_min_version
+ from diffusers.utils.import_utils import is_xformers_available
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ from torchvision import transforms
+ from tqdm.auto import tqdm
+ from transformers import CLIPTextModel, CLIPTokenizer
+@@ -277,7 +277,7 @@ def parse_args():
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/text_to_image/train_text_to_image_flax.py b/examples/text_to_image/train_text_to_image_flax.py
+index 26b84d4..21f8bbd 100644
+--- a/examples/text_to_image/train_text_to_image_flax.py
++++ b/examples/text_to_image/train_text_to_image_flax.py
+@@ -27,7 +27,7 @@ from diffusers.utils import check_min_version
+ from flax import jax_utils
+ from flax.training import train_state
+ from flax.training.common_utils import shard
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ from torchvision import transforms
+ from tqdm.auto import tqdm
+ from transformers import CLIPFeatureExtractor, CLIPTokenizer, FlaxCLIPTextModel, set_seed
+@@ -213,7 +213,7 @@ def parse_args():
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/textual_inversion/textual_inversion.py b/examples/textual_inversion/textual_inversion.py
+index a9f766a..f678148 100644
+--- a/examples/textual_inversion/textual_inversion.py
++++ b/examples/textual_inversion/textual_inversion.py
+@@ -23,7 +23,7 @@ from diffusers import AutoencoderKL, DDPMScheduler, StableDiffusionPipeline, UNe
+ from diffusers.optimization import get_scheduler
+ from diffusers.utils import check_min_version
+ from diffusers.utils.import_utils import is_xformers_available
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ 
+ # TODO: remove and import from diffusers.utils when the new version of diffusers is released
+ from packaging import version
+@@ -400,7 +400,7 @@ class TextualInversionDataset(Dataset):
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/textual_inversion/textual_inversion_flax.py b/examples/textual_inversion/textual_inversion_flax.py
+index 2fb961f..cec93f0 100644
+--- a/examples/textual_inversion/textual_inversion_flax.py
++++ b/examples/textual_inversion/textual_inversion_flax.py
+@@ -28,7 +28,7 @@ from diffusers.utils import check_min_version
+ from flax import jax_utils
+ from flax.training import train_state
+ from flax.training.common_utils import shard
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ 
+ # TODO: remove and import from diffusers.utils when the new version of diffusers is released
+ from packaging import version
+@@ -325,7 +325,7 @@ class TextualInversionDataset(Dataset):
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/unconditional_image_generation/train_unconditional.py b/examples/unconditional_image_generation/train_unconditional.py
+index af3d0dd..dc74148 100644
+--- a/examples/unconditional_image_generation/train_unconditional.py
++++ b/examples/unconditional_image_generation/train_unconditional.py
+@@ -15,7 +15,7 @@ from diffusers import DDPMPipeline, DDPMScheduler, UNet2DModel
+ from diffusers.optimization import get_scheduler
+ from diffusers.training_utils import EMAModel
+ from diffusers.utils import check_min_version
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ from torchvision.transforms import (
+     CenterCrop,
+     Compose,
+@@ -245,7 +245,7 @@ def parse_args():
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/examples/unconditional_image_generation/train_unconditional_ort.py b/examples/unconditional_image_generation/train_unconditional_ort.py
+index df0a463..0f3ebc4 100644
+--- a/examples/unconditional_image_generation/train_unconditional_ort.py
++++ b/examples/unconditional_image_generation/train_unconditional_ort.py
+@@ -15,7 +15,7 @@ from diffusers import DDPMPipeline, DDPMScheduler, UNet2DModel
+ from diffusers.optimization import get_scheduler
+ from diffusers.training_utils import EMAModel
+ from diffusers.utils import check_min_version
+-from huggingface_hub import HfFolder, Repository, whoami
++from huggingface_hub import Repository, get_token, whoami
+ from onnxruntime.training.ortmodule import ORTModule
+ from torchvision.transforms import (
+     CenterCrop,
+@@ -247,7 +247,7 @@ def parse_args():
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/my_diffusers/configuration_utils.py b/my_diffusers/configuration_utils.py
+index 189ef43..8a61930 100644
+--- a/my_diffusers/configuration_utils.py
++++ b/my_diffusers/configuration_utils.py
+@@ -382,8 +382,6 @@ class ConfigMixin:
+                     filename=cls.config_name,
+                     cache_dir=cache_dir,
+                     force_download=force_download,
+-                    proxies=proxies,
+-                    resume_download=resume_download,
+                     local_files_only=local_files_only,
+                     token=token,
+                     user_agent=user_agent,
+diff --git a/my_diffusers/models/modeling_flax_utils.py b/my_diffusers/models/modeling_flax_utils.py
+index 1ddcda9..e521a23 100644
+--- a/my_diffusers/models/modeling_flax_utils.py
++++ b/my_diffusers/models/modeling_flax_utils.py
+@@ -361,8 +361,6 @@ class FlaxModelMixin(PushToHubMixin):
+                     filename=FLAX_WEIGHTS_NAME if not from_pt else WEIGHTS_NAME,
+                     cache_dir=cache_dir,
+                     force_download=force_download,
+-                    proxies=proxies,
+-                    resume_download=resume_download,
+                     local_files_only=local_files_only,
+                     token=token,
+                     user_agent=user_agent,
+diff --git a/my_diffusers/pipelines/pipeline_flax_utils.py b/my_diffusers/pipelines/pipeline_flax_utils.py
+index b1035c1..2b50dfb 100644
+--- a/my_diffusers/pipelines/pipeline_flax_utils.py
++++ b/my_diffusers/pipelines/pipeline_flax_utils.py
+@@ -363,8 +363,6 @@ class FlaxDiffusionPipeline(ConfigMixin, PushToHubMixin):
+             cached_folder = snapshot_download(
+                 pretrained_model_name_or_path,
+                 cache_dir=cache_dir,
+-                resume_download=resume_download,
+-                proxies=proxies,
+                 local_files_only=local_files_only,
+                 token=token,
+                 revision=revision,
+diff --git a/my_diffusers/pipelines/pipeline_utils.py b/my_diffusers/pipelines/pipeline_utils.py
+index de7ad66..771e22a 100644
+--- a/my_diffusers/pipelines/pipeline_utils.py
++++ b/my_diffusers/pipelines/pipeline_utils.py
+@@ -1230,9 +1230,7 @@ class DiffusionPipeline(ConfigMixin, PushToHubMixin):
+                 cls.config_name,
+                 cache_dir=cache_dir,
+                 revision=revision,
+-                proxies=proxies,
+                 force_download=force_download,
+-                resume_download=resume_download,
+                 token=token,
+             )
+ 
+@@ -1422,8 +1420,6 @@ class DiffusionPipeline(ConfigMixin, PushToHubMixin):
+             cached_folder = snapshot_download(
+                 pretrained_model_name,
+                 cache_dir=cache_dir,
+-                resume_download=resume_download,
+-                proxies=proxies,
+                 local_files_only=local_files_only,
+                 token=token,
+                 revision=revision,
+diff --git a/my_diffusers/utils/dynamic_modules_utils.py b/my_diffusers/utils/dynamic_modules_utils.py
+index a4c704a..786cf30 100644
+--- a/my_diffusers/utils/dynamic_modules_utils.py
++++ b/my_diffusers/utils/dynamic_modules_utils.py
+@@ -306,8 +306,6 @@ def get_cached_module_file(
+                 module_file,
+                 cache_dir=cache_dir,
+                 force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+                 local_files_only=local_files_only,
+                 token=token,
+             )
+diff --git a/my_diffusers/utils/hub_utils.py b/my_diffusers/utils/hub_utils.py
+index e554b42..bbbebad 100644
+--- a/my_diffusers/utils/hub_utils.py
++++ b/my_diffusers/utils/hub_utils.py
+@@ -319,8 +319,6 @@ def _get_model_file(
+                     filename=_add_variant(weights_name, revision),
+                     cache_dir=cache_dir,
+                     force_download=force_download,
+-                    proxies=proxies,
+-                    resume_download=resume_download,
+                     local_files_only=local_files_only,
+                     token=token,
+                     user_agent=user_agent,
+@@ -344,8 +342,6 @@ def _get_model_file(
+                 filename=weights_name,
+                 cache_dir=cache_dir,
+                 force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+                 local_files_only=local_files_only,
+                 token=token,
+                 user_agent=user_agent,
+diff --git a/src/diffusers/configuration_utils.py b/src/diffusers/configuration_utils.py
+index ecf2301..980c4a5 100644
+--- a/src/diffusers/configuration_utils.py
++++ b/src/diffusers/configuration_utils.py
+@@ -328,8 +328,6 @@ class ConfigMixin:
+                     filename=cls.config_name,
+                     cache_dir=cache_dir,
+                     force_download=force_download,
+-                    proxies=proxies,
+-                    resume_download=resume_download,
+                     local_files_only=local_files_only,
+                     use_auth_token=use_auth_token,
+                     user_agent=user_agent,
+diff --git a/src/diffusers/models/modeling_flax_utils.py b/src/diffusers/models/modeling_flax_utils.py
+index aeeecca..bad6267 100644
+--- a/src/diffusers/models/modeling_flax_utils.py
++++ b/src/diffusers/models/modeling_flax_utils.py
+@@ -346,8 +346,6 @@ class FlaxModelMixin:
+                     filename=FLAX_WEIGHTS_NAME if not from_pt else WEIGHTS_NAME,
+                     cache_dir=cache_dir,
+                     force_download=force_download,
+-                    proxies=proxies,
+-                    resume_download=resume_download,
+                     local_files_only=local_files_only,
+                     use_auth_token=use_auth_token,
+                     user_agent=user_agent,
+diff --git a/src/diffusers/models/modeling_utils.py b/src/diffusers/models/modeling_utils.py
+index 91c4497..17449ad 100644
+--- a/src/diffusers/models/modeling_utils.py
++++ b/src/diffusers/models/modeling_utils.py
+@@ -594,8 +594,6 @@ class ModelMixin(torch.nn.Module):
+                     filename=weights_name,
+                     cache_dir=cache_dir,
+                     force_download=force_download,
+-                    proxies=proxies,
+-                    resume_download=resume_download,
+                     local_files_only=local_files_only,
+                     use_auth_token=use_auth_token,
+                     user_agent=user_agent,
+@@ -827,8 +825,6 @@ def _get_model_file(
+                 filename=weights_name,
+                 cache_dir=cache_dir,
+                 force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+                 local_files_only=local_files_only,
+                 use_auth_token=use_auth_token,
+                 user_agent=user_agent,
+diff --git a/src/diffusers/pipelines/pipeline_flax_utils.py b/src/diffusers/pipelines/pipeline_flax_utils.py
+index 1922d0f..a17e1d2 100644
+--- a/src/diffusers/pipelines/pipeline_flax_utils.py
++++ b/src/diffusers/pipelines/pipeline_flax_utils.py
+@@ -336,8 +336,6 @@ class FlaxDiffusionPipeline(ConfigMixin):
+             cached_folder = snapshot_download(
+                 pretrained_model_name_or_path,
+                 cache_dir=cache_dir,
+-                resume_download=resume_download,
+-                proxies=proxies,
+                 local_files_only=local_files_only,
+                 use_auth_token=use_auth_token,
+                 revision=revision,
+diff --git a/src/diffusers/pipelines/pipeline_utils.py b/src/diffusers/pipelines/pipeline_utils.py
+index 854a003..de59f78 100644
+--- a/src/diffusers/pipelines/pipeline_utils.py
++++ b/src/diffusers/pipelines/pipeline_utils.py
+@@ -503,8 +503,6 @@ class DiffusionPipeline(ConfigMixin):
+             cached_folder = snapshot_download(
+                 pretrained_model_name_or_path,
+                 cache_dir=cache_dir,
+-                resume_download=resume_download,
+-                proxies=proxies,
+                 local_files_only=local_files_only,
+                 use_auth_token=use_auth_token,
+                 revision=revision,
+diff --git a/src/diffusers/utils/dynamic_modules_utils.py b/src/diffusers/utils/dynamic_modules_utils.py
+index 464257b..0658107 100644
+--- a/src/diffusers/utils/dynamic_modules_utils.py
++++ b/src/diffusers/utils/dynamic_modules_utils.py
+@@ -26,7 +26,7 @@ from pathlib import Path
+ from typing import Dict, Optional, Union
+ from urllib import request
+ 
+-from huggingface_hub import HfFolder, cached_download, hf_hub_download, model_info
++from huggingface_hub import cached_download, get_token, hf_hub_download, model_info
+ 
+ from .. import __version__
+ from . import DIFFUSERS_DYNAMIC_MODULE_NAME, HF_MODULES_CACHE, logging
+@@ -304,8 +304,6 @@ def get_cached_module_file(
+                 module_file,
+                 cache_dir=cache_dir,
+                 force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+                 local_files_only=local_files_only,
+                 use_auth_token=use_auth_token,
+             )
+@@ -335,7 +333,7 @@ def get_cached_module_file(
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token is True:
+-            token = HfFolder.get_token()
++            token = get_token()
+         else:
+             token = None
+ 
+diff --git a/src/diffusers/utils/hub_utils.py b/src/diffusers/utils/hub_utils.py
+index e22b364..5317817 100644
+--- a/src/diffusers/utils/hub_utils.py
++++ b/src/diffusers/utils/hub_utils.py
+@@ -20,7 +20,7 @@ from pathlib import Path
+ from typing import Dict, Optional, Union
+ from uuid import uuid4
+ 
+-from huggingface_hub import HfFolder, whoami
++from huggingface_hub import get_token, whoami
+ 
+ from .. import __version__
+ from .constants import HUGGINGFACE_CO_RESOLVE_ENDPOINT
+@@ -78,7 +78,7 @@ def http_user_agent(user_agent: Union[Dict, str, None] = None) -> str:
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"

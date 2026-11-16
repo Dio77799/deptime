@@ -1,0 +1,13 @@
+diff --git a/code/proto_explanations/sense_label.py b/code/proto_explanations/sense_label.py
+index a358ee2..724b2cb 100644
+--- a/code/proto_explanations/sense_label.py
++++ b/code/proto_explanations/sense_label.py
+@@ -25,7 +25,7 @@ def vizualize(vectors, classes, seq_classes, labels, protos, lemma, method="PCA"
+             n_components=2,
+             perplexity=perplexity,
+             metric="cosine",
+-            n_iter=500,
++            max_iter=500,
+             init="pca",
+         )
+ 

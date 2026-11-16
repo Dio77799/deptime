@@ -1,0 +1,35 @@
+diff --git a/ydb_mcp/server.py b/ydb_mcp/server.py
+index e165bc1..d92746e 100644
+--- a/ydb_mcp/server.py
++++ b/ydb_mcp/server.py
+@@ -7,7 +7,7 @@ from typing import Any
+ 
+ import ydb
+ import ydb.aio
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ from .params import _build_ydb_params
+ from .serialization import _process_result_set, _stringify_keys
+@@ -43,7 +43,7 @@ def _load_root_certificates(root_certificates: str | bytes | os.PathLike | None)
+     return pem
+ 
+ 
+-class YDBMCPServer(FastMCP):
++class YDBMCPServer(MCPServer):
+     """MCP server for YDB database.
+ 
+     Control which built-in tools are registered via ``generic_tools``:
+diff --git a/ydb_mcp/tools.py b/ydb_mcp/tools.py
+index 6875cd2..8ac1499 100644
+--- a/ydb_mcp/tools.py
++++ b/ydb_mcp/tools.py
+@@ -25,7 +25,7 @@ class YDBGenericTool(str, Enum):
+ 
+ 
+ def register_generic_tools(server: "YDBMCPServer", enabled: set[YDBGenericTool]) -> None:
+-    """Register the built-in YDB tools with the FastMCP server.
++    """Register the built-in YDB tools with the MCPServer server.
+ 
+     :param enabled: set of tools to register; empty set registers nothing.
+     """

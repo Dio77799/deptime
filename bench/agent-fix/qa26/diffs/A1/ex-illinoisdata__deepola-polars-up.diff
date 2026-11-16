@@ -1,0 +1,659 @@
+diff --git a/baselines/polars/tpch/polars_queries/q1.py b/baselines/polars/tpch/polars_queries/q1.py
+index 999f308..926836e 100644
+--- a/baselines/polars/tpch/polars_queries/q1.py
++++ b/baselines/polars/tpch/polars_queries/q1.py
+@@ -12,7 +12,7 @@ def q():
+     q = utils.get_line_item_ds()
+     q_final = (
+         q.filter(pl.col("l_shipdate") <= VAR1)
+-        .groupby(["l_returnflag", "l_linestatus"])
++        .group_by(["l_returnflag", "l_linestatus"])
+         .agg(
+             [
+                 pl.sum("l_quantity").alias("sum_qty"),
+@@ -30,7 +30,7 @@ def q():
+                 pl.mean("l_quantity").alias("avg_qty"),
+                 pl.mean("l_extendedprice").alias("avg_price"),
+                 pl.mean("l_discount").alias("avg_disc"),
+-                pl.count().alias("count_order"),
++                pl.len().alias("count_order"),
+             ],
+         )
+         .sort(["l_returnflag", "l_linestatus"])
+diff --git a/baselines/polars/tpch/polars_queries/q10.py b/baselines/polars/tpch/polars_queries/q10.py
+index 8bdd6d0..79f379a 100644
+--- a/baselines/polars/tpch/polars_queries/q10.py
++++ b/baselines/polars/tpch/polars_queries/q10.py
+@@ -24,10 +24,10 @@ def q():
+         .filter(pl.col("o_orderdate") >= var1)
+         .filter(pl.col("o_orderdate") < var2)
+         .filter(pl.col("l_returnflag") == var3)
+-        .with_column(
++        .with_columns(
+             (pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("revenue")
+         )
+-        .groupby(["c_custkey","c_name", "c_acctbal", "c_phone", "n_name", "c_address", "c_comment"])
++        .group_by(["c_custkey","c_name", "c_acctbal", "c_phone", "n_name", "c_address", "c_comment"])
+         .agg([pl.sum("revenue")])
+         .select(
+             [
+@@ -41,8 +41,8 @@ def q():
+                 "c_comment"
+             ]
+         )
+-        .sort(by="revenue", reverse=True)
+-        .with_column(pl.col(pl.datatypes.Utf8).str.strip().keep_name())
++        .sort(by="revenue", descending=True)
++        .with_columns(pl.col(pl.String).str.strip_chars().name.keep())
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q11.py b/baselines/polars/tpch/polars_queries/q11.py
+index 7e26659..7a78ec0 100644
+--- a/baselines/polars/tpch/polars_queries/q11.py
++++ b/baselines/polars/tpch/polars_queries/q11.py
+@@ -25,7 +25,7 @@ def q():
+             left_on = "ps_suppkey",
+             right_on = "s_suppkey"
+         )
+-        .with_column((pl.col("ps_supplycost") * pl.col("ps_availqty") * 0.0001).alias("value_limit"))
++        .with_columns((pl.col("ps_supplycost") * pl.col("ps_availqty") * 0.0001).alias("value_limit"))
+         .select(["value_limit"])
+         .sum()
+     ).collect()
+@@ -41,12 +41,12 @@ def q():
+             left_on = "ps_suppkey",
+             right_on = "s_suppkey"
+         )
+-        .groupby(["ps_partkey"])
++        .group_by(["ps_partkey"])
+         .agg([
+             (pl.col("ps_supplycost") * pl.col("ps_availqty")).sum().alias("value")
+         ])
+-        .filter(pl.col("value") > pl.lit(ps_supplycost_agg.get_column("value_limit")))
+-        .sort(["value"], reverse=[True])
++        .filter(pl.col("value") > ps_supplycost_agg.get_column("value_limit").item())
++        .sort(["value"], descending=[True])
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q12.py b/baselines/polars/tpch/polars_queries/q12.py
+index 0d1f12a..ca11b63 100644
+--- a/baselines/polars/tpch/polars_queries/q12.py
++++ b/baselines/polars/tpch/polars_queries/q12.py
+@@ -23,7 +23,7 @@ def q():
+         .filter(pl.col("l_shipdate") < pl.col("l_commitdate"))
+         .filter(pl.col("l_receiptdate") >= var_date)
+         .filter(pl.col("l_receiptdate") < var_date_interval_1yr)
+-        .groupby(["l_shipmode"])
++        .group_by(["l_shipmode"])
+         .agg(
+             [
+                 ((pl.col("o_orderpriority") == "1-URGENT") | (pl.col("o_orderpriority") == "2-HIGH")).sum().alias("high_line_count"),
+diff --git a/baselines/polars/tpch/polars_queries/q13.py b/baselines/polars/tpch/polars_queries/q13.py
+index 1a596b2..18bd1f3 100644
+--- a/baselines/polars/tpch/polars_queries/q13.py
++++ b/baselines/polars/tpch/polars_queries/q13.py
+@@ -19,11 +19,11 @@ def q():
+             right_on = "o_custkey",
+             how = "left"
+         )
+-        .groupby(["c_custkey"])
++        .group_by(["c_custkey"])
+         .agg(pl.col("o_orderkey").drop_nulls().count().alias("c_count"))
+-        .groupby(["c_count"])
+-        .agg(pl.count().alias("custdist"))
+-        .sort(["custdist","c_count"], reverse=[True, True])
++        .group_by(["c_count"])
++        .agg(pl.len().alias("custdist"))
++        .sort(["custdist","c_count"], descending=[True, True])
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q14.py b/baselines/polars/tpch/polars_queries/q14.py
+index 1a561be..fb1e816 100644
+--- a/baselines/polars/tpch/polars_queries/q14.py
++++ b/baselines/polars/tpch/polars_queries/q14.py
+@@ -24,9 +24,10 @@ def q():
+                 (pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("revenue"),
+             ])
+         .with_columns([
+-            (pl.col("revenue") * pl.col("is_promo")).alias("num_revenue"),
++            (pl.col("revenue") * pl.col("is_promo").cast(pl.Float64)).alias("num_revenue"),
+             pl.col("revenue").alias("den_revenue"),
+         ])
++        .select(["num_revenue", "den_revenue"])
+         .sum()
+         .select(
+             (100.0 * pl.col("num_revenue")/pl.col("den_revenue")).alias("promo_revenue")
+diff --git a/baselines/polars/tpch/polars_queries/q15.py b/baselines/polars/tpch/polars_queries/q15.py
+index 093537a..12b41ed 100644
+--- a/baselines/polars/tpch/polars_queries/q15.py
++++ b/baselines/polars/tpch/polars_queries/q15.py
+@@ -25,14 +25,14 @@ def q():
+     revenue0 = (
+         line_item_ds
+         .filter((pl.col("l_shipdate") >= var_date) & (pl.col("l_shipdate") < var_date_interval_3mon))
+-        .with_column((pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("revenue"))
+-        .groupby("l_suppkey")
++        .with_columns((pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("revenue"))
++        .group_by("l_suppkey")
+         .agg(pl.sum("revenue").alias('total_revenue'))
+         .select(["l_suppkey", "total_revenue"])
+         .rename({"l_suppkey": "supplier_no"})
+     )
+ 
+-    max_total_revenue = revenue0.max().collect().get_column("total_revenue")
++    max_total_revenue = revenue0.select(pl.col("total_revenue").max()).collect().item()
+ 
+     q_final = (
+         supplier_ds
+diff --git a/baselines/polars/tpch/polars_queries/q16.py b/baselines/polars/tpch/polars_queries/q16.py
+index 506b6b0..4b55c97 100644
+--- a/baselines/polars/tpch/polars_queries/q16.py
++++ b/baselines/polars/tpch/polars_queries/q16.py
+@@ -28,11 +28,11 @@ def q():
+ 
+     q_final = (
+         part_supp_ds
+-        .filter(~pl.col("ps_suppkey").is_in(pl.lit(supp_ds_filter.get_column("s_suppkey"))))
++        .filter(~pl.col("ps_suppkey").is_in(supp_ds_filter.get_column("s_suppkey").to_list()))
+         .join(part_ds_filter, left_on="ps_partkey", right_on="p_partkey")
+-        .groupby(["p_brand","p_type","p_size"])
++        .group_by(["p_brand","p_type","p_size"])
+         .agg(pl.col("ps_suppkey").n_unique().alias("supplier_cnt"))
+-        .sort(["supplier_cnt","p_brand","p_type","p_size"], reverse=[True,False,False,False])
++        .sort(["supplier_cnt","p_brand","p_type","p_size"], descending=[True,False,False,False])
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q17.py b/baselines/polars/tpch/polars_queries/q17.py
+index decbd65..d6fc4fb 100644
+--- a/baselines/polars/tpch/polars_queries/q17.py
++++ b/baselines/polars/tpch/polars_queries/q17.py
+@@ -13,7 +13,7 @@ def q():
+ 
+     lineitem_grouped = (
+         lineitem_ds
+-        .groupby(["l_partkey"])
++        .group_by(["l_partkey"])
+         .agg(pl.col("l_quantity").mean().alias("l_quantity_avg"))
+     )
+ 
+@@ -23,8 +23,8 @@ def q():
+         .join(lineitem_ds, left_on="p_partkey", right_on="l_partkey")
+         .join(lineitem_grouped, left_on="p_partkey", right_on="l_partkey")
+         .filter(pl.col("l_quantity") < 0.2 * pl.col("l_quantity_avg"))
+-        .sum()
+-        .with_column((pl.col("l_extendedprice")/7.0).alias("avg_yearly"))
++        .select(pl.col("l_extendedprice").sum())
++        .with_columns((pl.col("l_extendedprice")/7.0).alias("avg_yearly"))
+         .select(pl.col("avg_yearly"))
+     )
+ 
+diff --git a/baselines/polars/tpch/polars_queries/q18.py b/baselines/polars/tpch/polars_queries/q18.py
+index 65381ee..9f618db 100644
+--- a/baselines/polars/tpch/polars_queries/q18.py
++++ b/baselines/polars/tpch/polars_queries/q18.py
+@@ -22,17 +22,17 @@ def q():
+         "o_totalprice",
+         "sum"
+     ]
+-    filtered_line_item_ds = (line_item_ds.groupby("l_orderkey")
++    filtered_line_item_ds = (line_item_ds.group_by("l_orderkey")
+         .agg(pl.sum("l_quantity").alias("sum_l_quantity"))
+         .select(["l_orderkey", "sum_l_quantity"])
+         .filter(pl.col("sum_l_quantity") > var_quantity)
+-        .with_column(pl.col("sum_l_quantity").cast(pl.datatypes.Float64).alias("sum")))
++        .with_columns(pl.col("sum_l_quantity").cast(pl.datatypes.Float64).alias("sum")))
+ 
+     q_final = (
+         customer_ds.join(orders_ds, left_on="c_custkey", right_on="o_custkey")
+         .join(filtered_line_item_ds, left_on="o_orderkey", right_on="l_orderkey")
+         .select(final_cols)
+-        .sort(["o_totalprice", "o_orderdate"], reverse=[True, False])
++        .sort(["o_totalprice", "o_orderdate"], descending=[True, False])
+     )
+ 
+ 
+diff --git a/baselines/polars/tpch/polars_queries/q19.py b/baselines/polars/tpch/polars_queries/q19.py
+index 5260f84..8e08779 100644
+--- a/baselines/polars/tpch/polars_queries/q19.py
++++ b/baselines/polars/tpch/polars_queries/q19.py
+@@ -22,31 +22,31 @@ def q():
+ 
+     q_final = (
+         line_item_ds
+-        .filter((pl.col("l_shipmode").is_in(pl.lit(pl.Series(["AIR","AIR REG"])))) & (pl.col("l_shipinstruct") == "DELIVER IN PERSON"))
++        .filter((pl.col("l_shipmode").is_in(["AIR","AIR REG"])) & (pl.col("l_shipinstruct") == "DELIVER IN PERSON"))
+         .join(part_ds, left_on="l_partkey", right_on="p_partkey")
+         .filter(
+             (
+                 (pl.col("p_brand") == "Brand#12") &
+-                (pl.col("p_container").is_in(pl.lit(pl.Series(['SM CASE', 'SM BOX', 'SM PACK', 'SM PKG'])))) &
+-                (pl.col("l_quantity").is_between(1,11,include_bounds=True)) &
+-                (pl.col("p_size").is_between(1,5,include_bounds=True)) &
+-                (pl.col("l_shipmode").is_in(pl.lit(pl.Series(["AIR","AIR REG"])))) &
++                (pl.col("p_container").is_in(['SM CASE', 'SM BOX', 'SM PACK', 'SM PKG'])) &
++                (pl.col("l_quantity").is_between(1,11,closed="both")) &
++                (pl.col("p_size").is_between(1,5,closed="both")) &
++                (pl.col("l_shipmode").is_in(["AIR","AIR REG"])) &
+                 (pl.col("l_shipinstruct") == "DELIVER IN PERSON")
+             ) |
+             (
+                 (pl.col("p_brand") == "Brand#23") &
+-                (pl.col("p_container").is_in(pl.lit(pl.Series(['MED BAG', 'MED BOX', 'MED PKG', 'MED PACK'])))) &
+-                (pl.col("l_quantity").is_between(10,20,include_bounds=True)) &
+-                (pl.col("p_size").is_between(1,10,include_bounds=True))
++                (pl.col("p_container").is_in(['MED BAG', 'MED BOX', 'MED PKG', 'MED PACK'])) &
++                (pl.col("l_quantity").is_between(10,20,closed="both")) &
++                (pl.col("p_size").is_between(1,10,closed="both"))
+             ) |
+             (
+                 (pl.col("p_brand") == "Brand#34") &
+-                (pl.col("p_container").is_in(pl.lit(pl.Series(['LG CASE', 'LG BOX', 'LG PACK', 'LG PKG'])))) &
+-                (pl.col("l_quantity").is_between(20,30,include_bounds=True)) &
+-                (pl.col("p_size").is_between(1,15,include_bounds=True))
++                (pl.col("p_container").is_in(['LG CASE', 'LG BOX', 'LG PACK', 'LG PKG'])) &
++                (pl.col("l_quantity").is_between(20,30,closed="both")) &
++                (pl.col("p_size").is_between(1,15,closed="both"))
+             )
+         )
+-        .with_column(
++        .with_columns(
+             (pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("revenue")
+         ).select("revenue").sum()
+     )
+@@ -56,4 +56,4 @@ def q():
+ 
+ 
+ if __name__ == "__main__":
+-    q()
+\ No newline at end of file
++    q()
+diff --git a/baselines/polars/tpch/polars_queries/q2.py b/baselines/polars/tpch/polars_queries/q2.py
+index f1c6116..e7a553e 100644
+--- a/baselines/polars/tpch/polars_queries/q2.py
++++ b/baselines/polars/tpch/polars_queries/q2.py
+@@ -37,7 +37,7 @@ def q():
+         .filter(pl.col("r_name") == var3)
+     ).cache()
+ 
+-    result2 = (result_q1.groupby("p_partkey")
++    result2 = (result_q1.group_by("p_partkey")
+         .agg(pl.min("ps_supplycost").alias("ps_supplycost_min")))
+ 
+     q_final = (
+@@ -49,10 +49,10 @@ def q():
+         .select(final_cols)
+         .sort(
+             by=["s_acctbal", "n_name", "s_name", "p_partkey"],
+-            reverse=[True, False, False, False],
++            descending=[True, False, False, False],
+         )
+         .limit(100)
+-        .with_column(pl.col(pl.datatypes.Utf8).str.strip().keep_name())
++        .with_columns(pl.col(pl.String).str.strip_chars().name.keep())
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q20.py b/baselines/polars/tpch/polars_queries/q20.py
+index dc587f2..4042042 100644
+--- a/baselines/polars/tpch/polars_queries/q20.py
++++ b/baselines/polars/tpch/polars_queries/q20.py
+@@ -28,7 +28,7 @@ def q():
+     lineitem_group_ds = (
+         line_item_ds
+         .filter((pl.col("l_shipdate") >= VAR1) & (pl.col("l_shipdate") < VAR2))
+-        .groupby(["l_partkey","l_suppkey"])
++        .group_by(["l_partkey","l_suppkey"])
+         .agg((0.5 * pl.col("l_quantity").sum()).alias("l_quantity_sum"))
+     )
+ 
+@@ -45,7 +45,7 @@ def q():
+         .join(nation_ds.filter(pl.col("n_name") == "CANADA"), left_on="s_nationkey", right_on="n_nationkey")
+         ## Alternate possibility: Instead of doing a collect(), perform a unique and then JOIN on ps_suppkey.
+         # .join(ps_suppkey_subquery, left_on="s_suppkey", right_on="ps_suppkey")
+-        .filter(pl.col("s_suppkey").is_in(pl.lit(ps_suppkey_subquery.get_column("ps_suppkey"))))
++        .filter(pl.col("s_suppkey").is_in(ps_suppkey_subquery.get_column("ps_suppkey").to_list()))
+         .select(["s_name","s_address"])
+         .sort("s_name")
+     )
+diff --git a/baselines/polars/tpch/polars_queries/q21.py b/baselines/polars/tpch/polars_queries/q21.py
+index 9814566..b02700b 100644
+--- a/baselines/polars/tpch/polars_queries/q21.py
++++ b/baselines/polars/tpch/polars_queries/q21.py
+@@ -27,7 +27,7 @@ def q():
+ 
+     num_total_suppliers = (
+         line_item_order_ds
+-        .groupby(["l_orderkey"])
++        .group_by(["l_orderkey"])
+         .agg([
+             pl.col("l_suppkey").n_unique().alias("num_total_suppliers"),
+         ])
+@@ -35,7 +35,7 @@ def q():
+     )
+     num_faulty_suppliers = (
+         line_item_order_faulty
+-        .groupby(["l_orderkey"])
++        .group_by(["l_orderkey"])
+         .agg([
+             pl.col("l_suppkey").n_unique().alias("num_faulty_supplier")
+         ])
+@@ -54,14 +54,14 @@ def q():
+     q_final = (
+         line_item_order_faulty
+         .join(supplier_nation_ds, left_on="l_suppkey", right_on="s_suppkey")
+-        .groupby(["l_orderkey","l_suppkey"])
+-        .agg(pl.count().alias("l_lineitem_count"))
++        .group_by(["l_orderkey","l_suppkey"])
++        .agg(pl.len().alias("l_lineitem_count"))
+         .join(num_total_suppliers, left_on="l_orderkey", right_on="l_orderkey")
+         .join(num_faulty_suppliers, left_on="l_orderkey", right_on="l_orderkey")
+         .join(supplier_ds, left_on="l_suppkey", right_on="s_suppkey")
+-        .groupby(["s_name"])
++        .group_by(["s_name"])
+         .agg(pl.col("l_lineitem_count").sum().alias("numwait"))
+-        .sort(["numwait", "s_name"], reverse=[True, False])
++        .sort(["numwait", "s_name"], descending=[True, False])
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q22.py b/baselines/polars/tpch/polars_queries/q22.py
+index e46cd66..1d0e167 100644
+--- a/baselines/polars/tpch/polars_queries/q22.py
++++ b/baselines/polars/tpch/polars_queries/q22.py
+@@ -14,21 +14,21 @@ def q():
+ 
+     avg_c_acctbal = (
+         customer_ds
+-        .filter((pl.col("c_acctbal") > 0) & (pl.col("c_phone").str.slice(0,2).cast(pl.Int32).is_in(pl.lit(pl.Series(var_list)))))
++        .filter((pl.col("c_acctbal") > 0) & (pl.col("c_phone").str.slice(0,2).cast(pl.Int32).is_in(var_list)))
+         .select(pl.col("c_acctbal"))
+         .mean()
+     ).collect()
+ 
+     q_final = (
+         customer_ds
+-        .with_column((pl.col("c_phone").str.slice(0,2).alias("cntrycode").cast(pl.Int32)))
+-        .filter(pl.col("cntrycode").is_in(pl.lit(pl.Series(var_list))))
+-        .filter(pl.col("c_acctbal") > pl.lit(avg_c_acctbal.get_column("c_acctbal")))
++        .with_columns((pl.col("c_phone").str.slice(0,2).alias("cntrycode").cast(pl.Int32)))
++        .filter(pl.col("cntrycode").is_in(var_list))
++        .filter(pl.col("c_acctbal") > avg_c_acctbal.get_column("c_acctbal").item())
+         .join(orders_ds, left_on=["c_custkey"], right_on=["o_custkey"],how="left")
+         .filter(pl.col("o_orderkey").is_null())
+-        .groupby(["cntrycode"])
++        .group_by(["cntrycode"])
+         .agg([
+-            pl.count().alias("numcust"),
++            pl.len().alias("numcust"),
+             pl.col("c_acctbal").sum().alias("totacctbal")
+         ]).sort("cntrycode")
+     )
+diff --git a/baselines/polars/tpch/polars_queries/q3.py b/baselines/polars/tpch/polars_queries/q3.py
+index 1140a8a..da1cab5 100644
+--- a/baselines/polars/tpch/polars_queries/q3.py
++++ b/baselines/polars/tpch/polars_queries/q3.py
+@@ -21,10 +21,10 @@ def q():
+         .join(line_item_ds, left_on="o_orderkey", right_on="l_orderkey")
+         .filter(pl.col("o_orderdate") < var2)
+         .filter(pl.col("l_shipdate") > var1)
+-        .with_column(
++        .with_columns(
+             (pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("revenue")
+         )
+-        .groupby(["o_orderkey", "o_orderdate", "o_shippriority"])
++        .group_by(["o_orderkey", "o_orderdate", "o_shippriority"])
+         .agg([pl.sum("revenue")])
+         .select(
+             [
+@@ -34,7 +34,7 @@ def q():
+                 "o_shippriority",
+             ]
+         )
+-        .sort(by=["revenue", "o_orderdate"], reverse=[True, False])
++        .sort(by=["revenue", "o_orderdate"], descending=[True, False])
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q4.py b/baselines/polars/tpch/polars_queries/q4.py
+index 9ddc95e..b4b412f 100644
+--- a/baselines/polars/tpch/polars_queries/q4.py
++++ b/baselines/polars/tpch/polars_queries/q4.py
+@@ -20,10 +20,10 @@ def q():
+         .filter(pl.col("o_orderdate") < var2)
+         .filter(pl.col("l_commitdate") < pl.col("l_receiptdate"))
+         .unique(subset=["o_orderpriority", "l_orderkey"])
+-        .groupby("o_orderpriority")
+-        .agg(pl.count().alias("order_count"))
++        .group_by("o_orderpriority")
++        .agg(pl.len().alias("order_count"))
+         .sort(by="o_orderpriority")
+-        .with_column(pl.col("order_count").cast(pl.datatypes.Int64))
++        .with_columns(pl.col("order_count").cast(pl.datatypes.Int64))
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q5.py b/baselines/polars/tpch/polars_queries/q5.py
+index 86f8393..1fe48b5 100644
+--- a/baselines/polars/tpch/polars_queries/q5.py
++++ b/baselines/polars/tpch/polars_queries/q5.py
+@@ -32,12 +32,12 @@ def q():
+         .filter(pl.col("r_name") == var1)
+         .filter(pl.col("o_orderdate") >= var2)
+         .filter(pl.col("o_orderdate") < var3)
+-        .with_column(
++        .with_columns(
+             (pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("revenue")
+         )
+-        .groupby("n_name")
++        .group_by("n_name")
+         .agg([pl.sum("revenue")])
+-        .sort(by="revenue", reverse=True)
++        .sort(by="revenue", descending=True)
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/q6.py b/baselines/polars/tpch/polars_queries/q6.py
+index 1fb88e1..486ba5f 100644
+--- a/baselines/polars/tpch/polars_queries/q6.py
++++ b/baselines/polars/tpch/polars_queries/q6.py
+@@ -19,7 +19,7 @@ def q():
+         .filter(pl.col("l_shipdate") < var2)
+         .filter((pl.col("l_discount") >= 0.05) & (pl.col("l_discount") <= 0.07))
+         .filter(pl.col("l_quantity") < var3)
+-        .with_column(
++        .with_columns(
+             (pl.col("l_extendedprice") * pl.col("l_discount")).alias("revenue")
+         )
+         .select(pl.sum("revenue").alias("revenue"))
+diff --git a/baselines/polars/tpch/polars_queries/q7.py b/baselines/polars/tpch/polars_queries/q7.py
+index f1d944f..0b3d704 100644
+--- a/baselines/polars/tpch/polars_queries/q7.py
++++ b/baselines/polars/tpch/polars_queries/q7.py
+@@ -41,11 +41,11 @@ def q():
+         pl.concat([df1, df2])
+         .filter(pl.col("l_shipdate") >= datetime(1995, 1, 1))
+         .filter(pl.col("l_shipdate") <= datetime(1996, 12, 31))
+-        .with_column(
++        .with_columns(
+             (pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("volume")
+         )
+-        .with_column(pl.col("l_shipdate").dt.year().alias("l_year"))
+-        .groupby(["supp_nation", "cust_nation", "l_year"])
++        .with_columns(pl.col("l_shipdate").dt.year().alias("l_year"))
++        .group_by(["supp_nation", "cust_nation", "l_year"])
+         .agg([pl.sum("volume").alias("revenue")])
+         .sort(by=["supp_nation", "cust_nation", "l_year"])
+     )
+diff --git a/baselines/polars/tpch/polars_queries/q8.py b/baselines/polars/tpch/polars_queries/q8.py
+index 526a4c6..6c2dad5 100644
+--- a/baselines/polars/tpch/polars_queries/q8.py
++++ b/baselines/polars/tpch/polars_queries/q8.py
+@@ -55,9 +55,9 @@ def q():
+             (pl.col("l_extendedprice") * (1 - pl.col("l_discount"))).alias("volume"),
+             pl.col("n2.n_name").alias("nation")
+         ])
+-        .groupby(["o_year"])
++        .group_by(["o_year"])
+         .agg([
+-            ((pl.col("volume") * (pl.col("n2.n_name") == var_s_nation)).sum()/pl.col("volume").sum()).alias("mkt_share")
++            ((pl.col("volume") * (pl.col("n2.n_name") == var_s_nation).cast(pl.Float64)).sum()/pl.col("volume").sum()).alias("mkt_share")
+         ])
+         .sort(["o_year"])
+     )
+diff --git a/baselines/polars/tpch/polars_queries/q9.py b/baselines/polars/tpch/polars_queries/q9.py
+index 81593c9..4f67657 100644
+--- a/baselines/polars/tpch/polars_queries/q9.py
++++ b/baselines/polars/tpch/polars_queries/q9.py
+@@ -29,14 +29,14 @@ def q():
+         .join(orders_ds, left_on="l_orderkey", right_on="o_orderkey")
+         .filter(pl.col("p_name").str.contains(var_color))
+         .rename({"n_name": "nation"})
+-        .with_column(pl.col("o_orderdate").dt.year().alias("o_year")) #extract year from orderdate
+-        .with_column(
++        .with_columns(pl.col("o_orderdate").dt.year().alias("o_year")) #extract year from orderdate
++        .with_columns(
+             (pl.col("l_extendedprice") * (1 - pl.col("l_discount")) - pl.col("ps_supplycost") * pl.col("l_quantity")).alias("amount")
+             )
+-        .groupby(["nation", "o_year"])
++        .group_by(["nation", "o_year"])
+         .agg([pl.sum("amount").alias("sum_profit")])
+         .select(final_cols)
+-        .sort(by=["nation", "o_year"], reverse=[False, True])
++        .sort(by=["nation", "o_year"], descending=[False, True])
+     )
+ 
+     utils.run_query(Q_NUM, q_final)
+diff --git a/baselines/polars/tpch/polars_queries/utils.py b/baselines/polars/tpch/polars_queries/utils.py
+index 43e467e..f3dec50 100644
+--- a/baselines/polars/tpch/polars_queries/utils.py
++++ b/baselines/polars/tpch/polars_queries/utils.py
+@@ -35,12 +35,12 @@ def _scan_ds(path: str):
+ 
+ def get_query_answer(query: int, base_dir: str = ANSWERS_BASE_DIR) -> pl.LazyFrame:
+     answer_ldf = pl.scan_csv(
+-        join(base_dir, f"{query}.csv"), sep=",", has_header=True, parse_dates=True
++        join(base_dir, f"{query}.csv"), separator=",", has_header=True, try_parse_dates=True
+     )
+-    cols = answer_ldf.columns
++    cols = answer_ldf.collect_schema().names()
+     answer_ldf = answer_ldf.select(
+         [pl.col(c).alias(c.strip()) for c in cols]
+-    ).with_columns([pl.col(pl.datatypes.Utf8).str.strip().keep_name()])
++    ).with_columns([pl.col(pl.String).str.strip_chars().name.keep()])
+ 
+     return answer_ldf
+ 
+@@ -49,8 +49,8 @@ def test_results(q_num: int, result_df: pl.DataFrame):
+     with CodeTimer(name=f"Testing result of polars Query {q_num}", unit="s"):
+         answer = get_query_answer(q_num).collect()
+         # String string columns of result_df to match with stripping done in answer.
+-        result_df = result_df.lazy().with_columns([pl.col(pl.datatypes.Utf8).str.strip().keep_name()]).collect()
+-        pl.testing.assert_frame_equal(left=result_df, right=answer, check_dtype=False)
++        result_df = result_df.lazy().with_columns([pl.col(pl.String).str.strip_chars().name.keep()]).collect()
++        pl.testing.assert_frame_equal(left=result_df, right=answer, check_dtypes=False)
+ 
+ 
+ def get_line_item_ds(base_dir: str = DATASET_BASE_DIR) -> pl.LazyFrame:
+@@ -89,7 +89,7 @@ def run_query(q_num: int, lp: pl.LazyFrame):
+     @linetimer(name=f"Overall execution of polars Query {q_num}", unit="s")
+     def query():
+         if SHOW_PLAN:
+-            print(lp.describe_optimized_plan())
++            print(lp.explain())
+ 
+         with CodeTimer(name=f"Get result of polars Query {q_num}", unit="s"):
+             t0 = timeit.default_timer()
+diff --git a/baselines/polars/tpch/requirements.txt b/baselines/polars/tpch/requirements.txt
+index 88867b7..a4aa66b 100644
+--- a/baselines/polars/tpch/requirements.txt
++++ b/baselines/polars/tpch/requirements.txt
+@@ -1,4 +1,4 @@
+-polars==0.15.1
++polars==2.1.0
+ black==22.3.0
+ isort==5.10.1
+ linetimer
+diff --git a/baselines/progressive/clean-data.py b/baselines/progressive/clean-data.py
+index a7b9692..b79b393 100644
+--- a/baselines/progressive/clean-data.py
++++ b/baselines/progressive/clean-data.py
+@@ -7,10 +7,10 @@ from tqdm import tqdm
+ lineitem_cols = ['l_orderkey','l_partkey','l_suppkey','l_linenumber','l_quantity','l_extendedprice','l_discount','l_tax','l_returnflag','l_linestatus','l_shipdate','l_commitdate','l_receiptdate','l_shipinstruct','l_shipmode','l_comment']
+ 
+ def clean_dataframe(input_file, output_file, variation = 'data'):
+-    df = pl.read_csv(input_file, sep = '|', has_header = False, new_columns = lineitem_cols)
++    df = pl.read_csv(input_file, separator = '|', has_header = False, new_columns = lineitem_cols)
+     df = df[[s.name for s in df if not (s.null_count() == df.height)]]
+     df = df.with_columns([(df["l_discount"] * 100).cast(pl.Int64), (df["l_tax"] * 100).cast(pl.Int64), df["l_extendedprice"].round(0).cast(pl.Int64)])
+-    df.write_csv(output_file, has_header = False)
++    df.write_csv(output_file, include_header = False)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/scripts/clean-data.py b/scripts/clean-data.py
+index 8eae555..3394dc1 100644
+--- a/scripts/clean-data.py
++++ b/scripts/clean-data.py
+@@ -7,10 +7,10 @@ from tqdm import tqdm
+ lineitem_cols = ['l_orderkey','l_partkey','l_suppkey','l_linenumber','l_quantity','l_extendedprice','l_discount','l_tax','l_returnflag','l_linestatus','l_shipdate','l_commitdate','l_receiptdate','l_shipinstruct','l_shipmode','l_comment']
+ 
+ def clean_dataframe(input_file, output_file, variation = 'data'):
+-    df = pl.read_csv(input_file, sep = '|', has_header = False, new_columns = lineitem_cols)
++    df = pl.read_csv(input_file, separator = '|', has_header = False, new_columns = lineitem_cols)
+     df = df[[s.name for s in df if not (s.null_count() == df.height)]]
+     df = df.with_columns([(df["l_discount"] * 100).cast(pl.Int64), (df["l_tax"] * 100).cast(pl.Int64), df["l_extendedprice"].round(0).cast(pl.Int64)])
+-    df.write_csv(output_file, sep = '|', has_header = False)
++    df.write_csv(output_file, separator = '|', include_header = False)
+ 
+ if __name__ == "__main__":
+     if len(sys.argv) < 3:
+diff --git a/scripts/convert-to-parquet.py b/scripts/convert-to-parquet.py
+index d7936dd..8b29c12 100644
+--- a/scripts/convert-to-parquet.py
++++ b/scripts/convert-to-parquet.py
+@@ -31,9 +31,9 @@ def convert_file_to_parquet(file_name):
+             break
+     if len(headers) != 0:
+         print(f"Found headers for {file_name}")
+-        df = pl.read_csv(file_name, has_header = False, sep = "|", parse_dates=True, low_memory=True, new_columns = tpch_headers[table])
++        df = pl.read_csv(file_name, has_header = False, separator = "|", try_parse_dates=True, low_memory=True, new_columns = tpch_headers[table])
+     else:
+-        df = pl.read_csv(file_name, has_header = False, sep = "|", parse_dates=True, low_memory=True)
++        df = pl.read_csv(file_name, has_header = False, separator = "|", try_parse_dates=True, low_memory=True)
+     df.write_parquet(target_file_name, statistics=True)
+     return target_file_name
+ 
+diff --git a/scripts/data-generation-requirements.txt b/scripts/data-generation-requirements.txt
+index 063429f..d72953b 100644
+--- a/scripts/data-generation-requirements.txt
++++ b/scripts/data-generation-requirements.txt
+@@ -1,2 +1,2 @@
+-polars==0.15.1
++polars==2.1.0
+ tqdm
+\ No newline at end of file
+diff --git a/scripts/test-correctness.py b/scripts/test-correctness.py
+index 99d0097..0cc03dc 100644
+--- a/scripts/test-correctness.py
++++ b/scripts/test-correctness.py
+@@ -54,13 +54,13 @@ if __name__ == "__main__":
+         baseline_df = baseline_df.sort(baseline_df.columns)
+ 
+         # Strip the string values in the dataframe
+-        obtained_df = obtained_df.with_columns([pl.col(pl.datatypes.Utf8).str.strip().keep_name()])
+-        baseline_df = baseline_df.with_columns([pl.col(pl.datatypes.Utf8).str.strip().keep_name()])
++        obtained_df = obtained_df.with_columns([pl.col(pl.String).str.strip_chars().name.keep()])
++        baseline_df = baseline_df.with_columns([pl.col(pl.String).str.strip_chars().name.keep()])
+ 
+         # Compare the two dataframes
+         print(f"Comparing {qdx}")
+         try:
+-            result = pl.testing.assert_frame_equal(baseline_df, obtained_df, check_dtype=False)
++            result = pl.testing.assert_frame_equal(baseline_df, obtained_df, check_dtypes=False)
+             print(f"Correct Output on {qdx}")
+         except Exception as e:
+             print(e)

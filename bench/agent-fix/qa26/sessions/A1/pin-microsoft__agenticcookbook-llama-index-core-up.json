@@ -1,0 +1,118 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 32,
+  "duration_ms": 113343,
+  "total_cost_usd": 0.27792029999999995,
+  "usage": {
+   "input_tokens": 30,
+   "cache_creation_input_tokens": 23448,
+   "cache_read_input_tokens": 252667,
+   "output_tokens": 10476,
+   "output_tokens_details": {
+    "thinking_tokens": 3148
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 23448,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1065,
+     "cache_read_input_tokens": 26847,
+     "cache_creation_input_tokens": 2378,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2378
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.32,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.26,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 3,
+  "Read": 2,
+  "Bash": 1,
+  "Glob": 1,
+  "WebSearch": 1,
+  "WebFetch": 20,
+  "Write": 1,
+  "Edit": 2
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://raw.githubusercontent.com/microsoft/autogen/v0.2.29/autogen/agentchat/contrib/llamaindex_conversable_agent.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.25/llama-index-core/llama_index/core/agent/__init__.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.25/llama-index-core/llama_index/core/memory/__init__.py",
+  "https://raw.githubusercontent.com/microsoft/autogen/v0.2.29/autogen/agentchat/contrib/llamaindex_conversable_agent.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.25/llama-index-core/llama_index/core/agent/workflow/react_agent.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.25/llama-index-core/llama_index/core/agent/workflow/base_agent.py",
+  "https://raw.githubusercontent.com/microsoft/autogen/v0.2.29/autogen/agentchat/contrib/llamaindex_conversable_agent.py",
+  "https://pypi.org/pypi/llama-index/json",
+  "https://pypi.org/pypi/llama-index/0.14.25/json",
+  "https://pypi.org/pypi/llama-index-tools-wikipedia/json",
+  "https://pypi.org/pypi/llama-index-embeddings-azure-openai/json",
+  "https://pypi.org/pypi/llama-index-llms-azure-openai/json",
+  "https://pypi.org/pypi/llama-index-llms-llama-cpp/json",
+  "https://pypi.org/pypi/llama-index-llms-openai/0.7.0/json",
+  "https://pypi.org/pypi/llama-index-multi-modal-llms-azure-openai/json",
+  "https://pypi.org/pypi/llama-index-postprocessor-rankgpt-rerank/json",
+  "https://pypi.org/pypi/llama-index-readers-file/json",
+  "https://pypi.org/pypi/llama-index-readers-smart-pdf-loader/json",
+  "https://pypi.org/pypi/llama-index-readers-web/json",
+  "https://pypi.org/pypi/llama-index-readers-wikipedia/json"
+ ],
+ "denied": 0,
+ "task": "pin-microsoft__agenticcookbook-llama-index-core-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 113.9,
+ "service_error": false
+}

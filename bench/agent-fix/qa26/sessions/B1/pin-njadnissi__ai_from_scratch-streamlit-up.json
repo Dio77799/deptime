@@ -1,0 +1,102 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 7,
+  "duration_ms": 15188,
+  "total_cost_usd": 0.0396697,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 4480,
+   "cache_read_input_tokens": 93917,
+   "output_tokens": 1233,
+   "output_tokens_details": {
+    "thinking_tokens": 169
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4480,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 376,
+     "cache_read_input_tokens": 14784,
+     "cache_creation_input_tokens": 162,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 162
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.12,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.25,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 4,
+  "Read": 1,
+  "Edit": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package streamlit --to 1.67.0 --from 1.35.0 --format markdown --output .deptime-report.md",
+  "uvx deptime==0.2.2 check-upgrade . --package streamlit --to 1.67.0 --from 1.35.0 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 2,
+ "fetched": [],
+ "denied": 0,
+ "task": "pin-njadnissi__ai_from_scratch-streamlit-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 17.0,
+ "service_error": false
+}

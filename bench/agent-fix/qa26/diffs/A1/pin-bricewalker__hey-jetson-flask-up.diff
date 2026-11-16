@@ -1,0 +1,44 @@
+diff --git a/app/routes.py b/app/routes.py
+index 3d21aca..5cc4ada 100644
+--- a/app/routes.py
++++ b/app/routes.py
+@@ -1,13 +1,14 @@
+ # This is the primary script for defining the routes for the flask web app
+ 
+ # Flask package imports
+-from flask import Flask, jsonify, request, render_template, session, redirect, url_for, send_from_directory, Markup, abort, send_file, make_response
++from flask import Flask, jsonify, request, render_template, session, redirect, url_for, send_from_directory, abort, send_file, make_response
++from markupsafe import Markup  # flask.Markup was removed in Flask 3.0
+ from flask_restful import Resource, Api, reqparse
+ from flask_cors import CORS
+ from flask_wtf import FlaskForm
+ from flask_wtf.file import FileField, FileRequired
+ from wtforms import StringField, SubmitField, SelectField, IntegerField
+-from wtforms.validators import DataRequired, Required
++from wtforms.validators import DataRequired
+ from werkzeug.utils import secure_filename
+ from werkzeug.datastructures import CombinedMultiDict
+ 
+@@ -131,19 +132,19 @@ class AudioForm(FlaskForm):
+ # Flask wtform to collect user input data for visualization engine
+ class VisualizationForm(FlaskForm):
+     viz_partition = SelectField('Select data partition:', choices=[('validation', 'validation'), ('test', 'test')], coerce=str)
+-    viz_instance_number = IntegerField('Enter individual instance number:', validators=[Required()])
++    viz_instance_number = IntegerField('Enter individual instance number:', validators=[DataRequired()])
+     viz_submit = SubmitField('Submit')
+ 
+ # Flask wtform to collect user input data for performance engine
+ class PerformanceForm(FlaskForm):
+     perf_partition = SelectField('Select data partition:', choices=[('validation', 'validation'), ('test', 'test')], coerce=str)
+-    perf_instance_number = IntegerField('Enter individual instance number:', validators=[Required()])
++    perf_instance_number = IntegerField('Enter individual instance number:', validators=[DataRequired()])
+     perf_submit = SubmitField('Submit')
+ 
+ # Flask wtform to collect user input data for sentiment engine
+ class SentimentForm(FlaskForm):
+     sent_partition = SelectField('Select data partition:', choices=[('validation', 'validation'), ('test', 'test')], coerce=str)
+-    sent_instance_number = IntegerField('Enter individual instance number:', validators=[Required()])
++    sent_instance_number = IntegerField('Enter individual instance number:', validators=[DataRequired()])
+     sent_submit = SubmitField('Submit')
+ 
+ @app.after_request

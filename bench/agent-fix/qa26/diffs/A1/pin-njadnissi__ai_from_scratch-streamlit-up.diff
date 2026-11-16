@@ -1,0 +1,74 @@
+diff --git a/HomeUtils.py b/HomeUtils.py
+index ae0c44b..35da785 100644
+--- a/HomeUtils.py
++++ b/HomeUtils.py
+@@ -146,10 +146,10 @@ def add_result_col(path_map:dict, pg):
+         
+         with col_btn:
+             # The button returns True only on the click event
+-            run_clicked = st.button("▶️ Run", key=f"run_{pg.url_path}", use_container_width=True)
++            run_clicked = st.button("▶️ Run", key=f"run_{pg.url_path}", width="stretch")
+             
+         with col_clr:
+-            if st.button("🧹 Clear", key=f"clear_{pg.url_path}", use_container_width=True):
++            if st.button("🧹 Clear", key=f"clear_{pg.url_path}", width="stretch"):
+                 # Clear the session state log for this page
+                 log_key = f"log_{pg.url_path}"
+                 if log_key in st.session_state:
+@@ -234,7 +234,7 @@ def add_artifacts_panel(target_file):
+                             if f.lower().endswith(('.mp4', '.mov')):
+                                 st.video(path)
+                             else:
+-                                st.image(path, caption=f, use_container_width=True)
++                                st.image(path, caption=f, width="stretch")
+                 else:
+                     st.info("No media artifacts found.")
+ 
+@@ -286,12 +286,12 @@ def add_utilities():
+         with st.expander("🛠️ System Utilities"):
+             st.write("Use these if hardware (Camera/GPU) gets locked.")
+             
+-            if st.button("🚨 Reset Camera Handle", use_container_width=True):
++            if st.button("🚨 Reset Camera Handle", width="stretch"):
+                 # Kills any process holding the camera device
+                 os.system("sudo fuser -k /dev/video0")
+                 st.success("Camera handle cleared!")
+                 
+-            if st.button("🧹 Clear GPU Memory", use_container_width=True):
++            if st.button("🧹 Clear GPU Memory", width="stretch"):
+                 # Clears zombie processes from the GPU
+                 os.system("nvidia-smi --gpu-reset") # Or your custom PID kill logic
+                 st.success("GPU memory reset!")                  
+\ No newline at end of file
+diff --git a/pages/ml_iot/smartphone_visio/app_flask_st.py b/pages/ml_iot/smartphone_visio/app_flask_st.py
+index c02e6d6..b2628fa 100644
+--- a/pages/ml_iot/smartphone_visio/app_flask_st.py
++++ b/pages/ml_iot/smartphone_visio/app_flask_st.py
+@@ -189,7 +189,7 @@ def run_streamlit():
+                 )
+                 gyro_placeholder.empty()
+                 with gyro_placeholder:
+-                    st.plotly_chart(fig, use_container_width=True)
++                    st.plotly_chart(fig, width="stretch")
+             else:
+                 gyro_placeholder.text("Waiting for gyroscope data...")
+ 
+@@ -200,7 +200,7 @@ def run_streamlit():
+         st.session_state.get('stop_flag', False)
+         if st.session_state.get('stop_flag', False):
+             break
+-        st.experimental_rerun()  # Refresh UI
++        st.rerun()  # Refresh UI
+ 
+ 
+ # ---------------------------
+diff --git a/pages/ml_iot/smartphone_visio/phone_requirements.txt b/pages/ml_iot/smartphone_visio/phone_requirements.txt
+index 1a088e7..5718efe 100644
+--- a/pages/ml_iot/smartphone_visio/phone_requirements.txt
++++ b/pages/ml_iot/smartphone_visio/phone_requirements.txt
+@@ -1,4 +1,4 @@
+-streamlit==1.35.0
++streamlit==1.67.0
+ flask==2.3.3
+ flask-socketio==5.3.6
+ geopy==2.4.1  # For location details

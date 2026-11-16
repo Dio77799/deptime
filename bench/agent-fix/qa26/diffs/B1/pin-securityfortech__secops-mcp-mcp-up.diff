@@ -1,0 +1,22 @@
+diff --git a/main.py b/main.py
+index 64b1e1e..dbfda8a 100644
+--- a/main.py
++++ b/main.py
+@@ -4,7 +4,7 @@ import json
+ from typing import List, Optional
+ 
+ import requests
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ from tools.nuclei import run_nuclei
+ from tools.ffuf import run_ffuf
+@@ -23,7 +23,7 @@ from tools.gospider import gospider_wrapper, gospider_crawl_with_filter
+ from tools.arjun import arjun_wrapper, arjun_bulk_scan, arjun_with_custom_payloads
+ 
+ # Create server
+-mcp = FastMCP(name="secops-mcp",
++mcp = MCPServer(name="secops-mcp",
+     version="1.0.0"
+ )
+ 

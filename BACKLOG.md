@@ -104,22 +104,24 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
     `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
 
-**Phase 4, the fix (the model's part, outside DepTime).** DT-QA-05 measured the hand-off and it lost: Claude Code on
-Sonnet fixed 80% of 25 real broken updates alone and 64% with `/deptime:fix-upgrade`
-(`bench/agent-fix/results-2026-11-16.md`). With the plugin installed and not named it called DepTime every time and
-kept 80%. DT-GTM-08 reworked the command. DT-OSS-17 waits for:
-- [ ] **DT-QA-26**: DT-QA-05 again on the reworked hand-off · `P1` `S` · deps: GTM-08, a release with it
-  - Protocol `bench/agent-fix/qa26/README.md`: 66 broken updates from the 2026-11 to 2026-11e holdouts (379
-    confirmed breaks), arms A and B once each, DT-QA-05's bar; if missed, 1.0 leaves the command out of its promise.
+**Phase 4, the fix (the model's part, outside DepTime): measured.** DT-QA-05 and DT-QA-26 tested the hand-off on 25
+and 66 real broken updates. The reworked command (0.2.2) now matches Claude Code alone (72.7% of sessions against
+69.7%, in half the turns) but misses the 80% bar, so 1.0 leaves it out of its promise
+(`bench/agent-fix/qa26/results-2026-11-16.md`). No further measured round before 1.0.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
   - A review of every tool parameter, result field and CLI option (last chance to rename without a major version);
     the GUI clients checked or listed as not covered (DT-SPIKE-05, DT-SPIKE-07); the 1.0 promise in CHANGELOG.md's
     versioning section (what's frozen, how something is retired, supported Pythons, what the index promises).
+  - From DT-QA-26: `/deptime:fix-upgrade` and the report's agent block are experimental, outside the promise; the
+    plugin's README leads with asking the agent in plain words.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-26** (2026-11-16): the reworked hand-off on 66 new broken updates: alone 69.7% of sessions fixed,
+  `/deptime:fix-upgrade` 72.7%, with fewer new breaks (2 against 4) and half the turns. Bar missed on its 80% line;
+  3 of B's 4 losses were breaks it found and left, as the command says when the fix isn't clear.
 - [x] **DT-GTM-08** (2026-11-16): `/deptime:fix-upgrade` has Claude check the uses DepTime can't tell about (also
   in the report's agent block), rerun with `--from` when a pin is unread, and read the report from a file.
 - [x] **DT-QA-05** (2026-11-16): bar missed. Sessions fixed: alone 80%, `/deptime:fix-upgrade` 64% (a third of the

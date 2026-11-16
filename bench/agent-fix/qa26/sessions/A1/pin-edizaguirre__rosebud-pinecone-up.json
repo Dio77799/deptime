@@ -1,0 +1,100 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 16,
+  "duration_ms": 55214,
+  "total_cost_usd": 0.1305986,
+  "usage": {
+   "input_tokens": 16,
+   "cache_creation_input_tokens": 12280,
+   "cache_read_input_tokens": 81355,
+   "output_tokens": 4175,
+   "output_tokens_details": {
+    "thinking_tokens": 877
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 12280,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 882,
+     "cache_read_input_tokens": 16358,
+     "cache_creation_input_tokens": 1699,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1699
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.36,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.26,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 1,
+  "Read": 3,
+  "Bash": 1,
+  "WebSearch": 2,
+  "Glob": 1,
+  "WebFetch": 3,
+  "Edit": 4
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://sdk.pinecone.io/python/migration/v10-migration.html",
+  "https://sdk.pinecone.io/python/migration/v9-migration.html",
+  "https://sdk.pinecone.io/python/migration/v10-migration.html"
+ ],
+ "denied": 0,
+ "task": "pin-edizaguirre__rosebud-pinecone-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 55.8,
+ "service_error": false
+}

@@ -1,0 +1,114 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 43,
+  "duration_ms": 85489,
+  "total_cost_usd": 0.349297,
+  "usage": {
+   "input_tokens": 34,
+   "cache_creation_input_tokens": 43278,
+   "cache_read_input_tokens": 599514,
+   "output_tokens": 11073,
+   "output_tokens_details": {
+    "thinking_tokens": 1025
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 43278,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 707,
+     "cache_read_input_tokens": 53388,
+     "cache_creation_input_tokens": 356,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 356
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.33,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.26,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 7,
+  "Read": 5,
+  "mcp__plugin_deptime_deptime__symbol_history": 1,
+  "mcp__plugin_deptime_deptime__diff_versions": 1,
+  "Grep": 2,
+  "mcp__plugin_deptime_deptime__check_symbols": 2,
+  "WebFetch": 2,
+  "Edit": 22
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package mcp --to 2.3.0 --from 1.10.1 --format markdown --output .deptime-report.md",
+  "symbol_history",
+  "diff_versions",
+  "check_symbols",
+  "check_symbols",
+  "uvx deptime==0.2.2 check-upgrade /Users/conorschmertz/.cache/deptime-work/qa26/runs/B1/pin-intel__intel-ai-builder-mcp-up/repo --package mcp --to 2.3.0 --from 1.10.1 --format markdown --output /Users/conorschmertz/.cache/deptime-work/qa26/runs/B1/pin-intel__intel-ai-builder-mcp-up/repo/.deptime-repo"
+ ],
+ "other_bash": 5,
+ "fetched": [
+  "https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/migration.md",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/main/docs/migration.md"
+ ],
+ "denied": 2,
+ "task": "pin-intel__intel-ai-builder-mcp-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 87.2,
+ "service_error": false
+}

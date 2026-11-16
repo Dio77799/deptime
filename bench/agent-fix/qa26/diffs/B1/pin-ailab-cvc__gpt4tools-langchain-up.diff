@@ -1,0 +1,34 @@
+diff --git a/gpt4tools/llm.py b/gpt4tools/llm.py
+index 7ede4b3..273d0b4 100644
+--- a/gpt4tools/llm.py
++++ b/gpt4tools/llm.py
+@@ -4,9 +4,9 @@ from typing import Any, Dict, List, Mapping, Optional
+ 
+ from pydantic import BaseModel, Extra, root_validator
+ 
+-from langchain.llms.base import LLM
+-from langchain.llms.utils import enforce_stop_tokens
+-from langchain.utils import get_from_dict_or_env
++from langchain_core.language_models.llms import LLM
++from langchain_community.llms.utils import enforce_stop_tokens
++from langchain_core.utils import get_from_dict_or_env
+ 
+ from peft import PeftModel
+ from transformers import LlamaForCausalLM, LlamaTokenizer, GenerationConfig, AutoTokenizer
+diff --git a/gpt4tools_demo.py b/gpt4tools_demo.py
+index 03902bb..d8f8208 100644
+--- a/gpt4tools_demo.py
++++ b/gpt4tools_demo.py
+@@ -7,9 +7,9 @@ from PIL import Image, ImageDraw, ImageOps, ImageFont
+ import numpy as np
+ import argparse
+ import inspect
+-from langchain.agents.initialize import initialize_agent
+-from langchain.agents.tools import Tool
+-from langchain.chains.conversation.memory import ConversationBufferMemory
++from langchain_classic.agents import initialize_agent
++from langchain_core.tools import Tool
++from langchain_classic.memory import ConversationBufferMemory
+ from gpt4tools.llm import LlamaLangChain
+ from gpt4tools.tools import *
+ 

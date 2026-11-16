@@ -1,0 +1,13 @@
+diff --git a/src/optimization_ZS.py b/src/optimization_ZS.py
+index 7f65374..7b921b9 100644
+--- a/src/optimization_ZS.py
++++ b/src/optimization_ZS.py
+@@ -185,7 +185,7 @@ def calcular_ganancia(y_pred, y_true):
+         if dtype is not None:
+             try:
+                 series = series.cast(dtype, strict=False)
+-            except pl.ComputeError:
++            except pl.exceptions.ComputeError:
+                 # Fallback si no puede castear (ej. Object a Int32)
+                 series = series.cast(pl.Float64, strict=False)
+         logger.info("Saliendo de _to_polars_series")

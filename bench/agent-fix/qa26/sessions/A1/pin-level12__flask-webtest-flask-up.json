@@ -1,0 +1,102 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 26,
+  "duration_ms": 161242,
+  "total_cost_usd": 0.37825709999999996,
+  "usage": {
+   "input_tokens": 28,
+   "cache_creation_input_tokens": 38850,
+   "cache_read_input_tokens": 353928,
+   "output_tokens": 17857,
+   "output_tokens_details": {
+    "thinking_tokens": 13258
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 38850,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 956,
+     "cache_read_input_tokens": 43593,
+     "cache_creation_input_tokens": 1034,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1034
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.13,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.25,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Glob": 4,
+  "Grep": 4,
+  "Read": 9,
+  "WebFetch": 7,
+  "Write": 1
+ },
+ "deptime_calls": [],
+ "other_bash": 0,
+ "fetched": [
+  "https://flask.palletsprojects.com/en/stable/changes/",
+  "https://raw.githubusercontent.com/level12/flask-webtest/master/flask_webtest.py",
+  "https://api.github.com/repos/level12/flask-webtest/commits?per_page=8",
+  "https://raw.githubusercontent.com/pallets/werkzeug/3.1.x/src/werkzeug/test.py",
+  "https://raw.githubusercontent.com/pallets/flask/3.1.3/src/flask/testing.py",
+  "https://raw.githubusercontent.com/pallets/werkzeug/3.1.3/src/werkzeug/test.py",
+  "https://flask-sqlalchemy.palletsprojects.com/en/stable/changes/"
+ ],
+ "denied": 0,
+ "task": "pin-level12__flask-webtest-flask-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 161.9,
+ "service_error": false
+}

@@ -1,0 +1,102 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 9,
+  "duration_ms": 16130,
+  "total_cost_usd": 0.044251,
+  "usage": {
+   "input_tokens": 16,
+   "cache_creation_input_tokens": 4963,
+   "cache_read_input_tokens": 109470,
+   "output_tokens": 1342,
+   "output_tokens_details": {
+    "thinking_tokens": 23
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4963,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 252,
+     "cache_read_input_tokens": 15358,
+     "cache_creation_input_tokens": 71,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 71
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.51,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.27,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 3,
+  "Read": 3,
+  "Edit": 2
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package huggingface-hub --to 2.4.0 --from 0.23.1 --format markdown --output .deptime-report.md",
+  "uvx deptime==0.2.2 check-upgrade . --package huggingface-hub --to 2.4.0 --from 0.23.1 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 1,
+ "fetched": [],
+ "denied": 0,
+ "task": "pin-fedirz__parler-tts-server-huggingface-hub-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 17.7,
+ "service_error": false
+}

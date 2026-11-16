@@ -1,0 +1,24 @@
+diff --git a/timm_modified/timm/models/_hub.py b/timm_modified/timm/models/_hub.py
+index 55ab04b..13ad39c 100644
+--- a/timm_modified/timm/models/_hub.py
++++ b/timm_modified/timm/models/_hub.py
+@@ -33,7 +33,7 @@ try:
+     from huggingface_hub import (
+         create_repo, get_hf_file_metadata,
+         hf_hub_download, hf_hub_url,
+-        repo_type_and_id_from_hf_id, upload_folder)
++        upload_folder)
+     from huggingface_hub.utils import EntryNotFoundError
+     hf_hub_download = partial(hf_hub_download, library_name="timm", library_version=__version__)
+     _has_hf_hub = True
+@@ -292,8 +292,8 @@ def push_to_hf_hub(
+ 
+     # Infer complete repo_id from repo_url
+     # Can be different from the input `repo_id` if repo_owner was implicit
+-    _, repo_owner, repo_name = repo_type_and_id_from_hf_id(repo_url)
+-    repo_id = f"{repo_owner}/{repo_name}"
++    # (`repo_type_and_id_from_hf_id` was removed in huggingface_hub 2.0; RepoUrl exposes the parsed parts)
++    repo_id = f"{repo_url.namespace}/{repo_url.repo_name}"
+ 
+     # Check if README file already exist in repo
+     try:

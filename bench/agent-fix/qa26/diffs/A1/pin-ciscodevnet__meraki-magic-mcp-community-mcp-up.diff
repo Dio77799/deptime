@@ -1,0 +1,177 @@
+diff --git a/meraki-mcp-dynamic.py b/meraki-mcp-dynamic.py
+index 34d273f..d63bd10 100644
+--- a/meraki-mcp-dynamic.py
++++ b/meraki-mcp-dynamic.py
+@@ -14,7 +14,7 @@ import threading
+ from typing import Any, Dict, Optional
+ from datetime import datetime, timedelta
+ from pathlib import Path
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from pydantic import Field
+ from meraki_mcp_config import (
+     CONFIRM_DESTRUCTIVE_ACTION_PARAM,
+@@ -33,7 +33,7 @@ MCP_HOST = os.getenv("MCP_HOST", "127.0.0.1")
+ MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
+ 
+ # Create an MCP server
+-mcp = FastMCP("Meraki Magic MCP - Full API", host=MCP_HOST, port=MCP_PORT)
++mcp = MCPServer("Meraki Magic MCP - Full API")
+ 
+ # Configuration
+ MERAKI_API_KEY = os.getenv("MERAKI_API_KEY")
+@@ -878,11 +878,13 @@ async def clear_cached_files(older_than_hours: int = 24) -> str:
+         }, indent=2)
+ 
+ # Module-level ASGI app for external uvicorn invocation
+-app = mcp.streamable_http_app() if MCP_TRANSPORT in ("http", "streamable-http") else None
++app = mcp.streamable_http_app(host=MCP_HOST) if MCP_TRANSPORT in ("http", "streamable-http") else None
+ 
+ if __name__ == "__main__":
+     transport = "streamable-http" if MCP_TRANSPORT == "http" else MCP_TRANSPORT
+     print(f"Starting Meraki Magic MCP - Full API ({transport} transport)", file=sys.stderr)
+     if transport in ("streamable-http", "sse"):
+         print(f"Listening on {MCP_HOST}:{MCP_PORT}", file=sys.stderr)
+-    mcp.run(transport=transport)
++        mcp.run(transport=transport, host=MCP_HOST, port=MCP_PORT)
++    else:
++        mcp.run(transport=transport)
+diff --git a/meraki-mcp.py b/meraki-mcp.py
+index f02debc..acad245 100644
+--- a/meraki-mcp.py
++++ b/meraki-mcp.py
+@@ -10,7 +10,7 @@ import asyncio
+ import functools
+ from typing import Dict, List, Optional, Any, TypedDict, Union, Callable
+ from pydantic import BaseModel, Field
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from meraki_mcp_config import (
+     get_meraki_base_url,
+     get_meraki_caller,
+@@ -24,7 +24,7 @@ MCP_HOST = os.getenv("MCP_HOST", "127.0.0.1")
+ MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
+ 
+ # Create an MCP server
+-mcp = FastMCP("Meraki Magic MCP", host=MCP_HOST, port=MCP_PORT)
++mcp = MCPServer("Meraki Magic MCP")
+ 
+ # Configuration
+ MERAKI_API_KEY = os.getenv("MERAKI_API_KEY")
+@@ -1109,11 +1109,13 @@ def greeting(name: str) -> str:
+     return f"Hello {name}!"
+ 
+ # Module-level ASGI app for external uvicorn invocation
+-app = mcp.streamable_http_app() if MCP_TRANSPORT in ("http", "streamable-http") else None
++app = mcp.streamable_http_app(host=MCP_HOST) if MCP_TRANSPORT in ("http", "streamable-http") else None
+ 
+ if __name__ == "__main__":
+     transport = "streamable-http" if MCP_TRANSPORT == "http" else MCP_TRANSPORT
+     print(f"Starting Meraki Magic MCP ({transport} transport)", file=sys.stderr)
+     if transport in ("streamable-http", "sse"):
+         print(f"Listening on {MCP_HOST}:{MCP_PORT}", file=sys.stderr)
+-    mcp.run(transport=transport)
++        mcp.run(transport=transport, host=MCP_HOST, port=MCP_PORT)
++    else:
++        mcp.run(transport=transport)
+diff --git a/pyproject.toml b/pyproject.toml
+index 41ad48c..81a9e56 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -5,8 +5,7 @@ description = "Add your description here"
+ readme = "README.md"
+ requires-python = ">=3.13"
+ dependencies = [
+-    "fastmcp>=3.4.4",
+-    "mcp[cli]>=1.28.1",
++    "mcp[cli]>=2.3.0",
+     "meraki>=4.5.0",
+     "uvicorn>=0.51.0",
+ ]
+diff --git a/requirements.txt b/requirements.txt
+index d63d6bb..77b84f0 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -21,8 +21,6 @@ docstring-parser==0.18.0
+ docutils==0.23
+ email-validator==2.3.0
+ exceptiongroup==1.3.1
+-fastmcp==3.4.4
+-fastmcp-slim==3.4.4
+ frozenlist==1.8.0
+ griffelib==2.1.0
+ h11==0.16.0
+@@ -41,7 +39,7 @@ jsonschema-path==0.5.0
+ jsonschema-specifications==2025.9.1
+ keyring==25.7.0
+ markdown-it-py==4.2.0
+-mcp==1.28.1
++mcp==2.3.0
+ mdurl==0.1.2
+ meraki==4.5.0
+ more-itertools==11.1.0
+diff --git a/tests/test_config_and_safety.py b/tests/test_config_and_safety.py
+index 92fcb89..af48459 100644
+--- a/tests/test_config_and_safety.py
++++ b/tests/test_config_and_safety.py
+@@ -15,8 +15,11 @@ import meraki_mcp_config as config
+ ROOT = Path(__file__).resolve().parents[1]
+ 
+ 
+-class FakeFastMCP:
++class FakeMCPServer:
+     def __init__(self, *args, **kwargs):
++        # mcp 2.x removed transport settings (host/port) from the constructor.
++        if "host" in kwargs or "port" in kwargs:
++            raise TypeError("transport parameters belong on run()/streamable_http_app()")
+         self.args = args
+         self.kwargs = kwargs
+ 
+@@ -32,7 +35,7 @@ class FakeFastMCP:
+ 
+         return decorator
+ 
+-    def streamable_http_app(self):
++    def streamable_http_app(self, *args, **kwargs):
+         return object()
+ 
+     def run(self, *args, **kwargs):
+@@ -117,8 +120,8 @@ def fake_runtime_modules():
+ 
+     fake_mcp = types.ModuleType("mcp")
+     fake_mcp_server = types.ModuleType("mcp.server")
+-    fake_fastmcp = types.ModuleType("mcp.server.fastmcp")
+-    fake_fastmcp.FastMCP = FakeFastMCP
++    fake_mcpserver = types.ModuleType("mcp.server.mcpserver")
++    fake_mcpserver.MCPServer = FakeMCPServer
+ 
+     fake_pydantic = types.ModuleType("pydantic")
+     fake_pydantic.BaseModel = FakeBaseModel
+@@ -128,7 +131,7 @@ def fake_runtime_modules():
+         "meraki": fake_meraki,
+         "mcp": fake_mcp,
+         "mcp.server": fake_mcp_server,
+-        "mcp.server.fastmcp": fake_fastmcp,
++        "mcp.server.mcpserver": fake_mcpserver,
+         "pydantic": fake_pydantic,
+     }
+     sentinel = object()
+@@ -340,15 +343,15 @@ def fake_meraki_module():
+             sys.modules["meraki"] = original
+ 
+ 
+-def fastmcp_available():
++def mcpserver_available():
+     try:
+-        import mcp.server.fastmcp  # noqa: F401
++        import mcp.server.mcpserver  # noqa: F401
+     except ImportError:
+         return False
+     return True
+ 
+ 
+-@unittest.skipUnless(fastmcp_available(), "mcp.server.fastmcp is not installed")
++@unittest.skipUnless(mcpserver_available(), "mcp.server.mcpserver is not installed")
+ class ToolSchemaTests(unittest.TestCase):
+     def test_null_default_arguments_accept_null(self):
+         for filename in ["meraki-mcp.py", "meraki-mcp-dynamic.py"]:

@@ -1,0 +1,31 @@
+diff --git a/src/app.py b/src/app.py
+index 0d5e9a6..740f145 100644
+--- a/src/app.py
++++ b/src/app.py
+@@ -20,10 +20,10 @@ from config.config_loader import ConfigLoader # CUSTOM CLASS
+ from models.model_loader import ModelLoader # CUSTOM CLASS
+ from utils.constants import TASK_OPTIONS #, DEFAULT_MODEL_PARAMS # CUSTOM CLASS/PARAMS
+ from utils.paths import PathManager # CUSTOM CLASS
+-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
++from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+ from IPython.display import Image, display
+-from langchain.text_splitter import RecursiveCharacterTextSplitter
+-from langchain.chains import ConversationalRetrievalChain
++from langchain_text_splitters import RecursiveCharacterTextSplitter
++from langchain_classic.chains import ConversationalRetrievalChain
+ from langchain_core.pydantic_v1 import BaseModel, Field
+ from langchain_core.runnables import RunnablePassthrough
+ # from ollama_functions_custom import OllamaFunctions
+diff --git a/src/models/model_loader.py b/src/models/model_loader.py
+index d7bbd8d..1e83c49 100644
+--- a/src/models/model_loader.py
++++ b/src/models/model_loader.py
+@@ -2,7 +2,7 @@ from llama_cpp import Llama
+ # from ollama_functions_custom import OllamaFunctions
+ from typing import Optional, Dict
+ from utils.paths import PathManager # CUSTOM_CLASS
+-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
++from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+ from langchain_openai import ChatOpenAI
+ # from langchain_groq import ChatGroq
+ from langchain_ollama import ChatOllama

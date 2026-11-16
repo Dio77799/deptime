@@ -1,0 +1,16 @@
+diff --git a/utils/vectordb/vector_db.py b/utils/vectordb/vector_db.py
+index 095ef4b..6265b46 100644
+--- a/utils/vectordb/vector_db.py
++++ b/utils/vectordb/vector_db.py
+@@ -26,9 +26,10 @@ import chromadb
+ from langchain_chroma import Chroma
+ from langchain_classic.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+ from langchain_community.document_loaders import DirectoryLoader, UnstructuredURLLoader
+-from langchain_community.vectorstores import FAISS, Qdrant
++from langchain_community.vectorstores import FAISS
+ from langchain_huggingface import HuggingFaceEmbeddings
+ from langchain_milvus import Milvus
++from langchain_qdrant import Qdrant
+ from langchain_sambanova import SambaNovaEmbeddings
+ 
+ vectordb_dir = os.path.dirname(os.path.abspath(__file__))

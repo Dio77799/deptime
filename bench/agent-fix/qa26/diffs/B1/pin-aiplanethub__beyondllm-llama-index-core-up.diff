@@ -1,0 +1,39 @@
+diff --git a/.deptime-report.md b/.deptime-report.md
+new file mode 100644
+index 0000000..6a0d2ea
+--- /dev/null
++++ b/.deptime-report.md
+@@ -0,0 +1,33 @@
++## DepTime upgrade check
++
++**2 breaks found** in this project's code: llama-index-core 0.10.34 → 0.14.25.
++
++### llama-index-core 0.10.34 → 0.14.25
++
++51 names used in 12 files.
++
++**Breaks**
++- `llama_index.core.evaluation.EmbeddingQAFinetuneDataset`: missing at 0.14.25. Last in 0.14.20, gone in 0.14.21. At `src/beyondllm/embeddings/finetune.py:3`, `src/beyondllm/embeddings/utils.py:6`, `src/beyondllm/embeddings/utils.py:74`, `src/beyondllm/retrievers/utils.py:11`, `src/beyondllm/retrievers/utils.py:62`.
++  - Missing with it: `llama_index.core.evaluation.EmbeddingQAFinetuneDataset.from_json` at `src/beyondllm/embeddings/finetune.py:56`, `src/beyondllm/embeddings/finetune.py:57`.
++
++<details><summary>DepTime can't tell, so check these yourself (never fails the check): 1</summary>
++
++- `llama_index.core.settings.Settings.callback_manager`: llama\_index.core.settings.Settings is an attribute, not a module or class, so the index doesn't list its attributes (often made at runtime). At `src/beyondllm/embeddings/utils.py:94`, `src/beyondllm/embeddings/utils.py:184`.
++
++</details>
++
++<details><summary>For a coding agent</summary>
++
++```text
++DepTime confirmed these uses break with this update (failing at the new version, not at the old).
++Fix these lines:
++- src/beyondllm/embeddings/finetune.py:3, src/beyondllm/embeddings/utils.py:6, src/beyondllm/embeddings/utils.py:74, src/beyondllm/retrievers/utils.py:11, src/beyondllm/retrievers/utils.py:62, src/beyondllm/embeddings/finetune.py:56, src/beyondllm/embeddings/finetune.py:57: llama_index.core.evaluation.EmbeddingQAFinetuneDataset: gone in llama-index-core 0.14.25
++DepTime can't tell whether these uses still work at the new version: check each one yourself.
++- src/beyondllm/embeddings/utils.py:94, src/beyondllm/embeddings/utils.py:184: llama_index.core.settings.Settings.callback_manager in llama-index-core 0.14.25
++Deprecations still work, and uses that fail at the old version too aren't caused by this update.
++Then run deptime check-upgrade again: it should find no breaks.
++```
++
++</details>
++
++DepTime reads the code and the index; it runs nothing and asks no model. A break is a use the index shows failing at the new version and not at the old one.

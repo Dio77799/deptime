@@ -1,0 +1,105 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 26,
+  "duration_ms": 102230,
+  "total_cost_usd": 0.2224218,
+  "usage": {
+   "input_tokens": 22,
+   "cache_creation_input_tokens": 23141,
+   "cache_read_input_tokens": 167912,
+   "output_tokens": 8185,
+   "output_tokens_details": {
+    "thinking_tokens": 2083
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 23141,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1037,
+     "cache_read_input_tokens": 26014,
+     "cache_creation_input_tokens": 2904,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2904
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.4,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.27,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 1,
+  "Read": 4,
+  "Glob": 1,
+  "Bash": 1,
+  "WebFetch": 8,
+  "WebSearch": 1,
+  "Edit": 9
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://ai.pydantic.dev/models/openai/",
+  "https://ai.pydantic.dev/message-history/",
+  "https://ai.pydantic.dev/output/",
+  "https://pydantic.dev/docs/ai/models/openai/",
+  "https://pydantic.dev/docs/ai/core-concepts/message-history/",
+  "https://pydantic.dev/docs/ai/core-concepts/output/",
+  "https://pydantic.dev/docs/ai/project/changelog/index.md",
+  "https://pypi.org/pypi/pydantic-ai-slim/2.66.0/json"
+ ],
+ "denied": 0,
+ "task": "pin-coleam00__ai-agents-masterclass-pydantic-ai-slim-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 102.7,
+ "service_error": false
+}

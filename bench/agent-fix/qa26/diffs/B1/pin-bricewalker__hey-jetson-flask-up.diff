@@ -1,0 +1,14 @@
+diff --git a/app/routes.py b/app/routes.py
+index 3d21aca..218fa2c 100644
+--- a/app/routes.py
++++ b/app/routes.py
+@@ -1,7 +1,8 @@
+ # This is the primary script for defining the routes for the flask web app
+ 
+ # Flask package imports
+-from flask import Flask, jsonify, request, render_template, session, redirect, url_for, send_from_directory, Markup, abort, send_file, make_response
++from flask import Flask, jsonify, request, render_template, session, redirect, url_for, send_from_directory, abort, send_file, make_response
++from markupsafe import Markup
+ from flask_restful import Resource, Api, reqparse
+ from flask_cors import CORS
+ from flask_wtf import FlaskForm

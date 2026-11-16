@@ -1,0 +1,26 @@
+diff --git a/llm_mpc.py b/llm_mpc.py
+index 3d8a75b..5690b13 100644
+--- a/llm_mpc.py
++++ b/llm_mpc.py
+@@ -6,7 +6,7 @@ from scipy.spatial.transform import Rotation as R
+ import roslibpy
+ from langchain_community.document_loaders import TextLoader
+ from langchain_text_splitters import CharacterTextSplitter
+-from langchain.indexes import VectorstoreIndexCreator
++from langchain_classic.indexes import VectorstoreIndexCreator
+ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+ from langchain_core.documents import Document
+ 
+diff --git a/tests/decision_tester/decision_tester.py b/tests/decision_tester/decision_tester.py
+index 4aa8e37..2a57bae 100644
+--- a/tests/decision_tester/decision_tester.py
++++ b/tests/decision_tester/decision_tester.py
+@@ -5,7 +5,7 @@ import tqdm
+ import argparse
+ from langchain_community.document_loaders import TextLoader
+ from langchain_text_splitters import CharacterTextSplitter
+-from langchain.indexes import VectorstoreIndexCreator
++from langchain_classic.indexes import VectorstoreIndexCreator
+ from langchain_openai import OpenAIEmbeddings
+ 
+ class DecisionTester:

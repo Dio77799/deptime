@@ -1,0 +1,18 @@
+diff --git a/bustime/models.py b/bustime/models.py
+index 21c578b..9fb7275 100644
+--- a/bustime/models.py
++++ b/bustime/models.py
+@@ -87,11 +87,11 @@ if settings.MASTER_HOSTNAME == 'f7':
+     REDISU = redis.StrictRedis(unix_socket_path='/tmp/redis.sock', db=0)
+ else:
+     REDIS = redis.StrictRedis(host=settings.REDIS_HOST, db=0, port=settings.REDIS_PORT)
+-    REDISU = redis.StrictRedis(host=settings.REDIS_HOST, db=0, port=settings.REDIS_PORT, charset="utf8", decode_responses=True)
++    REDISU = redis.StrictRedis(host=settings.REDIS_HOST, db=0, port=settings.REDIS_PORT, encoding="utf8", decode_responses=True)
+     REDIS_W = redis.StrictRedis(host=settings.REDIS_HOST_W, db=0, port=settings.REDIS_PORT_W)
+ 
+ REDIS_IO = redis.StrictRedis(host=settings.REDIS_HOST_IO, db=0, port=settings.REDIS_PORT_IO)
+-REDISU_IO = redis.StrictRedis(host=settings.REDIS_HOST_IO, db=0, port=settings.REDIS_PORT_IO, charset="utf8", decode_responses=True)
++REDISU_IO = redis.StrictRedis(host=settings.REDIS_HOST_IO, db=0, port=settings.REDIS_PORT_IO, encoding="utf8", decode_responses=True)
+ 
+ distance_meters = cdistance # C or Python? 3x times
+ RouteNode = namedtuple('RouteNode', ['route_id', 'busstop_id', 'name', 'direction', 'bus_id'])

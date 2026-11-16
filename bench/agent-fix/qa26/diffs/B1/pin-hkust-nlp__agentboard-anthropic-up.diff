@@ -1,0 +1,20 @@
+diff --git a/agentboard/llm/claude.py b/agentboard/llm/claude.py
+index 168a48f..e787620 100644
+--- a/agentboard/llm/claude.py
++++ b/agentboard/llm/claude.py
+@@ -1,10 +1,14 @@
+-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
++from anthropic import Anthropic
+ import os
+ import time
+ from common.registry import registry
+ import pdb
+ import tiktoken
+ 
++# These constants were removed from the anthropic SDK in 1.0.0.
++HUMAN_PROMPT = "\n\nHuman:"
++AI_PROMPT = "\n\nAssistant:"
++
+ 
+ @registry.register_llm("claude")
+ class CLAUDE:

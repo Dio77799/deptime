@@ -1,0 +1,136 @@
+diff --git a/experiments/chair/graph.py b/experiments/chair/graph.py
+index d0ff8d1..bea27f7 100644
+--- a/experiments/chair/graph.py
++++ b/experiments/chair/graph.py
+@@ -18,20 +18,13 @@ tools = [BehaviorTreeSimulatorTool()]  # ! need stw
+ 
+ ##################################################### * execution
+ 
+-from langchain import hub
+-from langchain.agents import create_openai_functions_agent
+ from langchain_openai import ChatOpenAI
+-
+-prompt = hub.pull("hwchase17/openai-functions-agent")
++from langgraph.prebuilt import create_react_agent
+ 
+ # Choose the LLM that will drive the agent
+ llm = ChatOpenAI(model="gpt-4-turbo-preview")
+-# Construct the OpenAI Functions agent
+-agent_runnable = create_openai_functions_agent(llm, tools, prompt)
+-
+-from langgraph.prebuilt import create_agent_executor
+-
+-agent_executor = create_agent_executor(agent_runnable, tools)
++# Construct the tool-calling agent (replaces the removed `create_agent_executor`)
++agent_executor = create_react_agent(llm, tools)
+ 
+ 
+ # * the graph state
+@@ -107,10 +100,8 @@ async def execute_step(state: PlanExecuteState):
+     execute the first step of the plan, append the result to the past steps
+     """
+     task = state["plan"][0]
+-    agent_response = await agent_executor.ainvoke({"input": task, "chat_history": []})
+-    return {
+-        "past_steps": (task, agent_response["agent_outcome"].return_values["output"])
+-    }
++    agent_response = await agent_executor.ainvoke({"messages": [("user", task)]})
++    return {"past_steps": [(task, agent_response["messages"][-1].content)]}
+ 
+ 
+ async def plan_step(state: PlanExecuteState):
+diff --git a/experiments/gearset1/graph.py b/experiments/gearset1/graph.py
+index 1483ab8..c24feaf 100644
+--- a/experiments/gearset1/graph.py
++++ b/experiments/gearset1/graph.py
+@@ -24,20 +24,13 @@ tools = [BehaviorTreeSimulatorTool()]  # ! need stw
+ 
+ ##################################################### * execution
+ 
+-from langchain import hub
+-from langchain.agents import create_openai_functions_agent
+ from langchain_openai import ChatOpenAI
+-
+-prompt = hub.pull("hwchase17/openai-functions-agent")
++from langgraph.prebuilt import create_react_agent
+ 
+ # Choose the LLM that will drive the agent
+ llm = ChatOpenAI(model="gpt-4-turbo-preview")
+-# Construct the OpenAI Functions agent
+-agent_runnable = create_openai_functions_agent(llm, tools, prompt)
+-
+-from langgraph.prebuilt import create_agent_executor
+-
+-agent_executor = create_agent_executor(agent_runnable, tools)
++# Construct the tool-calling agent (replaces the removed `create_agent_executor`)
++agent_executor = create_react_agent(llm, tools)
+ 
+ 
+ # * the graph state
+@@ -113,10 +106,8 @@ async def execute_step(state: PlanExecuteState):
+     execute the first step of the plan, append the result to the past steps
+     """
+     task = state["plan"][0]
+-    agent_response = await agent_executor.ainvoke({"input": task, "chat_history": []})
+-    return {
+-        "past_steps": (task, agent_response["agent_outcome"].return_values["output"])
+-    }
++    agent_response = await agent_executor.ainvoke({"messages": [("user", task)]})
++    return {"past_steps": [(task, agent_response["messages"][-1].content)]}
+ 
+ 
+ async def plan_step(state: PlanExecuteState):
+diff --git a/experiments/lamp/graph.py b/experiments/lamp/graph.py
+index d0ff8d1..bea27f7 100644
+--- a/experiments/lamp/graph.py
++++ b/experiments/lamp/graph.py
+@@ -18,20 +18,13 @@ tools = [BehaviorTreeSimulatorTool()]  # ! need stw
+ 
+ ##################################################### * execution
+ 
+-from langchain import hub
+-from langchain.agents import create_openai_functions_agent
+ from langchain_openai import ChatOpenAI
+-
+-prompt = hub.pull("hwchase17/openai-functions-agent")
++from langgraph.prebuilt import create_react_agent
+ 
+ # Choose the LLM that will drive the agent
+ llm = ChatOpenAI(model="gpt-4-turbo-preview")
+-# Construct the OpenAI Functions agent
+-agent_runnable = create_openai_functions_agent(llm, tools, prompt)
+-
+-from langgraph.prebuilt import create_agent_executor
+-
+-agent_executor = create_agent_executor(agent_runnable, tools)
++# Construct the tool-calling agent (replaces the removed `create_agent_executor`)
++agent_executor = create_react_agent(llm, tools)
+ 
+ 
+ # * the graph state
+@@ -107,10 +100,8 @@ async def execute_step(state: PlanExecuteState):
+     execute the first step of the plan, append the result to the past steps
+     """
+     task = state["plan"][0]
+-    agent_response = await agent_executor.ainvoke({"input": task, "chat_history": []})
+-    return {
+-        "past_steps": (task, agent_response["agent_outcome"].return_values["output"])
+-    }
++    agent_response = await agent_executor.ainvoke({"messages": [("user", task)]})
++    return {"past_steps": [(task, agent_response["messages"][-1].content)]}
+ 
+ 
+ async def plan_step(state: PlanExecuteState):
+diff --git a/requirements.txt b/requirements.txt
+index 491d28d..495bcc4 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -26,7 +26,7 @@ openai # you may need to upgrade this after installing it
+ # cohere
+ langchain
+ langchain-openai
+-langgraph==0.0.24
++langgraph==1.2.20
+ 
+ # semantic-router
+ semantic-router

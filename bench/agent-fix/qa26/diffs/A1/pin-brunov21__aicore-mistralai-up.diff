@@ -1,0 +1,49 @@
+diff --git a/aicore/embeddings/providers/mistral.py b/aicore/embeddings/providers/mistral.py
+index 269c16b..6c46e75 100644
+--- a/aicore/embeddings/providers/mistral.py
++++ b/aicore/embeddings/providers/mistral.py
+@@ -1,6 +1,7 @@
+ from aicore.embeddings.providers.base_provider import EmbeddingsBaseProvider
+ from pydantic import model_validator
+-from mistralai import Mistral, EmbeddingResponse, EmbeddingResponseData
++from mistralai.client import Mistral
++from mistralai.client.models import EmbeddingResponse, EmbeddingResponseData
+ from typing import List
+ from typing_extensions import Self
+ 
+diff --git a/aicore/llm/providers/mistral.py b/aicore/llm/providers/mistral.py
+index a480908..03cbf0d 100644
+--- a/aicore/llm/providers/mistral.py
++++ b/aicore/llm/providers/mistral.py
+@@ -5,7 +5,8 @@ from aicore.const import STREAM_START_TOKEN, STREAM_END_TOKEN, REASONING_STOP_TO
+ from pydantic import model_validator
+ # from mistral_common.protocol.instruct.messages import UserMessage
+ # from mistral_common.tokens.tokenizers.mistral import MistralTokenizer
+-from mistralai import Mistral, CompletionEvent, CompletionResponseStreamChoice, models
++from mistralai.client import Mistral, errors
++from mistralai.client.models import CompletionEvent, CompletionResponseStreamChoice
+ from typing import Any, Optional, Union, List, Literal, Dict
+ from typing_extensions import Self
+ import tiktoken
+@@ -19,7 +20,7 @@ class MistralLlm(LlmBaseProvider):
+         self.client :Mistral = Mistral(
+             api_key=self.config.api_key
+         )
+-        self._auth_exception = models.SDKError
++        self._auth_exception = errors.SDKError
+         self.validate_config()
+         ### Suspect Misral will always stream by default
+         self.completion_fn = self.client.chat.stream
+diff --git a/requirements.txt b/requirements.txt
+index 09a8793..47eb43b 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -3,7 +3,7 @@ claude-agent-sdk>=0.1.36
+ google-genai==1.38.0
+ groq==0.31.0
+ fastmcp>=2.2.6, <3.0
+-mistralai==1.7.0
++mistralai==3.7.0
+ loguru>=0.7.3
+ # mistral_common==1.5.1
+ openai>=2.41.0

@@ -1,0 +1,38 @@
+diff --git a/writer.py b/writer.py
+index 02baa92..04d2ece 100644
+--- a/writer.py
++++ b/writer.py
+@@ -4,8 +4,7 @@ import time
+ import anthropic
+ from settings import *
+ import google.generativeai as genai
+-from mistralai.client import MistralClient
+-from mistralai.models.chat_completion import ChatMessage
++from mistralai.client import Mistral
+ 
+ 
+ class OpenAIWriter:
+@@ -37,7 +36,7 @@ class MistralWriter:
+         self,
+         system_context="You are an automated assistant. Your top goal is to answer questions to the best of your ability"
+     ):
+-        self.client = MistralClient(
++        self.client = Mistral(
+             api_key="keyhere"
+         )
+         self.system_context = system_context
+@@ -45,11 +44,11 @@ class MistralWriter:
+     def write(self, prompt):
+         if block_paid_apis:
+             return ""
+-        completion = self.client.chat(
++        completion = self.client.chat.complete(
+             model="mistral-large-latest",
+             messages=[
+-                ChatMessage(role="system", content=self.system_context),
+-                ChatMessage(role="user", content=prompt),
++                {"role": "system", "content": self.system_context},
++                {"role": "user", "content": prompt},
+             ]
+         )
+         return completion.choices[0].message.content

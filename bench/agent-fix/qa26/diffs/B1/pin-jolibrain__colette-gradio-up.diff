@@ -1,0 +1,32 @@
+diff --git a/src/colette/ui/app.py b/src/colette/ui/app.py
+index 7974bca..c009ab3 100644
+--- a/src/colette/ui/app.py
++++ b/src/colette/ui/app.py
+@@ -71,9 +71,7 @@ def create_gradio_interface(config_path):
+                 elem_id="logo-image",
+                 interactive=False,
+                 container=False,
+-                show_share_button=False,
+-                show_download_button=False,
+-                show_fullscreen_button=False,
++                buttons=[],
+                 show_label=False
+             )
+ 
+@@ -122,7 +120,6 @@ def create_gradio_interface(config_path):
+                     chatbot = gr.Chatbot(
+                         elem_id="chatbot",
+                         # bubble_full_width=False,
+-                        type="messages",
+                         height=500,
+                         examples=list_of_examples,
+                     )
+@@ -147,7 +144,7 @@ def create_gradio_interface(config_path):
+         with gr.Tab(gradio_i18n("about")):
+             gr.Markdown(value=gradio_i18n("about_content"))
+ 
+-        chatbot.like(log_like_dislike, None, None, like_user_message=True)
++        chatbot.like(log_like_dislike, None, None)
+ 
+         chat_input.submit(
+             add_message,

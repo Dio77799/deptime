@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 91,
+  "duration_ms": 282474,
+  "total_cost_usd": 1.0951323000000004,
+  "usage": {
+   "input_tokens": 90,
+   "cache_creation_input_tokens": 109768,
+   "cache_read_input_tokens": 3003092,
+   "output_tokens": 31134,
+   "output_tokens_details": {
+    "thinking_tokens": 7549
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 109768,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1298,
+     "cache_read_input_tokens": 113066,
+     "cache_creation_input_tokens": 2479,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2479
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.43,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.27,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 22,
+  "Bash": 1,
+  "Glob": 2,
+  "Read": 18,
+  "WebSearch": 2,
+  "WebFetch": 10,
+  "Edit": 35
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://huggingface.co/docs/huggingface_hub/main/en/concepts/migration",
+  "https://newreleases.io/project/github/huggingface/huggingface_hub/release/v2.0.0",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/__init__.py",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/utils/__init__.py",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/file_download.py",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/constants.py",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/utils/_deprecation.py",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/__init__.py",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/utils/__init__.py",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/hf_api.py"
+ ],
+ "denied": 0,
+ "task": "pin-itamarzimm__unifiedimplicitattnrepr-huggingface-hub-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 283.0,
+ "service_error": false
+}

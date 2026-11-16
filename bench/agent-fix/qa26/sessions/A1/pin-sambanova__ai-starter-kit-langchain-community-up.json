@@ -1,0 +1,103 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 42,
+  "duration_ms": 97110,
+  "total_cost_usd": 0.2684508,
+  "usage": {
+   "input_tokens": 30,
+   "cache_creation_input_tokens": 29430,
+   "cache_read_input_tokens": 261081,
+   "output_tokens": 10496,
+   "output_tokens_details": {
+    "thinking_tokens": 2287
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 29430,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 976,
+     "cache_read_input_tokens": 34408,
+     "cache_creation_input_tokens": 799,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 799
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.38,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.26,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 7,
+  "Bash": 1,
+  "Glob": 1,
+  "WebSearch": 1,
+  "WebFetch": 6,
+  "Read": 10,
+  "Edit": 15
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://github.com/langchain-ai/langchain/releases/tag/langchain-community%3D%3D0.4.2",
+  "https://pypi.org/project/langchain-community/0.4.2/",
+  "https://pypi.org/pypi/langchain-community/0.4.2/json",
+  "https://github.com/langchain-ai/langchain-community/releases",
+  "https://github.com/langchain-ai/langchain-community/pull/404",
+  "https://pypi.org/pypi/langchain-qdrant/json"
+ ],
+ "denied": 0,
+ "task": "pin-sambanova__ai-starter-kit-langchain-community-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 97.8,
+ "service_error": false
+}

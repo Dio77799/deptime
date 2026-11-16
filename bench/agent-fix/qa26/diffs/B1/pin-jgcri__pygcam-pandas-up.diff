@@ -1,0 +1,13 @@
+diff --git a/pygcam/mcs/explorer.py b/pygcam/mcs/explorer.py
+index 0b57522..a3c20d9 100644
+--- a/pygcam/mcs/explorer.py
++++ b/pygcam/mcs/explorer.py
+@@ -390,7 +390,7 @@ class McsData(object):
+         for count in trialSteps:
+             corrDF = getCorrDF(inputsDF[:count], results[:count])
+             corrDF['count'] = count
+-            corrByTrials = corrByTrials.append(corrDF)
++            corrByTrials = pd.concat([corrByTrials, corrDF])
+ 
+         corrByTrials.reset_index(inplace=True)
+         return corrByTrials

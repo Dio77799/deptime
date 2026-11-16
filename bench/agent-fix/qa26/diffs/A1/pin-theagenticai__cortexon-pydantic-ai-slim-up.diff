@@ -1,0 +1,600 @@
+diff --git a/cortex_on/agents/code_agent.py b/cortex_on/agents/code_agent.py
+index 43fa047..6ce91e8 100644
+--- a/cortex_on/agents/code_agent.py
++++ b/cortex_on/agents/code_agent.py
+@@ -13,6 +13,7 @@ from fastapi import WebSocket
+ from pydantic import BaseModel, Field
+ from pydantic_ai import Agent, RunContext
+ from pydantic_ai.models.anthropic import AnthropicModel
++from pydantic_ai.providers.anthropic import AnthropicProvider
+ 
+ # Local application imports
+ from utils.ant_client import get_client
+@@ -239,14 +240,14 @@ async def send_stream_update(ctx: RunContext[CoderAgentDeps], message: str) -> N
+ # Initialize the model
+ model = AnthropicModel(
+     model_name=os.environ.get("ANTHROPIC_MODEL_NAME"),
+-    anthropic_client=get_client()
++    provider=AnthropicProvider(anthropic_client=get_client())
+ )
+ 
+ # Initialize the agent
+ coder_agent = Agent(
+     model=model,
+     name="Coder Agent",
+-    result_type=CoderResult,
++    output_type=CoderResult,
+     deps_type=CoderAgentDeps,
+     system_prompt=coder_system_message
+ )
+diff --git a/cortex_on/agents/orchestrator_agent.py b/cortex_on/agents/orchestrator_agent.py
+index 6b001ba..4f7870b 100644
+--- a/cortex_on/agents/orchestrator_agent.py
++++ b/cortex_on/agents/orchestrator_agent.py
+@@ -9,6 +9,7 @@ import logfire
+ from fastapi import WebSocket
+ from dotenv import load_dotenv
+ from pydantic_ai.models.anthropic import AnthropicModel
++from pydantic_ai.providers.anthropic import AnthropicProvider
+ from pydantic_ai import Agent, RunContext
+ from agents.web_surfer import WebSurfer
+ from utils.stream_response_format import StreamResponse
+@@ -160,7 +161,7 @@ Basic workflow:
+ 
+ model = AnthropicModel(
+     model_name=os.environ.get("ANTHROPIC_MODEL_NAME"),
+-    anthropic_client=get_client()
++    provider=AnthropicProvider(anthropic_client=get_client())
+ )
+ 
+ orchestrator_agent = Agent(
+@@ -199,7 +200,7 @@ async def plan_task(ctx: RunContext[orchestrator_deps], task: str) -> str:
+         planner_response = await planner_agent.run(user_prompt=task)
+         
+         # Update planner stream with results
+-        plan_text = planner_response.data.plan
++        plan_text = planner_response.output.plan
+         planner_stream_output.steps.append("Task planned successfully")
+         planner_stream_output.output = plan_text
+         planner_stream_output.status_code = 200
+@@ -262,7 +263,7 @@ async def coder_task(ctx: RunContext[orchestrator_deps], task: str) -> str:
+         )
+ 
+         # Extract response data
+-        response_data = coder_response.data.content
++        response_data = coder_response.output.content
+ 
+         # Update coder_stream_output with coding results
+         coder_stream_output.output = response_data
+@@ -439,7 +440,7 @@ async def planner_agent_update(ctx: RunContext[orchestrator_deps], completed_tas
+                 # We'll directly call planner_agent.run() to create a new plan first
+                 plan_prompt = f"Create a simple task plan based on this completed task: {completed_task}"
+                 plan_response = await planner_agent.run(user_prompt=plan_prompt)
+-                current_content = plan_response.data.plan
++                current_content = plan_response.output.plan
+             else:
+                 # Read existing todo.md
+                 with open(todo_path, "r") as file:
+@@ -461,7 +462,7 @@ async def planner_agent_update(ctx: RunContext[orchestrator_deps], completed_tas
+             await _safe_websocket_send(ctx.deps.websocket, planner_stream_output)
+             
+             updated_plan_response = await planner_agent.run(user_prompt=update_prompt)
+-            updated_plan = updated_plan_response.data.plan
++            updated_plan = updated_plan_response.output.plan
+             
+             # Write the updated plan back to todo.md
+             with open(todo_path, "w") as file:
+diff --git a/cortex_on/agents/planner_agent.py b/cortex_on/agents/planner_agent.py
+index 897c22f..7fefadf 100644
+--- a/cortex_on/agents/planner_agent.py
++++ b/cortex_on/agents/planner_agent.py
+@@ -8,6 +8,7 @@ import logfire
+ from pydantic import BaseModel, Field
+ from pydantic_ai import Agent
+ from pydantic_ai.models.anthropic import AnthropicModel
++from pydantic_ai.providers.anthropic import AnthropicProvider
+ 
+ # Local application imports
+ from utils.ant_client import get_client
+@@ -178,13 +179,13 @@ class PlannerResult(BaseModel):
+ 
+ model = AnthropicModel(
+     model_name=os.environ.get("ANTHROPIC_MODEL_NAME"),
+-    anthropic_client=get_client()
++    provider=AnthropicProvider(anthropic_client=get_client())
+ )
+ 
+ planner_agent = Agent(
+     model=model,
+     name="Planner Agent",
+-    result_type=PlannerResult,
++    output_type=PlannerResult,
+     system_prompt=planner_prompt 
+ )
+ 
+diff --git a/cortex_on/agents/web_surfer.py b/cortex_on/agents/web_surfer.py
+index 34e2cfd..af7d318 100644
+--- a/cortex_on/agents/web_surfer.py
++++ b/cortex_on/agents/web_surfer.py
+@@ -12,7 +12,6 @@ from dotenv import load_dotenv
+ from fastapi import WebSocket
+ import logfire
+ from pydantic_ai.messages import (
+-    ArgsJson,
+     ModelRequest,
+     ModelResponse,
+     ToolCallPart,
+@@ -113,7 +112,7 @@ class WebSurfer:
+                     ToolCallPart(
+                         tool_name="final_result",
+                         tool_call_id=tool_call_id,
+-                        args=ArgsJson(args_json=json.dumps(args_data)),
++                        args=json.dumps(args_data),
+                     )
+                 ],
+                 timestamp=current_time,
+@@ -142,7 +141,7 @@ class WebSurfer:
+                     ToolCallPart(
+                         tool_name="error",
+                         tool_call_id=f"error_{uuid.uuid4().hex[:12]}",
+-                        args=ArgsJson(args_json=json.dumps({"error": error_message})),
++                        args=json.dumps({"error": error_message}),
+                     )
+                 ],
+                 timestamp=datetime.utcnow(),
+diff --git a/cortex_on/instructor.py b/cortex_on/instructor.py
+index b4f0efb..85abef7 100644
+--- a/cortex_on/instructor.py
++++ b/cortex_on/instructor.py
+@@ -93,9 +93,9 @@ class SystemInstructor:
+                 user_prompt=task,
+                 deps=deps_for_orchestrator
+             )
+-            stream_output.output = orchestrator_response.data
++            stream_output.output = orchestrator_response.output
+             stream_output.status_code = 200
+-            logfire.debug(f"Orchestrator response: {orchestrator_response.data}")
++            logfire.debug(f"Orchestrator response: {orchestrator_response.output}")
+             await self._safe_websocket_send(stream_output)
+ 
+             logfire.info("Task completed successfully")
+diff --git a/cortex_on/requirements.txt b/cortex_on/requirements.txt
+index a635c7e..77bd97d 100644
+--- a/cortex_on/requirements.txt
++++ b/cortex_on/requirements.txt
+@@ -65,8 +65,8 @@ pyasn1_modules==0.4.1
+ pycparser==2.22
+ pycryptodome==3.21.0
+ pydantic==2.10.4
+-pydantic-ai==0.0.17
+-pydantic-ai-slim==0.0.17
++pydantic-ai==2.66.0
++pydantic-ai-slim==2.66.0
+ pydantic_core==2.27.2
+ Pygments==2.18.0
+ python-dateutil==2.9.0.post0
+diff --git a/ta-browser/core/agents/browser_agent.py b/ta-browser/core/agents/browser_agent.py
+index b026bea..ee5a02d 100644
+--- a/ta-browser/core/agents/browser_agent.py
++++ b/ta-browser/core/agents/browser_agent.py
+@@ -1,6 +1,6 @@
+ from pydantic_ai import Agent, RunContext
+ from pydantic import BaseModel, ConfigDict, Field
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from pydantic_ai.settings import ModelSettings
+ 
+ import os
+diff --git a/ta-browser/core/agents/critique_agent.py b/ta-browser/core/agents/critique_agent.py
+index e6e1777..0bc3001 100644
+--- a/ta-browser/core/agents/critique_agent.py
++++ b/ta-browser/core/agents/critique_agent.py
+@@ -7,7 +7,7 @@ import os
+ from dotenv import load_dotenv
+ from core.skills.final_response import get_response
+ from core.utils.openai_client import get_client
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ 
+ 
+ load_dotenv()
+diff --git a/ta-browser/core/agents/explainer_agent.py b/ta-browser/core/agents/explainer_agent.py
+index bcbf36c..3f85191 100644
+--- a/ta-browser/core/agents/explainer_agent.py
++++ b/ta-browser/core/agents/explainer_agent.py
+@@ -2,7 +2,7 @@ import os
+ from pydantic import BaseModel
+ from typing import List, Dict, Optional, Literal
+ from pydantic_ai import Agent
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from pydantic_ai.settings import ModelSettings
+ from core.utils.openai_client import get_client
+ from openai.types.chat.chat_completion_content_part_param import (
+diff --git a/ta-browser/core/agents/planner_agent.py b/ta-browser/core/agents/planner_agent.py
+index 69e9259..0e713f4 100644
+--- a/ta-browser/core/agents/planner_agent.py
++++ b/ta-browser/core/agents/planner_agent.py
+@@ -1,6 +1,6 @@
+ from pydantic_ai import Agent
+ from pydantic import BaseModel
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from pydantic_ai.settings import ModelSettings
+ 
+ import os
+diff --git a/ta-browser/core/orchestrator.py b/ta-browser/core/orchestrator.py
+index 9dbf16e..5b19c1c 100644
+--- a/ta-browser/core/orchestrator.py
++++ b/ta-browser/core/orchestrator.py
+@@ -11,7 +11,8 @@ import random
+ from typing import List, Optional, Union
+ from pydantic_ai.settings import ModelSettings
+ from pydantic_ai import Agent, RunContext
+-from pydantic_ai.result import Usage
++from pydantic_ai.output import ToolOutput
++from pydantic_ai.usage import RunUsage
+ from pydantic_ai.messages import ModelRequest, ModelResponse, ToolReturnPart
+ 
+ from core.browser_manager import PlaywrightManager
+@@ -158,13 +159,11 @@ def filter_dom_messages(messages):
+                     tool_name=part.tool_name,
+                     content="DOM successfully fetched",
+                     tool_call_id=part.tool_call_id,
+-                    timestamp=part.timestamp,
+-                    part_kind='tool-return'
++                    timestamp=part.timestamp
+                 )
+                 # Create new ModelRequest with modified part
+                 filtered_messages.append(ModelRequest(
+-                    parts=[new_part],
+-                    kind='request'
++                    parts=[new_part]
+                 ))
+             else:
+                 filtered_messages.append(msg)
+@@ -226,12 +225,12 @@ class Orchestrator:
+ 
+     
+             
+-    def update_token_usage(self, agent_type: str, usage: Usage):
++    def update_token_usage(self, agent_type: str, usage: RunUsage):
+         self.cumulative_tokens[agent_type]['total'] += usage.total_tokens
+-        self.cumulative_tokens[agent_type]['request'] += usage.request_tokens 
+-        self.cumulative_tokens[agent_type]['response'] += usage.response_tokens
++        self.cumulative_tokens[agent_type]['request'] += usage.input_tokens
++        self.cumulative_tokens[agent_type]['response'] += usage.output_tokens
+ 
+-    def log_token_usage(self, agent_type: str, usage: Usage, step: Optional[int] = None):
++    def log_token_usage(self, agent_type: str, usage: RunUsage, step: Optional[int] = None):
+         self.update_token_usage(agent_type, usage)
+         step_info = f" (Step {step})" if step is not None else ""
+         logger.debug(
+@@ -323,7 +322,7 @@ class Orchestrator:
+                 name="Explainer Agent",
+                 retries=2,
+                 model_settings=ModelSettings(temperature=0.2),
+-                result_type=ExplainerOutput
++                output_type=ExplainerOutput
+             )
+             logger.info("Explainer Agent initialized successfully.")
+ 
+@@ -420,9 +419,11 @@ class Orchestrator:
+                     name="Critique Agent",
+                     retries=3,
+                     model_settings=ModelSettings(temperature=0.5),
+-                    result_type=CritiqueOutput,
+-                    result_tool_name='final_response',
+-                    result_tool_description='Synthesizes web automation results into a comprehensive final answer addressing the clients original query.'
++                    output_type=ToolOutput(
++                        CritiqueOutput,
++                        name='final_response',
++                        description='Synthesizes web automation results into a comprehensive final answer addressing the clients original query.'
++                    )
+                 )
+                 logger.info("Critique Agent initialized successfully.")
+ 
+@@ -434,7 +435,7 @@ class Orchestrator:
+                     name="Planner Agent",
+                     retries=3,
+                     model_settings=ModelSettings(temperature=0.5),
+-                    result_type=NCPA_OP
++                    output_type=NCPA_OP
+                 )
+                 logger.info("No-critique Planner Agent initialized successfully.")
+             else:
+@@ -444,7 +445,7 @@ class Orchestrator:
+                     name="Planner Agent",
+                     retries=3,
+                     model_settings=ModelSettings(temperature=0.5),
+-                    result_type=PLANNER_AGENT_OP
++                    output_type=PLANNER_AGENT_OP
+                 )
+                 logger.info("Planner Agent initialized successfully.")
+             
+@@ -627,7 +628,7 @@ class Orchestrator:
+ 
+                                     logger.info(f"Planner Response: {planner_response.new_messages()}")
+ 
+-                                    plan_data = planner_response.data
++                                    plan_data = planner_response.output
+                                     
+                                     logger.info(f"Plan:, {plan_data}")
+                                     logger.info(f"Plan:, {plan_data.plan}")
+@@ -636,8 +637,8 @@ class Orchestrator:
+                                     c_step = plan_data.next_step
+                                     
+                                     # Handle termination for no_crit mode
+-                                    if self.no_crit and planner_response.data.terminate:
+-                                        final_response = planner_response.data.final_response
++                                    if self.no_crit and planner_response.output.terminate:
++                                        final_response = planner_response.output.final_response
+                                         await self.browser_manager.notify_user(
+                                             f"{final_response}",
+                                             message_type=MessageType.ANSWER
+@@ -676,7 +677,7 @@ class Orchestrator:
+ 
+                                 self.log_token_usage(
+                                     agent_type='planner',
+-                                    usage=planner_response._usage,
++                                    usage=planner_response.usage,
+                                     step=self.iteration_counter
+                                 )
+ 
+@@ -714,12 +715,12 @@ class Orchestrator:
+ 
+                                     logger.debug(f"All Messages from Browser Agent: {browser_response.all_messages()}")
+                                     logger.info(f"Tool Interactions: {tool_interactions_str}")
+-                                    logger.info(f"Browser Agent Response: {browser_response.data}")
++                                    logger.info(f"Browser Agent Response: {browser_response.output}")
+                                     await self._update_current_url()
+ 
+                                     self.log_token_usage(
+                                         agent_type='browser',
+-                                        usage=browser_response._usage,
++                                        usage=browser_response.usage,
+                                         step=self.iteration_counter
+                                     )
+ 
+@@ -759,7 +760,7 @@ class Orchestrator:
+                                         CA_prompt = (
+                                             f'plan="{plan}" '
+                                             f'next_step="{c_step}" '
+-                                            f'tool_response="{browser_response.data}" '
++                                            f'tool_response="{browser_response.output}" '
+                                             f'tool_interactions="{tool_interactions_str}" '
+                                             f'ss_analysis="SS analysis not available"'
+                                             f'browser_error="{browser_error if browser_error else "None"}"'
+@@ -773,14 +774,14 @@ class Orchestrator:
+                                         self.conversation_handler.add_critique_message(critique_response, prompt_constructor(CA_prompt))
+                                         self.message_histories['critique'].extend(critique_response.new_messages())
+ 
+-                                        critique_data = critique_response.data
++                                        critique_data = critique_response.output
+                                         logger.info(f"Critique Feedback: {critique_data.feedback}")
+                                         logger.info(f"Critique Response: {critique_data.final_response}")
+                                         logger.info(f"Critique Terminate: {critique_data.terminate}")
+                                         
+                                         self.log_token_usage(
+                                             agent_type='critique',
+-                                            usage=critique_response._usage,
++                                            usage=critique_response.usage,
+                                             step=self.iteration_counter
+                                         )
+ 
+@@ -790,7 +791,7 @@ class Orchestrator:
+                                                 # Use current context to generate final response
+                                                 final_response = await get_response(
+                                                     plan=plan,
+-                                                    browser_response=browser_response.data,
++                                                    browser_response=browser_response.output,
+                                                     current_step=c_step
+                                                 )
+                                                 logger.info(f"Programmatically generated final response: {final_response}")
+@@ -835,7 +836,7 @@ class Orchestrator:
+                                     PA_prompt = (
+                                         f"User Query : {command}\n"
+                                         f"Current URL : {self.current_url}\n"
+-                                        f"Tool Response : {browser_response.data}\n"
++                                        f"Tool Response : {browser_response.output}\n"
+                                         f"Current Date : {current_date}"
+                                         f"Tool Interactions : {tool_interactions_str}\n"
+                                     )
+diff --git a/ta-browser/core/skills/final_response.py b/ta-browser/core/skills/final_response.py
+index fe3e3a9..11c0a18 100644
+--- a/ta-browser/core/skills/final_response.py
++++ b/ta-browser/core/skills/final_response.py
+@@ -49,15 +49,17 @@ def get_final_response_provider():
+         # Anthropic provider
+         from core.utils.anthropic_client import get_client as get_anthropic_client
+         from pydantic_ai.models.anthropic import AnthropicModel
++        from pydantic_ai.providers.anthropic import AnthropicProvider
+         client = get_anthropic_client()
+-        model = AnthropicModel(model_name=model_name, anthropic_client=client)
++        model = AnthropicModel(model_name=model_name, provider=AnthropicProvider(anthropic_client=client))
+         provider = "anthropic"
+     else:
+         # OpenAI provider (default)
+         from core.utils.openai_client import get_client as get_openai_client
+-        from pydantic_ai.models.openai import OpenAIModel
++        from pydantic_ai.models.openai import OpenAIChatModel
++        from pydantic_ai.providers.openai import OpenAIProvider
+         client = get_openai_client()
+-        model = OpenAIModel(model_name=model_name, openai_client=client)
++        model = OpenAIChatModel(model_name=model_name, provider=OpenAIProvider(openai_client=client))
+         provider = "openai"
+     
+     return provider, client, model
+diff --git a/ta-browser/core/skills/get_dom_with_content_type.py b/ta-browser/core/skills/get_dom_with_content_type.py
+index 7aa8c7c..53b5317 100644
+--- a/ta-browser/core/skills/get_dom_with_content_type.py
++++ b/ta-browser/core/skills/get_dom_with_content_type.py
+@@ -139,11 +139,11 @@ async def get_dom_field_func(
+     logger.debug(f"[{time.strftime('%H:%M:%S')}] Explainer agent completed, took {explainer_time - capture_time:.2f} seconds")
+ 
+     try:
+-        if isinstance(explainer_response.data, str):
+-            parsed_data = extract_and_parse_json(explainer_response.data)
++        if isinstance(explainer_response.output, str):
++            parsed_data = extract_and_parse_json(explainer_response.output)
+             processed_data = parsed_data.get("expected_field_info", {})
+         else:
+-            processed_data = explainer_response.data.expected_field_info
++            processed_data = explainer_response.output.expected_field_info
+     except Exception as e:
+         logger.error(f"Error extracting expected field info: {str(e)}", exc_info=True)
+         processed_data = {"expected_field_info": {}}
+diff --git a/ta-browser/core/utils/convert_openai.py b/ta-browser/core/utils/convert_openai.py
+index 2703c24..ccf4e3f 100644
+--- a/ta-browser/core/utils/convert_openai.py
++++ b/ta-browser/core/utils/convert_openai.py
+@@ -1,3 +1,6 @@
++import json
++
++
+ def convert_to_openai_messages(pydantic_result):
+     """
+     Convert Pydantic AI result format to OpenAI API message format.
+@@ -40,12 +43,16 @@ def convert_to_openai_messages(pydantic_result):
+                 if part["part_kind"] == "text":
+                     text_parts.append(part["content"])
+                 elif part["part_kind"] == "tool-call":
++                    # In recent pydantic-ai versions `args` is either a JSON string or a dict
++                    args = part["args"]
++                    if not isinstance(args, str):
++                        args = json.dumps(args or {})
+                     tool_calls.append({
+                         "id": part["tool_call_id"],
+                         "type": "function",
+                         "function": {
+                             "name": part["tool_name"],
+-                            "arguments": part["args"]["args_json" if "args_json" in part["args"] else "args_dict"]
++                            "arguments": args
+                         }
+                     })
+             
+diff --git a/ta-browser/core/utils/init_client.py b/ta-browser/core/utils/init_client.py
+index 7d170c6..5358896 100644
+--- a/ta-browser/core/utils/init_client.py
++++ b/ta-browser/core/utils/init_client.py
+@@ -34,7 +34,11 @@ async def initialize_client():
+         
+         # Create model instance
+         from pydantic_ai.models.anthropic import AnthropicModel
+-        model_instance = AnthropicModel(model_name=model_name, anthropic_client=client_instance)
++        from pydantic_ai.providers.anthropic import AnthropicProvider
++        model_instance = AnthropicModel(
++            model_name=model_name,
++            provider=AnthropicProvider(anthropic_client=client_instance)
++        )
+         
+         logger.info(f"Anthropic client initialized successfully with model: {model_name}")
+         return client_instance, model_instance
+diff --git a/ta-browser/core/utils/openai_client.py b/ta-browser/core/utils/openai_client.py
+index 80670e3..cc8af43 100644
+--- a/ta-browser/core/utils/openai_client.py
++++ b/ta-browser/core/utils/openai_client.py
+@@ -1,4 +1,4 @@
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from openai import AsyncOpenAI, OpenAI
+ import os
+ from dotenv import load_dotenv
+diff --git a/ta-browser/core/utils/openai_msg_parser.py b/ta-browser/core/utils/openai_msg_parser.py
+index af57cdc..5b5f1ca 100644
+--- a/ta-browser/core/utils/openai_msg_parser.py
++++ b/ta-browser/core/utils/openai_msg_parser.py
+@@ -86,7 +86,7 @@ def extract_plan_data(planner_response):
+ 
+         # Prefer the args field if available; otherwise, use the content
+         if hasattr(plan_message, 'args') and plan_message.args:
+-            json_str = json.dumps(plan_message.args.args_dict)  # assuming args_dict holds the JSON data
++            json_str = json.dumps(plan_message.args_as_dict())
+         else:
+             json_str = plan_message.content
+ 
+@@ -127,11 +127,11 @@ def extract_plan_data_NCPA(planner_response):
+         last_message = messages[-1]
+         logger.info(f"Processing planner response (NCPA): {len(str(last_message))} chars")
+ 
+-        # If the response has a structured data attribute, use it directly.
+-        if hasattr(planner_response, 'data'):
++        # If the response has a structured output attribute, use it directly.
++        if hasattr(planner_response, 'output'):
+             plan_data = {
+-                'plan': planner_response.data.plan,
+-                'next_step': planner_response.data.next_step
++                'plan': planner_response.output.plan,
++                'next_step': planner_response.output.next_step
+             }
+             logger.info(f"Extracted structured data: {plan_data}")
+             return plan_data
+@@ -314,19 +314,18 @@ class AgentConversationHandler:
+         tool_name = getattr(response_part, 'tool_name', '')
+         args = {}
+         
+-        if hasattr(response_part, 'args'):
+-            # First try to use args_dict if available and non-empty
+-            if hasattr(response_part.args, 'args_dict') and response_part.args.args_dict:
+-                args = response_part.args.args_dict
+-            # Otherwise try args_json if available
+-            elif hasattr(response_part.args, 'args_json') and response_part.args.args_json:
+-                try:
+-                    args = json.loads(response_part.args.args_json)
+-                except json.JSONDecodeError:
+-                    args = {'raw_args': response_part.args.args_json}
+-            else:
+-                # Fallback: capture a string representation
+-                args = {'raw_args': str(response_part.args)}
++        raw_args = getattr(response_part, 'args', None)
++        # In current pydantic-ai versions `args` is a dict, a JSON string, or None
++        if isinstance(raw_args, dict):
++            args = raw_args
++        elif isinstance(raw_args, str) and raw_args:
++            try:
++                args = json.loads(raw_args)
++            except json.JSONDecodeError:
++                args = {'raw_args': raw_args}
++        elif raw_args:
++            # Fallback: capture a string representation
++            args = {'raw_args': str(raw_args)}
+         
+         return {
+             'id': tool_call_id,
+@@ -440,8 +439,8 @@ class AgentConversationHandler:
+             "role": "user",
+             "content": prompt,
+         })
+-        # Directly use the structured output from the planner's result_type.
+-        plan_data = planner_response.data  # This is now an instance of PLANNER_AGENT_OP or NCPA_OP.
++        # Directly use the structured output from the planner's output_type.
++        plan_data = planner_response.output  # This is now an instance of PLANNER_AGENT_OP or NCPA_OP.
+         # In all cases, 'plan' and 'next_step' are available.
+         plan = plan_data.plan
+         next_step = plan_data.next_step
+@@ -469,8 +468,8 @@ class AgentConversationHandler:
+ 
+     def add_critique_message(self, critique_response: Any, prompt: str) -> None:
+         logger.debug(f"Inside add_critique_message function : {critique_response}")
+-        # Directly use the structured output (result_type is CritiqueOutput).
+-        critique_data = critique_response.data
++        # Directly use the structured output (output_type is CritiqueOutput).
++        critique_data = critique_response.output
+         feedback = critique_data.feedback
+         terminate = critique_data.terminate
+         final_response = critique_data.final_response
+diff --git a/ta-browser/requirements.txt b/ta-browser/requirements.txt
+index af8c9b0..e674d5e 100644
+--- a/ta-browser/requirements.txt
++++ b/ta-browser/requirements.txt
+@@ -96,8 +96,8 @@ pyautogen==0.2.27
+ pycparser==2.22
+ pycryptodome==3.20.0
+ pydantic==2.10.4
+-pydantic-ai==0.0.17
+-pydantic-ai-slim==0.0.17
++pydantic-ai==2.66.0
++pydantic-ai-slim==2.66.0
+ pydantic-core==2.27.2
+ pyee==11.1.0
+ pygments==2.18.0

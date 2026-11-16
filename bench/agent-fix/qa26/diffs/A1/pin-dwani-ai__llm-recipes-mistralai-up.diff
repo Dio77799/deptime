@@ -1,0 +1,160 @@
+diff --git a/python/aquila/src/audio/ast/requirements.txt b/python/aquila/src/audio/ast/requirements.txt
+index f1fed25..4eb733e 100644
+--- a/python/aquila/src/audio/ast/requirements.txt
++++ b/python/aquila/src/audio/ast/requirements.txt
+@@ -47,7 +47,7 @@ markdown-it-py==3.0.0
+ MarkupSafe==2.1.5
+ matplotlib==3.10.0
+ mdurl==0.1.2
+-mistralai==1.5.0
++mistralai==3.7.0
+ mpmath==1.3.0
+ msgpack==1.1.0
+ mypy-extensions==1.0.0
+diff --git a/python/aquila/src/audio/main.py b/python/aquila/src/audio/main.py
+index e0afec5..d3b7544 100644
+--- a/python/aquila/src/audio/main.py
++++ b/python/aquila/src/audio/main.py
+@@ -1,7 +1,7 @@
+ import pandas as pd
+ import json 
+ import os
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import argparse
+ 
+ 
+diff --git a/python/divya-drishti/music/requirements.txt b/python/divya-drishti/music/requirements.txt
+index 2dd2ab6..0e76d67 100644
+--- a/python/divya-drishti/music/requirements.txt
++++ b/python/divya-drishti/music/requirements.txt
+@@ -74,7 +74,7 @@ MarkupSafe==2.1.5
+ matplotlib==3.10.0
+ matplotlib-inline==0.1.7
+ mdurl==0.1.2
+-mistralai==1.5.0
++mistralai==3.7.0
+ mpmath==1.3.0
+ msgpack==1.1.0
+ murmurhash==1.0.12
+diff --git a/python/fine-tuning/onnx-requirements.txt b/python/fine-tuning/onnx-requirements.txt
+index a97a79a..269bea5 100644
+--- a/python/fine-tuning/onnx-requirements.txt
++++ b/python/fine-tuning/onnx-requirements.txt
+@@ -79,7 +79,7 @@ MarkupSafe==2.1.5
+ matplotlib==3.10.0
+ matplotlib-inline==0.1.7
+ mdurl==0.1.2
+-mistralai==1.5.0
++mistralai==3.7.0
+ mpmath==1.3.0
+ msgpack==1.1.0
+ murmurhash==1.0.12
+diff --git a/python/notebooklm/pytorch-requirements.txt b/python/notebooklm/pytorch-requirements.txt
+index 975ed02..b90eeab 100644
+--- a/python/notebooklm/pytorch-requirements.txt
++++ b/python/notebooklm/pytorch-requirements.txt
+@@ -76,7 +76,7 @@ MarkupSafe==2.1.5
+ matplotlib==3.10.0
+ matplotlib-inline==0.1.7
+ mdurl==0.1.2
+-mistralai==1.5.0
++mistralai==3.7.0
+ mpmath==1.3.0
+ msgpack==1.1.0
+ murmurhash==1.0.12
+diff --git a/python/notebooklm/requirements.txt b/python/notebooklm/requirements.txt
+index d1eb1c8..39e9da0 100644
+--- a/python/notebooklm/requirements.txt
++++ b/python/notebooklm/requirements.txt
+@@ -13,7 +13,7 @@ huggingface-hub==0.28.1
+ idna==3.10
+ inquirerpy==0.3.4
+ jsonpath-python==1.0.6
+-mistralai==1.5.0
++mistralai==3.7.0
+ mypy-extensions==1.0.0
+ ollama==0.4.7
+ packaging==24.2
+diff --git a/python/notebooklm/script_parser.py b/python/notebooklm/script_parser.py
+index 7436988..8fde294 100644
+--- a/python/notebooklm/script_parser.py
++++ b/python/notebooklm/script_parser.py
+@@ -1,6 +1,6 @@
+ import json 
+ import os
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import argparse
+ from pdf_parser  import parser_data
+ 
+diff --git a/python/shopping-bot/base/llm.py b/python/shopping-bot/base/llm.py
+index 47073d0..0af7143 100644
+--- a/python/shopping-bot/base/llm.py
++++ b/python/shopping-bot/base/llm.py
+@@ -1,4 +1,4 @@
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import os
+ from dotenv import load_dotenv
+diff --git a/python/shopping-bot/base/v1/chat_order.py b/python/shopping-bot/base/v1/chat_order.py
+index ed72e55..1195727 100644
+--- a/python/shopping-bot/base/v1/chat_order.py
++++ b/python/shopping-bot/base/v1/chat_order.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import gradio as gr
+ import os
+diff --git a/python/shopping-bot/base/v1/cli_order_bot.py b/python/shopping-bot/base/v1/cli_order_bot.py
+index a3b4a7a..e3bfafd 100644
+--- a/python/shopping-bot/base/v1/cli_order_bot.py
++++ b/python/shopping-bot/base/v1/cli_order_bot.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import os
+ 
+diff --git a/python/shopping-bot/base/v1/gradio_order_bot.py b/python/shopping-bot/base/v1/gradio_order_bot.py
+index 2839441..28dc26c 100644
+--- a/python/shopping-bot/base/v1/gradio_order_bot.py
++++ b/python/shopping-bot/base/v1/gradio_order_bot.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import os
+ import gradio as gr
+diff --git a/python/shopping-bot/base/v2/agent_order_logic.py b/python/shopping-bot/base/v2/agent_order_logic.py
+index 7d240e7..42a40f6 100644
+--- a/python/shopping-bot/base/v2/agent_order_logic.py
++++ b/python/shopping-bot/base/v2/agent_order_logic.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import logging
+ import os
+diff --git a/python/shopping-bot/base/v3/order_logic.py b/python/shopping-bot/base/v3/order_logic.py
+index 09747d3..2ff1ad6 100644
+--- a/python/shopping-bot/base/v3/order_logic.py
++++ b/python/shopping-bot/base/v3/order_logic.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import logging
+ import os

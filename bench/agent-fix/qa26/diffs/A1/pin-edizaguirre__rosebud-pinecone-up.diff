@@ -1,0 +1,41 @@
+diff --git a/pinecone_flow.py b/pinecone_flow.py
+index 1ade306..fc07c5e 100644
+--- a/pinecone_flow.py
++++ b/pinecone_flow.py
+@@ -1,6 +1,5 @@
+ # Pinecone
+-from pinecone import Pinecone, ServerlessSpec
+-from pinecone.core.client.exceptions import NotFoundException
++from pinecone import Pinecone, ServerlessSpec, NotFoundError
+ 
+ # Langchain
+ from langchain_community.document_loaders import DirectoryLoader
+@@ -178,7 +177,8 @@ def upload_docs_to_pinecone(docs, config):
+ 
+     pc = Pinecone(api_key=PINECONE_KEY)
+ 
+-    if PINECONE_INDEX_NAME not in pc.list_indexes().names():
++    existing_index_names = [idx.name for idx in pc.list_indexes()]
++    if PINECONE_INDEX_NAME not in existing_index_names:
+         pc.create_index(
+             name=PINECONE_INDEX_NAME,
+             dimension=1536,
+@@ -197,7 +197,7 @@ def upload_docs_to_pinecone(docs, config):
+ 
+     try:
+         pc_index.delete(namespace=namespace, delete_all=True)
+-    except NotFoundException:
++    except NotFoundError:
+         print(f"Namespace '{namespace}' not found. Not deleting.")
+     except Exception as e:
+         print(f"An unexpected error occurred: {e}")
+diff --git a/requirements.txt b/requirements.txt
+index 507fab3..933caa1 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,4 +1,4 @@
+-pinecone==4.0.0
++pinecone==10.3.0
+ langchain==0.2.7
+ python-dotenv==1.0.1
+ streamlit==1.36.0

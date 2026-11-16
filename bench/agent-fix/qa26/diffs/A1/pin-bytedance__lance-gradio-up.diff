@@ -1,0 +1,128 @@
+diff --git a/common/gradio_utils/render.py b/common/gradio_utils/render.py
+index aa48976..fbacf78 100644
+--- a/common/gradio_utils/render.py
++++ b/common/gradio_utils/render.py
+@@ -124,8 +124,9 @@ def update_task_ui(task: str):
+     )
+ 
+ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+-    with gr.Blocks(title="Lance", css=APP_CSS) as demo:
+-        gr.HTML(build_header_html())
++    # In Gradio 6, `css` is passed to launch() instead of gr.Blocks(); see lance_gradio.py.
++    with gr.Blocks(title="Lance") as demo:
++        gr.HTML(build_header_html(), padding=True)
+ 
+         with gr.Column(elem_classes=["lance-taskbar-wrap"]):
+             task = gr.Radio(
+@@ -139,7 +140,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+         with gr.Row(elem_classes=["lance-main-row"]):
+             with gr.Column(scale=1, elem_classes=["lance-main-column", "lance-input-column"]):
+                 with gr.Column(elem_classes=["lance-panel", "lance-task-prompt-panel"]):
+-                    prompt_label = gr.HTML(build_lance_label_html("Prompt", "lance-prompt-label"), elem_classes=["lance-label-html"])
++                    prompt_label = gr.HTML(build_lance_label_html("Prompt", "lance-prompt-label"), elem_classes=["lance-label-html"], padding=True)
+                     prompt = gr.Textbox(
+                         label="Prompt",
+                         show_label=False,
+@@ -215,6 +216,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+                     output_label = gr.HTML(
+                         build_lance_icon_label_html("Output Video", "video", "lance-output-label"),
+                         elem_classes=["lance-label-html"],
++                        padding=True,
+                     )
+                     output_video = gr.Video(label="Output Video", show_label=False, elem_classes=["lance-display-frame", "output-media-control"])
+                     output_image = gr.Image(label="Output Image", show_label=False, type="filepath", visible=False, elem_classes=["lance-display-frame", "output-media-control"])
+@@ -260,6 +262,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+                                     gr.HTML(
+                                         build_example_media_html(preview_image_path, "image"),
+                                         elem_classes=["prompt-example-media-html"],
++                                        padding=True,
+                                     )
+                     else:
+                         example_button = gr.Button(
+@@ -273,7 +276,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+ 
+         def examples_section(title: str, examples: list[list], media_type: Optional[str] = None, visible: bool = False):
+             with gr.Column(visible=visible, elem_classes=["lance-recommended-section"]) as group:
+-                gr.HTML(build_lance_label_html(title, "lance-section-label"), elem_classes=["lance-label-html"])
++                gr.HTML(build_lance_label_html(title, "lance-section-label"), elem_classes=["lance-label-html"], padding=True)
+                 with gr.Group(elem_classes=["example-panel", "prompt-examples"]):
+                     buttons = build_prompt_example_table(examples, media_type=media_type)
+             return group, buttons
+@@ -338,7 +341,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+             inputs=[task, aspect_ratio, resolution],
+             outputs=[height, width, real_size],
+             queue=False,
+-            show_api=False,
++            api_visibility="undocumented",
+         )
+         # real_size is hidden and derived from task/resolution/aspect_ratio.
+         # Do not attach a .change handler here: dynamic Dropdown choices can briefly
+@@ -349,7 +352,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+             inputs=[task, aspect_ratio, resolution],
+             outputs=[real_size, height, width],
+             queue=False,
+-            show_api=False,
++            api_visibility="undocumented",
+         )
+ 
+         for example_button, example_prompt, _, _ in video_generation_example_buttons + image_generation_example_buttons:
+@@ -358,7 +361,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+                 inputs=[task],
+                 outputs=[prompt, system_prompt, aspect_ratio, height, width, num_frames, resolution, real_size],
+                 queue=False,
+-                show_api=False,
++                api_visibility="undocumented",
+             )
+ 
+         for example_button, example_prompt, example_video, example_image in (
+@@ -373,7 +376,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+                 inputs=[task],
+                 outputs=[prompt, input_video, input_image, system_prompt, aspect_ratio, height, width, num_frames, resolution, real_size],
+                 queue=False,
+-                show_api=False,
++                api_visibility="undocumented",
+             )
+ 
+         run_button.click(
+@@ -381,7 +384,7 @@ def build_demo(run_task_fn: Callable) -> gr.Blocks:
+             inputs=[],
+             outputs=[status],
+             queue=False,
+-            show_api=False,
++            api_visibility="undocumented",
+         ).then(
+             fn=run_task_fn,
+             inputs=[
+diff --git a/lance_gradio.py b/lance_gradio.py
+index 6c2b6f5..e33b34a 100644
+--- a/lance_gradio.py
++++ b/lance_gradio.py
+@@ -63,6 +63,7 @@ from transformers.models.qwen2_5_vl.configuration_qwen2_5_vl import Qwen2_5_VLVi
+ from common.gradio_utils.helpers import *
+ from common.gradio_utils.render import build_demo
+ from common.gradio_utils.settings import *
++from common.gradio_utils.styles import APP_CSS
+ from common.utils.logging import get_logger
+ from common.utils.misc import AutoEncoderParams, tuple_mul
+ from config.config_factory import DataArguments, InferenceArguments, ModelArguments
+@@ -870,4 +871,5 @@ if __name__ == "__main__":
+             if path.exists()
+         ],
+         ssr_mode=False,
++        css=APP_CSS,
+     )
+diff --git a/requirements.txt b/requirements.txt
+index 2265c06..a1a7fd3 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -3,8 +3,8 @@ decord==0.6.0
+ diffusers==0.29.1
+ einops==0.8.1
+ fsspec==2026.4.0
+-gradio==5.31.0
+-gradio-client==1.10.1
++gradio==6.31.0
++gradio-client==2.7.2
+ huggingface-hub==0.29.1
+ imageio==2.34.0
+ imageio-ffmpeg==0.5.1

@@ -56,7 +56,7 @@ From a terminal, `uvx deptime check-upgrade` compares the pinned versions at `HE
 
 **On 264 real Dependabot and Renovate update pull requests** (247 projects, scored once before any fix, [results](https://github.com/cschmertz/deptime/blob/main/bench/upgrade-check/prs/results-2026-11-16.md)), the check failed all 13 whose update breaks the project's code, found 46 of the 48 breaking uses, and flagged 1 of 3,291 uses that still work. 2 of the 264 failed with no real break.
 
-**An agent fixing the breaks** (Claude Code on Sonnet 5.5, 25 real broken updates, [results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/results-2026-11-16.md)): alone it left the code working in 80% of sessions; with `/deptime:fix-upgrade` in 64%, in a third of the turns; with the plugin installed and not named, 80%. The command's hand-off is being reworked.
+**An agent fixing the breaks** (Claude Code on Sonnet 5.5, 25 real broken updates, [results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/results-2026-11-16.md)): alone it left the code working in 80% of sessions; with `/deptime:fix-upgrade` in 64%, in a third of the turns; with the plugin installed and not named, 80%. On 66 new broken updates ([results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/qa26/results-2026-11-16.md)), the reworked command: 72.7% against 69.7% alone, in about half the turns. 1.0 will mark the command experimental.
 
 ## Install
 

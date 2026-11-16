@@ -1,0 +1,616 @@
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_app_ui.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_app_ui.py
+index 876fb2e..14fd790 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_app_ui.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_app_ui.py	
+@@ -8,7 +8,6 @@ import logging
+ from pathlib import Path
+ 
+ from fastmcp.resources import TextResource
+-from pydantic import Field
+ 
+ from mcp_runtime import mcp
+ 
+@@ -21,14 +20,13 @@ FEEDBACK_RESOURCE_PATH = Path(__file__).resolve().parent / "feedback_ui_v1.html"
+ 
+ 
+ class MCPAppTextResource(TextResource):
+-    """TextResource variant allowing the registered MCP App MIME profile.
++    """TextResource defaulting to the registered MCP App MIME profile.
+ 
+-    FastMCP 2.12.0 validates MIME values without parameters. MCP Apps require
+-    ``text/html;profile=mcp-app``, so this narrow subclass relaxes only that
+-    field while leaving the installed dependency versions unchanged.
++    FastMCP 4 accepts parameterized MIME values such as
++    ``text/html;profile=mcp-app``; this subclass only supplies the default.
+     """
+ 
+-    mime_type: str = Field(default=FEEDBACK_RESOURCE_MIME)
++    mime_type: str = FEEDBACK_RESOURCE_MIME
+ 
+ 
+ _registered = False
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py
+index e1ff0c9..3a3c9c5 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py	
+@@ -8,7 +8,7 @@ import json
+ import logging
+ from typing import Any, Dict, Iterable, Optional
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from GlyphsApp import Glyphs  # type: ignore[import-not-found]
+ 
+ from document_change_audit import DOCUMENT_CHANGE_LEDGER, overview_markdown
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py
+index afc8ee1..5630f3e 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py	
+@@ -12,7 +12,7 @@ import secrets
+ import time
+ from typing import Any, Dict, Iterable, List, Optional, Tuple
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from GlyphsApp import Glyphs  # type: ignore[import-not-found]
+ 
+ from tool_registration import glyphs_tool
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py
+index 200e96b..40d4388 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py	
+@@ -4,7 +4,7 @@
+ 
+ from __future__ import division, print_function, unicode_literals
+ 
+-from fastmcp.prompts.prompt import Message
++from fastmcp.prompts import Message
+ 
+ from mcp_tools import mcp
+ 
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py
+index 92a3572..9d5bb18 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py	
+@@ -7,7 +7,7 @@ from __future__ import annotations
+ import json
+ from typing import Any, Dict, Iterable, List, Optional
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ 
+ 
+ RESULT_SCHEMA_VERSION = 1
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/utils.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/utils.py
+index ec441d7..36ebb35 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/utils.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/utils.py	
+@@ -75,7 +75,11 @@ def get_tool_info(mcp_instance, tool_name):
+         
+         if tools and tool_name in tools:
+             tool = tools[tool_name]
+-            doc = getattr(tool, "__doc__", None) or "No description available"
++            doc = (
++                getattr(tool, "description", None)
++                or getattr(tool, "__doc__", None)
++                or "No description available"
++            )
+             # Extract first line of docstring for brief description
+             return doc.split("\n")[0].strip() if doc else "No description"
+         return "No description available"
+@@ -89,9 +93,8 @@ def get_mcp_tool_registry(mcp_instance):
+         return None
+ 
+     # FastMCP has exposed the registry both directly on the server and through
+-    # a ToolManager. Prefer the manager because it is the authoritative source
+-    # for FastMCP 2.12 protocol list/call handling; keep direct layouts only as
+-    # compatibility fallbacks for older runtimes.
++    # a ToolManager. Prefer the manager when present; keep direct layouts only
++    # as compatibility fallbacks for older runtimes.
+     containers = []
+     for manager_name in ["_tool_manager", "tool_manager"]:
+         try:
+@@ -110,6 +113,19 @@ def get_mcp_tool_registry(mcp_instance):
+                 candidate = None
+             if isinstance(candidate, dict):
+                 return candidate
++
++    # FastMCP 3+ stores components in the server's LocalProvider, keyed
++    # "tool:<name>[@version]". Expose a name-keyed read-only snapshot.
++    try:
++        components = getattr(getattr(mcp_instance, "local_provider", None), "_components", None)
++    except Exception:
++        components = None
++    if isinstance(components, dict):
++        return {
++            getattr(component, "name", None) or str(key)[len("tool:"):].split("@")[0]: component
++            for key, component in components.items()
++            if str(key).startswith("tool:")
++        }
+     return None
+ 
+ 
+diff --git a/requirements.txt b/requirements.txt
+index 0792e2d..dc5cc07 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -10,7 +10,7 @@ dulwich==1.2.14
+ dnspython==2.7.0
+ email_validator==2.2.0
+ exceptiongroup==1.3.0
+-fastmcp==2.12.0
++fastmcp==4.1.6
+ h11==0.16.0
+ httpcore==1.0.9
+ httpx==0.28.1
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_app_ui.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_app_ui.py
+index 876fb2e..14fd790 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_app_ui.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_app_ui.py	
+@@ -8,7 +8,6 @@ import logging
+ from pathlib import Path
+ 
+ from fastmcp.resources import TextResource
+-from pydantic import Field
+ 
+ from mcp_runtime import mcp
+ 
+@@ -21,14 +20,13 @@ FEEDBACK_RESOURCE_PATH = Path(__file__).resolve().parent / "feedback_ui_v1.html"
+ 
+ 
+ class MCPAppTextResource(TextResource):
+-    """TextResource variant allowing the registered MCP App MIME profile.
++    """TextResource defaulting to the registered MCP App MIME profile.
+ 
+-    FastMCP 2.12.0 validates MIME values without parameters. MCP Apps require
+-    ``text/html;profile=mcp-app``, so this narrow subclass relaxes only that
+-    field while leaving the installed dependency versions unchanged.
++    FastMCP 4 accepts parameterized MIME values such as
++    ``text/html;profile=mcp-app``; this subclass only supplies the default.
+     """
+ 
+-    mime_type: str = Field(default=FEEDBACK_RESOURCE_MIME)
++    mime_type: str = FEEDBACK_RESOURCE_MIME
+ 
+ 
+ _registered = False
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py
+index e1ff0c9..3a3c9c5 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py	
+@@ -8,7 +8,7 @@ import json
+ import logging
+ from typing import Any, Dict, Iterable, Optional
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from GlyphsApp import Glyphs  # type: ignore[import-not-found]
+ 
+ from document_change_audit import DOCUMENT_CHANGE_LEDGER, overview_markdown
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py
+index afc8ee1..5630f3e 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py	
+@@ -12,7 +12,7 @@ import secrets
+ import time
+ from typing import Any, Dict, Iterable, List, Optional, Tuple
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from GlyphsApp import Glyphs  # type: ignore[import-not-found]
+ 
+ from tool_registration import glyphs_tool
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py
+index 200e96b..40d4388 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py	
+@@ -4,7 +4,7 @@
+ 
+ from __future__ import division, print_function, unicode_literals
+ 
+-from fastmcp.prompts.prompt import Message
++from fastmcp.prompts import Message
+ 
+ from mcp_tools import mcp
+ 
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py
+index 92a3572..9d5bb18 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py	
+@@ -7,7 +7,7 @@ from __future__ import annotations
+ import json
+ from typing import Any, Dict, Iterable, List, Optional
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ 
+ 
+ RESULT_SCHEMA_VERSION = 1
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/utils.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/utils.py
+index ec441d7..36ebb35 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/utils.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/utils.py	
+@@ -75,7 +75,11 @@ def get_tool_info(mcp_instance, tool_name):
+         
+         if tools and tool_name in tools:
+             tool = tools[tool_name]
+-            doc = getattr(tool, "__doc__", None) or "No description available"
++            doc = (
++                getattr(tool, "description", None)
++                or getattr(tool, "__doc__", None)
++                or "No description available"
++            )
+             # Extract first line of docstring for brief description
+             return doc.split("\n")[0].strip() if doc else "No description"
+         return "No description available"
+@@ -89,9 +93,8 @@ def get_mcp_tool_registry(mcp_instance):
+         return None
+ 
+     # FastMCP has exposed the registry both directly on the server and through
+-    # a ToolManager. Prefer the manager because it is the authoritative source
+-    # for FastMCP 2.12 protocol list/call handling; keep direct layouts only as
+-    # compatibility fallbacks for older runtimes.
++    # a ToolManager. Prefer the manager when present; keep direct layouts only
++    # as compatibility fallbacks for older runtimes.
+     containers = []
+     for manager_name in ["_tool_manager", "tool_manager"]:
+         try:
+@@ -110,6 +113,19 @@ def get_mcp_tool_registry(mcp_instance):
+                 candidate = None
+             if isinstance(candidate, dict):
+                 return candidate
++
++    # FastMCP 3+ stores components in the server's LocalProvider, keyed
++    # "tool:<name>[@version]". Expose a name-keyed read-only snapshot.
++    try:
++        components = getattr(getattr(mcp_instance, "local_provider", None), "_components", None)
++    except Exception:
++        components = None
++    if isinstance(components, dict):
++        return {
++            getattr(component, "name", None) or str(key)[len("tool:"):].split("@")[0]: component
++            for key, component in components.items()
++            if str(key).startswith("tool:")
++        }
+     return None
+ 
+ 
+diff --git a/src/glyphs-mcp/tests/test_desktop_management.py b/src/glyphs-mcp/tests/test_desktop_management.py
+index 28c854d..c129d91 100644
+--- a/src/glyphs-mcp/tests/test_desktop_management.py
++++ b/src/glyphs-mcp/tests/test_desktop_management.py
+@@ -17,7 +17,7 @@ def test_authenticated_private_routes_and_unchanged_public_tools(tmp_path):
+     value, _, _ = service(tmp_path)
+     async def check():
+         mcp = create_server(value, control_token="x" * 32)
+-        assert len(await mcp.get_tools()) == 22
++        assert len(await mcp.list_tools()) == 22
+         app = mcp.http_app(stateless_http=True)
+         async with app.lifespan(app):
+             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://local") as client:
+diff --git a/src/glyphs-mcp/tests/test_glyphs_plugin_single_surface_startup.py b/src/glyphs-mcp/tests/test_glyphs_plugin_single_surface_startup.py
+index aadb80a..92c7aaa 100644
+--- a/src/glyphs-mcp/tests/test_glyphs_plugin_single_surface_startup.py
++++ b/src/glyphs-mcp/tests/test_glyphs_plugin_single_surface_startup.py
+@@ -301,7 +301,7 @@ class ServerStartupTests(unittest.TestCase):
+             import httpx
+             from fastmcp import FastMCP
+ 
+-            self.assertEqual(fastmcp.__version__, "2.12.0")
++            self.assertEqual(fastmcp.__version__, "4.1.6")
+             server = FastMCP("Glyphs MCP restart lifecycle regression", version="1")
+ 
+             @server.tool()
+diff --git a/src/glyphs-mcp/tests/test_simple_v2_edit_workflow.py b/src/glyphs-mcp/tests/test_simple_v2_edit_workflow.py
+index 6b873af..199fe23 100644
+--- a/src/glyphs-mcp/tests/test_simple_v2_edit_workflow.py
++++ b/src/glyphs-mcp/tests/test_simple_v2_edit_workflow.py
+@@ -326,7 +326,7 @@ def test_mcp_app_and_proxy_preserve_text_resources_metadata_and_actions(env):
+                 for name in ("start_edit_workflow", "get_edit_workflow", "respond_edit_workflow"):
+                     assert "resourceUri" not in catalog[name].meta["ui"]
+                 resources = await client.read_resource(RESOURCE_URI)
+-                assert resources[0].mimeType == RESOURCE_MIME
++                assert resources[0].mime_type == RESOURCE_MIME
+                 assert resources[0].meta['ui']['csp']['connectDomains'] == []
+                 assert resources[0].meta['ui']['prefersBorder'] is True
+                 assert "ui/initialize" in resources[0].text
+diff --git a/src/glyphs-mcp/tests/test_simple_v2_feedback.py b/src/glyphs-mcp/tests/test_simple_v2_feedback.py
+index 8c9c8de..1213c6c 100644
+--- a/src/glyphs-mcp/tests/test_simple_v2_feedback.py
++++ b/src/glyphs-mcp/tests/test_simple_v2_feedback.py
+@@ -13,7 +13,7 @@ for component in ('sidecar', 'protocol', 'bridge'):
+ 
+ import pytest
+ from fastmcp import Client
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from mcp import types
+ 
+ from glyphs_mcp_sidecar.activity_feedback import workflow_progress
+@@ -85,12 +85,10 @@ def test_server_and_stdio_proxy_advertise_the_same_offline_brand(env):
+         server = create_server(env[0])
+         for target in (server, create_proxy(server)):
+             async with Client(target) as client:
+-                info = client.initialize_result.serverInfo
+-                if not {'websiteUrl', 'icons'} <= set(type(info).model_fields):
+-                    pytest.skip('Initialize response branding requires the locked runtime MCP SDK')
+-                assert info.websiteUrl == 'https://ap.cx/gmcp'
++                info = client.initialize_result.server_info
++                assert info.website_url == 'https://ap.cx/gmcp'
+                 icon, = info.icons
+-                assert icon.mimeType == 'image/png' and icon.sizes == ['1024x1024']
++                assert icon.mime_type == 'image/png' and icon.sizes == ['1024x1024']
+                 assert base64.b64decode(icon.src.split(',',1)[1]) == (ROOT/'plugins/glyphs-mcp/assets/icon.png').read_bytes()
+     asyncio.run(run())
+ 
+diff --git a/src/glyphs-mcp/tests/test_simple_v2_sidecar.py b/src/glyphs-mcp/tests/test_simple_v2_sidecar.py
+index a61bacd..4270eb3 100644
+--- a/src/glyphs-mcp/tests/test_simple_v2_sidecar.py
++++ b/src/glyphs-mcp/tests/test_simple_v2_sidecar.py
+@@ -303,8 +303,8 @@ import json
+ from glyphs_mcp_sidecar.server import create_server
+ 
+ server = create_server(object())
+-tools = asyncio.run(server.get_tools())
+-print(json.dumps({name: tool.description for name, tool in tools.items()}, sort_keys=True))
++tools = asyncio.run(server.list_tools())
++print(json.dumps({tool.name: tool.description for tool in tools}, sort_keys=True))
+ """
+     environment = dict(os.environ)
+     environment["PYTHONPATH"] = os.pathsep.join(
+diff --git a/src/glyphs-mcp/tests/test_tool_catalog.py b/src/glyphs-mcp/tests/test_tool_catalog.py
+index 8f7955f..1fdca94 100644
+--- a/src/glyphs-mcp/tests/test_tool_catalog.py
++++ b/src/glyphs-mcp/tests/test_tool_catalog.py
+@@ -159,7 +159,7 @@ class ToolCatalogTests(unittest.TestCase):
+             async def review_curve_quality(glyph_name: str = "a"):
+                 return json.dumps({"ok": True, "target": {"glyphName": "a"}, "summary": {"count": 1}})
+ 
+-            tool = asyncio.run(server.get_tools())["review_curve_quality"]
++            tool = asyncio.run(server.get_tool("review_curve_quality"))
+             entry = self.catalog.TOOL_CATALOG["review_curve_quality"]
+             self.assertEqual(tool.title, entry.title)
+             self.assertEqual(tool.description, entry.description)
+diff --git a/src/glyphs-mcp/tests/test_utils_tool_registry.py b/src/glyphs-mcp/tests/test_utils_tool_registry.py
+index 6c9bf68..a877c0d 100644
+--- a/src/glyphs-mcp/tests/test_utils_tool_registry.py
++++ b/src/glyphs-mcp/tests/test_utils_tool_registry.py
+@@ -98,7 +98,7 @@ class ToolRegistryCompatibilityTests(unittest.TestCase):
+             from fastmcp import Client, FastMCP
+             from fastmcp.exceptions import ToolError
+ 
+-            self.assertEqual(fastmcp.__version__, "2.12.0")
++            self.assertEqual(fastmcp.__version__, "4.1.6")
+             self._exercise_real_fastmcp_round_trip(Client, FastMCP, ToolError)
+         finally:
+             for name in list(sys.modules):
+@@ -127,49 +127,34 @@ class ToolRegistryCompatibilityTests(unittest.TestCase):
+ 
+             return "applied" if confirm else "not confirmed"
+ 
+-        # FastMCP keeps protocol handlers connected to the live ToolManager even
+-        # after ASGI construction. This mirrors the plug-in's next-start model.
++        # FastMCP 4 keeps tools in the server's LocalProvider; the registry
++        # helper exposes a name-keyed snapshot of them.
+         self.assertIsNotNone(server.http_app())
+         registry = self.utils.get_mcp_tool_registry(server)
+-        self.assertIs(registry, server._tool_manager._tools)
+-        full_registry = dict(registry)
+-        readonly_names = {"review_curve_quality", "review_tunni_geometry"}
++        self.assertEqual(
++            set(registry),
++            {"review_curve_quality", "review_tunni_geometry", "apply_tunni_balance"},
++        )
++        self.assertEqual(
++            self.utils.get_tool_info(server, "review_curve_quality"),
++            "Review one glyph's sampled curvature.",
++        )
+ 
+-        async def exercise_profile_round_trip() -> None:
++        async def exercise_round_trip() -> None:
+             async with Client(server) as client:
+-                edit_tools = {tool.name: tool for tool in await client.list_tools()}
+-                self.assertEqual(set(edit_tools), set(full_registry))
+-                review_schema = edit_tools["review_curve_quality"].inputSchema
++                tools = {tool.name: tool for tool in await client.list_tools()}
++                self.assertEqual(set(tools), set(registry))
++                review_schema = tools["review_curve_quality"].input_schema
+                 self.assertIn("glyph_name", review_schema["properties"])
+                 self.assertIn("samples_per_curve", review_schema["properties"])
+ 
+-                self.utils.replace_tool_registry_in_place(
+-                    registry,
+-                    {name: full_registry[name] for name in readonly_names},
+-                )
+-                readonly_tools = {tool.name: tool for tool in await client.list_tools()}
+-                self.assertEqual(set(readonly_tools), readonly_names)
+-                self.assertEqual(
+-                    readonly_tools["review_curve_quality"].inputSchema,
+-                    review_schema,
+-                )
+-                with self.assertRaises(ToolError):
+-                    await client.call_tool("apply_tunni_balance", {"confirm": True})
+-
+-                self.utils.replace_tool_registry_in_place(registry, full_registry)
+-                restored_tools = {tool.name: tool for tool in await client.list_tools()}
+-                self.assertEqual(set(restored_tools), set(full_registry))
+-                self.assertEqual(
+-                    restored_tools["review_curve_quality"].inputSchema,
+-                    review_schema,
+-                )
+                 applied = await client.call_tool(
+                     "apply_tunni_balance",
+                     {"confirm": True},
+                 )
+                 self.assertFalse(applied.is_error)
+ 
+-        asyncio.run(exercise_profile_round_trip())
++        asyncio.run(exercise_round_trip())
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/src/sidecar/glyphs_mcp_sidecar/edit_workflow_ui.py b/src/sidecar/glyphs_mcp_sidecar/edit_workflow_ui.py
+index bb451c1..070bcf8 100644
+--- a/src/sidecar/glyphs_mcp_sidecar/edit_workflow_ui.py
++++ b/src/sidecar/glyphs_mcp_sidecar/edit_workflow_ui.py
+@@ -4,9 +4,8 @@ from typing import Any
+ 
+ from fastmcp import Context
+ from fastmcp.resources import TextResource
+-from fastmcp.tools.tool import ToolResult
+-from mcp.types import ReadResourceRequest, TextContent
+-from pydantic import Field
++from fastmcp.tools import ToolResult
++from mcp.types import TextContent
+ from .presentation import invocation_meta, workflow_call
+ 
+ RESOURCE_URI = "ui://glyphs-mcp/edit-workflow-v1.html"
+@@ -17,36 +16,17 @@ DATA_META = {"ui": {"visibility": ["model", "app"]}}
+ RESOURCE_META = {"ui": {"prefersBorder": True, "csp": {"connectDomains": [], "resourceDomains": []}}}
+ 
+ 
+-def preserve_ui_resource_metadata(mcp):
+-    # The pinned FastMCP also drops resource metadata when constructing read
+-    # contents. Supply the standard CSP on the wire for this one bundled App.
+-    handler = mcp._mcp_server.request_handlers[ReadResourceRequest]
+-
+-    async def read(request):
+-        result = await handler(request)
+-        for content in result.root.contents:
+-            if str(content.uri) == RESOURCE_URI:
+-                content.meta = RESOURCE_META
+-        return result
+-
+-    mcp._mcp_server.request_handlers[ReadResourceRequest] = read
+-
+-
+-class AppResource(TextResource):
+-    # FastMCP 2.12's default MIME validator predates parameterized MCP Apps MIME.
+-    mime_type: str = Field(default=RESOURCE_MIME)
+-
+-
+ def register_edit_workflow_tools(mcp, service):
+     from .service import ServiceError
+ 
+     html = Path(__file__).with_name("edit_workflow_v1.html").read_text(encoding="utf-8")
+-    mcp.add_resource(AppResource(
++    # FastMCP 4 copies the resource's meta (including the standard CSP) into the
++    # read contents, and accepts the parameterized MCP Apps MIME type as-is.
++    mcp.add_resource(TextResource(
+         uri=RESOURCE_URI, name="Glyphs edit workflow", title="Glyphs edit workflow",
+         description="Save prerequisites, progress and reversible edit review, also available in text.",
+-        text=html, meta=RESOURCE_META,
++        text=html, mime_type=RESOURCE_MIME, meta=RESOURCE_META,
+     ))
+-    preserve_ui_resource_metadata(mcp)
+ 
+     def result(callback):
+         try:
+diff --git a/src/sidecar/glyphs_mcp_sidecar/presentation.py b/src/sidecar/glyphs_mcp_sidecar/presentation.py
+index a08fd81..5c00a9e 100644
+--- a/src/sidecar/glyphs_mcp_sidecar/presentation.py
++++ b/src/sidecar/glyphs_mcp_sidecar/presentation.py
+@@ -14,14 +14,13 @@ def icon_uri():
+     return 'data:image/png;base64,' + base64.b64encode(image).decode('ascii')
+ 
+ 
+-def configure_identity(server):
+-    # FastMCP 2.12 does not expose icons in its constructor. The locked runtime's
+-    # MCP SDK does; older developer SDKs can still use the plugin's artwork.
++def identity_settings():
++    # FastMCP 4 accepts icons and website_url in its constructor.
+     from mcp import types
+-    native = server._mcp_server
+-    if hasattr(types, 'Icon') and hasattr(native, 'icons'):
+-        native.icons = [types.Icon(src=icon_uri(), mimeType='image/png', sizes=['1024x1024'])]
+-        native.website_url = 'https://ap.cx/gmcp'
++    return {
++        'icons': [types.Icon(src=icon_uri(), mime_type='image/png', sizes=['1024x1024'])],
++        'website_url': 'https://ap.cx/gmcp',
++    }
+ 
+ 
+ def invocation_meta(base, invoking, invoked):
+diff --git a/src/sidecar/glyphs_mcp_sidecar/proxy.py b/src/sidecar/glyphs_mcp_sidecar/proxy.py
+index 72174be..e289114 100644
+--- a/src/sidecar/glyphs_mcp_sidecar/proxy.py
++++ b/src/sidecar/glyphs_mcp_sidecar/proxy.py
+@@ -1,44 +1,13 @@
+ """Offline stdio entry point for clients without local HTTP transport."""
+ import sys
+-from fastmcp import FastMCP
+-from fastmcp.resources import ResourceManager
+-from fastmcp.server.proxy import ProxyResource, ProxyResourceManager
+-from mcp.shared.exceptions import McpError
+-from mcp.types import METHOD_NOT_FOUND
+-from pydantic import Field
+-
+-from .edit_workflow_ui import RESOURCE_MIME, preserve_ui_resource_metadata
+-
+-
+-class AppProxyResource(ProxyResource):
+-    # FastMCP 2.12's Resource pattern predates the standard parameterized MIME.
+-    mime_type: str = Field(default=RESOURCE_MIME)
+-
+-
+-class AppProxyResourceManager(ProxyResourceManager):
+-    async def get_resources(self):
+-        resources = await ResourceManager.get_resources(self)
+-        try:
+-            client = await self._get_client()
+-            async with client:
+-                for resource in await client.list_resources():
+-                    if str(resource.uri) not in resources:
+-                        cls = AppProxyResource if resource.mimeType == RESOURCE_MIME else ProxyResource
+-                        resources[str(resource.uri)] = cls.from_mcp_resource(client, resource)
+-        except McpError as exc:
+-            if exc.error.code != METHOD_NOT_FOUND:
+-                raise
+-        return resources
++from fastmcp.server import create_proxy as _create_proxy
+ 
+ 
+ def create_proxy(target):
+-    proxy = FastMCP.as_proxy(target, name="Glyphs MCP")
+-    from .presentation import configure_identity
+-    configure_identity(proxy)
+-    # Narrow compatibility adapter; keep the library's tools and result forwarding.
+-    proxy._resource_manager = AppProxyResourceManager(client_factory=proxy.client_factory)
+-    preserve_ui_resource_metadata(proxy)
+-    return proxy
++    # FastMCP 4's proxy provider already forwards tools, resources, MIME types
++    # (including the parameterized MCP Apps type) and resource metadata.
++    from .presentation import identity_settings
++    return _create_proxy(target, name="Glyphs MCP", **identity_settings())
+ 
+ 
+ def main():
+diff --git a/src/sidecar/glyphs_mcp_sidecar/server.py b/src/sidecar/glyphs_mcp_sidecar/server.py
+index bff9851..a79f1a8 100644
+--- a/src/sidecar/glyphs_mcp_sidecar/server.py
++++ b/src/sidecar/glyphs_mcp_sidecar/server.py
+@@ -26,9 +26,8 @@ def _result(callback: Callable[[], Any]) -> dict[str, Any]:
+ def create_server(service: SidecarService, *, control_token: str | None = None) -> Any:
+     from fastmcp import FastMCP
+ 
+-    mcp = FastMCP(name="Glyphs MCP Sidecar", version=RELEASE_VERSION)
+-    from .presentation import configure_identity
+-    configure_identity(mcp)
++    from .presentation import identity_settings
++    mcp = FastMCP(name="Glyphs MCP Sidecar", version=RELEASE_VERSION, **identity_settings())
+     cache = getattr(service, 'status_cache', None)
+     if cache is not None: cache.start()
+     from .health import feedback
+diff --git a/src/sidecar/pyproject.toml b/src/sidecar/pyproject.toml
+index 8634bc1..f1125da 100644
+--- a/src/sidecar/pyproject.toml
++++ b/src/sidecar/pyproject.toml
+@@ -9,7 +9,7 @@ description = "Standalone MCP sidecar for the lean Glyphs bridge"
+ requires-python = ">=3.11,<3.15"
+ dependencies = [
+     "Brotli==1.2.0",
+-    "fastmcp==2.12.0",
++    "fastmcp==4.1.6",
+     "fonttools==4.54.1",
+     "glyphs-mcp-protocol==0.1.0",
+     "uharfbuzz==0.56.0",

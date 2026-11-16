@@ -1,0 +1,43 @@
+diff --git a/query_llm.py b/query_llm.py
+index 3f7e815..f11754f 100644
+--- a/query_llm.py
++++ b/query_llm.py
+@@ -22,8 +22,7 @@ import replicate
+ import anthropic
+ 
+ # Mistral API
+-from mistralai.client import MistralClient
+-from mistralai.models.chat_completion import ChatMessage
++from mistralai.client import Mistral
+ 
+ from utils import *
+ from data_prompts import *
+@@ -343,12 +342,12 @@ class QueryLLM:
+ 
+                 # Call Mistral API for Mistral models
+                 elif re.search(r'mistral', llm_model) is not None:
+-                    client = MistralClient(api_key=self.mistral_key)
++                    client = Mistral(api_key=self.mistral_key)
+ 
+                     prompt = ' '.join(msg['content'] for msg in messages)
+-                    response = client.chat(
++                    response = client.chat.complete(
+                         model=llm_model,
+-                        messages=[ChatMessage(role="user", content=prompt)]
++                        messages=[{"role": "user", "content": prompt}]
+                     ).choices[0].message.content
+ 
+                 # Call OpenAI API for GPT models by default
+diff --git a/requirements.txt b/requirements.txt
+index e4b6d3d..29a9d8e 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -32,7 +32,7 @@ idna==3.6
+ install==1.3.5
+ Jinja2==3.1.3
+ MarkupSafe==2.1.5
+-mistralai==0.1.8
++mistralai==3.7.0
+ mpmath==1.3.0
+ networkx==3.1
+ numpy==1.24.4

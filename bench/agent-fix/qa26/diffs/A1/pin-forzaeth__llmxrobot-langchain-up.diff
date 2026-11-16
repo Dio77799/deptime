@@ -1,0 +1,68 @@
+diff --git a/arm_requirements.txt b/arm_requirements.txt
+index ce8940e..2350c9d 100644
+--- a/arm_requirements.txt
++++ b/arm_requirements.txt
+@@ -6,10 +6,12 @@ transformers==4.47.1
+ pillow==10.3.0
+ 
+ # Langchain
+-langchain==0.3.12
+-langchain-experimental==0.3.3
++langchain==1.4.9
++langchain-classic==1.0.8
++langchain-community==0.4.2
++langchain-experimental==0.4.2
+ unstructured[md]==0.16.11
+-langchain-openai==0.2.12
++langchain-openai==1.8.0
+ 
+ # Unsloth & related
+ scipy==1.14.1
+diff --git a/llm_mpc.py b/llm_mpc.py
+index 3d8a75b..5690b13 100644
+--- a/llm_mpc.py
++++ b/llm_mpc.py
+@@ -6,7 +6,7 @@ from scipy.spatial.transform import Rotation as R
+ import roslibpy
+ from langchain_community.document_loaders import TextLoader
+ from langchain_text_splitters import CharacterTextSplitter
+-from langchain.indexes import VectorstoreIndexCreator
++from langchain_classic.indexes import VectorstoreIndexCreator
+ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+ from langchain_core.documents import Document
+ 
+diff --git a/requirements.txt b/requirements.txt
+index b9bffdf..028dedd 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -8,12 +8,14 @@ pillow==11.1.0
+ #flash-attn==2.7.4.post1
+ 
+ #Langchain
+-langchain==0.3.22
+-langchain-experimental==0.3.4
++langchain==1.4.9
++langchain-classic==1.0.8
++langchain-community==0.4.2
++langchain-experimental==0.4.2
+ unstructured[md]
+ sentence-transformers==4.0.1
+ chromadb==0.6.3
+-langchain-openai==0.3.11
++langchain-openai==1.8.0
+ 
+ #Unsloth
+ unsloth==2025.3.19
+diff --git a/tests/decision_tester/decision_tester.py b/tests/decision_tester/decision_tester.py
+index 4aa8e37..2a57bae 100644
+--- a/tests/decision_tester/decision_tester.py
++++ b/tests/decision_tester/decision_tester.py
+@@ -5,7 +5,7 @@ import tqdm
+ import argparse
+ from langchain_community.document_loaders import TextLoader
+ from langchain_text_splitters import CharacterTextSplitter
+-from langchain.indexes import VectorstoreIndexCreator
++from langchain_classic.indexes import VectorstoreIndexCreator
+ from langchain_openai import OpenAIEmbeddings
+ 
+ class DecisionTester:

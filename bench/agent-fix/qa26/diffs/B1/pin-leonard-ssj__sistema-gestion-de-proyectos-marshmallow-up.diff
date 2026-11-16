@@ -1,0 +1,15 @@
+diff --git a/project-management-backend/app/schemas/task_schema.py b/project-management-backend/app/schemas/task_schema.py
+index 81de39e..a068775 100644
+--- a/project-management-backend/app/schemas/task_schema.py
++++ b/project-management-backend/app/schemas/task_schema.py
+@@ -25,8 +25,8 @@ class TaskCreateSchema(Schema):
+         'invalid': 'El título debe tener entre 1 y 255 caracteres'
+     })
+     description = fields.Str(required=False, allow_none=True, validate=validate.Length(max=5000))
+-    status = fields.Str(required=False, validate=validate.OneOf(['pending', 'in_progress', 'in_review', 'blocked', 'done']), missing='pending')
+-    priority = fields.Str(required=False, validate=validate.OneOf(['low', 'medium', 'high', 'urgent']), missing='medium')
++    status = fields.Str(required=False, validate=validate.OneOf(['pending', 'in_progress', 'in_review', 'blocked', 'done']), load_default='pending')
++    priority = fields.Str(required=False, validate=validate.OneOf(['low', 'medium', 'high', 'urgent']), load_default='medium')
+     assigned_to = fields.Str(required=False, allow_none=True)
+     sprint_id = fields.Str(required=False, allow_none=True, validate=validate.Length(equal=36))
+     due_date = fields.DateTime(required=True, error_messages={

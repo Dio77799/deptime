@@ -1,0 +1,13 @@
+diff --git a/pages/ml_iot/smartphone_visio/app_flask_st.py b/pages/ml_iot/smartphone_visio/app_flask_st.py
+index c02e6d6..1e6c3d7 100644
+--- a/pages/ml_iot/smartphone_visio/app_flask_st.py
++++ b/pages/ml_iot/smartphone_visio/app_flask_st.py
+@@ -200,7 +200,7 @@ def run_streamlit():
+         st.session_state.get('stop_flag', False)
+         if st.session_state.get('stop_flag', False):
+             break
+-        st.experimental_rerun()  # Refresh UI
++        st.rerun()  # Refresh UI
+ 
+ 
+ # ---------------------------

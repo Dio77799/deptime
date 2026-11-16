@@ -1,0 +1,96 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 17,
+  "duration_ms": 35770,
+  "total_cost_usd": 0.13158599999999998,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 18602,
+   "cache_read_input_tokens": 100603,
+   "output_tokens": 4618,
+   "output_tokens_details": {
+    "thinking_tokens": 873
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 18602,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 658,
+     "cache_read_input_tokens": 21123,
+     "cache_creation_input_tokens": 3256,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 3256
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.45,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.27,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Glob": 1,
+  "Grep": 2,
+  "Read": 5,
+  "WebFetch": 1,
+  "Edit": 7
+ },
+ "deptime_calls": [],
+ "other_bash": 0,
+ "fetched": [
+  "https://docs.streamlit.io/develop/api-reference/charts/st.pyplot"
+ ],
+ "denied": 0,
+ "task": "pin-just-krivi__option-pricing-models-streamlit-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 36.3,
+ "service_error": false
+}

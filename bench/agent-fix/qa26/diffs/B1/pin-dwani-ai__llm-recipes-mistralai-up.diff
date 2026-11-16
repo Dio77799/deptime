@@ -1,0 +1,126 @@
+diff --git a/python/aquila/src/audio/main.py b/python/aquila/src/audio/main.py
+index e0afec5..d3b7544 100644
+--- a/python/aquila/src/audio/main.py
++++ b/python/aquila/src/audio/main.py
+@@ -1,7 +1,7 @@
+ import pandas as pd
+ import json 
+ import os
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import argparse
+ 
+ 
+diff --git a/python/notebooklm/script_parser.py b/python/notebooklm/script_parser.py
+index 7436988..8fde294 100644
+--- a/python/notebooklm/script_parser.py
++++ b/python/notebooklm/script_parser.py
+@@ -1,6 +1,6 @@
+ import json 
+ import os
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import argparse
+ from pdf_parser  import parser_data
+ 
+diff --git a/python/shopping-bot/base/llm.py b/python/shopping-bot/base/llm.py
+index 47073d0..0af7143 100644
+--- a/python/shopping-bot/base/llm.py
++++ b/python/shopping-bot/base/llm.py
+@@ -1,4 +1,4 @@
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import os
+ from dotenv import load_dotenv
+diff --git a/python/shopping-bot/base/v1/chat_order.py b/python/shopping-bot/base/v1/chat_order.py
+index ed72e55..1195727 100644
+--- a/python/shopping-bot/base/v1/chat_order.py
++++ b/python/shopping-bot/base/v1/chat_order.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import gradio as gr
+ import os
+diff --git a/python/shopping-bot/base/v1/cli_order_bot.py b/python/shopping-bot/base/v1/cli_order_bot.py
+index a3b4a7a..e3bfafd 100644
+--- a/python/shopping-bot/base/v1/cli_order_bot.py
++++ b/python/shopping-bot/base/v1/cli_order_bot.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import os
+ 
+diff --git a/python/shopping-bot/base/v1/gradio_order_bot.py b/python/shopping-bot/base/v1/gradio_order_bot.py
+index 2839441..28dc26c 100644
+--- a/python/shopping-bot/base/v1/gradio_order_bot.py
++++ b/python/shopping-bot/base/v1/gradio_order_bot.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import os
+ import gradio as gr
+diff --git a/python/shopping-bot/base/v2/agent_order_logic.py b/python/shopping-bot/base/v2/agent_order_logic.py
+index 7d240e7..42a40f6 100644
+--- a/python/shopping-bot/base/v2/agent_order_logic.py
++++ b/python/shopping-bot/base/v2/agent_order_logic.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import logging
+ import os
+diff --git a/python/shopping-bot/base/v3/order_logic.py b/python/shopping-bot/base/v3/order_logic.py
+index 09747d3..2ff1ad6 100644
+--- a/python/shopping-bot/base/v3/order_logic.py
++++ b/python/shopping-bot/base/v3/order_logic.py
+@@ -1,6 +1,6 @@
+ import time
+ import requests
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import json
+ import logging
+ import os
+diff --git a/tutorials/mistral/autogen_mistral_client.py b/tutorials/mistral/autogen_mistral_client.py
+index 1d1a8c4..376e018 100644
+--- a/tutorials/mistral/autogen_mistral_client.py
++++ b/tutorials/mistral/autogen_mistral_client.py
+@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Union
+ 
+ # Mistral libraries
+ # pip install mistralai
+-from mistralai.client import MistralClient
++from mistralai.client import Mistral
+ from mistralai.models.chat_completion import ChatCompletionResponse, ChatMessage, ToolCall
+ from openai.types.chat import ChatCompletion, ChatCompletionMessageToolCall
+ from openai.types.chat.chat_completion import ChatCompletionMessage, Choice
+@@ -36,7 +36,7 @@ class MistralAIClient:
+             self.api_key
+         ), "Please specify the 'api_key' in your config list entry for Mistral or set the MISTRAL_API_KEY env variable."
+ 
+-        self._client = MistralClient(api_key=self.api_key)
++        self._client = Mistral(api_key=self.api_key)
+ 
+         self._last_tooluse_status = {}
+ 
+@@ -91,7 +91,7 @@ class MistralAIClient:
+                 mistral_messages.append(ChatMessage(role="user", content=message["content"]))
+             """
+ 
+-        mistral_response = self._client.chat(
++        mistral_response = self._client.chat.complete(
+             model=self.model, messages=mistral_messages, tools=converted_functions, tool_choice="auto"
+         )
+ 

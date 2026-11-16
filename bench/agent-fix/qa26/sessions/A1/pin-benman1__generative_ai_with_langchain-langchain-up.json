@@ -1,0 +1,128 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 58,
+  "duration_ms": 111535,
+  "total_cost_usd": 0.37579889999999994,
+  "usage": {
+   "input_tokens": 32,
+   "cache_creation_input_tokens": 33695,
+   "cache_read_input_tokens": 362968,
+   "output_tokens": 12515,
+   "output_tokens_details": {
+    "thinking_tokens": 2960
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 33695,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1375,
+     "cache_read_input_tokens": 39231,
+     "cache_creation_input_tokens": 241,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 241
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.59,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.28,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 3,
+  "Glob": 2,
+  "Read": 9,
+  "Bash": 1,
+  "WebFetch": 32,
+  "Edit": 10
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://pypi.org/pypi/langchain/1.4.9/json",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain_v1/langchain/embeddings/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain_v1/langchain/agents/__init__.py",
+  "https://pypi.org/pypi/langchain-classic/json",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain_v1/langchain/storage/__init__.py",
+  "https://pypi.org/pypi/langchain-experimental/json",
+  "https://pypi.org/pypi/langchain-community/json",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain/langchain_classic/callbacks/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain/langchain_classic/smith/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain/langchain_classic/storage/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain/langchain_classic/embeddings/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain-experimental/main/libs/experimental/langchain_experimental/plan_and_execute/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain-experimental/main/libs/experimental/langchain_experimental/agents/agent_toolkits/pandas/base.py",
+  "https://pypi.org/pypi/langchain-core/json",
+  "https://pypi.org/pypi/langchain-openai/json",
+  "https://pypi.org/pypi/langchain-anthropic/json",
+  "https://pypi.org/pypi/langchain-google-genai/json",
+  "https://pypi.org/pypi/langchain-google-vertexai/json",
+  "https://pypi.org/pypi/langchain-text-splitters/json",
+  "https://pypi.org/pypi/langchain-huggingface/json",
+  "https://pypi.org/pypi/langchain-ollama/json",
+  "https://pypi.org/pypi/langchain-groq/json",
+  "https://pypi.org/pypi/langchain-chroma/json",
+  "https://pypi.org/pypi/langchain-mistralai/json",
+  "https://pypi.org/pypi/langgraph/json",
+  "https://pypi.org/pypi/langsmith/json",
+  "https://pypi.org/pypi/langchain-huggingface/1.2.3/json",
+  "https://pypi.org/pypi/langchain-core/1.8.1/json",
+  "https://pypi.org/pypi/langchain-ollama/1.1.0/json",
+  "https://pypi.org/pypi/langchain-chroma/1.1.0/json",
+  "https://pypi.org/pypi/huggingface-hub/0.36.0/json",
+  "https://pypi.org/pypi/datasets/3.4.0/json"
+ ],
+ "denied": 0,
+ "task": "pin-benman1__generative_ai_with_langchain-langchain-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 112.2,
+ "service_error": false
+}

@@ -1,0 +1,149 @@
+diff --git a/src/colette/colette_cli.py b/src/colette/colette_cli.py
+index 9f793b2..26258b5 100644
+--- a/src/colette/colette_cli.py
++++ b/src/colette/colette_cli.py
+@@ -193,10 +193,10 @@ def ui(
+     """Launch the Colette Gradio UI."""
+     typer.echo(f"Starting Colette UI with config file: {config}")
+     try:
+-        from colette.ui.app import create_gradio_interface
++        from colette.ui.app import CSS_PATHS, create_gradio_interface
+ 
+-        gradio_app = create_gradio_interface(config)
+-        gradio_app.launch(server_name=host, server_port=port)
++        gradio_app, gradio_i18n = create_gradio_interface(config)
++        gradio_app.launch(server_name=host, server_port=port, i18n=gradio_i18n, css_paths=CSS_PATHS)
+     except ImportError as ie:
+         typer.echo("Please install the Colette UI dependencies.", err=True)
+         raise typer.Exit(code=1) from ie
+diff --git a/src/colette/ui/app.py b/src/colette/ui/app.py
+index 7974bca..63a27ce 100644
+--- a/src/colette/ui/app.py
++++ b/src/colette/ui/app.py
+@@ -25,6 +25,12 @@ from colette.ui.utils.i18n import get_i18n_instance
+ 
+ ASSETS_DIR = Path(__file__).parent / "assets"
+ 
++# Gradio 6: css_paths is an argument of launch(), not of gr.Blocks()
++CSS_PATHS = [
++    ASSETS_DIR / "css" / "custom.css",
++    ASSETS_DIR / "css" / "theme.css",
++]
++
+ # Load .env if it exists
+ load_dotenv()
+ 
+@@ -54,13 +60,7 @@ def create_gradio_interface(config_path):
+ 
+     gr.set_static_paths(paths=[ASSETS_DIR])
+ 
+-    with gr.Blocks(
+-            title="Colette",
+-            css_paths=[
+-                ASSETS_DIR / "css" / "custom.css",
+-                ASSETS_DIR / "css" / "theme.css",
+-            ]
+-        ) as colette_ui:
++    with gr.Blocks(title="Colette") as colette_ui:
+         
+         with gr.Row():
+             gr.Markdown("# Colette")
+@@ -71,9 +71,7 @@ def create_gradio_interface(config_path):
+                 elem_id="logo-image",
+                 interactive=False,
+                 container=False,
+-                show_share_button=False,
+-                show_download_button=False,
+-                show_fullscreen_button=False,
++                buttons=[],
+                 show_label=False
+             )
+ 
+@@ -125,6 +123,7 @@ def create_gradio_interface(config_path):
+                         type="messages",
+                         height=500,
+                         examples=list_of_examples,
++                        like_user_message=True,
+                     )
+ 
+                     chat_input = gr.MultimodalTextbox(
+@@ -139,7 +138,7 @@ def create_gradio_interface(config_path):
+ 
+                 with gr.Column(scale=2):
+                     with gr.Accordion(gradio_i18n("sources"), open=True):
+-                        context_display = gr.HTML(label=gradio_i18n("context_chunks"))
++                        context_display = gr.HTML(label=gradio_i18n("context_chunks"), padding=True)
+ 
+         with gr.Tab(gradio_i18n("logs")):
+             Log(log_file, tail=500, height="100%", dark=False)
+@@ -147,7 +146,7 @@ def create_gradio_interface(config_path):
+         with gr.Tab(gradio_i18n("about")):
+             gr.Markdown(value=gradio_i18n("about_content"))
+ 
+-        chatbot.like(log_like_dislike, None, None, like_user_message=True)
++        chatbot.like(log_like_dislike, None, None)
+ 
+         chat_input.submit(
+             add_message,
+@@ -205,6 +204,11 @@ if __name__ == "__main__":
+     print(f"Starting Colette UI with config file: {args.config}")
+     gradio_app, gradio_i18n_instance = create_gradio_interface(Path(args.config))
+     try:
+-        gradio_app.launch(server_name="0.0.0.0", server_port=7860, i18n=gradio_i18n_instance)
++        gradio_app.launch(
++            server_name="0.0.0.0",
++            server_port=7860,
++            i18n=gradio_i18n_instance,
++            css_paths=CSS_PATHS,
++        )
+     except Exception as e:
+         print(f"Error launching Colette UI: {e}")
+\ No newline at end of file
+diff --git a/src/colette/ui_requirements.txt b/src/colette/ui_requirements.txt
+index c36da97..5e101fa 100644
+--- a/src/colette/ui_requirements.txt
++++ b/src/colette/ui_requirements.txt
+@@ -1,5 +1,5 @@
+-gradio==5.47.0
+-gradio_client==1.13.2
++gradio==6.31.0
++gradio_client==2.7.2
+ pyyaml==6.0.2
+ gradio-log==0.0.8
+ nltk==3.9.1
+diff --git a/tests/test_cli_smoke.py b/tests/test_cli_smoke.py
+index d36c375..e1f58dd 100644
+--- a/tests/test_cli_smoke.py
++++ b/tests/test_cli_smoke.py
+@@ -182,10 +182,13 @@ def test_cli_chat_passes_retrieval_mode(monkeypatch, tmp_path):
+ @pytest.mark.smoke
+ def test_cli_ui_happy_path(monkeypatch):
+     class _DummyGradioApp:
+-        def launch(self, server_name, server_port):
++        def launch(self, server_name, server_port, i18n=None, css_paths=None):
+             return None
+ 
+-    dummy_module = types.SimpleNamespace(create_gradio_interface=lambda _config: _DummyGradioApp())
++    dummy_module = types.SimpleNamespace(
++        create_gradio_interface=lambda _config: (_DummyGradioApp(), None),
++        CSS_PATHS=[],
++    )
+     monkeypatch.setitem(sys.modules, "colette.ui.app", dummy_module)
+ 
+     colette_cli.ui(host="127.0.0.1", port=9999, config=None)
+@@ -356,10 +359,13 @@ def test_cli_ui_import_error(monkeypatch):
+ @pytest.mark.smoke
+ def test_cli_ui_runtime_error(monkeypatch):
+     class _BadGradioApp:
+-        def launch(self, server_name, server_port):
++        def launch(self, server_name, server_port, i18n=None, css_paths=None):
+             raise RuntimeError("boom")
+ 
+-    dummy_module = types.SimpleNamespace(create_gradio_interface=lambda _config: _BadGradioApp())
++    dummy_module = types.SimpleNamespace(
++        create_gradio_interface=lambda _config: (_BadGradioApp(), None),
++        CSS_PATHS=[],
++    )
+     monkeypatch.setitem(sys.modules, "colette.ui.app", dummy_module)
+ 
+     with pytest.raises(typer.Exit):

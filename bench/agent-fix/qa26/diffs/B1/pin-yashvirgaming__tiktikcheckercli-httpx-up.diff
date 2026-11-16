@@ -1,0 +1,31 @@
+diff --git a/TikTok.py b/TikTok.py
+index 17511b0..c9e8570 100644
+--- a/TikTok.py
++++ b/TikTok.py
+@@ -104,7 +104,7 @@ class TikTokChecker:
+     def get_proxy(self, idx):
+         if not self.proxies: return None
+         pr = self.proxies[idx % len(self.proxies)]
+-        return {"http://": pr, "https://": pr}
++        return pr
+ 
+     def login(self, email, password, proxy):
+         payload = {
+@@ -115,7 +115,7 @@ class TikTokChecker:
+             "mix_mode": "1"
+         }
+         try:
+-            with httpx.Client(headers=HEADERS, proxies=proxy, timeout=15, follow_redirects=True) as client:
++            with httpx.Client(headers=HEADERS, proxy=proxy, timeout=15, follow_redirects=True) as client:
+                 r = client.post(LOGIN_URL, content=urlencode(payload))
+                 data = r.json()
+                 if data.get("error_code") == 0 and data.get("data", {}).get("uid"):
+@@ -135,7 +135,7 @@ class TikTokChecker:
+         headers = HEADERS.copy()
+         cookies = {"sessionid": session_id}
+         try:
+-            with httpx.Client(headers=headers, cookies=cookies, proxies=proxy, timeout=15, follow_redirects=True) as client:
++            with httpx.Client(headers=headers, cookies=cookies, proxy=proxy, timeout=15, follow_redirects=True) as client:
+                 r = client.get(USER_INFO_URL, params=params)
+                 data = r.json()
+                 if data.get("status_code") == 0:

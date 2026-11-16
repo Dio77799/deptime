@@ -1,0 +1,81 @@
+diff --git a/project-management-backend/app/schemas/invite_schema.py b/project-management-backend/app/schemas/invite_schema.py
+index d5e440a..bcba44d 100644
+--- a/project-management-backend/app/schemas/invite_schema.py
++++ b/project-management-backend/app/schemas/invite_schema.py
+@@ -27,7 +27,7 @@ class InviteCreateSchema(Schema):
+     })
+ 
+     @validates('phone')
+-    def validate_phone(self, value):
++    def validate_phone(self, value, **kwargs):
+         if not isinstance(value, str) or not value.strip():
+             raise ValidationError('El teléfono es requerido')
+         if not all((ch.isdigit() or ch in '+-() ') for ch in value):
+diff --git a/project-management-backend/app/schemas/task_schema.py b/project-management-backend/app/schemas/task_schema.py
+index 81de39e..e243b1e 100644
+--- a/project-management-backend/app/schemas/task_schema.py
++++ b/project-management-backend/app/schemas/task_schema.py
+@@ -10,7 +10,7 @@ class ChecklistItemSchema(Schema):
+     completed = fields.Bool(required=True)
+     
+     @validates('id')
+-    def validate_id(self, value):
++    def validate_id(self, value, **kwargs):
+         """Validar que el ID sea un UUID válido"""
+         try:
+             uuid.UUID(value)
+@@ -25,8 +25,8 @@ class TaskCreateSchema(Schema):
+         'invalid': 'El título debe tener entre 1 y 255 caracteres'
+     })
+     description = fields.Str(required=False, allow_none=True, validate=validate.Length(max=5000))
+-    status = fields.Str(required=False, validate=validate.OneOf(['pending', 'in_progress', 'in_review', 'blocked', 'done']), missing='pending')
+-    priority = fields.Str(required=False, validate=validate.OneOf(['low', 'medium', 'high', 'urgent']), missing='medium')
++    status = fields.Str(required=False, validate=validate.OneOf(['pending', 'in_progress', 'in_review', 'blocked', 'done']), load_default='pending')
++    priority = fields.Str(required=False, validate=validate.OneOf(['low', 'medium', 'high', 'urgent']), load_default='medium')
+     assigned_to = fields.Str(required=False, allow_none=True)
+     sprint_id = fields.Str(required=False, allow_none=True, validate=validate.Length(equal=36))
+     due_date = fields.DateTime(required=True, error_messages={
+@@ -42,7 +42,7 @@ class TaskCreateSchema(Schema):
+     )
+ 
+     @validates('due_date')
+-    def validate_due_date(self, value):
++    def validate_due_date(self, value, **kwargs):
+         """Validar que la fecha de vencimiento sea futura"""
+         if value:
+             # Obtener fecha actual sin hora
+@@ -83,7 +83,7 @@ class TaskUpdateSchema(Schema):
+     )
+ 
+     @validates('due_date')
+-    def validate_due_date(self, value):
++    def validate_due_date(self, value, **kwargs):
+         """Validar que la fecha de vencimiento sea futura"""
+         if value:
+             # Obtener fecha actual sin hora
+diff --git a/project-management-backend/app/schemas/user_schema.py b/project-management-backend/app/schemas/user_schema.py
+index aeba70d..34d3e2c 100644
+--- a/project-management-backend/app/schemas/user_schema.py
++++ b/project-management-backend/app/schemas/user_schema.py
+@@ -23,7 +23,7 @@ class UserRegisterSchema(Schema):
+     avatar = fields.Str(required=False, allow_none=True, validate=validate.Length(max=500))
+     
+     @validates('password')
+-    def validate_password(self, value):
++    def validate_password(self, value, **kwargs):
+         """Validar que la contraseña tenga al menos una mayúscula, una minúscula y un número"""
+         if not re.search(r'[A-Z]', value):
+             raise ValidationError('La contraseña debe contener al menos una letra mayúscula')
+diff --git a/project-management-backend/requirements.txt b/project-management-backend/requirements.txt
+index d3a2b92..07c310e 100644
+--- a/project-management-backend/requirements.txt
++++ b/project-management-backend/requirements.txt
+@@ -12,7 +12,7 @@ psycopg2-binary==2.9.11
+ gunicorn==22.0.0
+ 
+ # Validation
+-marshmallow==3.20.1
++marshmallow==4.4.0
+ python-dotenv==1.0.0
+ 
+ # Security

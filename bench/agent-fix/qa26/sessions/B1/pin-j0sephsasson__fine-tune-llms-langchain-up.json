@@ -1,0 +1,106 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 10,
+  "duration_ms": 17580,
+  "total_cost_usd": 0.0772964,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 11958,
+   "cache_read_input_tokens": 108864,
+   "output_tokens": 1855,
+   "output_tokens_details": {
+    "thinking_tokens": 284
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 11958,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 486,
+     "cache_read_input_tokens": 22310,
+     "cache_creation_input_tokens": 114,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 114
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.52,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.28,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 4,
+  "Read": 2,
+  "mcp__plugin_deptime_deptime__coverage": 1,
+  "mcp__plugin_deptime_deptime__check_symbols": 1,
+  "Edit": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package langchain --to 1.4.9 --from 0.0.123 --format markdown --output .deptime-report.md",
+  "coverage",
+  "check_symbols",
+  "uvx deptime==0.2.2 check-upgrade . --package langchain --to 1.4.9 --from 0.0.123 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 2,
+ "fetched": [],
+ "denied": 0,
+ "task": "pin-j0sephsasson__fine-tune-llms-langchain-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 19.2,
+ "service_error": false
+}

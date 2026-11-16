@@ -1,0 +1,22 @@
+diff --git a/parler_tts_server/main.py b/parler_tts_server/main.py
+index 8e54cf1..d395ff0 100644
+--- a/parler_tts_server/main.py
++++ b/parler_tts_server/main.py
+@@ -78,7 +78,7 @@ def health() -> Response:
+ 
+ @app.get("/v1/models", response_model=list[Model])
+ def get_models() -> list[Model]:
+-    models = list(huggingface_hub.list_models(model_name="parler-tts"))
++    models = list(huggingface_hub.list_models(search="parler-tts"))
+     models = [
+         Model(
+             id=model.id,
+@@ -94,7 +94,7 @@ def get_models() -> list[Model]:
+ 
+ @app.get("/v1/models/{model_name:path}", response_model=Model)
+ def get_model(model_name: str) -> Model:
+-    models = list(huggingface_hub.list_models(model_name=model_name))
++    models = list(huggingface_hub.list_models(search=model_name))
+     if len(models) == 0:
+         raise HTTPException(status_code=404, detail="Model doesn't exists")
+     exact_match: ModelInfo | None = None

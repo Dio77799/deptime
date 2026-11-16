@@ -1,0 +1,185 @@
+diff --git a/gpt4tools/llm.py b/gpt4tools/llm.py
+index 7ede4b3..95377f6 100644
+--- a/gpt4tools/llm.py
++++ b/gpt4tools/llm.py
+@@ -1,12 +1,12 @@
+ """Wrapper around HuggingFace APIs."""
++import re
+ import torch
+ from typing import Any, Dict, List, Mapping, Optional
+ 
+-from pydantic import BaseModel, Extra, root_validator
++from pydantic import ConfigDict, model_validator
+ 
+-from langchain.llms.base import LLM
+-from langchain.llms.utils import enforce_stop_tokens
+-from langchain.utils import get_from_dict_or_env
++from langchain_core.callbacks import CallbackManagerForLLMRun
++from langchain_core.language_models.llms import LLM
+ 
+ from peft import PeftModel
+ from transformers import LlamaForCausalLM, LlamaTokenizer, GenerationConfig, AutoTokenizer
+@@ -15,6 +15,11 @@ DEFAULT_REPO_ID = "gpt2"
+ VALID_TASKS = ("text2text-generation", "text-generation")
+ 
+ 
++def enforce_stop_tokens(text: str, stop: List[str]) -> str:
++    """Cut off the text as soon as any of the stop words appear."""
++    return re.split("|".join(re.escape(s) for s in stop), text, maxsplit=1)[0]
++
++
+ class LlamaHuggingFace:
+ 
+     def __init__(self, 
+@@ -92,36 +97,33 @@ class LlamaHuggingFace:
+         return response
+ 
+ 
+-class LlamaLangChain(LLM, BaseModel):
++class LlamaLangChain(LLM):
+     """Wrapper around LLAMA  models.
+     """
+ 
+-    client: Any  #: :meta private:
++    client: Any = None  #: :meta private:
+     repo_id: str = DEFAULT_REPO_ID
+     """Model name to use."""
+-    task: Optional[str] = "text-generation" 
++    task: Optional[str] = "text-generation"
+     """Task to call the model with. Should be a task that returns `generated_text`."""
+     model_kwargs: Optional[dict] = None
+     """Key word arguments to pass to the model."""
+ 
+-    class Config:
+-        """Configuration for this pydantic object."""
+-
+-        extra = Extra.forbid
++    model_config = ConfigDict(extra="forbid")
+ 
+     def set_llm_params(self, **kwargs):
+         for key, value in kwargs.items():
+             setattr(self.client, key, value)
+ 
+-    @root_validator()
++    @model_validator(mode="before")
++    @classmethod
+     def validate_environment(cls, values: Dict) -> Dict:
+-        """Validate that api key and python package exists in environment."""
+-        repo_id = values["repo_id"]
+-        model_kwargs = values.get("model_kwargs")
++        """Build the underlying model client from the given arguments."""
++        model_kwargs = values.get("model_kwargs") or {}
+         client = LlamaHuggingFace(
+             base_model=model_kwargs.get("base_model"),
+             lora_model=model_kwargs.get("lora_model"),
+-            task=values.get("task"),
++            task=values.get("task", "text-generation"),
+             device=model_kwargs.get("device"),
+             max_new_tokens=model_kwargs.get("max_new_tokens"),
+             temperature=model_kwargs.get("temperature"),
+@@ -152,7 +154,13 @@ class LlamaLangChain(LLM, BaseModel):
+         """Return type of llm."""
+         return "huggingface_hub"
+ 
+-    def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
++    def _call(
++        self,
++        prompt: str,
++        stop: Optional[List[str]] = None,
++        run_manager: Optional[CallbackManagerForLLMRun] = None,
++        **kwargs: Any,
++    ) -> str:
+         """Call out to HuggingFace Hub's inference endpoint.
+ 
+         Args:
+diff --git a/gpt4tools_demo.py b/gpt4tools_demo.py
+index 03902bb..e0076f1 100644
+--- a/gpt4tools_demo.py
++++ b/gpt4tools_demo.py
+@@ -7,9 +7,10 @@ from PIL import Image, ImageDraw, ImageOps, ImageFont
+ import numpy as np
+ import argparse
+ import inspect
+-from langchain.agents.initialize import initialize_agent
+-from langchain.agents.tools import Tool
+-from langchain.chains.conversation.memory import ConversationBufferMemory
++from langchain_classic.agents import AgentType, initialize_agent
++from langchain_classic.memory import ConversationBufferMemory
++from langchain_core.messages import HumanMessage
++from langchain_core.tools import Tool
+ from gpt4tools.llm import LlamaLangChain
+ from gpt4tools.tools import *
+ 
+@@ -51,13 +52,17 @@ GPT4Tools needs to use tools to observe images, not directly imagine them. Thoug
+ os.makedirs('image', exist_ok=True)
+ 
+ 
+-def cut_dialogue_history(history_memory, keep_last_n_paragraphs=1):
+-    if history_memory is None or len(history_memory) == 0:
+-        return history_memory
+-    paragraphs = history_memory.split('Human:')
+-    if len(paragraphs) <= keep_last_n_paragraphs:
+-        return history_memory
+-    return 'Human:' + 'Human:'.join(paragraphs[-1:])
++def cut_dialogue_history(memory, keep_last_n_paragraphs=1):
++    """Trim the chat history in `memory` so that only the last human turn (and
++    the replies after it) is kept."""
++    messages = list(memory.chat_memory.messages)
++    human_idx = [i for i, m in enumerate(messages) if isinstance(m, HumanMessage)]
++    # Same condition as the old string-based version: it split on 'Human:', which
++    # yields one more paragraph than there are human turns.
++    if len(human_idx) + 1 <= keep_last_n_paragraphs:
++        return
++    memory.chat_memory.clear()
++    memory.chat_memory.add_messages(messages[human_idx[-1]:])
+ 
+ class ConversationBot:
+     def __init__(self, load_dict, llm_kwargs):
+@@ -102,7 +107,7 @@ class ConversationBot:
+         self.agent = initialize_agent(
+             self.tools,
+             self.llm,
+-            agent="conversational-react-description",
++            agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
+             verbose=True,
+             memory=self.memory,
+             return_intermediate_steps=True,
+@@ -114,8 +119,8 @@ class ConversationBot:
+         self.llm.set_llm_params(temperature=temperature,
+                                 top_p=top_p,
+                                 max_new_tokens=max_new_tokens)
+-        self.agent.memory.buffer = cut_dialogue_history(self.agent.memory.buffer, keep_last_n_paragraphs)
+-        res = self.agent({"input": text.strip()})
++        cut_dialogue_history(self.agent.memory, keep_last_n_paragraphs)
++        res = self.agent.invoke({"input": text.strip()})
+         res['output'] = res['output'].replace("\\", "/")
+         response = re.sub('(image/[-\w]*.png)', lambda m: f'![](file={m.group(0)})*{m.group(0)}*', res['output'])
+         state = state + [(text, response)]
+@@ -142,11 +147,12 @@ class ConversationBot:
+         print(f"Resize image form {width}x{height} to {width_new}x{height_new}")
+         description = self.models['ImageCaptioning'].inference(image_filename)
+         if lang == 'English':
+-            Human_prompt = f'\nHuman: Provide an image named {image_filename}. The description is: {description}. Understand the image using tools.\n'
++            Human_prompt = f'Provide an image named {image_filename}. The description is: {description}. Understand the image using tools.'
+             AI_prompt = "Received."
+         else:
+             raise NotImplementedError(f'{lang} is not supported yet')
+-        self.agent.memory.buffer = self.agent.memory.buffer + Human_prompt + 'AI: ' + AI_prompt
++        self.agent.memory.chat_memory.add_user_message(Human_prompt)
++        self.agent.memory.chat_memory.add_ai_message(AI_prompt)
+         state = state + [(f"![](file={image_filename})*{image_filename}*", AI_prompt)]
+         print(f"\nProcessed run_image, Input image: {image_filename}\nCurrent state: {state}\n"
+               f"Current Memory: {self.agent.memory.buffer}")
+diff --git a/requirements.txt b/requirements.txt
+index 7eeff82..bfbe16d 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,6 +1,7 @@
+ torch==2.1.0
+ transformers==4.31.0
+-langchain==0.0.101
++langchain==1.4.9
++langchain-classic
+ deepspeed==0.9.5
+ diffusers==0.21.2
+ gradio==3.35.2

@@ -1,0 +1,140 @@
+diff --git a/core/agents/browser_agent.py b/core/agents/browser_agent.py
+index a2c566b..71763f3 100644
+--- a/core/agents/browser_agent.py
++++ b/core/agents/browser_agent.py
+@@ -1,6 +1,7 @@
+ from pydantic_ai import RunContext
+ from pydantic import BaseModel
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
++from pydantic_ai.providers.openai import OpenAIProvider
+ from pydantic_ai.settings import ModelSettings
+ import os
+ from dotenv import load_dotenv
+@@ -225,7 +226,7 @@ BA_SYS_PROMPT = """
+ 
+ # Setup BA
+ BA_client = get_client()
+-BA_model = OpenAIModel(model_name = os.getenv("AGENTIC_BROWSER_TEXT_MODEL"), openai_client=BA_client)
++BA_model = OpenAIChatModel(model_name = os.getenv("AGENTIC_BROWSER_TEXT_MODEL"), provider=OpenAIProvider(openai_client=BA_client))
+ BA_agent = Agent(
+     model=BA_model, 
+     system_prompt=BA_SYS_PROMPT,
+diff --git a/core/agents/critique_agent.py b/core/agents/critique_agent.py
+index c823d87..9045d60 100644
+--- a/core/agents/critique_agent.py
++++ b/core/agents/critique_agent.py
+@@ -6,7 +6,8 @@ import os
+ from dotenv import load_dotenv
+ 
+ from core.utils.openai_client import get_client
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
++from pydantic_ai.providers.openai import OpenAIProvider
+ 
+ load_dotenv()
+ 
+@@ -98,7 +99,7 @@ Take this job seriously!
+ 
+ # Setup CA
+ CA_client = get_client()
+-CA_model = OpenAIModel(model_name = os.getenv("AGENTIC_BROWSER_TEXT_MODEL"), openai_client=CA_client)
++CA_model = OpenAIChatModel(model_name = os.getenv("AGENTIC_BROWSER_TEXT_MODEL"), provider=OpenAIProvider(openai_client=CA_client))
+ CA_agent = Agent(
+     model=CA_model, 
+     name="Critique Agent",
+@@ -107,7 +108,7 @@ CA_agent = Agent(
+     model_settings=ModelSettings(
+         temperature=0.5,
+     ),
+-    result_type=CritiqueOutput,
++    output_type=CritiqueOutput,
+ )
+ 
+ @CA_agent.tool_plain
+diff --git a/core/agents/planner_agent.py b/core/agents/planner_agent.py
+index 3a9dc16..6b34c30 100644
+--- a/core/agents/planner_agent.py
++++ b/core/agents/planner_agent.py
+@@ -1,6 +1,7 @@
+ from pydantic_ai import Agent
+ from pydantic import BaseModel
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
++from pydantic_ai.providers.openai import OpenAIProvider
+ from pydantic_ai.settings import ModelSettings
+ 
+ import os
+@@ -208,7 +209,7 @@ PA_SYS_PROMPT = """
+ 
+ # Setup PA
+ PA_client = get_client()
+-PA_model = OpenAIModel(model_name = os.getenv("AGENTIC_BROWSER_TEXT_MODEL"), openai_client=PA_client)
++PA_model = OpenAIChatModel(model_name = os.getenv("AGENTIC_BROWSER_TEXT_MODEL"), provider=OpenAIProvider(openai_client=PA_client))
+ 
+ PA_agent = Agent(
+     model=PA_model, 
+@@ -218,6 +219,6 @@ PA_agent = Agent(
+     model_settings=ModelSettings(
+         temperature=0.5,
+     ),
+-    result_type=PLANNER_AGENT_OP
++    output_type=PLANNER_AGENT_OP
+ )
+ 
+diff --git a/core/orchestrator.py b/core/orchestrator.py
+index e6253e9..32fa9e9 100644
+--- a/core/orchestrator.py
++++ b/core/orchestrator.py
+@@ -3,7 +3,7 @@ import asyncio
+ import tiktoken
+ import logfire
+ from typing import Optional
+-from pydantic_ai.result import Usage
++from pydantic_ai.usage import RunUsage
+ from core.agents.browser_agent import BA_agent, BA_SYS_PROMPT, current_step_class
+ from core.agents.planner_agent import PA_agent, PA_SYS_PROMPT
+ from core.agents.critique_agent import CA_agent, CA_SYS_PROMPT
+@@ -195,12 +195,12 @@ class Orchestrator:
+         self.ss_enabled = os.getenv('AGENTIC_BROWSER_SS_ENABLED', 'false').lower() == 'true'
+ 
+ 
+-    def update_token_usage(self, agent_type: str, usage: Usage):
++    def update_token_usage(self, agent_type: str, usage: RunUsage):
+         self.cumulative_tokens[agent_type]['total'] += usage.total_tokens
+         self.cumulative_tokens[agent_type]['request'] += usage.request_tokens 
+         self.cumulative_tokens[agent_type]['response'] += usage.response_tokens
+ 
+-    def log_token_usage(self, agent_type: str, usage: Usage, step: Optional[int] = None):
++    def log_token_usage(self, agent_type: str, usage: RunUsage, step: Optional[int] = None):
+         self.update_token_usage(agent_type, usage)
+         step_info = f" (Step {step})" if step is not None else ""
+         logfire.info(
+diff --git a/core/skills/final_response.py b/core/skills/final_response.py
+index d704690..d967f1c 100644
+--- a/core/skills/final_response.py
++++ b/core/skills/final_response.py
+@@ -1,10 +1,11 @@
+ from core.utils.openai_client import get_client
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
++from pydantic_ai.providers.openai import OpenAIProvider
+ import os
+ import logfire
+ 
+ client = get_client()
+-model = OpenAIModel(model_name = os.getenv("AGENTIC_BROWSER_TEXT_MODEL"), openai_client=client)
++model = OpenAIChatModel(model_name = os.getenv("AGENTIC_BROWSER_TEXT_MODEL"), provider=OpenAIProvider(openai_client=client))
+ 
+ system_prompt = """
+ 
+diff --git a/core/utils/openai_client.py b/core/utils/openai_client.py
+index 3ac1a62..ff0527b 100644
+--- a/core/utils/openai_client.py
++++ b/core/utils/openai_client.py
+@@ -1,4 +1,4 @@
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from openai import AsyncOpenAI, OpenAI
+ import os
+ from dotenv import load_dotenv

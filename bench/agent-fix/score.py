@@ -106,6 +106,14 @@ def _use_dict(u: Use) -> dict:
 # ------------------------------------------------------------------------------------------------------------ diffs
 
 
+def _git_path(p: str) -> str:
+    """A path from a `diff --git` header, without its a/ or b/; git quotes one with non-ASCII bytes in octal escapes
+    (DT-QA-26: a Streamlit page named with an emoji)."""
+    if p.startswith('"'):
+        p = p[1:-1].encode("latin-1").decode("unicode_escape").encode("latin-1").decode("utf-8")
+    return p[2:]
+
+
 def parse_diff(text: str) -> dict[str, dict]:
     """file (new path, or old for a deletion) -> {"old": old path, "deleted", "added_file", "blocks"}; each block is a
     run of changed lines: (old line numbers removed, [(new line number, text) added], old line before it)."""
@@ -123,9 +131,10 @@ def parse_diff(text: str) -> dict[str, dict]:
     for line in text.splitlines():
         if line.startswith("diff --git "):
             close()
-            m = re.match(r"diff --git a/(.*) b/(.*)$", line)
-            cur = {"old": m.group(1), "new": m.group(2), "deleted": False, "added_file": False, "blocks": []}
-            files[m.group(2)] = cur
+            m = re.match(r'diff --git (a/.*|"a/.*") (b/.*|"b/.*")$', line)
+            old, new = _git_path(m.group(1)), _git_path(m.group(2))
+            cur = {"old": old, "new": new, "deleted": False, "added_file": False, "blocks": []}
+            files[new] = cur
             continue
         if cur is None:
             continue
@@ -279,12 +288,20 @@ def use_verdict(r: dict | None, use: dict, called: bool, roots: tuple[str, ...])
     doesn't install (it installs the task's package and what that requires), so "No module named" there says nothing
     about the fix; and a call the probe finds doesn't bind, which the holdout's labels count as a break only once the
     source confirms it (pydantic models whose signature shows only their camelCase aliases bind by name)."""
-    root = use["path"].split(".")[0]
+    path = use["path"]
+    own = any(path == n or path.startswith(n + ".") for n in roots)
+    # By dotted name (DT-QA-26): under a namespace package (llama_index) the probe reports the sibling package's
+    # module as an attribute the namespace lacks, "module 'llama_index' has no attribute 'llms'".
+    m = re.search(
+        r"No module named '([\w.]+)'|module '([\w.]+)' has no attribute '(\w+)'", (r or {}).get("error") or ""
+    )
+    missing = (m.group(1) or f"{m.group(2)}.{m.group(3)}") if m else None
     if (
         r is not None
         and r.get("resolved") is False
-        and root not in roots
-        and f"No module named '{root}'" in (r.get("error") or "")
+        and not own
+        and missing
+        and (path == missing or path.startswith(missing + "."))
     ):
         return SOURCE
     if r is not None and r.get("resolved") and use.get("via") == "instance" and not r.get("builder_is_class"):
@@ -427,7 +444,7 @@ def pinned_elsewhere(t: dict, files: dict[str, dict]) -> list[str]:
         for b in f["blocks"]:
             for _, text in b["added"]:
                 m = re.match(
-                    r"\s*[\"']?([A-Za-z0-9_.\-]+)(?:\[[^\]]*\])?[\"']?\s*(?:=\s*[\"'])?\s*([\^~<>=!][^;#\"',]*)",
+                    r"\s*[\"']?([A-Za-z0-9_.\-]+)(?:\[[^\]]*\])?[\"']?\s*(?:=\s*[\"'])?\s*([\^~<>=!*0-9][^;#\"',]*)",
                     text,
                 )
                 if not m or canonicalize_name(m.group(1)) != name:
@@ -439,10 +456,15 @@ def pinned_elsewhere(t: dict, files: dict[str, dict]) -> list[str]:
 
 
 def _allows(spec: str, version: str) -> bool:
-    """Whether a pin allows `version`: PEP 440, or Poetry's `^` and `~` (`^0.28.1` is >=0.28.1,<0.29.0)."""
+    """Whether a pin allows `version`: PEP 440, or Poetry's `^`, `~`, `*` and bare versions (`^0.28.1` is
+    >=0.28.1,<0.29.0; `1.4.9` is ==1.4.9)."""
     from packaging.specifiers import InvalidSpecifier, SpecifierSet
     from packaging.version import InvalidVersion, Version
 
+    if spec == "*":  # Poetry: any version
+        return True
+    if spec[:1].isdigit():  # Poetry: a bare version is an exact pin (DT-QA-26: langchain = "1.4.9")
+        spec = f"=={spec}"
     try:
         if spec[:1] in "^~" and not spec.startswith("~="):
             base = Version(spec[1:])

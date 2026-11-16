@@ -1,0 +1,507 @@
+diff --git a/nl2sql_library/nl2sql/assets/prompts/__init__.py b/nl2sql_library/nl2sql/assets/prompts/__init__.py
+index 52c0df5..eefc68f 100644
+--- a/nl2sql_library/nl2sql/assets/prompts/__init__.py
++++ b/nl2sql_library/nl2sql/assets/prompts/__init__.py
+@@ -20,8 +20,7 @@ import json
+ import pkgutil
+ from typing import List
+ 
+-from langchain.prompts.few_shot import FewShotPromptTemplate
+-from langchain.prompts.prompt import PromptTemplate
++from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
+ from loguru import logger
+ from pydantic.v1 import BaseModel
+ 
+diff --git a/nl2sql_library/nl2sql/commons/utils/classifiers.py b/nl2sql_library/nl2sql/commons/utils/classifiers.py
+index bc76279..efce40d 100644
+--- a/nl2sql_library/nl2sql/commons/utils/classifiers.py
++++ b/nl2sql_library/nl2sql/commons/utils/classifiers.py
+@@ -17,9 +17,9 @@ Allows classifying unstructured text into defined categories.
+ """
+ 
+ from typing import Literal
+-from langchain.embeddings import VertexAIEmbeddings
+-from langchain.schema import Document
+-from langchain.vectorstores.chroma import Chroma
++from langchain_chroma import Chroma
++from langchain_core.documents import Document
++from langchain_google_vertexai import VertexAIEmbeddings
+ 
+ _yes_no_classifier = Chroma.from_documents(
+     [
+@@ -34,6 +34,6 @@ def yes_no_classifier(target: str) -> Literal["True", "False"]:
+     """
+     Categorizes arbitrary incoming string into "True"/"False" lterals
+     """
+-    return _yes_no_classifier.get_relevant_documents(target.lower())[0].metadata[
++    return _yes_no_classifier.invoke(target.lower())[0].metadata[
+         "relevant"
+     ]
+diff --git a/nl2sql_library/nl2sql/datasets/base.py b/nl2sql_library/nl2sql/datasets/base.py
+index b13717b..819269f 100644
+--- a/nl2sql_library/nl2sql/datasets/base.py
++++ b/nl2sql_library/nl2sql/datasets/base.py
+@@ -23,8 +23,8 @@ import typing
+ 
+ import numpy as np
+ import pandas as pd
+-from langchain.prompts import PromptTemplate
+-from langchain.sql_database import SQLDatabase
++from langchain_community.utilities import SQLDatabase
++from langchain_core.prompts import PromptTemplate
+ from loguru import logger
+ from pydantic import (
+     BaseModel,
+diff --git a/nl2sql_library/nl2sql/executors/__init__.py b/nl2sql_library/nl2sql/executors/__init__.py
+index 582a810..f6b21e0 100644
+--- a/nl2sql_library/nl2sql/executors/__init__.py
++++ b/nl2sql_library/nl2sql/executors/__init__.py
+@@ -22,7 +22,7 @@ from abc import ABC
+ from typing import Any
+ from uuid import uuid4
+ 
+-from langchain.llms.base import BaseLLM
++from langchain_core.language_models.llms import BaseLLM
+ from pydantic import BaseModel, Field, SkipValidation
+ 
+ from nl2sql.commons.reporting.persist import DEFAULT_HANDLER
+diff --git a/nl2sql_library/nl2sql/llms/google_palm.py b/nl2sql_library/nl2sql/llms/google_palm.py
+index 8ea5f8a..ead328d 100644
+--- a/nl2sql_library/nl2sql/llms/google_palm.py
++++ b/nl2sql_library/nl2sql/llms/google_palm.py
+@@ -17,7 +17,7 @@ Used to get an instance of the PaLM LLM
+ """
+ import os
+ from google.cloud import secretmanager
+-from langchain.llms.google_palm import GooglePalm
++from langchain_community.llms.google_palm import GooglePalm
+ 
+ 
+ class ExtendedPalm(GooglePalm):
+diff --git a/nl2sql_library/nl2sql/llms/vertexai.py b/nl2sql_library/nl2sql/llms/vertexai.py
+index 7500c21..0a2eb79 100644
+--- a/nl2sql_library/nl2sql/llms/vertexai.py
++++ b/nl2sql_library/nl2sql/llms/vertexai.py
+@@ -17,7 +17,7 @@ Used to get an instance of the Vertex AI LLM
+ """
+ from google.cloud import aiplatform_v1beta1
+ from google.protobuf import struct_pb2
+-from langchain.llms.vertexai import VertexAI
++from langchain_google_vertexai import VertexAI
+ 
+ 
+ class ExtendedVertexAI(VertexAI):
+diff --git a/nl2sql_library/nl2sql/tasks/column_selection/core.py b/nl2sql_library/nl2sql/tasks/column_selection/core.py
+index ee73ebf..c616d4c 100644
+--- a/nl2sql_library/nl2sql/tasks/column_selection/core.py
++++ b/nl2sql_library/nl2sql/tasks/column_selection/core.py
+@@ -18,10 +18,9 @@ Implementation of the core prompting based approach to Column Selection
+ from typing import Callable
+ from uuid import uuid4
+ 
+-from langchain.llms.base import BaseLLM
+-from langchain.output_parsers import ResponseSchema, StructuredOutputParser
+-from langchain.prompts.prompt import PromptTemplate
+-from langchain.schema import BasePromptTemplate
++from langchain_classic.output_parsers import ResponseSchema, StructuredOutputParser
++from langchain_core.language_models.llms import BaseLLM
++from langchain_core.prompts import BasePromptTemplate, PromptTemplate
+ from loguru import logger
+ from pydantic import BaseModel, SkipValidation
+ from typing_extensions import Literal
+@@ -188,13 +187,13 @@ class CoreColumnSelector(BaseColumnSelectionTask):
+             )
+             llm_response = self.llm.generate([prepared_prompt])
+             logger.debug(
+-                f"[{self.tasktype}] : Received LLM Response : {llm_response.json()}"
++                f"[{self.tasktype}] : Received LLM Response : {llm_response.model_dump_json()}"
+             )
+             try:
+                 raw_response = llm_response.generations[0][0].text.strip()
+             except IndexError as exc:
+                 raise ValueError(
+-                    f"Empty / Invalid Response received from LLM : {llm_response.json()}"
++                    f"Empty / Invalid Response received from LLM : {llm_response.model_dump_json()}"
+                 ) from exc
+ 
+             parsed_response = (
+@@ -208,7 +207,7 @@ class CoreColumnSelector(BaseColumnSelectionTask):
+                     "tasktype": self.tasktype,
+                     "table": tablename,
+                     "prepared_prompt": prepared_prompt,
+-                    "llm_response": llm_response.dict(),
++                    "llm_response": llm_response.model_dump(),
+                     "raw_response": raw_response,
+                     "parsed_response": parsed_response,
+                     "processed_response": processed_response,
+diff --git a/nl2sql_library/nl2sql/tasks/eval_fix/core.py b/nl2sql_library/nl2sql/tasks/eval_fix/core.py
+index f172aaa..06c54c3 100644
+--- a/nl2sql_library/nl2sql/tasks/eval_fix/core.py
++++ b/nl2sql_library/nl2sql/tasks/eval_fix/core.py
+@@ -18,10 +18,9 @@ Implementation of the core prompting based approach to Eval and Fix for SQL.
+ from typing import Callable, List
+ from uuid import uuid4
+ 
+-from langchain.llms.base import BaseLLM
+-from langchain.output_parsers import ResponseSchema, StructuredOutputParser
+-from langchain.prompts.prompt import PromptTemplate
+-from langchain.schema import BasePromptTemplate
++from langchain_classic.output_parsers import ResponseSchema, StructuredOutputParser
++from langchain_core.language_models.llms import BaseLLM
++from langchain_core.prompts import BasePromptTemplate, PromptTemplate
+ from loguru import logger
+ from pydantic import BaseModel, SkipValidation
+ from sqlalchemy.exc import DatabaseError
+@@ -217,13 +216,13 @@ class CoreEvalFix(BaseEvalFixTask):
+ 
+                 llm_response = self.llm.generate([prepared_prompt])
+                 logger.debug(
+-                    f"[{self.tasktype}] : Received LLM Response : {llm_response.json()}"
++                    f"[{self.tasktype}] : Received LLM Response : {llm_response.model_dump_json()}"
+                 )
+                 try:
+                     raw_response = llm_response.generations[0][0].text.strip()
+                 except IndexError as exc:
+                     raise ValueError(
+-                        f"Empty / Invalid Response received from LLM : {llm_response.json()}"
++                        f"Empty / Invalid Response received from LLM : {llm_response.model_dump_json()}"
+                     ) from exc
+ 
+                 parsed_response = (
+@@ -237,7 +236,7 @@ class CoreEvalFix(BaseEvalFixTask):
+                         f"trial_{trial_id}": {
+                                     "tasktype": self.tasktype,
+                                     "prepared_prompt": prepared_prompt,
+-                                    "llm_response": llm_response.dict(),
++                                    "llm_response": llm_response.model_dump(),
+                                     "raw_response": raw_response,
+                                     "parsed_response": parsed_response,
+                                     "processed_response": processed_response,
+diff --git a/nl2sql_library/nl2sql/tasks/join_selection/core.py b/nl2sql_library/nl2sql/tasks/join_selection/core.py
+index ca89fa8..82b8ef2 100644
+--- a/nl2sql_library/nl2sql/tasks/join_selection/core.py
++++ b/nl2sql_library/nl2sql/tasks/join_selection/core.py
+@@ -18,10 +18,9 @@ Implementation of the core prompting based approach to Join Selection
+ from typing import Callable
+ from uuid import uuid4
+ 
+-from langchain.llms.base import BaseLLM
+-from langchain.output_parsers import ResponseSchema, StructuredOutputParser
+-from langchain.prompts.prompt import PromptTemplate
+-from langchain.schema import BasePromptTemplate
++from langchain_classic.output_parsers import ResponseSchema, StructuredOutputParser
++from langchain_core.language_models.llms import BaseLLM
++from langchain_core.prompts import BasePromptTemplate, PromptTemplate
+ from loguru import logger
+ from pydantic import BaseModel, SkipValidation
+ from typing_extensions import Literal
+@@ -186,13 +185,13 @@ class CoreJoinSelector(BaseJoinSelectionTask):
+         )
+         llm_response = self.llm.generate([prepared_prompt])
+         logger.debug(
+-            f"[{self.tasktype}] : Received LLM Response : {llm_response.json()}"
++            f"[{self.tasktype}] : Received LLM Response : {llm_response.model_dump_json()}"
+         )
+         try:
+             raw_response = llm_response.generations[0][0].text.strip()
+         except IndexError as exc:
+             raise ValueError(
+-                f"Empty / Invalid Response received from LLM : {llm_response.json()}"
++                f"Empty / Invalid Response received from LLM : {llm_response.model_dump_json()}"
+             ) from exc
+ 
+         parsed_response = (
+@@ -205,7 +204,7 @@ class CoreJoinSelector(BaseJoinSelectionTask):
+             {
+                 "tasktype": self.tasktype,
+                 "prepared_prompt": prepared_prompt,
+-                "llm_response": llm_response.dict(),
++                "llm_response": llm_response.model_dump(),
+                 "raw_response": raw_response,
+                 "parsed_response": parsed_response,
+                 "processed_response": processed_response,
+diff --git a/nl2sql_library/nl2sql/tasks/sql_generation/core.py b/nl2sql_library/nl2sql/tasks/sql_generation/core.py
+index d43a0cc..d265e02 100644
+--- a/nl2sql_library/nl2sql/tasks/sql_generation/core.py
++++ b/nl2sql_library/nl2sql/tasks/sql_generation/core.py
+@@ -18,11 +18,10 @@ Implementation of the core prompting based approach to SQL Generation
+ from typing import Callable
+ from uuid import uuid4
+ 
+-from langchain.chains.sql_database.prompt import PROMPT, SQL_PROMPTS
+-from langchain.llms.base import BaseLLM
+-from langchain.output_parsers import ResponseSchema, StructuredOutputParser
+-from langchain.prompts.prompt import PromptTemplate
+-from langchain.schema import BasePromptTemplate
++from langchain_classic.chains.sql_database.prompt import PROMPT, SQL_PROMPTS
++from langchain_classic.output_parsers import ResponseSchema, StructuredOutputParser
++from langchain_core.language_models.llms import BaseLLM
++from langchain_core.prompts import BasePromptTemplate, PromptTemplate
+ from loguru import logger
+ from pydantic import BaseModel, SkipValidation
+ from typing_extensions import Literal
+@@ -204,13 +203,13 @@ class CoreSqlGenerator(BaseSqlGenerationTask):
+         )
+         llm_response = self.llm.generate([prepared_prompt])
+         logger.debug(
+-            f"[{self.tasktype}] : Received LLM Response : {llm_response.json()}"
++            f"[{self.tasktype}] : Received LLM Response : {llm_response.model_dump_json()}"
+         )
+         try:
+             raw_response = llm_response.generations[0][0].text.strip()
+         except IndexError as exc:
+             raise ValueError(
+-                f"Empty / Invalid Response received from LLM : {llm_response.json()}"
++                f"Empty / Invalid Response received from LLM : {llm_response.model_dump_json()}"
+             ) from exc
+ 
+         parsed_response = (
+@@ -223,7 +222,7 @@ class CoreSqlGenerator(BaseSqlGenerationTask):
+             {
+                 "tasktype": self.tasktype,
+                 "prepared_prompt": prepared_prompt,
+-                "llm_response": llm_response.dict(),
++                "llm_response": llm_response.model_dump(),
+                 "raw_response": raw_response,
+                 "parsed_response": parsed_response,
+                 "processed_response": processed_response,
+diff --git a/nl2sql_library/nl2sql/tasks/sql_generation/react.py b/nl2sql_library/nl2sql/tasks/sql_generation/react.py
+index 7d6d998..4aee213 100644
+--- a/nl2sql_library/nl2sql/tasks/sql_generation/react.py
++++ b/nl2sql_library/nl2sql/tasks/sql_generation/react.py
+@@ -17,10 +17,9 @@ Implementation of the ReAct prompting based approach to SQL Generation
+ """
+ from typing import Any
+ 
+-from langchain.agents import create_sql_agent
+-from langchain.agents.agent_toolkits import SQLDatabaseToolkit
+-from langchain.agents.agent_types import AgentType
+-from langchain.llms.base import BaseLLM
++from langchain_classic.agents.agent_types import AgentType
++from langchain_community.agent_toolkits import SQLDatabaseToolkit, create_sql_agent
++from langchain_core.language_models.llms import BaseLLM
+ from loguru import logger
+ from pydantic import SkipValidation
+ from typing_extensions import Literal
+@@ -70,7 +69,7 @@ class ReactSqlGenerator(BaseSqlGenerationTask):
+         agent.return_intermediate_steps = True
+         agent.handle_parsing_errors = True
+         try:
+-            result = agent(question)
++            result = agent.invoke({"input": question})
+         except Exception as exc:  # pylint: disable=broad-exception-caught
+             intermediate_steps.append(f"Exception in Agent.run : {exc}")
+             query = None
+diff --git a/nl2sql_library/nl2sql/tasks/table_selection/core.py b/nl2sql_library/nl2sql/tasks/table_selection/core.py
+index 464c724..4a349e4 100644
+--- a/nl2sql_library/nl2sql/tasks/table_selection/core.py
++++ b/nl2sql_library/nl2sql/tasks/table_selection/core.py
+@@ -18,11 +18,10 @@ Implementation of the core prompting based approach to Table Selection
+ from typing import Any, Callable, Dict, List
+ from uuid import uuid4
+ 
+-from langchain.chains.sql_database import prompt as lc_prompts
+-from langchain.llms.base import BaseLLM
+-from langchain.output_parsers import StructuredOutputParser
+-from langchain.prompts.few_shot import FewShotPromptTemplate
+-from langchain.schema import BasePromptTemplate
++from langchain_classic.chains.sql_database import prompt as lc_prompts
++from langchain_classic.output_parsers import StructuredOutputParser
++from langchain_core.language_models.llms import BaseLLM
++from langchain_core.prompts import BasePromptTemplate, FewShotPromptTemplate
+ from loguru import logger
+ from pydantic import BaseModel, SkipValidation
+ from typing_extensions import Literal
+@@ -179,13 +178,13 @@ class CoreTableSelector(BaseTableSelectionTask):
+             )
+             llm_response = self.llm.generate([prepared_prompt])
+             logger.debug(
+-                f"[{self.tasktype}] : Received LLM Response : {llm_response.json()}"
++                f"[{self.tasktype}] : Received LLM Response : {llm_response.model_dump_json()}"
+             )
+             try:
+                 raw_response = llm_response.generations[0][0].text.strip()
+             except IndexError as exc:
+                 raise ValueError(
+-                    f"Empty / Invalid Response received from LLM : {llm_response.json()}"
++                    f"Empty / Invalid Response received from LLM : {llm_response.model_dump_json()}"
+                 ) from exc
+ 
+             parsed_response = (
+@@ -199,7 +198,7 @@ class CoreTableSelector(BaseTableSelectionTask):
+                     "tasktype": self.tasktype,
+                     "table": tablename,
+                     "prepared_prompt": prepared_prompt,
+-                    "llm_response": llm_response.dict(),
++                    "llm_response": llm_response.model_dump(),
+                     "raw_response": raw_response,
+                     "parsed_response": parsed_response,
+                     "processed_response": processed_response,
+diff --git a/nl2sql_library/pyproject.toml b/nl2sql_library/pyproject.toml
+index 4f1ab18..f5d8036 100644
+--- a/nl2sql_library/pyproject.toml
++++ b/nl2sql_library/pyproject.toml
+@@ -6,7 +6,7 @@ authors = ["Madhup Sukoon <29144316+vagrantism@users.noreply.github.com>"]
+ readme = "README.md"
+ 
+ [tool.poetry.dependencies]
+-python = ">=3.10,<3.12"
++python = ">=3.11,<3.12"
+ datasets = "^2.14.5"
+ sqlalchemy = "1.4.50"
+ black = "^23.10.0"
+@@ -50,9 +50,11 @@ types-requests = "^2.31.0.20240106"
+ types-psutil = "^5.9.5.20240106"
+ radon = "^6.0.1"
+ vertexai = "^1.49.0"
+-langchain-google-vertexai = "^1.0.4"
+-langchain = "^0.2.2"
+-langchain-community = "^0.2.2"
++langchain-google-vertexai = "^3.3.0"
++langchain = "1.4.9"
++langchain-classic = "^1.0.8"
++langchain-community = "^0.4.2"
++langchain-chroma = "*"
+ scikit-learn = "^1.5.0"
+ faiss-cpu = "^1.8.0"
+ sentence-transformers = "^3.0.0"
+diff --git a/nl2sql_library/requirements_current.txt b/nl2sql_library/requirements_current.txt
+index 000c5a4..cc3e484 100644
+--- a/nl2sql_library/requirements_current.txt
++++ b/nl2sql_library/requirements_current.txt
+@@ -104,12 +104,14 @@ jupyter_client==8.6.1
+ jupyter_core==5.7.2
+ kubernetes==29.0.0
+ #langchain=="^0.0.334"
+-langchain
++langchain==1.4.9
++langchain-classic
+ #langchain-core==0.1.52
+-langchain-google-genai==1.0.4
+-langchain-google-vertexai==1.0.4
++langchain-google-genai
++langchain-google-vertexai==3.3.0
+ #langsmith==0.1.54
+ langchain-community
++langchain-chroma
+ lazy-object-proxy==1.10.0
+ loguru==0.7.2
+ mando==0.7.1
+diff --git a/nl2sql_src/base_requirements.txt b/nl2sql_src/base_requirements.txt
+index ea72278..70e22de 100644
+--- a/nl2sql_src/base_requirements.txt
++++ b/nl2sql_src/base_requirements.txt
+@@ -1,14 +1,15 @@
+ SQLAlchemy==1.4.52
+ sqlalchemy-bigquery==1.8.0
+ sqlglot==23.0.3
+-langchain==0.1.12
+-langchain-community==0.0.28
+-langchain-core==0.1.32
+-langchain-google-vertexai==0.1.1
+-langchain-text-splitters==0.0.1
+-langsmith==0.1.31
+-pydantic==1.10.14
+-google-cloud-aiplatform==1.44.0
++langchain==1.4.9
++langchain-classic==1.0.8
++langchain-community==0.4.2
++langchain-core>=1.8.0,<2.0.0
++langchain-google-vertexai==3.3.0
++langchain-text-splitters>=1.1.2,<2.0.0
++langsmith>=0.1.125,<1.0.0
++pydantic>=2.9.0,<3.0.0
++google-cloud-aiplatform>=1.97.0
+ gradio==3.50.2
+ pygwalker==0.3.9
+ google-cloud-bigquery==3.18.0
+diff --git a/nl2sql_src/requirements.txt b/nl2sql_src/requirements.txt
+index dc88fe7..2ade71a 100644
+--- a/nl2sql_src/requirements.txt
++++ b/nl2sql_src/requirements.txt
+@@ -40,7 +40,7 @@ frozenlist==1.4.1
+ fsspec==2024.6.0
+ google-api-core==2.19.0
+ google-auth==2.30.0
+-google-cloud-aiplatform==1.44.0
++google-cloud-aiplatform>=1.97.0
+ google-cloud-bigquery==3.18.0
+ google-cloud-core==2.4.1
+ google-cloud-resource-manager==1.12.3
+@@ -75,12 +75,13 @@ jsonschema==4.22.0
+ jsonschema-specifications==2023.12.1
+ jupyterlab_widgets==3.0.11
+ kiwisolver==1.4.5
+-langchain==0.1.12
+-langchain-community==0.0.28
+-langchain-core==0.1.32
+-langchain-google-vertexai==0.1.1
+-langchain-text-splitters==0.0.1
+-langsmith==0.1.31
++langchain==1.4.9
++langchain-classic==1.0.8
++langchain-community==0.4.2
++langchain-core>=1.8.0,<2.0.0
++langchain-google-vertexai==3.3.0
++langchain-text-splitters>=1.1.2,<2.0.0
++langsmith>=0.1.125,<1.0.0
+ loguru==0.7.2
+ markdown-it-py==3.0.0
+ MarkupSafe==2.1.5
+@@ -108,7 +109,7 @@ pyarrow==16.1.0
+ pyasn1==0.6.0
+ pyasn1_modules==0.4.0
+ pycparser==2.22
+-pydantic==1.10.14
++pydantic>=2.9.0,<3.0.0
+ pydub==0.25.1
+ Pygments==2.18.0
+ pygwalker==0.3.9
+diff --git a/nl2sql_src/utils/table_filter_test.py b/nl2sql_src/utils/table_filter_test.py
+index 7f928fc..5c9b57f 100644
+--- a/nl2sql_src/utils/table_filter_test.py
++++ b/nl2sql_src/utils/table_filter_test.py
+@@ -1,12 +1,12 @@
+ # import unittest
+ # from unittest.mock import patch
+ import csv
+-import langchain
++from langchain_google_vertexai import VertexAI
+ from nl2sql import table_filter
+ 
+-llm = langchain.llms.VertexAI(temperature=0,
+-                              model_name="text-bison@latest",
+-                              max_output_tokens=2048)
++llm = VertexAI(temperature=0,
++               model_name="text-bison@latest",
++               max_output_tokens=2048)
+ 
+ 
+ def run_tests_generate_csv():
+diff --git a/tests/test_security_fixes.py b/tests/test_security_fixes.py
+index ec08f63..96cfa5a 100644
+--- a/tests/test_security_fixes.py
++++ b/tests/test_security_fixes.py
+@@ -37,14 +37,14 @@ def _install_stub_modules():
+         "loguru",
+         "sqlglot",
+         "langchain",
+-        "langchain.llms",
+-        "langchain.llms.base",
+-        "langchain.output_parsers",
+-        "langchain.prompts",
+-        "langchain.prompts.prompt",
+-        "langchain.prompts.few_shot",
+-        "langchain.schema",
+-        "langchain.sql_database",
++        "langchain_classic",
++        "langchain_classic.output_parsers",
++        "langchain_community",
++        "langchain_community.utilities",
++        "langchain_core",
++        "langchain_core.language_models",
++        "langchain_core.language_models.llms",
++        "langchain_core.prompts",
+         "langchain_google_vertexai",
+         "nl2sql_query_embeddings",
+         "nl2sql.assets.prompts",

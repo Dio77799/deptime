@@ -1,0 +1,42 @@
+diff --git a/utils/model.py b/utils/model.py
+index d7eb376..764c508 100644
+--- a/utils/model.py
++++ b/utils/model.py
+@@ -12,7 +12,7 @@ from transformers import XLMRobertaTokenizerFast
+ from transformers import XLMRobertaForTokenClassification 
+ from transformers import Trainer , TrainingArguments
+ from transformers import DataCollatorForTokenClassification
+-from transformers import AdamW
++from torch.optim import AdamW
+ from transformers import get_linear_schedule_with_warmup
+ 
+ os.system(f"{sys.executable} -m pip install seqeval")
+@@ -120,7 +120,9 @@ if __name__ == '__main__':
+     logger.info("get model param optimizers")
+     optimizer_grouped_parameters = get_param_optimizr(model)
+     optim = AdamW(params=optimizer_grouped_parameters , 
+-                  lr = args_.lr )
++                  lr = args_.lr ,
++                  eps = 1e-6 ,            # transformers.AdamW defaults, kept
++                  weight_decay = 0.0 )    # (torch defaults: 1e-8 / 0.01)
+     
+     num_warm_up = int(0.001 * len(tokenized_datasets["train"]) * args_.epochs)
+     total_steps = int(args_.epochs * len(tokenized_datasets["train"]))
+@@ -129,7 +131,7 @@ if __name__ == '__main__':
+     
+     args = TrainingArguments(
+     "./model/bert-finetuned-ner-resume",
+-    evaluation_strategy="epoch",
++    eval_strategy="epoch",
+     save_strategy="epoch",
+     learning_rate=args_.lr,
+     num_train_epochs=args_.epochs,
+@@ -148,7 +150,7 @@ if __name__ == '__main__':
+     eval_dataset=tokenized_datasets["validation"],
+     data_collator=data_collator,
+     compute_metrics=compute_metrics,
+-    tokenizer=tokenizer,
++    processing_class=tokenizer,
+     optimizers=(optim , optim_schedule)
+     )
+     logger.info("start training ")

@@ -1,0 +1,408 @@
+diff --git a/mcp_servers/email_server.py b/mcp_servers/email_server.py
+index d3e32f9..4191574 100644
+--- a/mcp_servers/email_server.py
++++ b/mcp_servers/email_server.py
+@@ -23,13 +23,19 @@ import os.path
+ from pathlib import Path
+ from datetime import datetime, timedelta
+ 
+-from mcp.server import Server
++from mcp.server import Server, ServerRequestContext
+ from mcp.server.stdio import stdio_server
+-from mcp.types import Tool, TextContent
++from mcp.types import (
++    CallToolRequestParams,
++    CallToolResult,
++    ListToolsResult,
++    PaginatedRequestParams,
++    TextContent,
++    Tool,
++)
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+ 
+-server = Server("email")
+ EMAIL_SOCKET_TIMEOUT = float(os.environ.get("EMAIL_SOCKET_TIMEOUT", "20"))
+ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+ 
+@@ -1051,7 +1057,6 @@ def _download_attachment(uid, index, folder="INBOX", account=None):
+ # ── MCP Tool Registration ──
+ 
+ 
+-@server.list_tools()
+ async def list_tools() -> list[Tool]:
+     # The user may have multiple IMAP accounts configured. Every tool accepts an
+     # optional `account` param — match by name (e.g. "work"), email address,
+@@ -1307,7 +1312,6 @@ async def list_tools() -> list[Tool]:
+     ]
+ 
+ 
+-@server.call_tool()
+ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+     try:
+         if name == "list_email_accounts":
+@@ -1598,6 +1602,27 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+ 
+ # ── Main ──
+ 
++async def _handle_list_tools(
++    ctx: ServerRequestContext, params: PaginatedRequestParams | None
++) -> ListToolsResult:
++    return ListToolsResult(tools=await list_tools())
++
++
++async def _handle_call_tool(
++    ctx: ServerRequestContext, params: CallToolRequestParams
++) -> CallToolResult:
++    try:
++        content = await call_tool(params.name, params.arguments or {})
++    except Exception as e:
++        # mcp 2.x turns uncaught handler exceptions into JSON-RPC errors; keep
++        # the 1.x behavior of reporting them as an isError tool result.
++        return CallToolResult(content=[TextContent(type="text", text=str(e))], is_error=True)
++    return CallToolResult(content=content)
++
++
++server = Server("email", on_list_tools=_handle_list_tools, on_call_tool=_handle_call_tool)
++
++
+ async def run():
+     async with stdio_server() as (read_stream, write_stream):
+         await server.run(
+diff --git a/mcp_servers/image_gen_server.py b/mcp_servers/image_gen_server.py
+index 4607b08..e58c40f 100644
+--- a/mcp_servers/image_gen_server.py
++++ b/mcp_servers/image_gen_server.py
+@@ -10,16 +10,21 @@ import sys
+ import uuid
+ from pathlib import Path
+ 
+-from mcp.server import Server
++from mcp.server import Server, ServerRequestContext
+ from mcp.server.stdio import stdio_server
+-from mcp.types import Tool, TextContent
++from mcp.types import (
++    CallToolRequestParams,
++    CallToolResult,
++    ListToolsResult,
++    PaginatedRequestParams,
++    TextContent,
++    Tool,
++)
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+ 
+-server = Server("image_gen")
+ 
+ 
+-@server.list_tools()
+ async def list_tools() -> list[Tool]:
+     return [
+         Tool(
+@@ -39,7 +44,6 @@ async def list_tools() -> list[Tool]:
+     ]
+ 
+ 
+-@server.call_tool()
+ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+     if name != "generate_image":
+         return [TextContent(type="text", text=f"Unknown tool: {name}")]
+@@ -167,6 +171,27 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+         return [TextContent(type="text", text=f"Error: {e}")]
+ 
+ 
++async def _handle_list_tools(
++    ctx: ServerRequestContext, params: PaginatedRequestParams | None
++) -> ListToolsResult:
++    return ListToolsResult(tools=await list_tools())
++
++
++async def _handle_call_tool(
++    ctx: ServerRequestContext, params: CallToolRequestParams
++) -> CallToolResult:
++    try:
++        content = await call_tool(params.name, params.arguments or {})
++    except Exception as e:
++        # mcp 2.x turns uncaught handler exceptions into JSON-RPC errors; keep
++        # the 1.x behavior of reporting them as an isError tool result.
++        return CallToolResult(content=[TextContent(type="text", text=str(e))], is_error=True)
++    return CallToolResult(content=content)
++
++
++server = Server("image_gen", on_list_tools=_handle_list_tools, on_call_tool=_handle_call_tool)
++
++
+ async def run():
+     async with stdio_server() as (read_stream, write_stream):
+         await server.run(read_stream, write_stream, server.create_initialization_options())
+diff --git a/mcp_servers/memory_server.py b/mcp_servers/memory_server.py
+index 2da0ccf..f289cfa 100644
+--- a/mcp_servers/memory_server.py
++++ b/mcp_servers/memory_server.py
+@@ -10,14 +10,19 @@ import sys
+ import time
+ from pathlib import Path
+ 
+-from mcp.server import Server
++from mcp.server import Server, ServerRequestContext
+ from mcp.server.stdio import stdio_server
+-from mcp.types import Tool, TextContent
++from mcp.types import (
++    CallToolRequestParams,
++    CallToolResult,
++    ListToolsResult,
++    PaginatedRequestParams,
++    TextContent,
++    Tool,
++)
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+ 
+-server = Server("memory")
+-
+ # Late-initialized managers (set during first tool call)
+ _memory_manager = None
+ _memory_vector = None
+@@ -44,7 +49,6 @@ def _ensure_init():
+         _memory_vector = None
+ 
+ 
+-@server.list_tools()
+ async def list_tools() -> list[Tool]:
+     return [
+         Tool(
+@@ -72,7 +76,6 @@ async def list_tools() -> list[Tool]:
+     ]
+ 
+ 
+-@server.call_tool()
+ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+     if name != "manage_memory":
+         return [TextContent(type="text", text=f"Unknown tool: {name}")]
+@@ -198,6 +201,27 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+         return [TextContent(type="text", text=f"Error: Unknown action '{action}'. Use: list, add, edit, delete, search")]
+ 
+ 
++async def _handle_list_tools(
++    ctx: ServerRequestContext, params: PaginatedRequestParams | None
++) -> ListToolsResult:
++    return ListToolsResult(tools=await list_tools())
++
++
++async def _handle_call_tool(
++    ctx: ServerRequestContext, params: CallToolRequestParams
++) -> CallToolResult:
++    try:
++        content = await call_tool(params.name, params.arguments or {})
++    except Exception as e:
++        # mcp 2.x turns uncaught handler exceptions into JSON-RPC errors; keep
++        # the 1.x behavior of reporting them as an isError tool result.
++        return CallToolResult(content=[TextContent(type="text", text=str(e))], is_error=True)
++    return CallToolResult(content=content)
++
++
++server = Server("memory", on_list_tools=_handle_list_tools, on_call_tool=_handle_call_tool)
++
++
+ async def run():
+     async with stdio_server() as (read_stream, write_stream):
+         await server.run(read_stream, write_stream, server.create_initialization_options())
+diff --git a/mcp_servers/rag_server.py b/mcp_servers/rag_server.py
+index 71aa1b6..0d23bf1 100644
+--- a/mcp_servers/rag_server.py
++++ b/mcp_servers/rag_server.py
+@@ -9,14 +9,19 @@ import os
+ import sys
+ from pathlib import Path
+ 
+-from mcp.server import Server
++from mcp.server import Server, ServerRequestContext
+ from mcp.server.stdio import stdio_server
+-from mcp.types import Tool, TextContent
++from mcp.types import (
++    CallToolRequestParams,
++    CallToolResult,
++    ListToolsResult,
++    PaginatedRequestParams,
++    TextContent,
++    Tool,
++)
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+ 
+-server = Server("rag")
+-
+ _rag_manager = None
+ _personal_docs_manager = None
+ _initialized = False
+@@ -43,7 +48,6 @@ def _ensure_init():
+         pass
+ 
+ 
+-@server.list_tools()
+ async def list_tools() -> list[Tool]:
+     return [
+         Tool(
+@@ -65,7 +69,6 @@ async def list_tools() -> list[Tool]:
+     ]
+ 
+ 
+-@server.call_tool()
+ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+     if name != "manage_rag":
+         return [TextContent(type="text", text=f"Unknown tool: {name}")]
+@@ -151,6 +154,27 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+         return [TextContent(type="text", text=f"Error: Unknown action '{action}'. Use: list, add_directory, remove_directory")]
+ 
+ 
++async def _handle_list_tools(
++    ctx: ServerRequestContext, params: PaginatedRequestParams | None
++) -> ListToolsResult:
++    return ListToolsResult(tools=await list_tools())
++
++
++async def _handle_call_tool(
++    ctx: ServerRequestContext, params: CallToolRequestParams
++) -> CallToolResult:
++    try:
++        content = await call_tool(params.name, params.arguments or {})
++    except Exception as e:
++        # mcp 2.x turns uncaught handler exceptions into JSON-RPC errors; keep
++        # the 1.x behavior of reporting them as an isError tool result.
++        return CallToolResult(content=[TextContent(type="text", text=str(e))], is_error=True)
++    return CallToolResult(content=content)
++
++
++server = Server("rag", on_list_tools=_handle_list_tools, on_call_tool=_handle_call_tool)
++
++
+ async def run():
+     async with stdio_server() as (read_stream, write_stream):
+         await server.run(read_stream, write_stream, server.create_initialization_options())
+diff --git a/requirements.lock.txt b/requirements.lock.txt
+index 07121a0..d088826 100644
+--- a/requirements.lock.txt
++++ b/requirements.lock.txt
+@@ -106,7 +106,7 @@ markdown-it-py==4.2.0
+ marko==2.2.3
+ MarkupSafe==3.0.3
+ matplotlib==3.10.9
+-mcp==1.28.1
++mcp==2.3.0
+ mdurl==0.1.2
+ mflux==0.17.5
+ mlx==0.31.2
+diff --git a/requirements.txt b/requirements.txt
+index b050747..94b656e 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -41,7 +41,7 @@ python-dateutil
+ caldav
+ cryptography
+ bcrypt
+-mcp==1.28.1  # pinned: 2.0.0+ drops Server.list_tools() used by mcp_servers/*.py; 1.28.1 has the WebSocket Host/Origin validation fix (GHSA-vj7q-gjh5-988w)
++mcp==2.3.0  # 2.x: handlers passed as Server(on_list_tools=..., on_call_tool=...); streamable_http_client takes an httpx2 client
+ pyotp
+ qrcode[pil]
+ croniter
+diff --git a/src/mcp_manager.py b/src/mcp_manager.py
+index f4c6ac7..6f69b4d 100644
+--- a/src/mcp_manager.py
++++ b/src/mcp_manager.py
+@@ -169,7 +169,7 @@ class McpManager:
+                 tools.append({
+                     "name": tool.name,
+                     "description": tool.description or "",
+-                    "input_schema": tool.inputSchema if hasattr(tool, 'inputSchema') else {},
++                    "input_schema": tool.input_schema if hasattr(tool, 'input_schema') else {},
+                 })
+ 
+             self._sessions[server_id] = session
+@@ -226,7 +226,7 @@ class McpManager:
+                 tools.append({
+                     "name": tool.name,
+                     "description": tool.description or "",
+-                    "input_schema": tool.inputSchema if hasattr(tool, 'inputSchema') else {},
++                    "input_schema": tool.input_schema if hasattr(tool, 'input_schema') else {},
+                 })
+ 
+             self._sessions[server_id] = session
+@@ -278,7 +278,8 @@ class McpManager:
+         """Connect to a Streamable HTTP MCP server (with automatic OAuth)."""
+         try:
+             from mcp import ClientSession
+-            from mcp.client.streamable_http import streamablehttp_client
++            import httpx2
++            from mcp.client.streamable_http import streamable_http_client
+             from contextlib import AsyncExitStack
+             from src.mcp_oauth import build_provider, clear_auth_url
+ 
+@@ -292,8 +293,17 @@ class McpManager:
+ 
+             provider = build_provider(server_id, url, on_redirect=_on_redirect)
+             stack = AsyncExitStack()
+-            transport = await stack.enter_async_context(streamablehttp_client(url, auth=provider))
+-            read_stream, write_stream, _get_session_id = transport
++            # mcp 2.x: auth/timeouts live on the httpx2 client (same 30s/300s
++            # timeouts the 1.x streamablehttp_client defaulted to).
++            http_client = httpx2.AsyncClient(
++                auth=provider,
++                timeout=httpx2.Timeout(30, read=300),
++            )
++            await stack.enter_async_context(http_client)
++            transport = await stack.enter_async_context(
++                streamable_http_client(url, http_client=http_client)
++            )
++            read_stream, write_stream = transport
+             session = await stack.enter_async_context(ClientSession(read_stream, write_stream))
+             await session.initialize()
+ 
+@@ -303,7 +313,7 @@ class McpManager:
+                 tools.append({
+                     "name": tool.name,
+                     "description": tool.description or "",
+-                    "input_schema": tool.inputSchema if hasattr(tool, "inputSchema") else {},
++                    "input_schema": tool.input_schema if hasattr(tool, "input_schema") else {},
+                 })
+ 
+             self._sessions[server_id] = session
+@@ -435,14 +445,14 @@ class McpManager:
+                 output_parts.append(content.text)
+             elif getattr(content, 'type', '') == 'image' and hasattr(content, 'data'):
+                 # Image content (e.g. Playwright screenshots)
+-                mime = getattr(content, 'mimeType', 'image/png')
++                mime = getattr(content, 'mime_type', 'image/png')
+                 images.append({"data": content.data, "mimeType": mime})
+                 output_parts.append(f"[Screenshot captured ({mime})]")
+             elif hasattr(content, 'data'):
+                 output_parts.append(str(content.data))
+ 
+         output = "\n".join(output_parts)
+-        is_error = getattr(result, 'isError', False)
++        is_error = getattr(result, 'is_error', False)
+ 
+         result_dict = {
+             "stdout": output if not is_error else "",
+diff --git a/src/mcp_oauth.py b/src/mcp_oauth.py
+index d431deb..554cdbd 100644
+--- a/src/mcp_oauth.py
++++ b/src/mcp_oauth.py
+@@ -171,7 +171,8 @@ def build_provider(server_id: str, url: str, on_redirect=None):
+                 logger.warning(f"MCP OAuth on_redirect callback failed: {e}")
+         logger.info(f"MCP OAuth: server {server_id} awaiting authorization (state={state})")
+ 
+-    async def callback_handler() -> Tuple[str, Optional[str]]:
++    async def callback_handler():
++        from mcp.client.auth import AuthorizationCodeResult
+         auth_url = _auth_urls.get(server_id)
+         state = (parse_qs(urlparse(auth_url).query).get("state") or [None])[0] if auth_url else None
+         fut = _pending.get(state)
+@@ -179,7 +180,7 @@ def build_provider(server_id: str, url: str, on_redirect=None):
+             raise RuntimeError("No pending OAuth flow for this server")
+         try:
+             code, ret_state = await asyncio.wait_for(fut, timeout=AUTH_WAIT_SECONDS)
+-            return code, ret_state
++            return AuthorizationCodeResult(code=code, state=ret_state)
+         finally:
+             _discard_pending(state)
+             _auth_urls.pop(server_id, None)

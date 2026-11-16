@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 89,
+  "duration_ms": 161080,
+  "total_cost_usd": 0.5660306000000002,
+  "usage": {
+   "input_tokens": 56,
+   "cache_creation_input_tokens": 54939,
+   "cache_read_input_tokens": 1051929,
+   "output_tokens": 23447,
+   "output_tokens_details": {
+    "thinking_tokens": 3564
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 54939,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1439,
+     "cache_read_input_tokens": 65247,
+     "cache_creation_input_tokens": 158,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 158
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.02,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.24,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 10,
+  "Read": 30,
+  "Edit": 42,
+  "Grep": 4,
+  "WebFetch": 2
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package huggingface-hub --to 2.4.0 --from 0.23.0 --format markdown --output .deptime-report.md",
+  "uvx deptime==0.2.2 check-upgrade . --package huggingface-hub --to 2.4.0 --from 0.23.0 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 8,
+ "fetched": [
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v1.0.0/src/huggingface_hub/file_download.py",
+  "https://raw.githubusercontent.com/huggingface/huggingface_hub/v2.4.0/src/huggingface_hub/file_download.py"
+ ],
+ "denied": 1,
+ "task": "ex-psp3dcg__tdfold-huggingface-hub-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 163.4,
+ "service_error": false
+}

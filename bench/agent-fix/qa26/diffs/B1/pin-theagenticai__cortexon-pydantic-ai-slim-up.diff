@@ -1,0 +1,281 @@
+diff --git a/cortex_on/agents/code_agent.py b/cortex_on/agents/code_agent.py
+index 43fa047..6ce91e8 100644
+--- a/cortex_on/agents/code_agent.py
++++ b/cortex_on/agents/code_agent.py
+@@ -13,6 +13,7 @@ from fastapi import WebSocket
+ from pydantic import BaseModel, Field
+ from pydantic_ai import Agent, RunContext
+ from pydantic_ai.models.anthropic import AnthropicModel
++from pydantic_ai.providers.anthropic import AnthropicProvider
+ 
+ # Local application imports
+ from utils.ant_client import get_client
+@@ -239,14 +240,14 @@ async def send_stream_update(ctx: RunContext[CoderAgentDeps], message: str) -> N
+ # Initialize the model
+ model = AnthropicModel(
+     model_name=os.environ.get("ANTHROPIC_MODEL_NAME"),
+-    anthropic_client=get_client()
++    provider=AnthropicProvider(anthropic_client=get_client())
+ )
+ 
+ # Initialize the agent
+ coder_agent = Agent(
+     model=model,
+     name="Coder Agent",
+-    result_type=CoderResult,
++    output_type=CoderResult,
+     deps_type=CoderAgentDeps,
+     system_prompt=coder_system_message
+ )
+diff --git a/cortex_on/agents/orchestrator_agent.py b/cortex_on/agents/orchestrator_agent.py
+index 6b001ba..ae3ea1d 100644
+--- a/cortex_on/agents/orchestrator_agent.py
++++ b/cortex_on/agents/orchestrator_agent.py
+@@ -9,6 +9,7 @@ import logfire
+ from fastapi import WebSocket
+ from dotenv import load_dotenv
+ from pydantic_ai.models.anthropic import AnthropicModel
++from pydantic_ai.providers.anthropic import AnthropicProvider
+ from pydantic_ai import Agent, RunContext
+ from agents.web_surfer import WebSurfer
+ from utils.stream_response_format import StreamResponse
+@@ -160,7 +161,7 @@ Basic workflow:
+ 
+ model = AnthropicModel(
+     model_name=os.environ.get("ANTHROPIC_MODEL_NAME"),
+-    anthropic_client=get_client()
++    provider=AnthropicProvider(anthropic_client=get_client())
+ )
+ 
+ orchestrator_agent = Agent(
+diff --git a/cortex_on/agents/planner_agent.py b/cortex_on/agents/planner_agent.py
+index 897c22f..7fefadf 100644
+--- a/cortex_on/agents/planner_agent.py
++++ b/cortex_on/agents/planner_agent.py
+@@ -8,6 +8,7 @@ import logfire
+ from pydantic import BaseModel, Field
+ from pydantic_ai import Agent
+ from pydantic_ai.models.anthropic import AnthropicModel
++from pydantic_ai.providers.anthropic import AnthropicProvider
+ 
+ # Local application imports
+ from utils.ant_client import get_client
+@@ -178,13 +179,13 @@ class PlannerResult(BaseModel):
+ 
+ model = AnthropicModel(
+     model_name=os.environ.get("ANTHROPIC_MODEL_NAME"),
+-    anthropic_client=get_client()
++    provider=AnthropicProvider(anthropic_client=get_client())
+ )
+ 
+ planner_agent = Agent(
+     model=model,
+     name="Planner Agent",
+-    result_type=PlannerResult,
++    output_type=PlannerResult,
+     system_prompt=planner_prompt 
+ )
+ 
+diff --git a/cortex_on/agents/web_surfer.py b/cortex_on/agents/web_surfer.py
+index 34e2cfd..af7d318 100644
+--- a/cortex_on/agents/web_surfer.py
++++ b/cortex_on/agents/web_surfer.py
+@@ -12,7 +12,6 @@ from dotenv import load_dotenv
+ from fastapi import WebSocket
+ import logfire
+ from pydantic_ai.messages import (
+-    ArgsJson,
+     ModelRequest,
+     ModelResponse,
+     ToolCallPart,
+@@ -113,7 +112,7 @@ class WebSurfer:
+                     ToolCallPart(
+                         tool_name="final_result",
+                         tool_call_id=tool_call_id,
+-                        args=ArgsJson(args_json=json.dumps(args_data)),
++                        args=json.dumps(args_data),
+                     )
+                 ],
+                 timestamp=current_time,
+@@ -142,7 +141,7 @@ class WebSurfer:
+                     ToolCallPart(
+                         tool_name="error",
+                         tool_call_id=f"error_{uuid.uuid4().hex[:12]}",
+-                        args=ArgsJson(args_json=json.dumps({"error": error_message})),
++                        args=json.dumps({"error": error_message}),
+                     )
+                 ],
+                 timestamp=datetime.utcnow(),
+diff --git a/ta-browser/core/agents/browser_agent.py b/ta-browser/core/agents/browser_agent.py
+index b026bea..ee5a02d 100644
+--- a/ta-browser/core/agents/browser_agent.py
++++ b/ta-browser/core/agents/browser_agent.py
+@@ -1,6 +1,6 @@
+ from pydantic_ai import Agent, RunContext
+ from pydantic import BaseModel, ConfigDict, Field
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from pydantic_ai.settings import ModelSettings
+ 
+ import os
+diff --git a/ta-browser/core/agents/critique_agent.py b/ta-browser/core/agents/critique_agent.py
+index e6e1777..0bc3001 100644
+--- a/ta-browser/core/agents/critique_agent.py
++++ b/ta-browser/core/agents/critique_agent.py
+@@ -7,7 +7,7 @@ import os
+ from dotenv import load_dotenv
+ from core.skills.final_response import get_response
+ from core.utils.openai_client import get_client
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ 
+ 
+ load_dotenv()
+diff --git a/ta-browser/core/agents/explainer_agent.py b/ta-browser/core/agents/explainer_agent.py
+index bcbf36c..3f85191 100644
+--- a/ta-browser/core/agents/explainer_agent.py
++++ b/ta-browser/core/agents/explainer_agent.py
+@@ -2,7 +2,7 @@ import os
+ from pydantic import BaseModel
+ from typing import List, Dict, Optional, Literal
+ from pydantic_ai import Agent
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from pydantic_ai.settings import ModelSettings
+ from core.utils.openai_client import get_client
+ from openai.types.chat.chat_completion_content_part_param import (
+diff --git a/ta-browser/core/agents/planner_agent.py b/ta-browser/core/agents/planner_agent.py
+index 69e9259..0e713f4 100644
+--- a/ta-browser/core/agents/planner_agent.py
++++ b/ta-browser/core/agents/planner_agent.py
+@@ -1,6 +1,6 @@
+ from pydantic_ai import Agent
+ from pydantic import BaseModel
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from pydantic_ai.settings import ModelSettings
+ 
+ import os
+diff --git a/ta-browser/core/orchestrator.py b/ta-browser/core/orchestrator.py
+index 9dbf16e..c29cd3b 100644
+--- a/ta-browser/core/orchestrator.py
++++ b/ta-browser/core/orchestrator.py
+@@ -10,8 +10,8 @@ import datetime
+ import random
+ from typing import List, Optional, Union
+ from pydantic_ai.settings import ModelSettings
+-from pydantic_ai import Agent, RunContext
+-from pydantic_ai.result import Usage
++from pydantic_ai import Agent, RunContext, ToolOutput
++from pydantic_ai.usage import RunUsage
+ from pydantic_ai.messages import ModelRequest, ModelResponse, ToolReturnPart
+ 
+ from core.browser_manager import PlaywrightManager
+@@ -226,12 +226,12 @@ class Orchestrator:
+ 
+     
+             
+-    def update_token_usage(self, agent_type: str, usage: Usage):
++    def update_token_usage(self, agent_type: str, usage: RunUsage):
+         self.cumulative_tokens[agent_type]['total'] += usage.total_tokens
+-        self.cumulative_tokens[agent_type]['request'] += usage.request_tokens 
+-        self.cumulative_tokens[agent_type]['response'] += usage.response_tokens
++        self.cumulative_tokens[agent_type]['request'] += usage.input_tokens
++        self.cumulative_tokens[agent_type]['response'] += usage.output_tokens
+ 
+-    def log_token_usage(self, agent_type: str, usage: Usage, step: Optional[int] = None):
++    def log_token_usage(self, agent_type: str, usage: RunUsage, step: Optional[int] = None):
+         self.update_token_usage(agent_type, usage)
+         step_info = f" (Step {step})" if step is not None else ""
+         logger.debug(
+@@ -323,7 +323,7 @@ class Orchestrator:
+                 name="Explainer Agent",
+                 retries=2,
+                 model_settings=ModelSettings(temperature=0.2),
+-                result_type=ExplainerOutput
++                output_type=ExplainerOutput
+             )
+             logger.info("Explainer Agent initialized successfully.")
+ 
+@@ -420,9 +420,11 @@ class Orchestrator:
+                     name="Critique Agent",
+                     retries=3,
+                     model_settings=ModelSettings(temperature=0.5),
+-                    result_type=CritiqueOutput,
+-                    result_tool_name='final_response',
+-                    result_tool_description='Synthesizes web automation results into a comprehensive final answer addressing the clients original query.'
++                    output_type=ToolOutput(
++                        CritiqueOutput,
++                        name='final_response',
++                        description='Synthesizes web automation results into a comprehensive final answer addressing the clients original query.',
++                    ),
+                 )
+                 logger.info("Critique Agent initialized successfully.")
+ 
+@@ -434,7 +436,7 @@ class Orchestrator:
+                     name="Planner Agent",
+                     retries=3,
+                     model_settings=ModelSettings(temperature=0.5),
+-                    result_type=NCPA_OP
++                    output_type=NCPA_OP
+                 )
+                 logger.info("No-critique Planner Agent initialized successfully.")
+             else:
+@@ -444,7 +446,7 @@ class Orchestrator:
+                     name="Planner Agent",
+                     retries=3,
+                     model_settings=ModelSettings(temperature=0.5),
+-                    result_type=PLANNER_AGENT_OP
++                    output_type=PLANNER_AGENT_OP
+                 )
+                 logger.info("Planner Agent initialized successfully.")
+             
+diff --git a/ta-browser/core/skills/final_response.py b/ta-browser/core/skills/final_response.py
+index fe3e3a9..11c0a18 100644
+--- a/ta-browser/core/skills/final_response.py
++++ b/ta-browser/core/skills/final_response.py
+@@ -49,15 +49,17 @@ def get_final_response_provider():
+         # Anthropic provider
+         from core.utils.anthropic_client import get_client as get_anthropic_client
+         from pydantic_ai.models.anthropic import AnthropicModel
++        from pydantic_ai.providers.anthropic import AnthropicProvider
+         client = get_anthropic_client()
+-        model = AnthropicModel(model_name=model_name, anthropic_client=client)
++        model = AnthropicModel(model_name=model_name, provider=AnthropicProvider(anthropic_client=client))
+         provider = "anthropic"
+     else:
+         # OpenAI provider (default)
+         from core.utils.openai_client import get_client as get_openai_client
+-        from pydantic_ai.models.openai import OpenAIModel
++        from pydantic_ai.models.openai import OpenAIChatModel
++        from pydantic_ai.providers.openai import OpenAIProvider
+         client = get_openai_client()
+-        model = OpenAIModel(model_name=model_name, openai_client=client)
++        model = OpenAIChatModel(model_name=model_name, provider=OpenAIProvider(openai_client=client))
+         provider = "openai"
+     
+     return provider, client, model
+diff --git a/ta-browser/core/utils/init_client.py b/ta-browser/core/utils/init_client.py
+index 7d170c6..a2bd4fe 100644
+--- a/ta-browser/core/utils/init_client.py
++++ b/ta-browser/core/utils/init_client.py
+@@ -34,7 +34,8 @@ async def initialize_client():
+         
+         # Create model instance
+         from pydantic_ai.models.anthropic import AnthropicModel
+-        model_instance = AnthropicModel(model_name=model_name, anthropic_client=client_instance)
++        from pydantic_ai.providers.anthropic import AnthropicProvider
++        model_instance = AnthropicModel(model_name=model_name, provider=AnthropicProvider(anthropic_client=client_instance))
+         
+         logger.info(f"Anthropic client initialized successfully with model: {model_name}")
+         return client_instance, model_instance
+diff --git a/ta-browser/core/utils/openai_client.py b/ta-browser/core/utils/openai_client.py
+index 80670e3..cc8af43 100644
+--- a/ta-browser/core/utils/openai_client.py
++++ b/ta-browser/core/utils/openai_client.py
+@@ -1,4 +1,4 @@
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from openai import AsyncOpenAI, OpenAI
+ import os
+ from dotenv import load_dotenv

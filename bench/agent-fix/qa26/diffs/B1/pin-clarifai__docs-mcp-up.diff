@@ -1,0 +1,41 @@
+diff --git a/code_snippets/runners-examples/web-search.py b/code_snippets/runners-examples/web-search.py
+index d7a56ed..5c0b02b 100644
+--- a/code_snippets/runners-examples/web-search.py
++++ b/code_snippets/runners-examples/web-search.py
+@@ -6,7 +6,7 @@ from urllib.parse import urlparse, parse_qs, unquote
+ 
+ import httpx  # type: ignore
+ from bs4 import BeautifulSoup  # type: ignore
+-from mcp.server.fastmcp import FastMCP, Context  # type: ignore
++from mcp.server.mcpserver import MCPServer, Context  # type: ignore
+ 
+ USER_AGENT = (
+     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+@@ -139,8 +139,8 @@ async def fetch_page(url: str, timeout: int = 20) -> PageCache:
+     print(f"[fetch_page] Extracted {len(lines)} lines")
+     return PageCache(url=url, text_lines=lines)
+ 
+-# ---------------- FastMCP Server (in-process) ----------------
+-mcp = FastMCP(
++# ---------------- MCPServer (in-process) ----------------
++mcp = MCPServer(
+     name="duckduckgo-browser",
+     instructions=r"""
+ Tool for browsing.
+@@ -150,7 +150,6 @@ Cite information from the tool using the following format:
+ Do not quote more than 10 words directly from the tool output.
+ sources=web
+ """.strip(),
+-    port=8001,
+ )
+ 
+ @mcp.tool(
+@@ -298,7 +297,7 @@ def web_browsing_prompt(task_type: str) -> str:
+ from clarifai.runners.models.mcp_class import MCPModelClass
+ 
+ class MyBrowserSearchToolClass(MCPModelClass):
+-    def get_server(self) -> FastMCP:
++    def get_server(self) -> MCPServer:
+         return mcp
+ 
+ # Main function to run the MCP server

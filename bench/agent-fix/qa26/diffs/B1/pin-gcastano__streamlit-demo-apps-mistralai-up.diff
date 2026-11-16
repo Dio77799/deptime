@@ -1,0 +1,25 @@
+diff --git a/StreamlitGeneradorCharts/streamlitGeneradorCharts.py b/StreamlitGeneradorCharts/streamlitGeneradorCharts.py
+index a6ea579..094a305 100644
+--- a/StreamlitGeneradorCharts/streamlitGeneradorCharts.py
++++ b/StreamlitGeneradorCharts/streamlitGeneradorCharts.py
+@@ -8,7 +8,7 @@
+ import json # JSON: Librería estándar para trabajar con datos en formato JSON (parsear y generar).
+ import pandas as pd  # Pandas: Librería estándar para manipulación y análisis de datos (DataFrames).
+ import streamlit as st  # Streamlit: Framework para crear aplicaciones web de data science rápidamente en Python.
+-from mistralai import Mistral  # MistralAI: Cliente oficial para interactuar con los modelos LLM de Mistral.
++from mistralai.client import Mistral # MistralAI: Cliente oficial para interactuar con los modelos LLM de Mistral.
+ import plotly.express as px  # Plotly Express: Interfaz de alto nivel para crear gráficos interactivos fácilmente.
+ from streamlit_lottie import st_lottie  # Streamlit Lottie: Permite mostrar animaciones Lottie en Streamlit para mejorar la experiencia de usuario (UX).
+ 
+diff --git a/StreamlitMistralAI/streamlitMistral.py b/StreamlitMistralAI/streamlitMistral.py
+index aaecb65..c893127 100644
+--- a/StreamlitMistralAI/streamlitMistral.py
++++ b/StreamlitMistralAI/streamlitMistral.py
+@@ -1,6 +1,6 @@
+ import base64
+ import streamlit as st
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ 
+ # Instalación de las librerías necesarias:
+ # streamlit: `pip install streamlit`

@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 16,
+  "duration_ms": 29308,
+  "total_cost_usd": 0.10716940000000001,
+  "usage": {
+   "input_tokens": 24,
+   "cache_creation_input_tokens": 13805,
+   "cache_read_input_tokens": 216414,
+   "output_tokens": 3026,
+   "output_tokens_details": {
+    "thinking_tokens": 573
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 13805,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 519,
+     "cache_read_input_tokens": 24200,
+     "cache_creation_input_tokens": 71,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 71
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.05,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.24,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 7,
+  "Read": 3,
+  "mcp__plugin_deptime_deptime__symbol_history": 1,
+  "mcp__plugin_deptime_deptime__check_symbols": 1,
+  "Edit": 3
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package gradio --to 6.31.0 --from 5.47.0 --format markdown --output .deptime-report.md",
+  "uvx deptime==0.2.2 check-upgrade . --package gradio --to 6.31.0 --from 5.47.0 --format json --output .deptime-report.md",
+  "symbol_history",
+  "check_symbols",
+  "uvx deptime==0.2.2 check-upgrade . --package gradio --to 6.31.0 --from 5.47.0 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 4,
+ "fetched": [],
+ "denied": 1,
+ "task": "pin-jolibrain__colette-gradio-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 31.0,
+ "service_error": false
+}

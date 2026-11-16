@@ -1,0 +1,12 @@
+diff --git a/pinecone_flow.py b/pinecone_flow.py
+index 1ade306..c30e3c0 100644
+--- a/pinecone_flow.py
++++ b/pinecone_flow.py
+@@ -1,6 +1,6 @@
+ # Pinecone
+ from pinecone import Pinecone, ServerlessSpec
+-from pinecone.core.client.exceptions import NotFoundException
++from pinecone.exceptions import NotFoundException
+ 
+ # Langchain
+ from langchain_community.document_loaders import DirectoryLoader

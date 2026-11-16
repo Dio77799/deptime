@@ -1,0 +1,77 @@
+diff --git a/baselines/polars/tpch/polars_queries/utils.py b/baselines/polars/tpch/polars_queries/utils.py
+index 43e467e..97ccfa9 100644
+--- a/baselines/polars/tpch/polars_queries/utils.py
++++ b/baselines/polars/tpch/polars_queries/utils.py
+@@ -35,7 +35,7 @@ def _scan_ds(path: str):
+ 
+ def get_query_answer(query: int, base_dir: str = ANSWERS_BASE_DIR) -> pl.LazyFrame:
+     answer_ldf = pl.scan_csv(
+-        join(base_dir, f"{query}.csv"), sep=",", has_header=True, parse_dates=True
++        join(base_dir, f"{query}.csv"), separator=",", has_header=True, try_parse_dates=True
+     )
+     cols = answer_ldf.columns
+     answer_ldf = answer_ldf.select(
+@@ -50,7 +50,7 @@ def test_results(q_num: int, result_df: pl.DataFrame):
+         answer = get_query_answer(q_num).collect()
+         # String string columns of result_df to match with stripping done in answer.
+         result_df = result_df.lazy().with_columns([pl.col(pl.datatypes.Utf8).str.strip().keep_name()]).collect()
+-        pl.testing.assert_frame_equal(left=result_df, right=answer, check_dtype=False)
++        pl.testing.assert_frame_equal(left=result_df, right=answer, check_dtypes=False)
+ 
+ 
+ def get_line_item_ds(base_dir: str = DATASET_BASE_DIR) -> pl.LazyFrame:
+diff --git a/baselines/progressive/clean-data.py b/baselines/progressive/clean-data.py
+index a7b9692..259c98d 100644
+--- a/baselines/progressive/clean-data.py
++++ b/baselines/progressive/clean-data.py
+@@ -7,7 +7,7 @@ from tqdm import tqdm
+ lineitem_cols = ['l_orderkey','l_partkey','l_suppkey','l_linenumber','l_quantity','l_extendedprice','l_discount','l_tax','l_returnflag','l_linestatus','l_shipdate','l_commitdate','l_receiptdate','l_shipinstruct','l_shipmode','l_comment']
+ 
+ def clean_dataframe(input_file, output_file, variation = 'data'):
+-    df = pl.read_csv(input_file, sep = '|', has_header = False, new_columns = lineitem_cols)
++    df = pl.read_csv(input_file, separator = '|', has_header = False, new_columns = lineitem_cols)
+     df = df[[s.name for s in df if not (s.null_count() == df.height)]]
+     df = df.with_columns([(df["l_discount"] * 100).cast(pl.Int64), (df["l_tax"] * 100).cast(pl.Int64), df["l_extendedprice"].round(0).cast(pl.Int64)])
+     df.write_csv(output_file, has_header = False)
+diff --git a/scripts/clean-data.py b/scripts/clean-data.py
+index 8eae555..fad831d 100644
+--- a/scripts/clean-data.py
++++ b/scripts/clean-data.py
+@@ -7,7 +7,7 @@ from tqdm import tqdm
+ lineitem_cols = ['l_orderkey','l_partkey','l_suppkey','l_linenumber','l_quantity','l_extendedprice','l_discount','l_tax','l_returnflag','l_linestatus','l_shipdate','l_commitdate','l_receiptdate','l_shipinstruct','l_shipmode','l_comment']
+ 
+ def clean_dataframe(input_file, output_file, variation = 'data'):
+-    df = pl.read_csv(input_file, sep = '|', has_header = False, new_columns = lineitem_cols)
++    df = pl.read_csv(input_file, separator = '|', has_header = False, new_columns = lineitem_cols)
+     df = df[[s.name for s in df if not (s.null_count() == df.height)]]
+     df = df.with_columns([(df["l_discount"] * 100).cast(pl.Int64), (df["l_tax"] * 100).cast(pl.Int64), df["l_extendedprice"].round(0).cast(pl.Int64)])
+     df.write_csv(output_file, sep = '|', has_header = False)
+diff --git a/scripts/convert-to-parquet.py b/scripts/convert-to-parquet.py
+index d7936dd..8b29c12 100644
+--- a/scripts/convert-to-parquet.py
++++ b/scripts/convert-to-parquet.py
+@@ -31,9 +31,9 @@ def convert_file_to_parquet(file_name):
+             break
+     if len(headers) != 0:
+         print(f"Found headers for {file_name}")
+-        df = pl.read_csv(file_name, has_header = False, sep = "|", parse_dates=True, low_memory=True, new_columns = tpch_headers[table])
++        df = pl.read_csv(file_name, has_header = False, separator = "|", try_parse_dates=True, low_memory=True, new_columns = tpch_headers[table])
+     else:
+-        df = pl.read_csv(file_name, has_header = False, sep = "|", parse_dates=True, low_memory=True)
++        df = pl.read_csv(file_name, has_header = False, separator = "|", try_parse_dates=True, low_memory=True)
+     df.write_parquet(target_file_name, statistics=True)
+     return target_file_name
+ 
+diff --git a/scripts/test-correctness.py b/scripts/test-correctness.py
+index 99d0097..0da76d1 100644
+--- a/scripts/test-correctness.py
++++ b/scripts/test-correctness.py
+@@ -60,7 +60,7 @@ if __name__ == "__main__":
+         # Compare the two dataframes
+         print(f"Comparing {qdx}")
+         try:
+-            result = pl.testing.assert_frame_equal(baseline_df, obtained_df, check_dtype=False)
++            result = pl.testing.assert_frame_equal(baseline_df, obtained_df, check_dtypes=False)
+             print(f"Correct Output on {qdx}")
+         except Exception as e:
+             print(e)

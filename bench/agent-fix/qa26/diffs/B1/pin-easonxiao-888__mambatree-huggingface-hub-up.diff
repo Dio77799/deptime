@@ -1,0 +1,506 @@
+diff --git a/GrootL/transformers/commands/pt_to_tf.py b/GrootL/transformers/commands/pt_to_tf.py
+index 0185679..1d46ba2 100644
+--- a/GrootL/transformers/commands/pt_to_tf.py
++++ b/GrootL/transformers/commands/pt_to_tf.py
+@@ -274,11 +274,11 @@ class PTtoTFCommand(BaseTransformersCLICommand):
+                 " installation."
+             )
+         else:
+-            from huggingface_hub import Repository, create_commit
++            from huggingface_hub import create_commit, snapshot_download, upload_folder
+             from huggingface_hub._commit_api import CommitOperationAdd
+ 
+         # Fetch remote data
+-        repo = Repository(local_dir=self._local_dir, clone_from=self._model_name)
++        snapshot_download(repo_id=self._model_name, local_dir=self._local_dir)
+ 
+         # Load config and get the appropriate architecture -- the latter is needed to convert the head's weights
+         config = AutoConfig.from_pretrained(self._local_dir)
+@@ -380,9 +380,7 @@ class PTtoTFCommand(BaseTransformersCLICommand):
+ 
+         commit_message = "Update TF weights" if self._new_weights else "Add TF weights"
+         if self._push:
+-            repo.git_add(auto_lfs_track=True)
+-            repo.git_commit(commit_message)
+-            repo.git_push(blocking=True)  # this prints a progress bar with the upload
++            upload_folder(repo_id=self._model_name, folder_path=self._local_dir, commit_message=commit_message)
+             self._logger.warning(f"TF weights pushed into {self._model_name}")
+         elif not self._no_pr:
+             self._logger.warning("Uploading the weights into a new PR...")
+diff --git a/GrootL/transformers/commands/user.py b/GrootL/transformers/commands/user.py
+index 938f4c8..961b9d9 100644
+--- a/GrootL/transformers/commands/user.py
++++ b/GrootL/transformers/commands/user.py
+@@ -16,7 +16,8 @@ import subprocess
+ from argparse import ArgumentParser
+ from typing import List, Union
+ 
+-from huggingface_hub.hf_api import HfFolder, create_repo, whoami
++from huggingface_hub import get_token
++from huggingface_hub.hf_api import create_repo, whoami
+ from requests.exceptions import HTTPError
+ 
+ from . import BaseTransformersCLICommand
+@@ -117,7 +118,7 @@ class WhoamiCommand(BaseUserCommand):
+                 "`huggingface-cli whoami` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+@@ -151,7 +152,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
+diff --git a/GrootL/transformers/keras_callbacks.py b/GrootL/transformers/keras_callbacks.py
+index b6e8327..6802c25 100644
+--- a/GrootL/transformers/keras_callbacks.py
++++ b/GrootL/transformers/keras_callbacks.py
+@@ -6,7 +6,7 @@ from typing import Callable, List, Optional, Union
+ 
+ import numpy as np
+ import tensorflow as tf
+-from huggingface_hub import Repository, create_repo
++from huggingface_hub import create_repo, snapshot_download, upload_folder
+ from packaging.version import parse
+ 
+ from . import IntervalStrategy, PreTrainedTokenizerBase
+@@ -340,7 +340,8 @@ class PushToHubCallback(keras.callbacks.Callback):
+         self.hub_model_id = create_repo(repo_id=hub_model_id, exist_ok=True, token=hub_token).repo_id
+ 
+         self.output_dir = output_dir
+-        self.repo = Repository(str(self.output_dir), clone_from=self.hub_model_id, token=hub_token)
++        self.hub_token = hub_token
++        snapshot_download(repo_id=self.hub_model_id, local_dir=str(self.output_dir), token=hub_token)
+ 
+         self.tokenizer = tokenizer
+         self.last_job = None
+@@ -348,6 +349,16 @@ class PushToHubCallback(keras.callbacks.Callback):
+         self.training_history = None
+         self.model_card_args = model_card_args
+ 
++    def _push_to_hub(self, commit_message, blocking):
++        # Replaces the removed `Repository.push_to_hub`: when not blocking, returns a `Future` for the upload.
++        return upload_folder(
++            repo_id=self.hub_model_id,
++            folder_path=str(self.output_dir),
++            commit_message=commit_message,
++            token=self.hub_token,
++            run_as_future=not blocking,
++        )
++
+     def on_train_begin(self, logs=None):
+         # Although we can access model.history, we have no guarantees that the History callback will fire before this
+         # one, so we keep track of it here too
+@@ -355,14 +366,12 @@ class PushToHubCallback(keras.callbacks.Callback):
+ 
+     def on_train_batch_end(self, batch, logs=None):
+         if self.save_strategy == IntervalStrategy.STEPS and (batch + 1) % self.save_steps == 0:
+-            if self.last_job is not None and not self.last_job.is_done:
++            if self.last_job is not None and not self.last_job.done():
+                 return  # The last upload is still running, don't start another
+             self.model.save_pretrained(self.output_dir)
+             if self.tokenizer is not None:
+                 self.tokenizer.save_pretrained(self.output_dir)
+-            _, self.last_job = self.repo.push_to_hub(
+-                commit_message=f"Training in progress steps {batch}", blocking=False
+-            )
++            self.last_job = self._push_to_hub(commit_message=f"Training in progress steps {batch}", blocking=False)
+ 
+     def on_epoch_end(self, epoch, logs=None):
+         logs = logs.copy()  # Don't accidentally write things that Keras will read later
+@@ -370,7 +379,7 @@ class PushToHubCallback(keras.callbacks.Callback):
+             logs["epoch"] = epoch
+         self.training_history.append(logs)
+         if self.save_strategy == IntervalStrategy.EPOCH:
+-            if self.last_job is not None and not self.last_job.is_done:
++            if self.last_job is not None and not self.last_job.done():
+                 return  # The last upload is still running, don't start another
+             self.model.save_pretrained(self.output_dir)
+             if self.tokenizer is not None:
+@@ -387,15 +396,13 @@ class PushToHubCallback(keras.callbacks.Callback):
+             model_card = train_summary.to_model_card()
+             with (self.output_dir / "README.md").open("w") as f:
+                 f.write(model_card)
+-            _, self.last_job = self.repo.push_to_hub(
+-                commit_message=f"Training in progress epoch {epoch}", blocking=False
+-            )
++            self.last_job = self._push_to_hub(commit_message=f"Training in progress epoch {epoch}", blocking=False)
+ 
+     def on_train_end(self, logs=None):
+         # Makes sure the latest version of the model is uploaded
+-        if self.last_job is not None and not self.last_job.is_done:
++        if self.last_job is not None and not self.last_job.done():
+             logging.info("Pushing the last epoch to the Hub, this may take a while...")
+-            while not self.last_job.is_done:
++            while not self.last_job.done():
+                 sleep(1)
+         else:
+             self.model.save_pretrained(self.output_dir)
+@@ -410,4 +417,4 @@ class PushToHubCallback(keras.callbacks.Callback):
+             model_card = train_summary.to_model_card()
+             with (self.output_dir / "README.md").open("w") as f:
+                 f.write(model_card)
+-            self.repo.push_to_hub(commit_message="End of training", blocking=True)
++            self._push_to_hub(commit_message="End of training", blocking=True)
+diff --git a/GrootL/transformers/models/clvp/convert_clvp_to_hf.py b/GrootL/transformers/models/clvp/convert_clvp_to_hf.py
+index 4ae6fd4..91a38a7 100644
+--- a/GrootL/transformers/models/clvp/convert_clvp_to_hf.py
++++ b/GrootL/transformers/models/clvp/convert_clvp_to_hf.py
+@@ -19,6 +19,7 @@ Weights conversion script for CLVP
+ 
+ import argparse
+ import os
++import shutil
+ 
+ import torch
+ from huggingface_hub import hf_hub_download
+@@ -183,12 +184,13 @@ def convert_decoder_weights(original_weights):
+ def _download(url: str, root: str):
+     repo_id = f"{url.split('/')[3]}/{url.split('/')[4]}"
+     filename = f"{url.split('/')[-2]}/{url.split('/')[-1]}"
+-    hf_hub_download(
++    downloaded_path = hf_hub_download(
+         repo_id=repo_id,
+         filename=filename,
+-        force_filename=root,
+-        local_dir_use_symlinks=False,
+     )
++    # `force_filename` was removed from `hf_hub_download`: copy the file to the requested location instead.
++    os.makedirs(os.path.dirname(root) or ".", exist_ok=True)
++    shutil.copyfile(downloaded_path, root)
+ 
+ 
+ def convert_clvp_weights(checkpoint_path, pytorch_dump_folder_path):
+diff --git a/GrootL/transformers/models/cvt/convert_cvt_original_pytorch_checkpoint_to_pytorch.py b/GrootL/transformers/models/cvt/convert_cvt_original_pytorch_checkpoint_to_pytorch.py
+index ea4edac..5ee2f72 100644
+--- a/GrootL/transformers/models/cvt/convert_cvt_original_pytorch_checkpoint_to_pytorch.py
++++ b/GrootL/transformers/models/cvt/convert_cvt_original_pytorch_checkpoint_to_pytorch.py
+@@ -22,7 +22,7 @@ import json
+ from collections import OrderedDict
+ 
+ import torch
+-from huggingface_hub import cached_download, hf_hub_url
++from huggingface_hub import hf_hub_download
+ 
+ from transformers import AutoImageProcessor, CvtConfig, CvtForImageClassification
+ 
+@@ -284,7 +284,7 @@ def convert_cvt_checkpoint(cvt_model, image_size, cvt_file_name, pytorch_dump_fo
+ 
+     repo_id = "huggingface/label-files"
+     num_labels = num_labels
+-    id2label = json.load(open(cached_download(hf_hub_url(repo_id, img_labels_file, repo_type="dataset")), "r"))
++    id2label = json.load(open(hf_hub_download(repo_id, img_labels_file, repo_type="dataset"), "r"))
+     id2label = {int(k): v for k, v in id2label.items()}
+ 
+     id2label = id2label
+diff --git a/GrootL/transformers/models/deformable_detr/convert_deformable_detr_to_pytorch.py b/GrootL/transformers/models/deformable_detr/convert_deformable_detr_to_pytorch.py
+index 928fa36..5d2b7a7 100644
+--- a/GrootL/transformers/models/deformable_detr/convert_deformable_detr_to_pytorch.py
++++ b/GrootL/transformers/models/deformable_detr/convert_deformable_detr_to_pytorch.py
+@@ -21,7 +21,7 @@ from pathlib import Path
+ 
+ import requests
+ import torch
+-from huggingface_hub import cached_download, hf_hub_url
++from huggingface_hub import hf_hub_download
+ from PIL import Image
+ 
+ from transformers import DeformableDetrConfig, DeformableDetrForObjectDetection, DeformableDetrImageProcessor
+@@ -110,7 +110,7 @@ def convert_deformable_detr_checkpoint(
+     config.num_labels = 91
+     repo_id = "huggingface/label-files"
+     filename = "coco-detection-id2label.json"
+-    id2label = json.load(open(cached_download(hf_hub_url(repo_id, filename, repo_type="dataset")), "r"))
++    id2label = json.load(open(hf_hub_download(repo_id, filename, repo_type="dataset"), "r"))
+     id2label = {int(k): v for k, v in id2label.items()}
+     config.id2label = id2label
+     config.label2id = {v: k for k, v in id2label.items()}
+diff --git a/GrootL/transformers/models/deprecated/van/convert_van_to_pytorch.py b/GrootL/transformers/models/deprecated/van/convert_van_to_pytorch.py
+index 20492e4..e800df2 100644
+--- a/GrootL/transformers/models/deprecated/van/convert_van_to_pytorch.py
++++ b/GrootL/transformers/models/deprecated/van/convert_van_to_pytorch.py
+@@ -27,7 +27,7 @@ from typing import List
+ 
+ import torch
+ import torch.nn as nn
+-from huggingface_hub import cached_download, hf_hub_download
++from huggingface_hub import hf_hub_download
+ from torch import Tensor
+ 
+ from transformers import AutoImageProcessor, VanConfig, VanForImageClassification
+@@ -128,7 +128,10 @@ def convert_weight_and_push(
+     push_to_hub: bool = True,
+ ):
+     print(f"Downloading weights for {name}...")
+-    checkpoint_path = cached_download(checkpoint)
++    # `checkpoint` is a hub URL: https://huggingface.co/<org>/<repo>/resolve/<revision>/<filename>
++    repo_id, revision_and_filename = checkpoint.split("https://huggingface.co/", 1)[1].split("/resolve/", 1)
++    revision, filename = revision_and_filename.split("/", 1)
++    checkpoint_path = hf_hub_download(repo_id, filename, revision=revision)
+     print(f"Converting {name}...")
+     from_state_dict = torch.load(checkpoint_path)["state_dict"]
+     from_model.load_state_dict(from_state_dict)
+diff --git a/GrootL/transformers/models/deta/convert_deta_resnet_to_pytorch.py b/GrootL/transformers/models/deta/convert_deta_resnet_to_pytorch.py
+index cc17568..f80ab7b 100644
+--- a/GrootL/transformers/models/deta/convert_deta_resnet_to_pytorch.py
++++ b/GrootL/transformers/models/deta/convert_deta_resnet_to_pytorch.py
+@@ -23,7 +23,7 @@ from pathlib import Path
+ 
+ import requests
+ import torch
+-from huggingface_hub import cached_download, hf_hub_download, hf_hub_url
++from huggingface_hub import hf_hub_download
+ from PIL import Image
+ 
+ from transformers import DetaConfig, DetaForObjectDetection, DetaImageProcessor
+@@ -49,7 +49,7 @@ def get_deta_config():
+     config.num_labels = 91
+     repo_id = "huggingface/label-files"
+     filename = "coco-detection-id2label.json"
+-    id2label = json.load(open(cached_download(hf_hub_url(repo_id, filename, repo_type="dataset")), "r"))
++    id2label = json.load(open(hf_hub_download(repo_id, filename, repo_type="dataset"), "r"))
+     id2label = {int(k): v for k, v in id2label.items()}
+     config.id2label = id2label
+     config.label2id = {v: k for k, v in id2label.items()}
+diff --git a/GrootL/transformers/models/deta/convert_deta_swin_to_pytorch.py b/GrootL/transformers/models/deta/convert_deta_swin_to_pytorch.py
+index 911bc43..2febdee 100644
+--- a/GrootL/transformers/models/deta/convert_deta_swin_to_pytorch.py
++++ b/GrootL/transformers/models/deta/convert_deta_swin_to_pytorch.py
+@@ -23,7 +23,7 @@ from pathlib import Path
+ 
+ import requests
+ import torch
+-from huggingface_hub import cached_download, hf_hub_download, hf_hub_url
++from huggingface_hub import hf_hub_download
+ from PIL import Image
+ 
+ from transformers import DetaConfig, DetaForObjectDetection, DetaImageProcessor, SwinConfig
+@@ -64,7 +64,7 @@ def get_deta_config(model_name):
+         filename = "coco-detection-id2label.json"
+ 
+     config.num_labels = num_labels
+-    id2label = json.load(open(cached_download(hf_hub_url(repo_id, filename, repo_type="dataset")), "r"))
++    id2label = json.load(open(hf_hub_download(repo_id, filename, repo_type="dataset"), "r"))
+     id2label = {int(k): v for k, v in id2label.items()}
+     config.id2label = id2label
+     config.label2id = {v: k for k, v in id2label.items()}
+diff --git a/GrootL/transformers/models/dpt/convert_dpt_hybrid_to_pytorch.py b/GrootL/transformers/models/dpt/convert_dpt_hybrid_to_pytorch.py
+index 0fa69ad..b3a4067 100644
+--- a/GrootL/transformers/models/dpt/convert_dpt_hybrid_to_pytorch.py
++++ b/GrootL/transformers/models/dpt/convert_dpt_hybrid_to_pytorch.py
+@@ -21,7 +21,7 @@ from pathlib import Path
+ 
+ import requests
+ import torch
+-from huggingface_hub import cached_download, hf_hub_url
++from huggingface_hub import hf_hub_download
+ from PIL import Image
+ 
+ from transformers import DPTConfig, DPTForDepthEstimation, DPTForSemanticSegmentation, DPTImageProcessor
+@@ -62,7 +62,7 @@ def get_dpt_config(checkpoint_url):
+         config.patch_size = 16
+         repo_id = "huggingface/label-files"
+         filename = "ade20k-id2label.json"
+-        id2label = json.load(open(cached_download(hf_hub_url(repo_id, filename, repo_type="dataset")), "r"))
++        id2label = json.load(open(hf_hub_download(repo_id, filename, repo_type="dataset"), "r"))
+         id2label = {int(k): v for k, v in id2label.items()}
+         config.id2label = id2label
+         config.label2id = {v: k for k, v in id2label.items()}
+diff --git a/GrootL/transformers/models/dpt/convert_dpt_to_pytorch.py b/GrootL/transformers/models/dpt/convert_dpt_to_pytorch.py
+index 42637cb..e1249af 100644
+--- a/GrootL/transformers/models/dpt/convert_dpt_to_pytorch.py
++++ b/GrootL/transformers/models/dpt/convert_dpt_to_pytorch.py
+@@ -21,7 +21,7 @@ from pathlib import Path
+ 
+ import requests
+ import torch
+-from huggingface_hub import cached_download, hf_hub_url
++from huggingface_hub import hf_hub_download
+ from PIL import Image
+ 
+ from transformers import DPTConfig, DPTForDepthEstimation, DPTForSemanticSegmentation, DPTImageProcessor
+@@ -50,7 +50,7 @@ def get_dpt_config(checkpoint_url):
+         config.num_labels = 150
+         repo_id = "huggingface/label-files"
+         filename = "ade20k-id2label.json"
+-        id2label = json.load(open(cached_download(hf_hub_url(repo_id, filename, repo_type="dataset")), "r"))
++        id2label = json.load(open(hf_hub_download(repo_id, filename, repo_type="dataset"), "r"))
+         id2label = {int(k): v for k, v in id2label.items()}
+         config.id2label = id2label
+         config.label2id = {v: k for k, v in id2label.items()}
+diff --git a/GrootL/transformers/models/owlvit/convert_owlvit_original_flax_to_hf.py b/GrootL/transformers/models/owlvit/convert_owlvit_original_flax_to_hf.py
+index 1e9fbb9..b623d77 100644
+--- a/GrootL/transformers/models/owlvit/convert_owlvit_original_flax_to_hf.py
++++ b/GrootL/transformers/models/owlvit/convert_owlvit_original_flax_to_hf.py
+@@ -24,7 +24,7 @@ import torch
+ import torch.nn as nn
+ from clip.model import CLIP
+ from flax.training import checkpoints
+-from huggingface_hub import Repository
++from huggingface_hub import snapshot_download, upload_folder
+ 
+ from transformers import (
+     CLIPTokenizer,
+@@ -327,8 +327,8 @@ def convert_owlvit_checkpoint(pt_backbone, flax_params, attn_params, pytorch_dum
+     """
+     Copy/paste/tweak model's weights to transformers design.
+     """
+-    repo = Repository(pytorch_dump_folder_path, clone_from=f"google/{pytorch_dump_folder_path}")
+-    repo.git_pull()
++    repo_id = f"google/{pytorch_dump_folder_path}"
++    snapshot_download(repo_id=repo_id, local_dir=pytorch_dump_folder_path)
+ 
+     if config_path is not None:
+         config = OwlViTConfig.from_pretrained(config_path)
+@@ -348,7 +348,7 @@ def convert_owlvit_checkpoint(pt_backbone, flax_params, attn_params, pytorch_dum
+     copy_class_box_heads(hf_model, flax_params)
+ 
+     # Save HF model
+-    hf_model.save_pretrained(repo.local_dir)
++    hf_model.save_pretrained(pytorch_dump_folder_path)
+ 
+     # Initialize image processor
+     image_processor = OwlViTImageProcessor(
+@@ -359,12 +359,12 @@ def convert_owlvit_checkpoint(pt_backbone, flax_params, attn_params, pytorch_dum
+ 
+     # Initialize processor
+     processor = OwlViTProcessor(image_processor=image_processor, tokenizer=tokenizer)
+-    image_processor.save_pretrained(repo.local_dir)
+-    processor.save_pretrained(repo.local_dir)
++    image_processor.save_pretrained(pytorch_dump_folder_path)
++    processor.save_pretrained(pytorch_dump_folder_path)
+ 
+-    repo.git_add()
+-    repo.git_commit("Upload model and processor")
+-    repo.git_push()
++    upload_folder(
++        repo_id=repo_id, folder_path=pytorch_dump_folder_path, commit_message="Upload model and processor"
++    )
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/GrootL/transformers/models/phi/convert_phi_weights_to_hf.py b/GrootL/transformers/models/phi/convert_phi_weights_to_hf.py
+index 69ef4c5..666276b 100644
+--- a/GrootL/transformers/models/phi/convert_phi_weights_to_hf.py
++++ b/GrootL/transformers/models/phi/convert_phi_weights_to_hf.py
+@@ -25,6 +25,7 @@ Example : $python ./convert_phi_weights_to_hf.py --model_name "microsoft/phi-2"
+ import argparse
+ import gc
+ import os
++import shutil
+ 
+ import safetensors
+ import torch
+@@ -94,12 +95,13 @@ def convert_weights(original_weights, mapping, config):
+ def _download(url: str, root: str):
+     repo_id = f"{url.split('/')[3]}/{url.split('/')[4]}"
+     filename = f"{url.split('/')[-1]}"
+-    hf_hub_download(
++    downloaded_path = hf_hub_download(
+         repo_id=repo_id,
+         filename=filename,
+-        force_filename=root,
+-        local_dir_use_symlinks=False,
+     )
++    # `force_filename` was removed from `hf_hub_download`: copy the file to the requested location instead.
++    os.makedirs(os.path.dirname(root) or ".", exist_ok=True)
++    shutil.copyfile(downloaded_path, root)
+ 
+ 
+ def convert_phi_weights(
+diff --git a/GrootL/transformers/models/regnet/convert_regnet_seer_10b_to_pytorch.py b/GrootL/transformers/models/regnet/convert_regnet_seer_10b_to_pytorch.py
+index 93a516f..0742367 100644
+--- a/GrootL/transformers/models/regnet/convert_regnet_seer_10b_to_pytorch.py
++++ b/GrootL/transformers/models/regnet/convert_regnet_seer_10b_to_pytorch.py
+@@ -30,7 +30,7 @@ from typing import Dict, List, Tuple
+ import torch
+ import torch.nn as nn
+ from classy_vision.models.regnet import RegNet, RegNetParams
+-from huggingface_hub import cached_download, hf_hub_url
++from huggingface_hub import hf_hub_download
+ from torch import Tensor
+ from vissl.models.model_helpers import get_trunk_forward_outputs
+ 
+@@ -165,7 +165,7 @@ def convert_weights_and_push(save_directory: Path, model_name: str = None, push_
+ 
+     repo_id = "huggingface/label-files"
+     num_labels = num_labels
+-    id2label = json.load(open(cached_download(hf_hub_url(repo_id, filename, repo_type="dataset")), "r"))
++    id2label = json.load(open(hf_hub_download(repo_id, filename, repo_type="dataset"), "r"))
+     id2label = {int(k): v for k, v in id2label.items()}
+ 
+     id2label = id2label
+diff --git a/GrootL/transformers/models/regnet/convert_regnet_to_pytorch.py b/GrootL/transformers/models/regnet/convert_regnet_to_pytorch.py
+index d29077c..92906d0 100644
+--- a/GrootL/transformers/models/regnet/convert_regnet_to_pytorch.py
++++ b/GrootL/transformers/models/regnet/convert_regnet_to_pytorch.py
+@@ -26,7 +26,7 @@ import timm
+ import torch
+ import torch.nn as nn
+ from classy_vision.models.regnet import RegNet, RegNetParams, RegNetY32gf, RegNetY64gf, RegNetY128gf
+-from huggingface_hub import cached_download, hf_hub_url
++from huggingface_hub import hf_hub_download
+ from torch import Tensor
+ from vissl.models.model_helpers import get_trunk_forward_outputs
+ 
+@@ -226,7 +226,7 @@ def convert_weights_and_push(save_directory: Path, model_name: str = None, push_
+ 
+     repo_id = "huggingface/label-files"
+     num_labels = num_labels
+-    id2label = json.load(open(cached_download(hf_hub_url(repo_id, filename, repo_type="dataset")), "r"))
++    id2label = json.load(open(hf_hub_download(repo_id, filename, repo_type="dataset"), "r"))
+     id2label = {int(k): v for k, v in id2label.items()}
+ 
+     id2label = id2label
+diff --git a/GrootL/transformers/tools/agents.py b/GrootL/transformers/tools/agents.py
+index 86adde9..4b57df1 100644
+--- a/GrootL/transformers/tools/agents.py
++++ b/GrootL/transformers/tools/agents.py
+@@ -22,7 +22,7 @@ from dataclasses import dataclass
+ from typing import Dict
+ 
+ import requests
+-from huggingface_hub import HfFolder, hf_hub_download, list_spaces
++from huggingface_hub import get_token, hf_hub_download, list_spaces
+ 
+ from ..models.auto import AutoTokenizer
+ from ..utils import is_offline_mode, is_openai_available, is_torch_available, logging
+@@ -629,7 +629,7 @@ class HfAgent(Agent):
+     ):
+         self.url_endpoint = url_endpoint
+         if token is None:
+-            self.token = f"Bearer {HfFolder().get_token()}"
++            self.token = f"Bearer {get_token()}"
+         elif token.startswith("Bearer") or token.startswith("Basic"):
+             self.token = token
+         else:
+diff --git a/GrootL/transformers/utils/hub.py b/GrootL/transformers/utils/hub.py
+index 47ca63e..b0b18a5 100644
+--- a/GrootL/transformers/utils/hub.py
++++ b/GrootL/transformers/utils/hub.py
+@@ -404,8 +404,6 @@ def cached_file(
+             cache_dir=cache_dir,
+             user_agent=user_agent,
+             force_download=force_download,
+-            proxies=proxies,
+-            resume_download=resume_download,
+             token=token,
+             local_files_only=local_files_only,
+         )
+@@ -586,7 +584,7 @@ def download_url(url, proxies=None):
+     )
+     tmp_fd, tmp_file = tempfile.mkstemp()
+     with os.fdopen(tmp_fd, "wb") as f:
+-        http_get(url, f, proxies=proxies)
++        http_get(url, f)
+     return tmp_file
+ 
+ 

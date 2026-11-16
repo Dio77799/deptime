@@ -1,0 +1,26 @@
+diff --git a/requirements.txt b/requirements.txt
+index a6ba513..133330e 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -55,7 +55,7 @@ platformdirs==4.4.0
+ ploomber-core==0.2.27
+ plotly==6.3.1
+ pluggy==1.6.0
+-polars==1.33.1
++polars==2.1.0
+ posthog==6.7.4
+ prettytable==3.16.0
+ prompt_toolkit==3.0.52
+diff --git a/vm_requirements.txt b/vm_requirements.txt
+index 5eada26..d7b1ebb 100644
+--- a/vm_requirements.txt
++++ b/vm_requirements.txt
+@@ -55,7 +55,7 @@ platformdirs==4.4.0
+ ploomber-core==0.2.27
+ plotly==6.3.1
+ pluggy==1.6.0
+-polars==1.33.1
++polars==2.1.0
+ posthog==6.7.4
+ prettytable==3.16.0
+ prompt_toolkit==3.0.52

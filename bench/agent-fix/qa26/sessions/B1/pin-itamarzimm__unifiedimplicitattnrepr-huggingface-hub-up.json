@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 68,
+  "duration_ms": 159434,
+  "total_cost_usd": 0.5123920999999999,
+  "usage": {
+   "input_tokens": 62,
+   "cache_creation_input_tokens": 48506,
+   "cache_read_input_tokens": 1166441,
+   "output_tokens": 20160,
+   "output_tokens_details": {
+    "thinking_tokens": 3406
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 48506,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1551,
+     "cache_read_input_tokens": 58764,
+     "cache_creation_input_tokens": 208,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 208
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.42,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.27,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 12,
+  "Read": 16,
+  "Grep": 6,
+  "mcp__plugin_deptime_deptime__check_symbols": 1,
+  "Edit": 31,
+  "mcp__plugin_deptime_deptime__symbol_history": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package huggingface-hub --to 2.4.0 --from 0.19.4 --format markdown --output .deptime-report.md",
+  "check_symbols",
+  "symbol_history",
+  "uvx deptime==0.2.2 check-upgrade . --package huggingface-hub --to 2.4.0 --from 0.19.4 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 10,
+ "fetched": [],
+ "denied": 3,
+ "task": "pin-itamarzimm__unifiedimplicitattnrepr-huggingface-hub-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 161.4,
+ "service_error": false
+}

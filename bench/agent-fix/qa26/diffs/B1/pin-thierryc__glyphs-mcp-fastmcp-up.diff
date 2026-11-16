@@ -1,0 +1,168 @@
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py
+index e1ff0c9..3a3c9c5 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py	
+@@ -8,7 +8,7 @@ import json
+ import logging
+ from typing import Any, Dict, Iterable, Optional
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from GlyphsApp import Glyphs  # type: ignore[import-not-found]
+ 
+ from document_change_audit import DOCUMENT_CHANGE_LEDGER, overview_markdown
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py
+index afc8ee1..5630f3e 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py	
+@@ -12,7 +12,7 @@ import secrets
+ import time
+ from typing import Any, Dict, Iterable, List, Optional, Tuple
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from GlyphsApp import Glyphs  # type: ignore[import-not-found]
+ 
+ from tool_registration import glyphs_tool
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py
+index 200e96b..40d4388 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py	
+@@ -4,7 +4,7 @@
+ 
+ from __future__ import division, print_function, unicode_literals
+ 
+-from fastmcp.prompts.prompt import Message
++from fastmcp.prompts import Message
+ 
+ from mcp_tools import mcp
+ 
+diff --git a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py
+index 92a3572..9d5bb18 100644
+--- a/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py	
++++ b/plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py	
+@@ -7,7 +7,7 @@ from __future__ import annotations
+ import json
+ from typing import Any, Dict, Iterable, List, Optional
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ 
+ 
+ RESULT_SCHEMA_VERSION = 1
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py
+index e1ff0c9..3a3c9c5 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py	
+@@ -8,7 +8,7 @@ import json
+ import logging
+ from typing import Any, Dict, Iterable, Optional
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from GlyphsApp import Glyphs  # type: ignore[import-not-found]
+ 
+ from document_change_audit import DOCUMENT_CHANGE_LEDGER, overview_markdown
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py
+index afc8ee1..5630f3e 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_feedback.py	
+@@ -12,7 +12,7 @@ import secrets
+ import time
+ from typing import Any, Dict, Iterable, List, Optional, Tuple
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from GlyphsApp import Glyphs  # type: ignore[import-not-found]
+ 
+ from tool_registration import glyphs_tool
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py
+index 200e96b..40d4388 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py	
+@@ -4,7 +4,7 @@
+ 
+ from __future__ import division, print_function, unicode_literals
+ 
+-from fastmcp.prompts.prompt import Message
++from fastmcp.prompts import Message
+ 
+ from mcp_tools import mcp
+ 
+diff --git a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py
+index 92a3572..9d5bb18 100644
+--- a/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py	
++++ b/src/glyphs-mcp/Glyphs MCP.glyphsPlugin/Contents/Resources/tool_result_schemas.py	
+@@ -7,7 +7,7 @@ from __future__ import annotations
+ import json
+ from typing import Any, Dict, Iterable, List, Optional
+ 
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ 
+ 
+ RESULT_SCHEMA_VERSION = 1
+diff --git a/src/glyphs-mcp/tests/test_simple_v2_feedback.py b/src/glyphs-mcp/tests/test_simple_v2_feedback.py
+index 8c9c8de..31f0da9 100644
+--- a/src/glyphs-mcp/tests/test_simple_v2_feedback.py
++++ b/src/glyphs-mcp/tests/test_simple_v2_feedback.py
+@@ -13,7 +13,7 @@ for component in ('sidecar', 'protocol', 'bridge'):
+ 
+ import pytest
+ from fastmcp import Client
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from mcp import types
+ 
+ from glyphs_mcp_sidecar.activity_feedback import workflow_progress
+diff --git a/src/glyphs-mcp/tests/test_tool_catalog.py b/src/glyphs-mcp/tests/test_tool_catalog.py
+index 8f7955f..1fdca94 100644
+--- a/src/glyphs-mcp/tests/test_tool_catalog.py
++++ b/src/glyphs-mcp/tests/test_tool_catalog.py
+@@ -159,7 +159,7 @@ class ToolCatalogTests(unittest.TestCase):
+             async def review_curve_quality(glyph_name: str = "a"):
+                 return json.dumps({"ok": True, "target": {"glyphName": "a"}, "summary": {"count": 1}})
+ 
+-            tool = asyncio.run(server.get_tools())["review_curve_quality"]
++            tool = asyncio.run(server.get_tool("review_curve_quality"))
+             entry = self.catalog.TOOL_CATALOG["review_curve_quality"]
+             self.assertEqual(tool.title, entry.title)
+             self.assertEqual(tool.description, entry.description)
+diff --git a/src/sidecar/glyphs_mcp_sidecar/edit_workflow_ui.py b/src/sidecar/glyphs_mcp_sidecar/edit_workflow_ui.py
+index bb451c1..0b5757f 100644
+--- a/src/sidecar/glyphs_mcp_sidecar/edit_workflow_ui.py
++++ b/src/sidecar/glyphs_mcp_sidecar/edit_workflow_ui.py
+@@ -4,7 +4,7 @@ from typing import Any
+ 
+ from fastmcp import Context
+ from fastmcp.resources import TextResource
+-from fastmcp.tools.tool import ToolResult
++from fastmcp.tools import ToolResult
+ from mcp.types import ReadResourceRequest, TextContent
+ from pydantic import Field
+ from .presentation import invocation_meta, workflow_call
+diff --git a/src/sidecar/glyphs_mcp_sidecar/proxy.py b/src/sidecar/glyphs_mcp_sidecar/proxy.py
+index 72174be..63077dd 100644
+--- a/src/sidecar/glyphs_mcp_sidecar/proxy.py
++++ b/src/sidecar/glyphs_mcp_sidecar/proxy.py
+@@ -1,8 +1,9 @@
+ """Offline stdio entry point for clients without local HTTP transport."""
+ import sys
+-from fastmcp import FastMCP
++from fastmcp.server import create_proxy as create_fastmcp_proxy
+ from fastmcp.resources import ResourceManager
+-from fastmcp.server.proxy import ProxyResource, ProxyResourceManager
++from fastmcp.server.providers.proxy import ProxyResource
++from fastmcp.server.proxy import ProxyResourceManager  # no 4.x equivalent; see report
+ from mcp.shared.exceptions import McpError
+ from mcp.types import METHOD_NOT_FOUND
+ from pydantic import Field
+@@ -32,7 +33,7 @@ class AppProxyResourceManager(ProxyResourceManager):
+ 
+ 
+ def create_proxy(target):
+-    proxy = FastMCP.as_proxy(target, name="Glyphs MCP")
++    proxy = create_fastmcp_proxy(target, name="Glyphs MCP")
+     from .presentation import configure_identity
+     configure_identity(proxy)
+     # Narrow compatibility adapter; keep the library's tools and result forwarding.

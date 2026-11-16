@@ -1,0 +1,111 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 28,
+  "duration_ms": 63507,
+  "total_cost_usd": 0.28558690000000003,
+  "usage": {
+   "input_tokens": 22,
+   "cache_creation_input_tokens": 33784,
+   "cache_read_input_tokens": 294808,
+   "output_tokens": 6918,
+   "output_tokens_details": {
+    "thinking_tokens": 1927
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 33784,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1032,
+     "cache_read_input_tokens": 37761,
+     "cache_creation_input_tokens": 1800,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1800
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.53,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.28,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 1,
+  "Glob": 1,
+  "Read": 3,
+  "Bash": 1,
+  "WebFetch": 15,
+  "Edit": 6
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://pypi.org/pypi/langchain/1.4.9/json",
+  "https://github.com/langchain-ai/langchain/tree/master/libs/langchain_v1/langchain",
+  "https://pypi.org/pypi/langchain-core/1.7.5/json",
+  "https://pypi.org/pypi/langchain-community/json",
+  "https://pypi.org/pypi/langchain-ollama/json",
+  "https://pypi.org/pypi/langchain-openai/json",
+  "https://pypi.org/pypi/langchain-text-splitters/json",
+  "https://pypi.org/pypi/langchain-huggingface/json",
+  "https://pypi.org/pypi/langchain-groq/json",
+  "https://pypi.org/pypi/langchain-experimental/json",
+  "https://pypi.org/pypi/langgraph/1.2.12/json",
+  "https://pypi.org/pypi/langgraph-checkpoint/json",
+  "https://pypi.org/pypi/langgraph-prebuilt/json",
+  "https://pypi.org/pypi/langgraph-sdk/json",
+  "https://pypi.org/pypi/langsmith/json"
+ ],
+ "denied": 0,
+ "task": "pin-raj-maharajwala__ai_agent_chatbot_synapse-langchain-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 64.3,
+ "service_error": false
+}

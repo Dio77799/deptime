@@ -1,0 +1,104 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 19,
+  "duration_ms": 57899,
+  "total_cost_usd": 0.21810069999999998,
+  "usage": {
+   "input_tokens": 38,
+   "cache_creation_input_tokens": 30331,
+   "cache_read_input_tokens": 318651,
+   "output_tokens": 3412,
+   "output_tokens_details": {
+    "thinking_tokens": 751
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 30331,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 353,
+     "cache_read_input_tokens": 22177,
+     "cache_creation_input_tokens": 749,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 749
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.89,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.24,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 9,
+  "Read": 4,
+  "mcp__plugin_deptime_deptime__symbol_history": 1,
+  "Edit": 3
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package httpx --to 0.28.1 --from 0.26.0 --format markdown --output .deptime-report.md",
+  "symbol_history",
+  "uvx deptime==0.2.2 check-upgrade . --package httpx --to 0.28.1 --from 0.26.0 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 7,
+ "fetched": [],
+ "denied": 2,
+ "task": "pin-yashvirgaming__tiktikcheckercli-httpx-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 59.7,
+ "service_error": false
+}

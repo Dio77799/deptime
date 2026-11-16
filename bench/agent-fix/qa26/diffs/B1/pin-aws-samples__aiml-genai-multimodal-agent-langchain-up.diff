@@ -1,0 +1,120 @@
+diff --git a/app_complete.py b/app_complete.py
+index 5a5621a..87f96cc 100644
+--- a/app_complete.py
++++ b/app_complete.py
+@@ -3,38 +3,38 @@ from botocore.exceptions import ClientError
+ import json
+ import langchain
+ from importlib import reload
+-from langchain.agents.structured_chat import output_parser
+ from typing import List
+ import logging
+ import os
+ import sqlalchemy
+ from sqlalchemy import create_engine
+-from langchain.docstore.document import Document
+-from langchain import PromptTemplate,SQLDatabase, LLMChain
++from langchain_core.documents import Document
++from langchain_core.prompts import PromptTemplate
++from langchain_community.utilities import SQLDatabase
++from langchain_classic.chains import LLMChain
+ from langchain_experimental.sql.base import SQLDatabaseChain
+-from langchain.prompts.prompt import PromptTemplate
+ import streamlit as st
+ import pandas as pd
+ import datetime
+ from langchain.tools import tool
+ from typing import List, Optional
+ import json
+-from langchain.prompts import (
++from langchain_core.prompts import (
+     ChatPromptTemplate,
+     PromptTemplate,
+     SystemMessagePromptTemplate,
+     AIMessagePromptTemplate,
+     HumanMessagePromptTemplate,
+ )
+-from langchain.llms.bedrock import Bedrock
++from langchain_community.llms import Bedrock
+ from langchain_experimental.plan_and_execute import PlanAndExecute, load_agent_executor, load_chat_planner
+-from langchain.agents.tools import Tool
++from langchain_core.tools import Tool
+ import time
+ import uuid
+ from utility import get_cfn_details,custom_logga, upload_amz_file
+-from langchain.tools.python.tool import PythonREPLTool
+-from langchain.memory import ConversationBufferMemory
+-from langchain.memory.chat_message_histories import DynamoDBChatMessageHistory
++from langchain_experimental.tools import PythonREPLTool
++from langchain_classic.memory import ConversationBufferMemory
++from langchain_community.chat_message_histories import DynamoDBChatMessageHistory
+ from streamlit.web.server.websocket_headers import _get_websocket_headers
+ import sys 
+ 
+diff --git a/utility/kendra_tool_mm.py b/utility/kendra_tool_mm.py
+index 9228c8e..0a1ea38 100644
+--- a/utility/kendra_tool_mm.py
++++ b/utility/kendra_tool_mm.py
+@@ -1,12 +1,11 @@
+-from langchain.retrievers import AmazonKendraRetriever
+-from langchain.chains import RetrievalQA
+-from langchain.prompts import PromptTemplate
++from langchain_community.retrievers import AmazonKendraRetriever
++from langchain_classic.chains import RetrievalQA
++from langchain_core.prompts import PromptTemplate
+ import os
+-from langchain.chat_models import ChatAnthropic
+ import boto3
+ from botocore.exceptions import ClientError
+ import json
+-from langchain.llms.bedrock import Bedrock
++from langchain_community.llms import Bedrock
+ 
+ with open ('param.json','r') as f:
+     params=json.load(f)
+diff --git a/utility/mm_fsi_tools.py b/utility/mm_fsi_tools.py
+index 25075c4..f95243c 100644
+--- a/utility/mm_fsi_tools.py
++++ b/utility/mm_fsi_tools.py
+@@ -1,6 +1,6 @@
+-from langchain.agents.tools import Tool
++from langchain_core.tools import Tool
+ from langchain_experimental.plan_and_execute import PlanAndExecute, load_agent_executor, load_chat_planner
+-from langchain.tools.python.tool import PythonREPLTool
++from langchain_experimental.tools import PythonREPLTool
+ import aws_tools, kendra_tool_mm, portfolio_tool, stock_query_mm
+ from stock_query_mm import 
+ 
+diff --git a/utility/portfolio_tool.py b/utility/portfolio_tool.py
+index b00463b..fc5b9ed 100644
+--- a/utility/portfolio_tool.py
++++ b/utility/portfolio_tool.py
+@@ -6,7 +6,7 @@ from pypfopt.efficient_frontier import EfficientFrontier
+ from pypfopt import risk_models
+ from pypfopt import expected_returns
+ from langchain.tools import tool
+-from langchain.tools.base import StructuredTool
++from langchain_core.tools import StructuredTool
+ from typing import Optional
+ from langchain.tools import BaseTool
+ from typing import List, Optional
+diff --git a/utility/stock_query_mm.py b/utility/stock_query_mm.py
+index e991f23..4b6a1fe 100644
+--- a/utility/stock_query_mm.py
++++ b/utility/stock_query_mm.py
+@@ -1,11 +1,12 @@
+-from langchain import PromptTemplate,SQLDatabase, LLMChain
++from langchain_core.prompts import PromptTemplate
++from langchain_community.utilities import SQLDatabase
++from langchain_classic.chains import LLMChain
+ from langchain_experimental.sql.base import SQLDatabaseChain
+-from langchain.prompts.prompt import PromptTemplate
+ import boto3
+ from botocore.exceptions import ClientError
+ import json
+ from sqlalchemy import create_engine
+-from langchain.llms.bedrock import Bedrock
++from langchain_community.llms import Bedrock
+ 
+ with open ('param.json','r') as f:
+     params=json.load(f)

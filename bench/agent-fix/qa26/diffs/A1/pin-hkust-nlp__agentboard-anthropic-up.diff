@@ -1,0 +1,122 @@
+diff --git a/agentboard/llm/claude.py b/agentboard/llm/claude.py
+index 168a48f..eb475d4 100644
+--- a/agentboard/llm/claude.py
++++ b/agentboard/llm/claude.py
+@@ -1,4 +1,4 @@
+-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
++from anthropic import Anthropic
+ import os
+ import time
+ from common.registry import registry
+@@ -9,7 +9,7 @@ import tiktoken
+ @registry.register_llm("claude")
+ class CLAUDE:
+     def __init__(self,
+-                 engine="claude-2",
++                 engine="claude-sonnet-5-5",
+                  temperature=0,
+                  max_tokens=200,
+                  top_p=1,
+@@ -34,33 +34,44 @@ class CLAUDE:
+         self.xml_split = split
+         self.anthropic = None
+         self.init_api_key()
+-        self.default_tokens_fixed = self.anthropic.count_tokens(
++        # Local token estimate (anthropic>=0.39 removed the client-side count_tokens).
++        self.tokenizer = tiktoken.get_encoding("cl100k_base")
++        self.default_tokens_fixed = self._count_tokens(
+             "\n\nHuman: \n\nAssistant:Do you only want to output the next Action? \n\nHuman: Yes, please do. \n\nAssistant:")
++
++    def _count_tokens(self, text):
++        return len(self.tokenizer.encode(text, disallowed_special=()))
++
+     def init_api_key(self):
+         self.anthropic = Anthropic(
+             api_key=os.environ.get("ANTHROPIC_API_KEY")
+         )
+ 
+-    def llm_inference(self, messages):
+-        # pdb.set_trace()
+-        response = self.anthropic.completions.create(
++    def llm_inference(self, system_message, messages):
++        kwargs = dict(
+             model=self.engine,
+-            max_tokens_to_sample=self.max_tokens,
+-            prompt=messages,
+-            stop_sequences=self.stop,
+-            temperature=self.temperature
++            max_tokens=self.max_tokens,
++            messages=messages,
++            temperature=self.temperature,
+         )
+-        return response.completion
++        if system_message:
++            kwargs["system"] = system_message
++        # Messages API rejects whitespace-only stop sequences.
++        stop_sequences = [s for s in (self.stop or []) if s and s.strip()]
++        if stop_sequences:
++            kwargs["stop_sequences"] = stop_sequences
++        response = self.anthropic.messages.create(**kwargs)
++        return "".join(block.text for block in response.content if block.type == "text")
+ 
+     def generate(self, system_message, prompt):
+-        # print(f"{self.num_tokens_from_messages(prompt, self.engine)} prompt tokens counted by num_tokens_from_messages().")
+-
+-        # self.llm_inference(prompt)
+-        extra_prompt = " \n\nAssistant:Do you only want to output the next Action? \n\nHuman: Yes, please do. "
+-        prompt = HUMAN_PROMPT + system_message + prompt + extra_prompt + AI_PROMPT
++        messages = [
++            {"role": "user", "content": prompt},
++            {"role": "assistant", "content": "Do you only want to output the next Action?"},
++            {"role": "user", "content": "Yes, please do."},
++        ]
+         for attempt in range(self.max_retry_iters):
+             try:
+-                return True, self.llm_inference(prompt)  # return success, completion
++                return True, self.llm_inference(system_message, messages)  # return success, completion
+             except Exception as e:
+                 print(f"Error on attempt {attempt + 1}")
+                 if attempt < self.max_retry_iters - 1:  # If not the last attempt
+@@ -72,27 +83,17 @@ class CLAUDE:
+ 
+         return False, None
+ 
+-    def num_tokens_from_messages(self, messages, model="claude-2"):
+-        """Return the number of tokens used by a list of messages."""
+-        default_tokens_fixed = self.default_tokens_fixed
+-        if "claude-2" in model:
+-            default_tokens_fixed = default_tokens_fixed  # tokens of HUMAN_PROMPT and AI_PROMPT
+-        elif "claude-instant-1" in model:
+-            default_tokens_fixed = default_tokens_fixed
+-        else:
+-            raise NotImplementedError(
+-                f"""Not implemented for model {model}."""
+-            )
+-        num_tokens = 0
++    def num_tokens_from_messages(self, messages, model=None):
++        """Return an estimate of the number of tokens used by a list of messages."""
++        num_tokens = self.default_tokens_fixed  # tokens of the fixed conversation scaffolding
+         for message in messages:
+-            num_tokens += self.anthropic.count_tokens(message["content"])
+-        num_tokens += default_tokens_fixed
++            num_tokens += self._count_tokens(message["content"])
+         return num_tokens
+ 
+     @classmethod
+     def from_config(cls, config):
+ 
+-        engine = config.get("engine", "claude-2")
++        engine = config.get("engine", "claude-sonnet-5-5")
+         temperature = config.get("temperature", 0)
+         max_tokens = config.get("max_tokens", 100)
+         system_message = config.get("system_message", "You are a helpful assistant.")
+diff --git a/requirements.txt b/requirements.txt
+index 5318919..1ccf772 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -58,4 +58,4 @@ train==0.0.5
+ # transformers==4.23.1 # claude need transformers 4.23.1 / transformers 4.34.1
+ typing_extensions==4.5.0
+ typing-inspect==0.8.0
+-anthropic==0.6.0
++anthropic==2.6.0

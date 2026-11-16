@@ -1,0 +1,148 @@
+diff --git a/api/pyproject.toml b/api/pyproject.toml
+index e2c0227..9c6db59 100644
+--- a/api/pyproject.toml
++++ b/api/pyproject.toml
+@@ -54,12 +54,11 @@ dev = [
+     "pytest",
+ ]
+ all = [
+-    "torch==2.3.1",
+-    "transformers==4.44.1",
++    "torch>=2.6.0",
++    "transformers==5.22.2",
+     "sentencepiece",
+-    "hf-transfer==0.1.6",
+-    "huggingface_hub==0.23.4",
+-    "sentence-transformers==3.0.1",
++    "huggingface_hub>=1.31.0,<3.0",
++    "sentence-transformers==6.3.0",
+     "peft",
+     "black",
+     "mypy",
+diff --git a/api/reranker_requirements.txt b/api/reranker_requirements.txt
+index 8018dc9..3583353 100644
+--- a/api/reranker_requirements.txt
++++ b/api/reranker_requirements.txt
+@@ -1,5 +1,4 @@
+-transformers==4.44.1
++transformers==5.22.2
+ sentencepiece
+-hf-transfer==0.1.6
+-huggingface_hub==0.23.4
+-sentence-transformers==3.0.1
+\ No newline at end of file
++huggingface_hub>=1.31.0,<3.0
++sentence-transformers==6.3.0
+diff --git a/api/scholarqa/rag/reranker/modal_deploy/ai2-scholar-qa-reranker.py b/api/scholarqa/rag/reranker/modal_deploy/ai2-scholar-qa-reranker.py
+index a4c31dc..348f9d0 100644
+--- a/api/scholarqa/rag/reranker/modal_deploy/ai2-scholar-qa-reranker.py
++++ b/api/scholarqa/rag/reranker/modal_deploy/ai2-scholar-qa-reranker.py
+@@ -32,7 +32,6 @@ APP_LABEL = APP_NAME.lower()
+ 
+ def download_model_to_image(model_dir, model_name):
+     from huggingface_hub import snapshot_download
+-    from transformers.utils import move_cache
+ 
+     os.makedirs(model_dir, exist_ok=True)
+ 
+@@ -40,7 +39,6 @@ def download_model_to_image(model_dir, model_name):
+         model_name,
+         local_dir=model_dir,
+     )
+-    move_cache()
+ 
+ 
+ # ### Image definition
+@@ -50,17 +48,15 @@ def download_model_to_image(model_dir, model_name):
+ # the model are saved within the container image.
+ 
+ reranker_image = (
+-    modal.Image.debian_slim(python_version="3.10")
++    modal.Image.debian_slim(python_version="3.11")
+     .pip_install(
+-        "torch==2.3.1",
+-        "transformers==4.44.1",
++        "torch==2.6.0",
++        "transformers==5.22.2",
+         "sentencepiece",
+-        "hf-transfer==0.1.6",
+-        "huggingface_hub==0.23.4",
+-        "sentence-transformers==3.0.1",
+-        "peft==0.13.2"
++        "huggingface_hub>=1.31.0,<3.0",
++        "sentence-transformers==6.3.0",
++        "peft>=0.18.0"
+     )
+-    .env({"HF_HUB_ENABLE_HF_TRANSFER": "1"})
+     .run_function(
+         download_model_to_image,
+         timeout=60 * 20,
+@@ -104,7 +100,7 @@ class Model:
+         device = "cuda" if torch.cuda.is_available() else "cpu"
+         self.reranker_compiled = PaddedCrossEncoder(
+             MODEL_DIR,
+-            automodel_args={"torch_dtype": "float16"},
++            model_kwargs={"dtype": "float16"},
+             trust_remote_code=True,
+             device=device,
+         )
+@@ -113,7 +109,7 @@ class Model:
+ 
+         self.reranker_torch = CrossEncoder(
+             MODEL_DIR,
+-            automodel_args={"torch_dtype": "float16"},
++            model_kwargs={"dtype": "float16"},
+             trust_remote_code=True,
+             device=device,
+         )
+diff --git a/api/scholarqa/rag/reranker/modal_deploy/custom_cross_encoder.py b/api/scholarqa/rag/reranker/modal_deploy/custom_cross_encoder.py
+index dbb0bdf..41f0fcf 100644
+--- a/api/scholarqa/rag/reranker/modal_deploy/custom_cross_encoder.py
++++ b/api/scholarqa/rag/reranker/modal_deploy/custom_cross_encoder.py
+@@ -2,17 +2,20 @@ from sentence_transformers import CrossEncoder
+ 
+ 
+ class PaddedCrossEncoder(CrossEncoder):
+-    def smart_batching_collate_text_only(self, batch):
+-        texts = [[] for _ in range(len(batch[0]))]
++    """CrossEncoder that always pads inputs to the max sequence length.
+ 
+-        for example in batch:
+-            for idx, text in enumerate(example):
+-                texts[idx].append(text.strip())
++    Fixed-size inputs avoid re-compilation of a ``torch.compile``d model for every new batch shape.
++    sentence-transformers >= 6 no longer exposes ``smart_batching_collate_text_only``, so padding is requested
++    through the ``processing_kwargs`` argument of ``predict`` instead.
++    """
+ 
+-        tokenized = self.tokenizer(*texts, padding="max_length", truncation='longest_first', return_tensors="pt",
+-                                   max_length=self.max_length)
+-
+-        for name in tokenized:
+-            tokenized[name] = tokenized[name].to(self._target_device)
+-
+-        return tokenized
+\ No newline at end of file
++    def predict(self, inputs, *args, **kwargs):
++        processing_kwargs = kwargs.pop("processing_kwargs", None) or {}
++        text_kwargs = {
++            "padding": "max_length",
++            "truncation": "longest_first",
++            "max_length": self.max_seq_length,
++        }
++        text_kwargs.update(processing_kwargs.get("text", {}))
++        processing_kwargs = {**processing_kwargs, "text": text_kwargs}
++        return super().predict(inputs, *args, processing_kwargs=processing_kwargs, **kwargs)
+diff --git a/api/scholarqa/rag/reranker/reranker_base.py b/api/scholarqa/rag/reranker/reranker_base.py
+index 70baa79..fb0782d 100644
+--- a/api/scholarqa/rag/reranker/reranker_base.py
++++ b/api/scholarqa/rag/reranker/reranker_base.py
+@@ -53,7 +53,7 @@ class CrossEncoderScores(AbstractReranker):
+         print(device)
+         self.model = CrossEncoder(
+             model_name_or_path,
+-            automodel_args={"torch_dtype": "float16"},
++            model_kwargs={"dtype": "float16"},
+             trust_remote_code=True,
+             device=device,
+         )

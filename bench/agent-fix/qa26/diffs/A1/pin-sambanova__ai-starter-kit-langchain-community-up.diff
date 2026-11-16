@@ -1,0 +1,176 @@
+diff --git a/base-requirements.txt b/base-requirements.txt
+index ba2c8a8..4780efc 100644
+--- a/base-requirements.txt
++++ b/base-requirements.txt
+@@ -5,6 +5,7 @@ langchain-chroma==1.0.0
+ langchain-community==0.4.1
+ langchain-huggingface==1.0.0
+ langchain-milvus==0.2.2
++langchain-qdrant==1.1.0
+ langchain-sambanova==1.0.0
+ langchain==1.0.2
+ langgraph==1.0.1
+diff --git a/document_comparison/requirements.txt b/document_comparison/requirements.txt
+index a30fa74..0ef9e6b 100644
+--- a/document_comparison/requirements.txt
++++ b/document_comparison/requirements.txt
+@@ -12,6 +12,7 @@ langchain-chroma==1.0.0
+ langchain-community==0.4.1
+ langchain-huggingface==1.0.0
+ langchain-milvus==0.2.2
++langchain-qdrant==1.1.0
+ langchain-sambanova==1.0.0
+ langchain==1.0.2
+ langgraph==1.0.1
+diff --git a/enterprise_knowledge_retriever/requirements.txt b/enterprise_knowledge_retriever/requirements.txt
+index e49e51f..d189d64 100644
+--- a/enterprise_knowledge_retriever/requirements.txt
++++ b/enterprise_knowledge_retriever/requirements.txt
+@@ -13,6 +13,7 @@ langchain-chroma==1.0.0
+ langchain-community==0.4.1
+ langchain-huggingface==1.0.0
+ langchain-milvus==0.2.2
++langchain-qdrant==1.1.0
+ langchain-sambanova==1.0.0
+ langchain==1.0.2
+ langgraph==1.0.1
+diff --git a/eval_jumpstart/requirements.txt b/eval_jumpstart/requirements.txt
+index 0ec2019..08dee5b 100644
+--- a/eval_jumpstart/requirements.txt
++++ b/eval_jumpstart/requirements.txt
+@@ -5,6 +5,7 @@ langchain-chroma==1.0.0
+ langchain-community==0.4.1
+ langchain-huggingface==1.0.0
+ langchain-milvus==0.2.2
++langchain-qdrant==1.1.0
+ langchain-sambanova==1.0.0
+ langchain==1.0.2
+ pre-commit==4.3.0
+diff --git a/function_calling/requirements.txt b/function_calling/requirements.txt
+index f256236..6d19604 100644
+--- a/function_calling/requirements.txt
++++ b/function_calling/requirements.txt
+@@ -3,6 +3,7 @@ langchain-chroma==1.0.0
+ langchain-community==0.4.1
+ langchain-huggingface==1.0.0
+ langchain-milvus==0.2.2
++langchain-qdrant==1.1.0
+ langchain-sambanova==1.0.0
+ langchain==1.0.2
+ langchain-experimental==0.4.0
+diff --git a/multimodal_knowledge_retriever/requirements.txt b/multimodal_knowledge_retriever/requirements.txt
+index 3d6d998..7f110e9 100644
+--- a/multimodal_knowledge_retriever/requirements.txt
++++ b/multimodal_knowledge_retriever/requirements.txt
+@@ -4,6 +4,7 @@ langchain-chroma==1.0.0
+ langchain-community==0.4.1
+ langchain-huggingface==1.0.0
+ langchain-milvus==0.2.2
++langchain-qdrant==1.1.0
+ langchain-sambanova==1.0.0
+ langchain==1.0.2
+ mypy==1.18.2
+diff --git a/search_assistant/requirements.txt b/search_assistant/requirements.txt
+index a59ee86..5295af7 100644
+--- a/search_assistant/requirements.txt
++++ b/search_assistant/requirements.txt
+@@ -8,6 +8,7 @@ langchain-chroma==1.0.0
+ langchain-community==0.4.1
+ langchain-huggingface==1.0.0
+ langchain-milvus==0.2.2
++langchain-qdrant==1.1.0
+ langchain-sambanova==1.0.0
+ langchain==1.0.2
+ mypy==1.18.2
+diff --git a/utils/vectordb/create_vector_db.py b/utils/vectordb/create_vector_db.py
+index 6ddfaa6..90c7cce 100644
+--- a/utils/vectordb/create_vector_db.py
++++ b/utils/vectordb/create_vector_db.py
+@@ -23,7 +23,8 @@ from langchain_chroma import Chroma
+ from langchain_classic.document_loaders import DirectoryLoader
+ from langchain_classic.embeddings import HuggingFaceInstructEmbeddings
+ from langchain_classic.text_splitter import RecursiveCharacterTextSplitter
+-from langchain_classic.vectorstores import FAISS, Qdrant
++from langchain_classic.vectorstores import FAISS
++from langchain_qdrant import QdrantVectorStore
+ 
+ # Configure the logger
+ logging.basicConfig(
+@@ -84,7 +85,7 @@ def main(input_path: str, output_db: str, chunk_size: int, chunk_overlap: int, d
+         f'Processing embeddings using {embedding_model}. This could take time depending on the number of chunks ...'
+     )
+ 
+-    vectorstore: FAISS | Qdrant | Chroma
++    vectorstore: FAISS | QdrantVectorStore | Chroma
+ 
+     if db_type == 'faiss':
+         vectorstore = FAISS.from_documents(documents=chunks, embedding=embeddings)
+@@ -93,7 +94,7 @@ def main(input_path: str, output_db: str, chunk_size: int, chunk_overlap: int, d
+     elif db_type == 'chromadb':
+         vectorstore = Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=output_db)
+     elif db_type == 'qdrant':
+-        vectorstore = Qdrant.from_documents(
++        vectorstore = QdrantVectorStore.from_documents(
+             documents=chunks,
+             embedding=embeddings,
+             path=output_db,
+@@ -101,7 +102,7 @@ def main(input_path: str, output_db: str, chunk_size: int, chunk_overlap: int, d
+         )
+     elif db_type == 'qdrant-server':
+         url = 'http://localhost:6333/'
+-        vectorstore = Qdrant.from_documents(
++        vectorstore = QdrantVectorStore.from_documents(
+             documents=chunks,
+             embedding=embeddings,
+             url=url,
+diff --git a/utils/vectordb/vector_db.py b/utils/vectordb/vector_db.py
+index 095ef4b..69e21e0 100644
+--- a/utils/vectordb/vector_db.py
++++ b/utils/vectordb/vector_db.py
+@@ -26,9 +26,10 @@ import chromadb
+ from langchain_chroma import Chroma
+ from langchain_classic.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+ from langchain_community.document_loaders import DirectoryLoader, UnstructuredURLLoader
+-from langchain_community.vectorstores import FAISS, Qdrant
++from langchain_community.vectorstores import FAISS
+ from langchain_huggingface import HuggingFaceEmbeddings
+ from langchain_milvus import Milvus
++from langchain_qdrant import QdrantVectorStore
+ from langchain_sambanova import SambaNovaEmbeddings
+ 
+ vectordb_dir = os.path.dirname(os.path.abspath(__file__))
+@@ -227,7 +228,7 @@ class VectorDb:
+             collection_name = f'collection_{self.collection_id}'
+             logger.info(f'This is the collection name: {collection_name}')
+ 
+-        vector_store: FAISS | Qdrant | Chroma | Milvus
++        vector_store: FAISS | QdrantVectorStore | Chroma | Milvus
+         if db_type == 'faiss':
+             vector_store = FAISS.from_documents(documents=chunks, embedding=embeddings)
+             if output_db:
+@@ -248,14 +249,14 @@ class VectorDb:
+ 
+         elif db_type == 'qdrant':
+             if output_db:
+-                vector_store = Qdrant.from_documents(
++                vector_store = QdrantVectorStore.from_documents(
+                     documents=chunks,
+                     embedding=embeddings,
+                     path=output_db,
+                     collection_name='test_collection',
+                 )
+             else:
+-                vector_store = Qdrant.from_documents(
++                vector_store = QdrantVectorStore.from_documents(
+                     documents=chunks,
+                     embedding=embeddings,
+                     collection_name='test_collection',
+@@ -290,7 +291,7 @@ class VectorDb:
+         db_type: str = 'chroma',
+         collection_name: Optional[str] = None,
+     ) -> Any:
+-        vector_store: FAISS | Qdrant | Chroma | Milvus
++        vector_store: FAISS | QdrantVectorStore | Chroma | Milvus
+         if db_type == 'faiss':
+             vector_store = FAISS.load_local(persist_directory, embedding_model, allow_dangerous_deserialization=True)  # type: ignore
+         elif db_type == 'chroma':

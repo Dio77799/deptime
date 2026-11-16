@@ -1,0 +1,487 @@
+diff --git a/HF/transformers/setup.py b/HF/transformers/setup.py
+index 37fa113..4dd5b80 100644
+--- a/HF/transformers/setup.py
++++ b/HF/transformers/setup.py
+@@ -117,7 +117,7 @@ _deps = [
+     "fugashi>=1.0",
+     "GitPython<3.1.19",
+     "hf-doc-builder>=0.3.0",
+-    "huggingface-hub>=0.19.3,<1.0",
++    "huggingface-hub>=2.0.0,<3.0",
+     "importlib_metadata",
+     "ipadic>=1.0.0,<2.0",
+     "isort>=5.5.4",
+diff --git a/HF/transformers/src/transformers/commands/pt_to_tf.py b/HF/transformers/src/transformers/commands/pt_to_tf.py
+index 0185679..b28f629 100644
+--- a/HF/transformers/src/transformers/commands/pt_to_tf.py
++++ b/HF/transformers/src/transformers/commands/pt_to_tf.py
+@@ -17,9 +17,8 @@ import os
+ from argparse import ArgumentParser, Namespace
+ from importlib import import_module
+ 
+-import huggingface_hub
+ import numpy as np
+-from packaging import version
++from huggingface_hub import CommitOperationAdd, create_commit, snapshot_download, upload_folder
+ 
+ from .. import (
+     FEATURE_EXTRACTOR_MAPPING,
+@@ -267,18 +266,8 @@ class PTtoTFCommand(BaseTransformersCLICommand):
+         return pt_input, tf_input
+ 
+     def run(self):
+-        # hub version 0.9.0 introduced the possibility of programmatically opening PRs with normal write tokens.
+-        if version.parse(huggingface_hub.__version__) < version.parse("0.9.0"):
+-            raise ImportError(
+-                "The huggingface_hub version must be >= 0.9.0 to use this command. Please update your huggingface_hub"
+-                " installation."
+-            )
+-        else:
+-            from huggingface_hub import Repository, create_commit
+-            from huggingface_hub._commit_api import CommitOperationAdd
+-
+         # Fetch remote data
+-        repo = Repository(local_dir=self._local_dir, clone_from=self._model_name)
++        snapshot_download(repo_id=self._model_name, local_dir=self._local_dir)
+ 
+         # Load config and get the appropriate architecture -- the latter is needed to convert the head's weights
+         config = AutoConfig.from_pretrained(self._local_dir)
+@@ -380,9 +369,12 @@ class PTtoTFCommand(BaseTransformersCLICommand):
+ 
+         commit_message = "Update TF weights" if self._new_weights else "Add TF weights"
+         if self._push:
+-            repo.git_add(auto_lfs_track=True)
+-            repo.git_commit(commit_message)
+-            repo.git_push(blocking=True)  # this prints a progress bar with the upload
++            upload_folder(
++                repo_id=self._model_name,
++                folder_path=self._local_dir,
++                commit_message=commit_message,
++                ignore_patterns=[".cache/*"],  # local bookkeeping folder created by `snapshot_download`
++            )
+             self._logger.warning(f"TF weights pushed into {self._model_name}")
+         elif not self._no_pr:
+             self._logger.warning("Uploading the weights into a new PR...")
+diff --git a/HF/transformers/src/transformers/commands/user.py b/HF/transformers/src/transformers/commands/user.py
+index 938f4c8..64566b3 100644
+--- a/HF/transformers/src/transformers/commands/user.py
++++ b/HF/transformers/src/transformers/commands/user.py
+@@ -16,8 +16,8 @@ import subprocess
+ from argparse import ArgumentParser
+ from typing import List, Union
+ 
+-from huggingface_hub.hf_api import HfFolder, create_repo, whoami
+-from requests.exceptions import HTTPError
++from huggingface_hub import create_repo, get_token, whoami
++from huggingface_hub.utils import HfHubHTTPError as HTTPError
+ 
+ from . import BaseTransformersCLICommand
+ 
+@@ -117,13 +117,14 @@ class WhoamiCommand(BaseUserCommand):
+                 "`huggingface-cli whoami` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+         try:
+-            user, orgs = whoami(token)
+-            print(user)
++            info = whoami(token=token)
++            print(info["name"])
++            orgs = [org["name"] for org in info.get("orgs", [])]
+             if orgs:
+                 print(ANSI.bold("orgs: "), ",".join(orgs))
+         except HTTPError as e:
+@@ -151,7 +152,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
+@@ -174,7 +175,7 @@ class RepoCreateCommand(BaseUserCommand):
+             )
+         print("")
+ 
+-        user, _ = whoami(token)
++        user = whoami(token=token)["name"]
+         namespace = self.args.organization if self.args.organization is not None else user
+         full_name = f"{namespace}/{self.args.name}"
+         print(f"You are about to create {ANSI.bold(full_name)}")
+@@ -185,7 +186,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 print("Abort")
+                 exit()
+         try:
+-            url = create_repo(token, name=self.args.name, organization=self.args.organization)
++            url = create_repo(repo_id=full_name, token=token)
+         except HTTPError as e:
+             print(e)
+             print(ANSI.red(e.response.text))
+diff --git a/HF/transformers/src/transformers/dependency_versions_table.py b/HF/transformers/src/transformers/dependency_versions_table.py
+index 7f78c82..9976305 100644
+--- a/HF/transformers/src/transformers/dependency_versions_table.py
++++ b/HF/transformers/src/transformers/dependency_versions_table.py
+@@ -24,7 +24,7 @@ deps = {
+     "fugashi": "fugashi>=1.0",
+     "GitPython": "GitPython<3.1.19",
+     "hf-doc-builder": "hf-doc-builder>=0.3.0",
+-    "huggingface-hub": "huggingface-hub>=0.19.3,<1.0",
++    "huggingface-hub": "huggingface-hub>=2.0.0,<3.0",
+     "importlib_metadata": "importlib_metadata",
+     "ipadic": "ipadic>=1.0.0,<2.0",
+     "isort": "isort>=5.5.4",
+diff --git a/HF/transformers/src/transformers/keras_callbacks.py b/HF/transformers/src/transformers/keras_callbacks.py
+index b6e8327..4ee9ae8 100644
+--- a/HF/transformers/src/transformers/keras_callbacks.py
++++ b/HF/transformers/src/transformers/keras_callbacks.py
+@@ -6,7 +6,7 @@ from typing import Callable, List, Optional, Union
+ 
+ import numpy as np
+ import tensorflow as tf
+-from huggingface_hub import Repository, create_repo
++from huggingface_hub import create_repo, upload_folder
+ from packaging.version import parse
+ 
+ from . import IntervalStrategy, PreTrainedTokenizerBase
+@@ -340,7 +340,7 @@ class PushToHubCallback(keras.callbacks.Callback):
+         self.hub_model_id = create_repo(repo_id=hub_model_id, exist_ok=True, token=hub_token).repo_id
+ 
+         self.output_dir = output_dir
+-        self.repo = Repository(str(self.output_dir), clone_from=self.hub_model_id, token=hub_token)
++        self.hub_token = hub_token
+ 
+         self.tokenizer = tokenizer
+         self.last_job = None
+@@ -348,6 +348,17 @@ class PushToHubCallback(keras.callbacks.Callback):
+         self.training_history = None
+         self.model_card_args = model_card_args
+ 
++    def _push_to_hub(self, commit_message: str, blocking: bool):
++        # Uploads the content of `output_dir` to the Hub. If `blocking=False`, the upload runs in the background and
++        # a `Future` is returned.
++        return upload_folder(
++            repo_id=self.hub_model_id,
++            folder_path=str(self.output_dir),
++            commit_message=commit_message,
++            token=self.hub_token,
++            run_as_future=not blocking,
++        )
++
+     def on_train_begin(self, logs=None):
+         # Although we can access model.history, we have no guarantees that the History callback will fire before this
+         # one, so we keep track of it here too
+@@ -355,14 +366,12 @@ class PushToHubCallback(keras.callbacks.Callback):
+ 
+     def on_train_batch_end(self, batch, logs=None):
+         if self.save_strategy == IntervalStrategy.STEPS and (batch + 1) % self.save_steps == 0:
+-            if self.last_job is not None and not self.last_job.is_done:
++            if self.last_job is not None and not self.last_job.done():
+                 return  # The last upload is still running, don't start another
+             self.model.save_pretrained(self.output_dir)
+             if self.tokenizer is not None:
+                 self.tokenizer.save_pretrained(self.output_dir)
+-            _, self.last_job = self.repo.push_to_hub(
+-                commit_message=f"Training in progress steps {batch}", blocking=False
+-            )
++            self.last_job = self._push_to_hub(commit_message=f"Training in progress steps {batch}", blocking=False)
+ 
+     def on_epoch_end(self, epoch, logs=None):
+         logs = logs.copy()  # Don't accidentally write things that Keras will read later
+@@ -370,7 +379,7 @@ class PushToHubCallback(keras.callbacks.Callback):
+             logs["epoch"] = epoch
+         self.training_history.append(logs)
+         if self.save_strategy == IntervalStrategy.EPOCH:
+-            if self.last_job is not None and not self.last_job.is_done:
++            if self.last_job is not None and not self.last_job.done():
+                 return  # The last upload is still running, don't start another
+             self.model.save_pretrained(self.output_dir)
+             if self.tokenizer is not None:
+@@ -387,15 +396,13 @@ class PushToHubCallback(keras.callbacks.Callback):
+             model_card = train_summary.to_model_card()
+             with (self.output_dir / "README.md").open("w") as f:
+                 f.write(model_card)
+-            _, self.last_job = self.repo.push_to_hub(
+-                commit_message=f"Training in progress epoch {epoch}", blocking=False
+-            )
++            self.last_job = self._push_to_hub(commit_message=f"Training in progress epoch {epoch}", blocking=False)
+ 
+     def on_train_end(self, logs=None):
+         # Makes sure the latest version of the model is uploaded
+-        if self.last_job is not None and not self.last_job.is_done:
++        if self.last_job is not None and not self.last_job.done():
+             logging.info("Pushing the last epoch to the Hub, this may take a while...")
+-            while not self.last_job.is_done:
++            while not self.last_job.done():
+                 sleep(1)
+         else:
+             self.model.save_pretrained(self.output_dir)
+@@ -410,4 +417,4 @@ class PushToHubCallback(keras.callbacks.Callback):
+             model_card = train_summary.to_model_card()
+             with (self.output_dir / "README.md").open("w") as f:
+                 f.write(model_card)
+-            self.repo.push_to_hub(commit_message="End of training", blocking=True)
++            self._push_to_hub(commit_message="End of training", blocking=True)
+diff --git a/HF/transformers/src/transformers/modelcard.py b/HF/transformers/src/transformers/modelcard.py
+index 4776737..07656ee 100644
+--- a/HF/transformers/src/transformers/modelcard.py
++++ b/HF/transformers/src/transformers/modelcard.py
+@@ -23,10 +23,9 @@ from dataclasses import dataclass
+ from pathlib import Path
+ from typing import Any, Dict, List, Optional, Union
+ 
+-import requests
+ import yaml
+ from huggingface_hub import model_info
+-from huggingface_hub.utils import HFValidationError
++from huggingface_hub.utils import HFValidationError, httpx
+ 
+ from . import __version__
+ from .models.auto.modeling_auto import (
+@@ -385,7 +384,7 @@ class TrainingSummary:
+                 for tag in info.tags:
+                     if tag.startswith("license:"):
+                         self.license = tag[8:]
+-            except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError, HFValidationError):
++            except (httpx.HTTPError, HFValidationError):
+                 pass
+ 
+     def create_model_index(self, metric_mapping):
+diff --git a/HF/transformers/src/transformers/tools/agents.py b/HF/transformers/src/transformers/tools/agents.py
+index 86adde9..4b57df1 100644
+--- a/HF/transformers/src/transformers/tools/agents.py
++++ b/HF/transformers/src/transformers/tools/agents.py
+@@ -22,7 +22,7 @@ from dataclasses import dataclass
+ from typing import Dict
+ 
+ import requests
+-from huggingface_hub import HfFolder, hf_hub_download, list_spaces
++from huggingface_hub import get_token, hf_hub_download, list_spaces
+ 
+ from ..models.auto import AutoTokenizer
+ from ..utils import is_offline_mode, is_openai_available, is_torch_available, logging
+@@ -629,7 +629,7 @@ class HfAgent(Agent):
+     ):
+         self.url_endpoint = url_endpoint
+         if token is None:
+-            self.token = f"Bearer {HfFolder().get_token()}"
++            self.token = f"Bearer {get_token()}"
+         elif token.startswith("Bearer") or token.startswith("Basic"):
+             self.token = token
+         else:
+diff --git a/HF/transformers/src/transformers/tools/base.py b/HF/transformers/src/transformers/tools/base.py
+index 2a7d05a..7d501fc 100644
+--- a/HF/transformers/src/transformers/tools/base.py
++++ b/HF/transformers/src/transformers/tools/base.py
+@@ -56,6 +56,8 @@ TOOL_CONFIG_FILE = "tool_config.json"
+ def get_repo_type(repo_id, repo_type=None, **hub_kwargs):
+     if repo_type is not None:
+         return repo_type
++    # `resume_download` and `proxies` are not supported by `hf_hub_download` anymore.
++    hub_kwargs = {k: v for k, v in hub_kwargs.items() if k not in ("resume_download", "proxies")}
+     try:
+         hf_hub_download(repo_id, TOOL_CONFIG_FILE, repo_type="space", **hub_kwargs)
+         return "space"
+@@ -756,7 +758,7 @@ class EndpointClient:
+             payload["parameters"] = params
+ 
+         # Make API call
+-        response = get_session().post(self.endpoint_url, headers=self.headers, json=payload, data=data)
++        response = get_session().post(self.endpoint_url, headers=self.headers, json=payload, content=data)
+ 
+         # By default, parse the response for the user.
+         if output_image:
+diff --git a/HF/transformers/src/transformers/utils/hub.py b/HF/transformers/src/transformers/utils/hub.py
+index 616bfa7..06b6f00 100644
+--- a/HF/transformers/src/transformers/utils/hub.py
++++ b/HF/transformers/src/transformers/utils/hub.py
+@@ -29,7 +29,6 @@ from urllib.parse import urlparse
+ from uuid import uuid4
+ 
+ import huggingface_hub
+-import requests
+ from huggingface_hub import (
+     _CACHED_NO_EXIST,
+     CommitOperationAdd,
+@@ -44,7 +43,7 @@ from huggingface_hub import (
+     hf_hub_url,
+     try_to_load_from_cache,
+ )
+-from huggingface_hub.file_download import REGEX_COMMIT_HASH, http_get
++from huggingface_hub.file_download import REGEX_COMMIT_HASH
+ from huggingface_hub.utils import (
+     EntryNotFoundError,
+     GatedRepoError,
+@@ -53,11 +52,16 @@ from huggingface_hub.utils import (
+     RepositoryNotFoundError,
+     RevisionNotFoundError,
+     build_hf_headers,
++    get_session,
+     hf_raise_for_status,
++    httpx,
+     send_telemetry,
+ )
+ from huggingface_hub.utils._deprecation import _deprecate_method
+-from requests.exceptions import HTTPError
++
++# `huggingface_hub` >= 1.0 uses `httpx` (`httpx2` in >= 2.0) instead of `requests`. `httpx` is re-exported by
++# `huggingface_hub.utils` so that the right HTTP library is always used.
++HTTPError = httpx.HTTPError
+ 
+ from . import __version__, logging
+ from .generic import working_or_temp_dir
+@@ -202,7 +206,7 @@ def get_cached_models(cache_dir: Union[str, Path] = None) -> List[Tuple]:
+ 
+ def define_sagemaker_information():
+     try:
+-        instance_data = requests.get(os.environ["ECS_CONTAINER_METADATA_URI"]).json()
++        instance_data = get_session().get(os.environ["ECS_CONTAINER_METADATA_URI"]).json()
+         dlc_container_used = instance_data["Image"]
+         dlc_tag = instance_data["Image"].split(":")[1]
+     except Exception:
+@@ -249,6 +253,26 @@ def http_user_agent(user_agent: Union[Dict, str, None] = None) -> str:
+     return ua
+ 
+ 
++def _warn_if_ignored_download_args(proxies=None, resume_download=False):
++    """
++    `huggingface_hub` >= 1.0 does not support per-call `proxies` (use the `HTTP_PROXY`/`HTTPS_PROXY` environment
++    variables) nor `resume_download` (interrupted downloads are always resumed). The arguments are still accepted by
++    the functions of this module for backward compatibility but they are ignored.
++    """
++    if proxies:
++        warnings.warn(
++            "The `proxies` argument is ignored with the installed version of `huggingface_hub`. Please set the "
++            "`HTTP_PROXY` / `HTTPS_PROXY` environment variables instead.",
++            FutureWarning,
++        )
++    if resume_download:
++        warnings.warn(
++            "The `resume_download` argument is ignored with the installed version of `huggingface_hub`: interrupted "
++            "downloads are always resumed.",
++            FutureWarning,
++        )
++
++
+ def extract_commit_hash(resolved_file: Optional[str], commit_hash: Optional[str]) -> Optional[str]:
+     """
+     Extracts the commit hash from a resolved filename toward a cache file.
+@@ -300,10 +324,10 @@ def cached_file(
+             Whether or not to force to (re-)download the configuration files and override the cached versions if they
+             exist.
+         resume_download (`bool`, *optional*, defaults to `False`):
+-            Whether or not to delete incompletely received file. Attempts to resume the download if such a file exists.
++            Deprecated and ignored: interrupted downloads are always resumed by `huggingface_hub`.
+         proxies (`Dict[str, str]`, *optional*):
+-            A dictionary of proxy servers to use by protocol or endpoint, e.g., `{'http': 'foo.bar:3128',
+-            'http://hostname': 'foo.bar:4012'}.` The proxies are used on each request.
++            Deprecated and ignored: `huggingface_hub` only supports proxies configured with the `HTTP_PROXY` and
++            `HTTPS_PROXY` environment variables.
+         token (`str` or *bool*, *optional*):
+             The token to use as HTTP bearer authorization for remote files. If `True`, will use the token generated
+             when running `huggingface-cli login` (stored in `~/.huggingface`).
+@@ -345,6 +369,8 @@ def cached_file(
+             raise ValueError("`token` and `use_auth_token` are both specified. Please set only the argument `token`.")
+         token = use_auth_token
+ 
++    _warn_if_ignored_download_args(proxies=proxies, resume_download=resume_download)
++
+     # Private arguments
+     #     _raise_exceptions_for_gated_repo: if False, do not raise an exception for gated repo error but return
+     #         None.
+@@ -404,8 +430,6 @@ def cached_file(
+             cache_dir=cache_dir,
+             user_agent=user_agent,
+             force_download=force_download,
+-            proxies=proxies,
+-            resume_download=resume_download,
+             token=token,
+             local_files_only=local_files_only,
+         )
+@@ -500,10 +524,10 @@ def get_file_from_repo(
+             Whether or not to force to (re-)download the configuration files and override the cached versions if they
+             exist.
+         resume_download (`bool`, *optional*, defaults to `False`):
+-            Whether or not to delete incompletely received file. Attempts to resume the download if such a file exists.
++            Deprecated and ignored: interrupted downloads are always resumed by `huggingface_hub`.
+         proxies (`Dict[str, str]`, *optional*):
+-            A dictionary of proxy servers to use by protocol or endpoint, e.g., `{'http': 'foo.bar:3128',
+-            'http://hostname': 'foo.bar:4012'}.` The proxies are used on each request.
++            Deprecated and ignored: `huggingface_hub` only supports proxies configured with the `HTTP_PROXY` and
++            `HTTPS_PROXY` environment variables.
+         token (`str` or *bool*, *optional*):
+             The token to use as HTTP bearer authorization for remote files. If `True`, will use the token generated
+             when running `huggingface-cli login` (stored in `~/.huggingface`).
+@@ -571,12 +595,13 @@ def download_url(url, proxies=None):
+     Args:
+         url (`str`): The url of the file to download.
+         proxies (`Dict[str, str]`, *optional*):
+-            A dictionary of proxy servers to use by protocol or endpoint, e.g., `{'http': 'foo.bar:3128',
+-            'http://hostname': 'foo.bar:4012'}.` The proxies are used on each request.
++            Deprecated and ignored: `huggingface_hub` only supports proxies configured with the `HTTP_PROXY` and
++            `HTTPS_PROXY` environment variables.
+ 
+     Returns:
+         `str`: The location of the temporary file where the url was downloaded.
+     """
++    _warn_if_ignored_download_args(proxies=proxies)
+     warnings.warn(
+         f"Using `from_pretrained` with the url of a file (here {url}) is deprecated and won't be possible anymore in"
+         " v5 of Transformers. You should host your file on the Hub (hf.co) instead and use the repository ID. Note"
+@@ -586,7 +611,10 @@ def download_url(url, proxies=None):
+     )
+     tmp_fd, tmp_file = tempfile.mkstemp()
+     with os.fdopen(tmp_fd, "wb") as f:
+-        http_get(url, f, proxies=proxies)
++        with get_session().stream("GET", url, follow_redirects=True) as response:
++            hf_raise_for_status(response)
++            for chunk in response.iter_bytes():
++                f.write(chunk)
+     return tmp_file
+ 
+ 
+@@ -624,7 +652,8 @@ def has_file(
+     url = hf_hub_url(path_or_repo, filename=filename, revision=revision)
+     headers = build_hf_headers(token=token, user_agent=http_user_agent())
+ 
+-    r = requests.head(url, headers=headers, allow_redirects=False, proxies=proxies, timeout=10)
++    _warn_if_ignored_download_args(proxies=proxies)
++    r = get_session().head(url, headers=headers, follow_redirects=False, timeout=10)
+     try:
+         hf_raise_for_status(r)
+         return True
+@@ -644,7 +673,7 @@ def has_file(
+             f"{revision} is not a valid git identifier (branch name, tag name or commit id) that exists for this "
+             f"model name. Check the model page at 'https://huggingface.co/{path_or_repo}' for available revisions."
+         )
+-    except requests.HTTPError:
++    except HTTPError:
+         # We return false for EntryNotFoundError (logical) as well as any connection error.
+         return False
+ 
+@@ -1199,7 +1228,7 @@ def move_cache(cache_dir=None, new_cache_dir=None, token=None):
+         if url not in hub_metadata:
+             try:
+                 hub_metadata[url] = get_hf_file_metadata(url, token=token)
+-            except requests.HTTPError:
++            except HTTPError:
+                 continue
+ 
+         etag, commit_hash = hub_metadata[url].etag, hub_metadata[url].commit_hash
+diff --git a/MambaVision/vim/vim_requirements.txt b/MambaVision/vim/vim_requirements.txt
+index c431c59..f33e3db 100644
+--- a/MambaVision/vim/vim_requirements.txt
++++ b/MambaVision/vim/vim_requirements.txt
+@@ -27,7 +27,7 @@ gitdb==4.0.11
+ GitPython==3.1.40
+ greenlet==3.0.2
+ gunicorn==21.2.0
+-huggingface-hub==0.19.4
++huggingface-hub==2.4.0
+ idna==3.6
+ importlib-metadata==7.0.0
+ itsdangerous==2.1.2

@@ -1,0 +1,98 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 50,
+  "duration_ms": 96456,
+  "total_cost_usd": 0.3547295,
+  "usage": {
+   "input_tokens": 30,
+   "cache_creation_input_tokens": 40462,
+   "cache_read_input_tokens": 426606,
+   "output_tokens": 13799,
+   "output_tokens_details": {
+    "thinking_tokens": 2741
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 40462,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1029,
+     "cache_read_input_tokens": 45810,
+     "cache_creation_input_tokens": 429,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 429
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.45,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.27,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Glob": 1,
+  "Grep": 7,
+  "Read": 13,
+  "WebFetch": 3,
+  "Edit": 25
+ },
+ "deptime_calls": [],
+ "other_bash": 0,
+ "fetched": [
+  "https://pypi.org/pypi/langchain/1.4.9/json",
+  "https://pypi.org/pypi/langchain-openai/json",
+  "https://pypi.org/pypi/langchain-core/json"
+ ],
+ "denied": 0,
+ "task": "pin-dzlab__deeplearning.ai-langchain-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 97.1,
+ "service_error": false
+}

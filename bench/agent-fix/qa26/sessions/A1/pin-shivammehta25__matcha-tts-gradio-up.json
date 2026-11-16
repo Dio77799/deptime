@@ -1,0 +1,102 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 17,
+  "duration_ms": 59146,
+  "total_cost_usd": 0.1172659,
+  "usage": {
+   "input_tokens": 20,
+   "cache_creation_input_tokens": 14430,
+   "cache_read_input_tokens": 128585,
+   "output_tokens": 4001,
+   "output_tokens_details": {
+    "thinking_tokens": 837
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 14430,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 511,
+     "cache_read_input_tokens": 18378,
+     "cache_creation_input_tokens": 1829,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1829
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.38,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.26,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 2,
+  "Read": 1,
+  "Bash": 1,
+  "Glob": 1,
+  "WebFetch": 6,
+  "Edit": 5
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://www.gradio.app/main/guides/gradio-6-migration-guide",
+  "https://www.gradio.app/docs/gradio/markdown",
+  "https://www.gradio.app/docs/gradio/image",
+  "https://www.gradio.app/docs/gradio/group",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/__init__.py",
+  "https://www.gradio.app/docs/gradio/button"
+ ],
+ "denied": 0,
+ "task": "pin-shivammehta25__matcha-tts-gradio-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 59.7,
+ "service_error": false
+}

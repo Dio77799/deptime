@@ -1,0 +1,112 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 16,
+  "duration_ms": 49416,
+  "total_cost_usd": 0.11655279999999998,
+  "usage": {
+   "input_tokens": 22,
+   "cache_creation_input_tokens": 11232,
+   "cache_read_input_tokens": 182407,
+   "output_tokens": 3461,
+   "output_tokens_details": {
+    "thinking_tokens": 266
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 11232,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1039,
+     "cache_read_input_tokens": 21240,
+     "cache_creation_input_tokens": 458,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 458
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794869400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.19,
+    "resetsAt": 1794869400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.25,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 3,
+  "Read": 2,
+  "mcp__plugin_deptime_deptime__symbol_history": 1,
+  "Grep": 2,
+  "WebSearch": 1,
+  "WebFetch": 6
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.2 check-upgrade . --package llama-index-core --to 0.14.25 --from 0.10.34 --format markdown --output .deptime-report.md",
+  "symbol_history"
+ ],
+ "other_bash": 2,
+ "fetched": [
+  "https://raw.githubusercontent.com/run-llama/llama_index/main/llama-index-core/llama_index/core/evaluation/__init__.py",
+  "https://github.com/run-llama/llama_index/blob/main/CHANGELOG.md",
+  "https://raw.githubusercontent.com/run-llama/llama_index/main/llama-index-finetuning/llama_index/finetuning/__init__.py",
+  "https://api.github.com/search/code?q=EmbeddingQAFinetuneDataset+repo:run-llama/llama_index+filename:__init__.py",
+  "https://pypi.org/pypi/llama-index-finetuning/json",
+  "https://github.com/run-llama/llama_index/releases?q=0.14.21"
+ ],
+ "denied": 2,
+ "task": "pin-aiplanethub__beyondllm-llama-index-core-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 51.1,
+ "service_error": false
+}
