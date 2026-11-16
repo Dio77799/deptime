@@ -98,9 +98,6 @@ In order. The first line of each phase is what it delivers.
 code?" from a project directory.
 **Phase 3, the GitHub Action (DT-GTM-06, done).** A check on Dependabot and Renovate pull requests. DT-QA-22 met
 every bar on real ones; its wrong answers and misses first:
-- [ ] **DT-DATA-51** (from Held): Names computed at import time read absent · `P1` `M`
-  - Now a false break on a real update: sqlalchemy 2.1 binds `orm.collections.attribute_mapped_collection` with
-    `global` in a function run at import (DT-QA-22). Detail in the archive.
 - [ ] **DT-CORE-73**: Members of a name that became an alias read `unknown` · `P2` `S`
   - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project).
 
@@ -127,6 +124,9 @@ every bar on real ones; its wrong answers and misses first:
 
 ## Done since 2026-11-13
 
+- [x] **DT-DATA-51**, the `global` shape (2026-11-16): names a top-level function the module calls at import binds
+  through `global` and imports are the module's: sqlalchemy 2.x's `orm.collections.attribute_mapped_collection` and
+  six more. With DT-CORE-72 and DT-DATA-82, `SNAPSHOT_FORMAT` 27. instructor's and chromadb's shapes stay held.
 - [x] **DT-DATA-82** (2026-11-16): a class or function defined in an `except ImportError` handler isn't recorded as
   raising: dspy 3.4.1's `GEPA` stand-in, which raises only where gepa can't install. Extraction, in the batch.
 - [x] **DT-CORE-72** (2026-11-16): a `@dataclass(init=False)` class keeps the constructor it inherits. griffe made
@@ -234,6 +234,7 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 
 | ID | Gap | Fix is in |
 |---|---|---|
+| DT-DATA-51 | Names computed at import time read `missing`: instructor's provider factories, chromadb's `globals()` writes | extraction |
 | DT-DATA-75 | Names in compiled extension modules read `missing` (scikit-learn's `tree._tree`) | extraction |
 | DT-DATA-77 | A keyword only a decorator takes reads `never_existed` (huggingface_hub's `use_auth_token`) | extraction |
 | DT-DATA-78 | openai 1.0's removed resources point to response types of the same name; `ChatCompletion.create` reads missing where a proxy raises | curated hints, pairing rule |

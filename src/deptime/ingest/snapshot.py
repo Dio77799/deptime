@@ -38,7 +38,7 @@ from deptime.ingest.replacements import (
 if TYPE_CHECKING:
     from deptime.config import ServedRule
 
-SNAPSHOT_FORMAT = 26  # bump when extraction changes: cached snapshots in another format are rebuilt
+SNAPSHOT_FORMAT = 27  # bump when extraction changes: cached snapshots in another format are rebuilt
 MAX_DEPTH = 12  # guards pathological re-export cycles
 
 DEPRECATED_DECORATOR_RE = re.compile(r"^(?:[\w.]+\.)?deprecated\b(?:\(.*\))?$", re.S)
@@ -4487,6 +4487,81 @@ class _ImportFallback(griffe.Extension):
             func.labels.add(IMPORT_FALLBACK)
 
 
+def _function_body(func: ast.FunctionDef):
+    """The statements a function runs itself, through `if`, `try` and `with`, not inside nested definitions."""
+    stack = list(func.body)
+    while stack:
+        st = stack.pop(0)
+        if isinstance(st, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            continue
+        yield st
+        for part in ("body", "orelse", "finalbody", "handlers"):
+            stack.extend(getattr(st, part, None) or [])
+
+
+def _import_target(mod: griffe.Module, st: ast.ImportFrom, name: str) -> str | None:
+    """The path `from <st.module> import <name>` binds, relative imports resolved against `mod`'s package."""
+    if not st.level:
+        return f"{st.module}.{name}" if st.module else None
+    parts = mod.path.split(".") if mod.is_init_module else mod.path.split(".")[:-1]
+    if st.level - 1 >= len(parts):
+        return None
+    base = parts[: len(parts) - (st.level - 1)]
+    return ".".join([*base, *([st.module] if st.module else []), name])
+
+
+class _CalledGlobals(griffe.Extension):
+    """Names a module binds through `global` in a function it calls at import (DT-DATA-51). sqlalchemy 2.x's
+    `orm/collections.py` ends with `__go(locals())`, whose body declares `global attribute_mapped_collection, ...`
+    and imports them from `.mapped_collection`, so `orm.collections.attribute_mapped_collection` read missing though
+    the module lists it in `__all__`: a false break on a real update (DT-QA-22). Only a top-level function called by
+    a top-level statement, and only the imports its own body makes of a name it declares `global`, are read; a name
+    the module binds already stays, unless only for type checkers (`if TYPE_CHECKING:`), which this binds at
+    runtime."""
+
+    def on_module_members(
+        self, *, node: ast.AST | griffe.ObjectNode, mod: griffe.Module, **kwargs: Any
+    ) -> None:
+        if not isinstance(node, ast.Module):
+            return
+        funcs = {st.name: st for st in node.body if isinstance(st, ast.FunctionDef)}
+        called = [
+            funcs[st.value.func.id]
+            for st in node.body
+            if isinstance(st, ast.Expr)
+            and isinstance(st.value, ast.Call)
+            and isinstance(st.value.func, ast.Name)
+            and st.value.func.id in funcs
+        ]
+        for func in called:
+            body = list(_function_body(func))
+            declared = {n for st in body if isinstance(st, ast.Global) for n in st.names}
+            if not declared:
+                continue
+            for st in body:
+                if not isinstance(st, ast.ImportFrom):
+                    continue
+                for alias in st.names:
+                    name = alias.asname or alias.name
+                    if name not in declared or alias.name == "*":
+                        continue
+                    target = _import_target(mod, st, alias.name)
+                    have = mod.members.get(name)
+                    if target is None or (have is not None and have.runtime):
+                        continue
+                    mod.set_member(
+                        name,
+                        griffe.Alias(
+                            name,
+                            target,
+                            lineno=st.lineno,
+                            endlineno=st.end_lineno,
+                            runtime=True,
+                            analysis="static",
+                        ),
+                    )
+
+
 class _Rebound(griffe.Extension):
     """A class or function its scope rebinds to a call on itself is still that class or function (DT-DATA-50). griffe
     records `AutoModel = auto_class_update(AutoModel)` as an attribute, so transformers' 41 Auto classes had no
@@ -4907,7 +4982,12 @@ def build_snapshot(
             # search_paths replaces sys.path; other distributions' names stay aliases.
             resolve_external=None,
             extensions=griffe.load_extensions(
-                _RuntimeElse(), _OverloadsOnly(), _Rebound(), _ImportStructure(), _ImportFallback()
+                _RuntimeElse(),
+                _OverloadsOnly(),
+                _Rebound(),
+                _ImportStructure(),
+                _ImportFallback(),
+                _CalledGlobals(),
             ),
         )
         if isinstance(loaded, griffe.Module):

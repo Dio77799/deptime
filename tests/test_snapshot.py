@@ -3616,6 +3616,42 @@ def test_a_fallback_defined_only_when_an_import_fails_isnt_recorded_as_raising(t
     assert snap.symbols["opt.strict"].raises == "RuntimeError: a handler for something else"
 
 
+def test_names_a_function_run_at_import_binds_through_global_are_recorded(tmp_path):
+    """DT-DATA-51: sqlalchemy 2.x's `orm/collections.py` ends with `__go(locals())`, which declares `global
+    attribute_mapped_collection, ...` and imports them, so the name read missing though `__all__` lists it."""
+    files = {
+        "sa/__init__.py": "",
+        "sa/orm/__init__.py": "",
+        "sa/orm/mapped.py": (
+            "def keyed_dict(attr_name, *, ignore=False):\n    pass\n\n"
+            "class KeyFuncDict(dict):\n    pass\n\n"
+            "attribute_mapped_collection = keyed_dict\n"
+        ),
+        "sa/orm/collections.py": (
+            "from typing import TYPE_CHECKING\n\n"
+            "if TYPE_CHECKING:\n    from .mapped import KeyFuncDict\n\n"
+            "__all__ = ['keyed_dict', 'attribute_mapped_collection', 'KeyFuncDict']\n\n\n"
+            "def __go(lcls):\n"
+            "    global keyed_dict, attribute_mapped_collection, KeyFuncDict\n"
+            "    from .mapped import keyed_dict\n"
+            "    from .mapped import attribute_mapped_collection\n"
+            "    from .mapped import KeyFuncDict\n"
+            "    from .mapped import KeyFuncDict as not_global\n\n\n"
+            "def _never_called():\n    global hidden\n    from .mapped import keyed_dict as hidden\n\n\n"
+            "__go(locals())\n"
+        ),
+    }
+    snap = build_snapshot("sa", "2.1", ["sa"], _write(tmp_path, files))
+    sym = snap.symbols
+    assert sym["sa.orm.collections.keyed_dict"].canonical == "sa.orm.mapped.keyed_dict"
+    assert [p["name"] for p in sym["sa.orm.collections.keyed_dict"].params] == ["attr_name", "ignore"]
+    assert "sa.orm.collections.attribute_mapped_collection" in sym
+    assert (
+        sym["sa.orm.collections.KeyFuncDict"].kind == "class"
+    )  # bound at runtime, not only for type checkers
+    assert "sa.orm.collections.not_global" not in sym and "sa.orm.collections.hidden" not in sym
+
+
 def test_a_namespace_import_root_is_recorded(tmp_path):
     root = _write(tmp_path, {"nsroot/graph/__init__.py": "def g():\n    pass\n"})
     assert build_snapshot("nsroot", "1.0", ["nsroot"], root).namespaces == ["nsroot"]
