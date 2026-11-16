@@ -488,8 +488,6 @@ def _handoff(result: UpgradeCheckResult) -> list[str]:
                 step += f"; try {_plain(f.replacements[0].target)}"
             where = ", ".join(f"{_plain(loc.file)}:{loc.line}" for loc in locs) or "(no line recorded)"
             items.append(f"- {where}: {step}")
-    if not items:
-        return []
     # DT-GTM-08: an `unknown` is a use DepTime can't rule out, not one it cleared (DT-QA-05 lost 4 sessions on it)
     unsure = [
         f"- {', '.join(f'{_plain(loc.file)}:{loc.line}' for loc in x.locations) or '(no line recorded)'}: "
@@ -498,6 +496,8 @@ def _handoff(result: UpgradeCheckResult) -> list[str]:
         for x in p.notices
         if x.status == "unknown"
     ]
+    if not items and not unsure:
+        return []
     more = "- and {} more: run `deptime check-upgrade --format json` for all"
     shown = items[:MAX_HANDOFF_LINES]
     if len(items) > len(shown):
@@ -512,12 +512,21 @@ def _handoff(result: UpgradeCheckResult) -> list[str]:
         "<details><summary>For a coding agent</summary>",
         "",
         "```text",
-        "DepTime confirmed these uses break with this update (failing at the new version, not at the old).",
-        "Fix these lines:",
-        *shown,
+        # DT-GTM-09 (from DT-QA-26): the block also shows when DepTime confirmed no break but can't tell about
+        # some uses, and says what to do without a replacement (the agent left 3 breaks it found as "not clear")
+        *(
+            [
+                "DepTime confirmed these uses break with this update (failing at the new version, not at the old).",
+                "Fix these lines. Where no replacement is given, find how the new version does the same thing (its"
+                " source, release notes or migration guide) and rewrite the code to it.",
+                *shown,
+            ]
+            if shown
+            else ["DepTime confirmed no break in this update."]
+        ),
         *tail,
         "Deprecations still work, and uses that fail at the old version too aren't caused by this update.",
-        "Then run deptime check-upgrade again: it should find no breaks.",
+        *(["Then run deptime check-upgrade again: it should find no breaks."] if shown else []),
         "```",
         "",
         "</details>",

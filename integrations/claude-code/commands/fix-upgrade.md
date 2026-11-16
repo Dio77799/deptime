@@ -4,8 +4,8 @@ argument-hint: "[package version [old-version]] (empty: compare the lockfiles at
 allowed-tools: Bash(uvx deptime==0.2.2 check-upgrade:*), Bash(rm .deptime-report.md)
 ---
 
-DepTime finds the uses an update breaks; you write the fix. Its breaks are confirmed: fix them, and don't rewrite
-code it didn't report as broken or unsure.
+DepTime finds the uses an update breaks; you write the fix. Its breaks are confirmed: fix them. Leave working code
+as it is, but if you find another use this update breaks, fix that too.
 
 1. Run the check from the project's root. Arguments: `$ARGUMENTS`. It writes its report to `.deptime-report.md`;
    read that file with the Read tool (it can be longer than the shell shows). Run each command here exactly as
@@ -22,12 +22,15 @@ code it didn't report as broken or unsure.
 3. Exit code 1 means breaks. The report's "For a coding agent" block lists each one with every line it reaches:
    - "the index proves `old` -> `new`": use `new` where the code uses `old`.
    - "try X": the best replacement the index found; check how X is called at the new version before rewriting.
-   - No replacement: read the break's lines in the report and the package's release notes; if the fix isn't clear,
-     leave the line, say why, and offer to pin the package to the last version that had it (the report says which).
+   - No replacement: find how the new version does the same thing, in its source, release notes or migration guide,
+     and rewrite the code to that, even when it takes more than a rename (a new class, a new way to build or call
+     it). Leave a line only when the new version has no way to do what it did; then say why, and offer to pin the
+     package to the last version that had it (the report says which).
    - For the full detail of a break (each replacement's signature and confidence, release links), run the check
      again with `--format json --output .deptime-report.md` and read the file.
 4. Uses under "DepTime can't tell" may or may not break: DepTime couldn't follow them. Check each one yourself in
-   the new version's source or release notes, and fix it if it's broken. Do this even when the check exits 0.
+   the new version's source or release notes, and fix it the same way if it's broken. Do this even when the check
+   exits 0.
    Deprecations still work, and uses flagged at the old version too aren't caused by this update: leave both.
 5. Run the same command again, and repeat until it exits 0 or only breaks you couldn't fix remain. Then delete the
    report (`rm .deptime-report.md`), and report each line you changed, each unsure use you checked and what you

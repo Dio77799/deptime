@@ -305,6 +305,42 @@ def test_the_hand_off_asks_the_agent_to_check_unknown_uses():
     j = lines.index("- b.py:7: httpx.Maybe in httpx 2")
     assert i < j and "check each one yourself" in lines[j - 1]
     assert "httpx.Old" not in hand  # a deprecation still works: nothing to do for this update
+    assert "Where no replacement is given" in hand  # DT-GTM-09: rewrite it, don't leave it
+
+
+def test_agent_block_lists_unknowns_without_breaks():
+    """DT-GTM-09: with no confirmed break, the uses DepTime can't tell about still reach the agent."""
+    from deptime.models import PackageUpgrade, UpgradeCheckResult, UpgradeNotice, UseLocation
+
+    notices = [
+        UpgradeNotice(
+            path="httpx.Maybe",
+            status="unknown",
+            detail="namespace package",
+            locations=[UseLocation(file="b.py", line=7)],
+        )
+    ]
+    res = UpgradeCheckResult(
+        project="p",
+        breaks=0,
+        checked=[
+            PackageUpgrade(
+                change=_change("1", "2"),
+                resolved_version="2",
+                exact=True,
+                uses=1,
+                files=1,
+                breaks=[],
+                notices=notices,
+            )
+        ],
+    )
+    hand = to_markdown(res).split("For a coding agent", 1)[1]
+    assert "DepTime confirmed no break in this update." in hand
+    assert "- b.py:7: httpx.Maybe in httpx 2" in hand
+    assert "run deptime check-upgrade again" not in hand
+    res.checked[0].notices = []
+    assert "For a coding agent" not in to_markdown(res)
 
 
 def test_project_files_follow_gitignore(tmp_path):
