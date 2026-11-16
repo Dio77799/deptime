@@ -3417,7 +3417,9 @@ def test_a_name_bound_to_a_module_level_instances_method_takes_its_signature(tmp
     """DT-DATA-66: huggingface_hub binds its top-level functions as `api = HfApi()` then `list_models =
     api.list_models`; `list_models(model_name=...)` breaks where `HfApi.list_models` has no such parameter."""
     files = {
-        "hub/__init__.py": "from hub.api import HfApi, list_models, upload, whoami, size, made, other\n",
+        "hub/__init__.py": (
+            "from hub.api import HfApi, list_models, upload, whoami, size, made, other, typed, typed_made, maybe\n"
+        ),
         "hub/base.py": ("class Base:\n    def whoami(self, token=None):\n        pass\n"),
         "hub/api.py": (
             "import warnings\n"
@@ -3437,6 +3439,13 @@ def test_a_name_bound_to_a_module_level_instances_method_takes_its_signature(tmp
             "made = factory().list_models\n"
             "_made = factory()\n"
             "other = _made.list_models\n"
+            "from typing import Optional\n"
+            "_typed: HfApi = _holder.api\n"
+            "typed = _typed.list_models\n"
+            "_typed_made: HfApi = factory()\n"
+            "typed_made = _typed_made.upload\n"
+            "_maybe: Optional[HfApi] = None\n"
+            "maybe = _maybe.list_models\n"
         ),
     }
     snap = build_snapshot("hub", "1.0", ["hub"], _write(tmp_path, files))
@@ -3454,6 +3463,11 @@ def test_a_name_bound_to_a_module_level_instances_method_takes_its_signature(tmp
     # A property's value, and an instance not made by calling the class, stay attributes.
     assert symbols["hub.size"].kind == "attribute"
     assert symbols["hub.made"].kind == "attribute" and symbols["hub.other"].kind == "attribute"
+    # DT-DATA-83: an instance its annotation types (streamlit 1.33+'s `_main: _DeltaGenerator = ...`), whatever its
+    # value; not one typed through a subscript.
+    assert [p["name"] for p in symbols["hub.typed"].params] == ["search", "limit"]
+    assert [p["name"] for p in symbols["hub.typed_made"].params] == ["repo_id", "folder", "run_as_future"]
+    assert symbols["hub.maybe"].kind == "attribute"
 
 
 def test_a_modules_version_is_public_however_it_is_bound(tmp_path):

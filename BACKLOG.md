@@ -104,18 +104,27 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
     `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
 
-**Phase 4, the fix (the model's part, outside DepTime): measured.** DT-QA-05 and DT-QA-26 tested the hand-off on 25
-and 66 real broken updates. The reworked command (0.2.2) now matches Claude Code alone (72.7% of sessions against
-69.7%, in half the turns) but misses the 80% bar, so 1.0 leaves it out of its promise
-(`bench/agent-fix/qa26/results-2026-11-16.md`). No further measured round before 1.0.
+**Phase 4, the fix (the model's part, outside DepTime).** DT-QA-26 missed only its 80% line: the reworked command
+matched Claude Code alone (72.7% of sessions against 69.7%, in half the turns), and 3 of its 4 losses were breaks the
+agent found and left (`bench/agent-fix/qa26/results-2026-11-16.md`). The maintainer chose (2026-11-16) to fix what
+lost them and measure again on new broken updates; 1.0 waits for that result.
+- [x] **DT-GTM-09** (2026-11-16): `/deptime:fix-upgrade` rewrites a break with no replacement from the new version's
+  source or release notes, leaving it only when the new version can't do what the code did, and fixes any other
+  break the agent finds; the report's agent block says the same and also shows when only unsure uses are left.
+- [x] **DT-DATA-83** (2026-11-16): a name bound to a method of a module-level instance takes the method's signature
+  when the instance's annotation names the class: streamlit 1.33+'s `_main: _DeltaGenerator = ...`, so 103
+  top-level `st.<name>` calls are checked again (DT-QA-26's `st.pyplot()`). Extraction: `SNAPSHOT_FORMAT` 28.
+- [ ] **DT-QA-27**: The hand-off again, on a new set of broken updates · `P1` `M` · deps: GTM-09, DATA-83, a release
+  - Collect real upgrades to a newer version with a labelled break that no earlier study used, as the holdouts
+    were collected; then a protocol committed before the first run: arms A and B once each, DT-QA-26's bar.
 
 **Phase 5, toward 1.0.**
-- [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
+- [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: QA-27 (the maintainer's call, 2026-11-16)
   - A review of every tool parameter, result field and CLI option (last chance to rename without a major version);
     the GUI clients checked or listed as not covered (DT-SPIKE-05, DT-SPIKE-07); the 1.0 promise in CHANGELOG.md's
     versioning section (what's frozen, how something is retired, supported Pythons, what the index promises).
-  - From DT-QA-26: `/deptime:fix-upgrade` and the report's agent block are experimental, outside the promise; the
-    plugin's README leads with asking the agent in plain words.
+  - The hand-off (`/deptime:fix-upgrade` and the report's agent block) is frozen if DT-QA-27 meets its bar;
+    otherwise it is experimental, outside the promise, and the plugin's README leads with asking in plain words.
 
 ## Done since 2026-11-13
 

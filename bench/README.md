@@ -178,8 +178,9 @@ the result. The same agent on 66 broken updates the reworked command (0.2.2) was
 2026-11e holdouts: alone 69.7% of sessions, with the command 72.7%, fewer new breaks (2 against 4) and about half the
 turns. The bar's first line (80%) is missed; the command no longer loses to the agent alone. Of the 4 tasks only the
 agent alone fixed, 3 were breaks the command's agent found and then left, as its step 3 says when the fix isn't clear,
-and 1 a required argument DepTime doesn't check (DT-CORE-34). Per the protocol, 1.0 leaves the command and the agent
-block out of its promise.
+and 1 a required argument DepTime didn't see (a streamlit binding, DT-DATA-83). Per the protocol, a miss leaves the
+command out of 1.0's promise; the maintainer chose instead to fix both causes and measure again on new updates
+(DT-QA-27) before 1.0.
 
 ## Per-release holdout (DT-QA-07 to DT-QA-11)
 

@@ -38,7 +38,7 @@ from deptime.ingest.replacements import (
 if TYPE_CHECKING:
     from deptime.config import ServedRule
 
-SNAPSHOT_FORMAT = 27  # bump when extraction changes: cached snapshots in another format are rebuilt
+SNAPSHOT_FORMAT = 28  # bump when extraction changes: cached snapshots in another format are rebuilt
 MAX_DEPTH = 12  # guards pathological re-export cycles
 
 DEPRECATED_DECORATOR_RE = re.compile(r"^(?:[\w.]+\.)?deprecated\b(?:\(.*\))?$", re.S)
@@ -4172,8 +4172,10 @@ def _bound_class(attr: griffe.Object) -> griffe.Class | None:
 def _bound_method(attr: griffe.Object) -> griffe.Function | None:
     """The method a module-level name is bound to through a module-level instance of one of the package's classes
     (DT-DATA-66): huggingface_hub's `api = HfApi()` then `list_models = api.list_models`. Python finds the bound
-    method under the name, which takes the method's parameters but `self`. None for any other value, an instance
-    made any other way than calling the class, or a member that isn't a function (a property)."""
+    method under the name, which takes the method's parameters but `self`. The instance's class is the one it calls,
+    else the one its annotation names (DT-DATA-83): streamlit 1.33+'s `_main: _DeltaGenerator =
+    _dg_singleton._main_dg` then `pyplot = _main.pyplot`, and so on for 103 top-level `st.<name>`. None for any
+    other value, an instance whose class neither says, or a member that isn't a function (a property)."""
     value = getattr(attr, "value", None)
     if (
         not isinstance(value, griffe.ExprAttribute)
@@ -4188,16 +4190,30 @@ def _bound_method(attr: griffe.Object) -> griffe.Function | None:
         holder = _resolve(attr.modules_collection[instance.canonical_path])  # type: ignore[union-attr]
         if holder is None or not holder.is_attribute or holder.parent is None or not holder.parent.is_module:
             return None
+        cls = None
         call = getattr(holder, "value", None)
-        if not isinstance(call, griffe.ExprCall) or not isinstance(
+        if isinstance(call, griffe.ExprCall) and isinstance(
             call.function, (griffe.ExprName, griffe.ExprAttribute)
         ):
-            return None
-        cls = _resolve(holder.modules_collection[call.function.canonical_path])
-        found = _member(cls, method.name, inherited=True) if cls is not None and cls.is_class else None  # type: ignore[union-attr]
+            cls = _class_at(holder, call.function)
+        if cls is None:
+            cls = _class_at(holder, getattr(holder, "annotation", None))
+        found = _member(cls, method.name, inherited=True) if cls is not None else None
     except Exception:  # outside the package, not loaded, or an alias griffe can't resolve
         return None
     return found if isinstance(found, griffe.Function) else None
+
+
+def _class_at(obj: griffe.Object, expr: object) -> griffe.Class | None:
+    """The package's class a plain name or dotted name (not a subscript, a string or a call) resolves to from
+    `obj`'s module; None for anything else, or a name outside the package."""
+    if not isinstance(expr, (griffe.ExprName, griffe.ExprAttribute)):
+        return None
+    try:
+        found = _resolve(obj.modules_collection[expr.canonical_path])
+    except Exception:  # outside the package, not loaded, or an alias griffe can't resolve
+        return None
+    return found if found is not None and found.is_class else None  # type: ignore[return-value]
 
 
 def _metaclass(cls: griffe.Class) -> griffe.Class | None:
