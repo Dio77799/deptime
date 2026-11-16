@@ -261,6 +261,52 @@ def test_the_hand_off_block_carries_no_library_text(dt):
     assert hand.count("```") == 2
 
 
+def test_the_hand_off_asks_the_agent_to_check_unknown_uses():
+    """DT-GTM-08: an `unknown` is a use DepTime can't rule out, so the hand-off asks the agent to check it rather than
+    telling it the use is fine (DT-QA-05 lost 4 sessions to that sentence)."""
+    from deptime.models import PackageUpgrade, UpgradeBreak, UpgradeCheckResult, UpgradeNotice, UseLocation
+
+    b = UpgradeBreak(
+        path="httpx.Gone", kind="missing", explanation="gone", locations=[UseLocation(file="a.py", line=2)]
+    )
+    notices = [
+        UpgradeNotice(
+            path="httpx.Maybe",
+            status="unknown",
+            detail="re-exported",
+            locations=[UseLocation(file="b.py", line=7)],
+        ),
+        UpgradeNotice(
+            path="httpx.Old",
+            status="deprecated",
+            detail="use New",
+            locations=[UseLocation(file="c.py", line=1)],
+        ),
+    ]
+    res = UpgradeCheckResult(
+        project="p",
+        breaks=1,
+        checked=[
+            PackageUpgrade(
+                change=_change("1", "2"),
+                resolved_version="2",
+                exact=True,
+                uses=3,
+                files=3,
+                breaks=[b],
+                notices=notices,
+            )
+        ],
+    )
+    hand = to_markdown(res).split("For a coding agent", 1)[1]
+    assert "can't tell about are not breaks" not in hand
+    lines = hand.splitlines()
+    i = lines.index("- a.py:2: httpx.Gone: gone in httpx 2")
+    j = lines.index("- b.py:7: httpx.Maybe in httpx 2")
+    assert i < j and "check each one yourself" in lines[j - 1]
+    assert "httpx.Old" not in hand  # a deprecation still works: nothing to do for this update
+
+
 def test_project_files_follow_gitignore(tmp_path):
     subprocess.run(["git", "-C", str(tmp_path), "init", "-q"], check=True)
     for rel in ("a.py", "pkg/b.py", "build/c.py", ".venv/lib/d.py", "ignored/e.py", "notes.txt"):

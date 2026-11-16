@@ -55,8 +55,9 @@ jobs:
 Outputs: `result` (`pass` or `breaks`) and `report` (the path to the Markdown report).
 
 When it finds a break, the report ends with a collapsed "For a coding agent" block: each broken line, what changed
-and the index's proven fix or best replacement, as plain names (no text from the libraries' source). Paste it to
-your coding agent, or have one read the report: DepTime has decided what is broken, and the agent writes the fix.
+and the index's proven fix or best replacement, as plain names (no text from the libraries' source), then the uses
+DepTime can't tell about, for the agent to check. Paste it to your coding agent, or have one read the report: DepTime
+has found what is broken, and the agent writes the fix.
 
 A break you've checked and accept can be left out with a suppression in `deptime.toml` or `pyproject.toml`, as for
 the command.

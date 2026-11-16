@@ -52,7 +52,7 @@ jobs:
       - uses: cschmertz/deptime@v0.2.1
 ```
 
-From a terminal, `uvx deptime check-upgrade` compares the pinned versions at `HEAD` with your working tree, or `--package httpx --to 0.28.1` checks one update. An agent can call the `check_upgrade` tool with the code instead, and the Claude Code plugin's `/deptime:fix-upgrade` runs the check and has Claude fix exactly the lines it reports. A break is a use the index shows failing at the new version and not at the old one; the report ends with a block a coding agent can act on.
+From a terminal, `uvx deptime check-upgrade` compares the pinned versions at `HEAD` with your working tree, or `--package httpx --to 0.28.1` checks one update. An agent can call the `check_upgrade` tool with the code instead, and the Claude Code plugin's `/deptime:fix-upgrade` runs the check and has Claude fix the lines it reports as broken and check the ones it can't tell about. A break is a use the index shows failing at the new version and not at the old one; the report ends with a block a coding agent can act on.
 
 **On 264 real Dependabot and Renovate update pull requests** (247 projects, scored once before any fix, [results](https://github.com/cschmertz/deptime/blob/main/bench/upgrade-check/prs/results-2026-11-16.md)), the check failed all 13 whose update breaks the project's code, found 46 of the 48 breaking uses, and flagged 1 of 3,291 uses that still work. 2 of the 264 failed with no real break.
 

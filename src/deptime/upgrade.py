@@ -490,19 +490,33 @@ def _handoff(result: UpgradeCheckResult) -> list[str]:
             items.append(f"- {where}: {step}")
     if not items:
         return []
+    # DT-GTM-08: an `unknown` is a use DepTime can't rule out, not one it cleared (DT-QA-05 lost 4 sessions on it)
+    unsure = [
+        f"- {', '.join(f'{_plain(loc.file)}:{loc.line}' for loc in x.locations) or '(no line recorded)'}: "
+        f"{_plain(x.path)} in {p.change.package} {_plain(p.resolved_version or p.change.to_version or '')}"
+        for p in result.checked
+        for x in p.notices
+        if x.status == "unknown"
+    ]
+    more = "- and {} more: run `deptime check-upgrade --format json` for all"
     shown = items[:MAX_HANDOFF_LINES]
     if len(items) > len(shown):
-        shown.append(
-            f"- and {len(items) - len(shown)} more: run `deptime check-upgrade --format json` for all"
+        shown.append(more.format(len(items) - len(shown)))
+    room = max(MAX_HANDOFF_LINES - len(shown), 10)
+    tail = unsure[:room] + ([more.format(len(unsure) - room)] if len(unsure) > room else [])
+    if tail:
+        tail.insert(
+            0, "DepTime can't tell whether these uses still work at the new version: check each one yourself."
         )
     return [
         "<details><summary>For a coding agent</summary>",
         "",
         "```text",
         "DepTime confirmed these uses break with this update (failing at the new version, not at the old).",
-        "Fix exactly these lines, and nothing else for this update: deprecations and uses DepTime can't tell"
-        " about are not breaks.",
+        "Fix these lines:",
         *shown,
+        *tail,
+        "Deprecations still work, and uses that fail at the old version too aren't caused by this update.",
         "Then run deptime check-upgrade again: it should find no breaks.",
         "```",
         "",
@@ -556,7 +570,12 @@ def to_markdown(result: UpgradeCheckResult) -> str:
                 lambda x: True,
                 False,
             ),
-            ("unknown", "DepTime can't tell (never fails the check)", lambda x: True, False),
+            (
+                "unknown",
+                "DepTime can't tell, so check these yourself (never fails the check)",
+                lambda x: True,
+                False,
+            ),
         ]
         for status, title, keep, shown in groups:
             items = [x for x in p.notices if x.status == status and keep(x)]
@@ -566,7 +585,9 @@ def to_markdown(result: UpgradeCheckResult) -> str:
             for x in items:
                 since = f" (since {x.deprecated_in})" if x.deprecated_in else ""
                 at = f" At {_where(x.locations)}." if x.locations else ""
-                lines.append(f"- {_code(x.path)}{since}: {_md(x.detail)}{at}")
+                detail = _md(x.detail).rstrip()
+                stop = "" if not detail or detail[-1] in ".!?" else "."
+                lines.append(f"- {_code(x.path)}{since}: {detail}{stop}{at}")
             lines += [""] if shown else ["", "</details>", ""]
         if p.note:
             lines += [_md(p.note), ""]

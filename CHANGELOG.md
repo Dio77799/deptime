@@ -24,6 +24,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+### Changed
+
+- `check-upgrade`'s "For a coding agent" block lists the uses DepTime can't tell about and asks the agent to check
+  them, instead of saying they aren't breaks; the markdown report's section for them says the same (DT-GTM-08).
+- `/deptime:fix-upgrade` (Claude Code plugin) writes the report to a file and reads it, so a long report is read
+  whole; reruns with `--from` when the project pins the package somewhere DepTime doesn't read; and has Claude check
+  the uses DepTime can't tell about, even when the check finds no break (DT-GTM-08).
+
 ## [0.2.1] - 2026-11-16
 
 Two fixes to the upgrade check; nothing in the contract changed.

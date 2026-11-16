@@ -107,14 +107,10 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 **Phase 4, the fix (the model's part, outside DepTime).** DT-QA-05 measured the hand-off and it lost: Claude Code on
 Sonnet fixed 80% of 25 real broken updates alone and 64% with `/deptime:fix-upgrade`
 (`bench/agent-fix/results-2026-11-16.md`). With the plugin installed and not named it called DepTime every time and
-kept 80%. DT-OSS-17 waits for:
-- [ ] **DT-GTM-08**: Rework the fix-upgrade hand-off from DT-QA-05's losses · `P1` `S`
-  - `unknown` notices are breaks DepTime can't rule out: the agent checks them itself (4 lost sessions); on exit 2
-    "pass --from", rerun with the version the user named (2); write the report with `--output` and read it, or a
-    shorter agent format, so a report past the shell's limit is still read whole (2, plus both largest tasks).
-- [ ] **DT-QA-26**: DT-QA-05 again on the reworked hand-off · `P1` `S` · deps: GTM-08
-  - A new protocol before its first run, on new broken updates (DT-QA-05's 25 are now in-sample for the command), with
-    a shell that asks rather than denies, as a person's does.
+kept 80%. DT-GTM-08 reworked the command. DT-OSS-17 waits for:
+- [ ] **DT-QA-26**: DT-QA-05 again on the reworked hand-off · `P1` `S` · deps: GTM-08, a release with it
+  - A new protocol before its first run, on new broken updates (DT-QA-05's 25 are now in-sample for the command).
+    Same `dontAsk` shell (`claude -p` can't ask a person): the reworked command needs no pipe or redirect.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
@@ -124,6 +120,8 @@ kept 80%. DT-OSS-17 waits for:
 
 ## Done since 2026-11-13
 
+- [x] **DT-GTM-08** (2026-11-16): `/deptime:fix-upgrade` has Claude check the uses DepTime can't tell about (also
+  in the report's agent block), rerun with `--from` when a pin is unread, and read the report from a file.
 - [x] **DT-QA-05** (2026-11-16): bar missed. Sessions fixed: alone 80%, `/deptime:fix-upgrade` 64% (a third of the
   turns, no new breaks), plugin installed and not named 80%. Also DT-SPIKE-06: unprompted, the agent called DepTime in
   25 of 25 sessions.
