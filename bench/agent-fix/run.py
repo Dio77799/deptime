@@ -1,14 +1,16 @@
-"""Run the agent on DT-QA-05's tasks, by the rules in README.md here.
+"""Run the agent on an agent-fix study's tasks, by the rules in that study's README.md (`study.py`: DT-QA-05 here by
+default, DT-QA-26 in `qa26/` with AGENT_FIX_STUDY=qa26).
 
-    uv run python bench/agent-fix/run.py tasks            # task repositories under the work dir, and tasks.json here
+    uv run python bench/agent-fix/run.py tasks            # task repositories under the work dir, and the study's tasks.json
     uv run python bench/agent-fix/run.py trial            # the two trial tasks, every arm, not scored
-    uv run python bench/agent-fix/run.py run --run 1      # run 1: arms A, B and C on every task; run 2: A and B
+    uv run python bench/agent-fix/run.py run --run 1      # DT-QA-05: run 1 is arms A, B and C, run 2 A and B; DT-QA-26: A, B
 
-The work dir is ~/.cache/deptime-work/qa05 (QA05_WORK overrides). Sources are the GitHub tarballs DT-QA-21 and DT-QA-22
-already hold (read as data). Each session gets a fresh copy of its task and runs `claude -p` confined to it
-(`--restricted`): file tools only inside the copy, no Bash but `uvx deptime==0.2.1 check-upgrade`, so nothing runs the
-project's code. Transcripts stay in the work dir; `sessions/<run>/<task>.json` (counts and tool names, no transcript
-text) and `diffs/<run>/<task>.diff` are written here. A finished session is never run again.
+The work dir is ~/.cache/deptime-work/qa05 (QA05_WORK overrides), or qa26 (QA26_WORK). Sources are the GitHub tarballs
+DT-QA-21 and DT-QA-22 already hold (read as data). Each session gets a fresh copy of its task and runs `claude -p`
+confined to it (`--restricted`): file tools only inside the copy, no Bash but the study's pinned `uvx deptime==<pin>
+check-upgrade` (and, for DT-QA-26, `rm .deptime-report.md`), so nothing runs the project's code. Transcripts stay in the
+work dir; `sessions/<run>/<task>.json` (counts and tool names, no transcript text) and `diffs/<run>/<task>.diff` are
+written to the study's directory. A finished session is never run again.
 """
 
 from __future__ import annotations
@@ -34,42 +36,25 @@ PLUGIN = REPO_ROOT / "integrations" / "claude-code"
 sys.path.insert(0, str(HOLDOUT))
 
 from envs import use_key  # noqa: E402
+from study import STUDY  # noqa: E402  (DT-QA-05 or DT-QA-26: AGENT_FIX_STUDY)
 
-WORK = Path(os.environ.get("QA05_WORK", "~/.cache/deptime-work/qa05")).expanduser()
+OUT = STUDY.out
+WORK = STUDY.work
 SOURCES = [
     Path("~/.cache/deptime-work/qa21/sources").expanduser(),
     Path("~/.cache/deptime-work/qa22/sources").expanduser(),
 ]
 
-HOLDOUT_SET = "2026-11f"
-HOLDOUT_TASKS = [  # README.md: every 2026-11f upgrade to a newer version with a labelled break
-    "pin-tonypeng1__personal-chatgpt-mistralai-up",
-    "pin-ai-learning-gems__ai-learning-gems.github.io-mistralai-up",
-    "pin-aianytime__medical-rag-using-bio-mistral-7b-langchain-community-up",
-    "pin-mindsdb__minds-mcp-mcp-up",
-    "pin-gaa-uam__c-gb-scikit-learn-up",
-    "pin-oaklight__mango-anthropic-up",
-    "pin-surajrimal07__nepseapi-unofficial-fastmcp-up",
-    "pin-dtunai__synthtot-langchain-up",
-    "pin-jerome3o__schemallm-langchain-up",
-    "pin-mbzuai-oryx__xraygpt-gradio-up",
-    "pin-wpydcr__llm-kit-gradio-up",
-    "ex-2023csb1141__iitd-summer-intern-huggingface-hub-up",
-]
-TRIAL_SET = "2026-11e"
-TRIAL_TASKS = ["pin-wayveai__driving-with-llms-openai-up", "pin-vivekkeshore__flask-dantic-pydantic-up"]
-
-DEPTIME_PIN = "deptime==0.2.1"
+DEPTIME_PIN = STUDY.deptime_pin
 MODEL, EFFORT = "sonnet", "high"
 LIMIT_S = 30 * 60
 BASE_TOOLS = ["Read", "Edit", "Write", "Glob", "Grep", "WebSearch", "WebFetch"]
-CHECK_RULE = f"Bash(uvx {DEPTIME_PIN} check-upgrade:*)"
 PLUGIN_MCP = "mcp__plugin_deptime_deptime"
 DEPTIME_CMD = re.compile(
     r"(^|[\s;&|(])(uvx\s+)?deptime(==[\w.]+)?\s"
 )  # the command, not a path with the word in it
-ARMS_BY_RUN = {1: ["A", "B", "C"], 2: ["A", "B"]}
-SEED = 5  # DT-QA-05
+ARMS_BY_RUN = STUDY.arms_by_run
+SEED = STUDY.seed
 RETRIES = 2  # README.md: a session ended by the service is run again, at most twice
 _GIT = ["git", "-c", "user.name=qa05", "-c", "user.email=qa05@invalid", "-c", "commit.gpgsign=false"]
 
@@ -115,18 +100,37 @@ def _task(set_name: str, set_dir: Path, row: dict, labels: dict) -> dict:
     }
 
 
+def _upward(row: dict) -> bool:
+    from packaging.version import Version
+
+    return Version(row["to"]) > Version(row["from"])
+
+
 def all_tasks(trial: bool = False) -> list[dict]:
     if trial:
-        set_dir = HOLDOUT / TRIAL_SET
+        set_dir = HOLDOUT / STUDY.trial_set
         rows, labels = _jsonl(set_dir / "upgrades.jsonl"), _jsonl(set_dir / "labels.jsonl")
-        return [_task(TRIAL_SET, set_dir, rows[i], labels[i]) for i in TRIAL_TASKS]
-    set_dir = HOLDOUT / HOLDOUT_SET
-    rows, labels = _jsonl(set_dir / "upgrades.jsonl"), _jsonl(set_dir / "labels.jsonl")
-    out = [_task(HOLDOUT_SET, set_dir, rows[i], labels[i]) for i in HOLDOUT_TASKS]
-    rows, labels = _jsonl(PRS / "upgrades.jsonl"), _jsonl(PRS / "labels.jsonl")
-    for i, lab in labels.items():
-        if any(x["label"] == "breaks" for x in lab["items"]):
-            out.append(_task("prs", PRS, rows[i], lab))
+        return [_task(STUDY.trial_set, set_dir, rows[i], labels[i]) for i in STUDY.trial_tasks]
+    out = []
+    for name in STUDY.holdout_sets:
+        set_dir = HOLDOUT / name
+        rows, labels = _jsonl(set_dir / "upgrades.jsonl"), _jsonl(set_dir / "labels.jsonl")
+        if STUDY.holdout_only is not None:
+            ids = list(STUDY.holdout_only)
+        else:  # every upgrade to a newer version with a labelled break, but the trial's
+            ids = [
+                i
+                for i, lab in labels.items()
+                if any(x["label"] == "breaks" for x in lab["items"])
+                and _upward(rows[i])
+                and (name, i) not in {(STUDY.trial_set, x) for x in STUDY.trial_tasks}
+            ]
+        out += [_task(name, set_dir, rows[i], labels[i]) for i in ids]
+    if STUDY.prs:
+        rows, labels = _jsonl(PRS / "upgrades.jsonl"), _jsonl(PRS / "labels.jsonl")
+        for i, lab in labels.items():
+            if any(x["label"] == "breaks" for x in lab["items"]):
+                out.append(_task("prs", PRS, rows[i], lab))
     return out
 
 
@@ -153,7 +157,8 @@ def cmd_tasks(a: argparse.Namespace) -> int:
         build_task(t)
     n = sum(len(t["breaks"]) for t in tasks)
     doc = {"tasks": tasks, "trial": trial}
-    (HERE / "tasks.json").write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8")
+    OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / "tasks.json").write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8")
     print(f"tasks.json: {len(tasks)} tasks, {n} confirmed breaks; {len(trial)} trial tasks", file=sys.stderr)
     return 0
 
@@ -175,7 +180,7 @@ def command(arm: str) -> list[str]:
     cmd = ["claude", "--print", "--model", MODEL, "--effort", EFFORT, "--restricted"]
     if arm in ("B", "C"):
         tools.append("Bash")
-        allowed += [CHECK_RULE, PLUGIN_MCP]
+        allowed += [*STUDY.bash_rules, PLUGIN_MCP]
         cmd += ["--plugin-dir", str(PLUGIN)]
     return [
         *cmd,
@@ -376,14 +381,15 @@ def run_sessions(label_of, arms: list[str], tasks: list[dict], seed: int, out_di
 
 
 def cmd_trial(a: argparse.Namespace) -> int:
-    trial = json.loads((HERE / "tasks.json").read_text(encoding="utf-8"))["trial"]
-    return run_sessions(lambda arm: f"trial-{arm}", ["A", "B", "C"], trial, SEED, WORK / "trial-out")
+    trial = json.loads((OUT / "tasks.json").read_text(encoding="utf-8"))["trial"]
+    arms = sorted({x for run in ARMS_BY_RUN.values() for x in run})
+    return run_sessions(lambda arm: f"trial-{arm}", arms, trial, SEED, WORK / "trial-out")
 
 
 def cmd_run(a: argparse.Namespace) -> int:
-    tasks = json.loads((HERE / "tasks.json").read_text(encoding="utf-8"))["tasks"]
+    tasks = json.loads((OUT / "tasks.json").read_text(encoding="utf-8"))["tasks"]
     arms = [x for x in ARMS_BY_RUN[a.run] if a.arm in (None, x)]
-    return run_sessions(lambda arm: f"{arm}{a.run}", arms, tasks, SEED * 100 + a.run, HERE)
+    return run_sessions(lambda arm: f"{arm}{a.run}", arms, tasks, SEED * 100 + a.run, OUT)
 
 
 def main(argv: list[str] | None = None) -> int:

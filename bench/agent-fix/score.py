@@ -1,4 +1,5 @@
-"""Score DT-QA-05's sessions, by the rules in README.md here ("Scoring a session", "Measures and the bar").
+"""Score an agent-fix study's sessions (`study.py`: DT-QA-05, or DT-QA-26 with AGENT_FIX_STUDY=qa26), by the rules in
+its README.md ("Scoring a session", "Measures and the bar").
 
     uv run python bench/agent-fix/score.py envs            # envs.json, uses.json: the probe's work for the fixed trees
     # bench/holdout/probe.py on them: .github/workflows/holdout.yml with SET=bench/agent-fix, on a spike branch
@@ -35,14 +36,15 @@ sys.path.insert(0, str(HOLDOUT))  # before this directory, whose own score.py an
 
 from envs import use_key  # noqa: E402
 from labels import var_keyword_only, works  # noqa: E402  (the rule the labels came from)
-from run import WORK  # noqa: E402  (this directory's run.py: the holdout has none)
+from run import ARMS_BY_RUN, OUT, WORK  # noqa: E402  (this directory's run.py: the holdout has none)
 from score import rate  # noqa: E402  (../holdout/score.py: a share with its 95% Wilson interval)
+from study import STUDY  # noqa: E402  (DT-QA-05 or DT-QA-26: AGENT_FIX_STUDY)
 from uses import Use, uses_in_tree  # noqa: E402
 
 from deptime.config import load_coverage  # noqa: E402
 
 BAR_FIXED = 0.80  # README.md: arm B fixes at least 80% of its sessions
-SCORED = ["A1", "A2", "B1", "B2", "C1"]
+SCORED = list(STUDY.scored)
 MANIFEST = re.compile(
     r"(^|/)(.*requirements.*\.txt|.*\.in|pyproject\.toml|setup\.cfg|setup\.py|Pipfile|.*\.lock)$"
 )
@@ -51,15 +53,15 @@ STDLIB = set(sys.stdlib_module_names)
 
 
 def _tasks() -> dict[str, dict]:
-    return {t["id"]: t for t in json.loads((HERE / "tasks.json").read_text(encoding="utf-8"))["tasks"]}
+    return {t["id"]: t for t in json.loads((OUT / "tasks.json").read_text(encoding="utf-8"))["tasks"]}
 
 
 def _sessions() -> list[dict]:
     out = []
     for label in SCORED:
-        for f in sorted((HERE / "sessions" / label).glob("*.json")):
+        for f in sorted((OUT / "sessions" / label).glob("*.json")):
             s = json.loads(f.read_text(encoding="utf-8"))
-            s["diff"] = (HERE / "diffs" / label / f"{s['task']}.diff").read_text(encoding="utf-8")
+            s["diff"] = (OUT / "diffs" / label / f"{s['task']}.diff").read_text(encoding="utf-8")
             out.append(s)
     return out
 
@@ -242,8 +244,8 @@ def cmd_envs(a: argparse.Namespace) -> int:
     out = [{**e, "uses": sorted(e["uses"].values(), key=lambda x: x["key"])} for e in envs.values()]
     out = [e for e in out if e["uses"]]
     out.sort(key=lambda e: e["id"])
-    (HERE / "envs.json").write_text(json.dumps({"envs": out}, indent=0) + "\n", encoding="utf-8")
-    (HERE / "envs-tracebacks.json").write_text(json.dumps({"envs": []}) + "\n", encoding="utf-8")
+    (OUT / "envs.json").write_text(json.dumps({"envs": out}, indent=0) + "\n", encoding="utf-8")
+    (OUT / "envs-tracebacks.json").write_text(json.dumps({"envs": []}) + "\n", encoding="utf-8")
     print(f"envs.json: {len(out)} environments, {sum(len(e['uses']) for e in out)} uses", file=sys.stderr)
     return 0
 
@@ -529,20 +531,20 @@ def cmd_hand(a: argparse.Namespace) -> int:
     random.Random(5).shuffle(todo)
     use_list = sorted(uses.values(), key=lambda u: (u["env"], u["path"], u["key"]))
     doc = {"uses": use_list, "breaks": todo}
-    (HERE / "hand-todo.json").write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8")
+    (OUT / "hand-todo.json").write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8")
     print(f"hand-todo.json: {len(use_list)} uses and {len(todo)} breaks to check by hand", file=sys.stderr)
     return 0
 
 
 def _use_hand() -> dict[tuple[str, str], dict]:
-    f = HERE / "hand-checks.json"
+    f = OUT / "hand-checks.json"
     if not f.exists():
         return {}
     return {(c["env"], c["key"]): c for c in json.loads(f.read_text(encoding="utf-8")).get("uses", [])}
 
 
 def _hand() -> dict[str, dict]:
-    f = HERE / "hand-checks.json"
+    f = OUT / "hand-checks.json"
     if not f.exists():
         return {}
     return {c["id"]: c for c in json.loads(f.read_text(encoding="utf-8")).get("checks", [])}
@@ -610,7 +612,7 @@ def report(rows: list[dict], tasks: dict, failed: set[str], flagged) -> list[str
     def fixed(rs):
         return sum(r["session"] == "fixed" for r in rs)
 
-    out = ["# Does an agent fix an update's breaks better with DepTime? Results (DT-QA-05)", ""]
+    out = [f"# Does an agent fix an update's breaks better with DepTime? Results ({STUDY.name})", ""]
     out += [
         f"Protocol: `README.md` here. Probe environments that didn't install: {sorted(failed) or 'none'}.",
         "",
@@ -647,15 +649,16 @@ def report(rows: list[dict], tasks: dict, failed: set[str], flagged) -> list[str
 
     out += ["", "## By set", "", "| arm | set | sessions | fixed |", "|---|---|---|---|"]
     for x in arms:
-        for st in ("2026-11f", "prs"):
+        for st in dict.fromkeys(t["set"] for t in tasks.values()):
             rs = [r for r in by_arm[x] if r["t"]["set"] == st]
             if rs:
                 out.append(f"| {x} | {st} | {len(rs)} | {rate(fixed(rs), len(rs))} |")
 
     out += ["", "## A and B paired (each task and run)", ""]
     pair = Counter()
+    ab_runs = [run for run, arms_ in ARMS_BY_RUN.items() if "A" in arms_ and "B" in arms_]
     for t in tasks:
-        for run in (1, 2):
+        for run in ab_runs:
             ra = next((r for r in rows if r["task"] == t and r["label"] == f"A{run}"), None)
             rb = next((r for r in rows if r["task"] == t and r["label"] == f"B{run}"), None)
             if ra and rb:
@@ -664,15 +667,19 @@ def report(rows: list[dict], tasks: dict, failed: set[str], flagged) -> list[str
         f"Both fixed {pair[(True, True)]}, B only {pair[(False, True)]}, A only {pair[(True, False)]}, neither "
         f"{pair[(False, False)]}; McNemar's exact p = {mcnemar_exact(pair[(False, True)], pair[(True, False)]):.3f}."
     )
-    out += [
-        "",
-        "Tasks fixed in both runs: "
-        + ", ".join(
-            f"{x} {sum(all(r['session'] == 'fixed' for r in by_arm[x] if r['task'] == t) and sum(1 for r in by_arm[x] if r['task'] == t) == 2 for t in tasks)}"
-            for x in ("A", "B")
-        )
-        + f" of {len(tasks)}.",
-    ]
+    out += (
+        []
+        if len(ab_runs) < 2
+        else [
+            "",
+            "Tasks fixed in both runs: "
+            + ", ".join(
+                f"{x} {sum(all(r['session'] == 'fixed' for r in by_arm[x] if r['task'] == t) and sum(1 for r in by_arm[x] if r['task'] == t) == 2 for t in tasks)}"
+                for x in ("A", "B")
+            )
+            + f" of {len(tasks)}.",
+        ]
+    )
 
     out += ["", "## Each task", "", "| task | breaks | DepTime reports | " + " | ".join(SCORED) + " |"]
     out += ["|---|---|---|" + "---|" * len(SCORED)]
@@ -729,12 +736,29 @@ def report(rows: list[dict], tasks: dict, failed: set[str], flagged) -> list[str
             f"| {x} | {med(mins):.1f} | {med(turns)} | {med(toks)} | {sum(r['s']['timed_out'] for r in rs)} |"
         )
 
-    out += ["", "## DT-SPIKE-06: does the agent call DepTime when it isn't named? (arm C)", ""]
     c_rs = by_arm["C"]
-    called = [r for r in c_rs if r["s"]["deptime_calls"]]
-    out.append(f"{len(called)} of {len(c_rs)} sessions called DepTime.")
-    for r in called:
-        out.append(f"- `{r['task']}`: {', '.join(r['s']['deptime_calls'][:6])}")
+    if c_rs:
+        out += ["", "## DT-SPIKE-06: does the agent call DepTime when it isn't named? (arm C)", ""]
+        called = [r for r in c_rs if r["s"]["deptime_calls"]]
+        out.append(f"{len(called)} of {len(c_rs)} sessions called DepTime.")
+        for r in called:
+            out.append(f"- `{r['task']}`: {', '.join(r['s']['deptime_calls'][:6])}")
+
+    if STUDY.name != "DT-QA-05":  # added for DT-QA-26; DT-QA-05's committed report has no such section
+        out += [
+            "",
+            "## The shell",
+            "",
+            "| arm | sessions with a Bash command denied | sessions that ran DepTime |",
+        ]
+        out += ["|---|---|---|"]
+        for x in arms:
+            rs = by_arm[x]
+            if rs:
+                out.append(
+                    f"| {x} | {sum(r['s']['denied'] > 0 for r in rs)} of {len(rs)} | "
+                    f"{sum(bool(r['s']['deptime_calls']) for r in rs)} of {len(rs)} |"
+                )
 
     own = [
         r

@@ -1,0 +1,5413 @@
+{
+ "tasks": [
+  {
+   "id": "pin-benman1__generative_ai_with_langchain-langchain-up",
+   "set": "2026-11",
+   "repo": "https://github.com/benman1/generative_ai_with_langchain",
+   "source": "benman1__generative_ai_with_langchain@87e17fd2057946d51f062764eb508b68692332a4",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.3.17",
+   "to": "1.4.9",
+   "python": "3.11",
+   "env": "langchain==1.4.9@2026-11-07",
+   "breaks": [
+    {
+     "key": "6f405891b5d27233",
+     "kind": "name",
+     "path": "langchain.agents.AgentExecutor",
+     "change": "removed",
+     "where": [
+      "chapter7/data_science/agent.py:4"
+     ]
+    },
+    {
+     "key": "a719c583feec116a",
+     "kind": "name",
+     "path": "langchain.agents.AgentType",
+     "change": "removed",
+     "where": [
+      "chapter9/tracing.py:6"
+     ]
+    },
+    {
+     "key": "b1a8dd75923b57da",
+     "kind": "name",
+     "path": "langchain.agents.AgentType.OPENAI_MULTI_FUNCTIONS",
+     "change": "removed",
+     "where": [
+      "chapter9/tracing.py:34"
+     ]
+    },
+    {
+     "key": "14b93b27614b6d9e",
+     "kind": "name",
+     "path": "langchain.agents.initialize_agent",
+     "change": "removed",
+     "where": [
+      "chapter9/tracing.py:6",
+      "chapter9/tracing.py:31"
+     ]
+    },
+    {
+     "key": "0860b54a5c5f01d3",
+     "kind": "name",
+     "path": "langchain.callbacks",
+     "change": "removed",
+     "where": [
+      "chapter9/fastapi/main.py:9"
+     ]
+    },
+    {
+     "key": "29b193f5604e4601",
+     "kind": "call",
+     "path": "langchain.callbacks.AsyncIteratorCallbackHandler",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "chapter9/fastapi/main.py:57"
+     ]
+    },
+    {
+     "key": "b8eabaed47f899a4",
+     "kind": "name",
+     "path": "langchain.callbacks.AsyncIteratorCallbackHandler",
+     "change": "removed",
+     "where": [
+      "chapter9/fastapi/main.py:9",
+      "chapter9/fastapi/main.py:57"
+     ]
+    },
+    {
+     "key": "17b60e9452e3cc1d",
+     "kind": "call",
+     "path": "langchain.callbacks.AsyncIteratorCallbackHandler.aiter",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "chapter9/fastapi/main.py:100"
+     ]
+    },
+    {
+     "key": "9c7e1b43ffed6057",
+     "kind": "name",
+     "path": "langchain.callbacks.AsyncIteratorCallbackHandler.aiter",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "chapter9/fastapi/main.py:100"
+     ]
+    },
+    {
+     "key": "09739342c0573ded",
+     "kind": "name",
+     "path": "langchain.chains",
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/baby_dev.py:4",
+      "chapter7/software_development/test.py:37",
+      "chapter9/chat.py:7"
+     ]
+    },
+    {
+     "key": "587da5ab10d0f2a2",
+     "kind": "call",
+     "path": "langchain.chains.ConversationChain",
+     "npos": 0,
+     "kwargs": [
+      "llm",
+      "verbose"
+     ],
+     "change": "removed",
+     "where": [
+      "chapter9/chat.py:18"
+     ]
+    },
+    {
+     "key": "c523bf853ec2dffd",
+     "kind": "name",
+     "path": "langchain.chains.ConversationChain",
+     "change": "removed",
+     "where": [
+      "chapter9/chat.py:7",
+      "chapter9/chat.py:18"
+     ]
+    },
+    {
+     "key": "8c7d4c9c3e2001a4",
+     "kind": "name",
+     "path": "langchain.chains.LLMChain",
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/baby_dev.py:4",
+      "chapter7/software_development/test.py:37"
+     ]
+    },
+    {
+     "key": "d5432e507d5e413f",
+     "kind": "call",
+     "path": "langchain.chains.LLMChain.from_string",
+     "npos": 1,
+     "kwargs": [
+      "template"
+     ],
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/test.py:40"
+     ]
+    },
+    {
+     "key": "74a1d13ba95d814a",
+     "kind": "name",
+     "path": "langchain.chains.LLMChain.from_string",
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/test.py:40"
+     ]
+    },
+    {
+     "key": "9ca145917b085451",
+     "kind": "name",
+     "path": "langchain.embeddings.CacheBackedEmbeddings",
+     "change": "removed",
+     "where": [
+      "chapter4/llms.py:2"
+     ]
+    },
+    {
+     "key": "8050401d751ad3ca",
+     "kind": "call",
+     "path": "langchain.embeddings.CacheBackedEmbeddings.from_bytes_store",
+     "npos": 2,
+     "kwargs": [
+      "namespace"
+     ],
+     "change": "removed",
+     "where": [
+      "chapter4/llms.py:25"
+     ]
+    },
+    {
+     "key": "424b4345b891c14e",
+     "kind": "name",
+     "path": "langchain.embeddings.CacheBackedEmbeddings.from_bytes_store",
+     "change": "removed",
+     "where": [
+      "chapter4/llms.py:25"
+     ]
+    },
+    {
+     "key": "53f34b25d7e4a72a",
+     "kind": "name",
+     "path": "langchain.smith",
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/test.py:28",
+      "chapter7/software_development/test.py:46"
+     ]
+    },
+    {
+     "key": "bc0b6cd97b562f31",
+     "kind": "call",
+     "path": "langchain.smith.RunEvalConfig",
+     "npos": 0,
+     "kwargs": [
+      "evaluators"
+     ],
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/test.py:29"
+     ]
+    },
+    {
+     "key": "8df33d4c7858eaed",
+     "kind": "name",
+     "path": "langchain.smith.RunEvalConfig",
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/test.py:28",
+      "chapter7/software_development/test.py:29"
+     ]
+    },
+    {
+     "key": "66af54e39318392b",
+     "kind": "call",
+     "path": "langchain.smith.RunEvalConfig.Criteria",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/test.py:31",
+      "chapter7/software_development/test.py:32"
+     ]
+    },
+    {
+     "key": "2a986aa45bc162c1",
+     "kind": "name",
+     "path": "langchain.smith.RunEvalConfig.Criteria",
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/test.py:31",
+      "chapter7/software_development/test.py:32"
+     ]
+    },
+    {
+     "key": "49f4a2c303afc4c2",
+     "kind": "name",
+     "path": "langchain.smith.run_on_dataset",
+     "change": "removed",
+     "where": [
+      "chapter7/software_development/test.py:46",
+      "chapter7/software_development/test.py:48"
+     ]
+    },
+    {
+     "key": "8942aa32c787ee7f",
+     "kind": "name",
+     "path": "langchain.storage",
+     "change": "removed",
+     "where": [
+      "chapter4/llms.py:3"
+     ]
+    },
+    {
+     "key": "7ac39ff1003927da",
+     "kind": "call",
+     "path": "langchain.storage.LocalFileStore",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "chapter4/llms.py:19"
+     ]
+    },
+    {
+     "key": "c442b3193c40622b",
+     "kind": "name",
+     "path": "langchain.storage.LocalFileStore",
+     "change": "removed",
+     "where": [
+      "chapter4/llms.py:3",
+      "chapter4/llms.py:19"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-sambanova__ai-starter-kit-langchain-community-up",
+   "set": "2026-11",
+   "repo": "https://github.com/sambanova/ai-starter-kit",
+   "source": "sambanova__ai-starter-kit@8f58380ff748a59cd79d4f7e94bdb326066647ff",
+   "dir": "",
+   "package": "langchain-community",
+   "from": "0.4.1",
+   "to": "0.4.2",
+   "python": "3.11",
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "breaks": [
+    {
+     "key": "00ef35dee6e5694f",
+     "kind": "name",
+     "path": "langchain_community.vectorstores.Qdrant",
+     "change": "removed",
+     "where": [
+      "utils/vectordb/vector_db.py:29"
+     ]
+    },
+    {
+     "key": "a38511a764dcf15d",
+     "kind": "name",
+     "path": "langchain_community.vectorstores.Qdrant.from_documents",
+     "change": "removed",
+     "where": [
+      "utils/vectordb/vector_db.py:251",
+      "utils/vectordb/vector_db.py:258"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-opencsgs__csghub-server-mcp-up",
+   "set": "2026-11",
+   "repo": "https://github.com/OpenCSGs/csghub-server",
+   "source": "OpenCSGs__csghub-server@9df8bf6d3135b860bc0437326cdcd0002088b87b",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.25.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:2"
+     ]
+    },
+    {
+     "key": "90c0cb5c7d59347f",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "npos": 0,
+     "kwargs": [
+      "host",
+      "log_level",
+      "name",
+      "port"
+     ],
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:4"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:2",
+      "docker/spaces/templates/mcp_server/app.py:4"
+     ]
+    },
+    {
+     "key": "a9c8f8b5acb20c2d",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.prompt",
+     "npos": 0,
+     "kwargs": [
+      "description",
+      "name"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:22"
+     ]
+    },
+    {
+     "key": "62ddae6859fa3279",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.prompt",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:22"
+     ]
+    },
+    {
+     "key": "fec8ffbaad2077f9",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.resource",
+     "npos": 0,
+     "kwargs": [
+      "description",
+      "uri"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:6"
+     ]
+    },
+    {
+     "key": "13a0ae28b810115e",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.resource",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:6"
+     ]
+    },
+    {
+     "key": "c80ba6ed6e1a4efe",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [
+      "transport"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:28"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:28"
+     ]
+    },
+    {
+     "key": "ceec1ff784eeae3c",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "npos": 0,
+     "kwargs": [
+      "description",
+      "name"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:11"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "docker/spaces/templates/mcp_server/app.py:11"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-coleam00__ai-agents-masterclass-pydantic-ai-slim-up",
+   "set": "2026-11",
+   "repo": "https://github.com/coleam00/ai-agents-masterclass",
+   "source": "coleam00__ai-agents-masterclass@1879176f4a000026786185841800fe404b9c12cb",
+   "dir": "",
+   "package": "pydantic-ai-slim",
+   "from": "0.0.10",
+   "to": "2.66.0",
+   "python": "3.11",
+   "env": "pydantic-ai-slim==2.66.0@2026-11-07",
+   "breaks": [
+    {
+     "key": "6bbb17895239adbb",
+     "kind": "call",
+     "path": "pydantic_ai.messages.ModelTextResponse",
+     "npos": 0,
+     "kwargs": [
+      "content"
+     ],
+     "change": "removed",
+     "where": [
+      "pydantic-ai/streamlit_ui.py:78"
+     ]
+    },
+    {
+     "key": "a4a9be9be818e46d",
+     "kind": "name",
+     "path": "pydantic_ai.messages.ModelTextResponse",
+     "change": "removed",
+     "where": [
+      "pydantic-ai/streamlit_ui.py:11",
+      "pydantic-ai/streamlit_ui.py:78"
+     ]
+    },
+    {
+     "key": "c0d8d3bf1c3e3219",
+     "kind": "call",
+     "path": "pydantic_ai.messages.UserPrompt",
+     "npos": 0,
+     "kwargs": [
+      "content"
+     ],
+     "change": "removed",
+     "where": [
+      "pydantic-ai/streamlit_ui.py:66"
+     ]
+    },
+    {
+     "key": "52f71b5f9b16fa7c",
+     "kind": "name",
+     "path": "pydantic_ai.messages.UserPrompt",
+     "change": "removed",
+     "where": [
+      "pydantic-ai/streamlit_ui.py:11",
+      "pydantic-ai/streamlit_ui.py:66"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-openbmb__visrag-huggingface-hub-up",
+   "set": "2026-11",
+   "repo": "https://github.com/OpenBMB/VisRAG",
+   "source": "OpenBMB__VisRAG@56f9785bf8385bce0c220f19ba7c82ddddc89ba0",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.34.5",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-07",
+   "breaks": [
+    {
+     "key": "a91308e645c548a4",
+     "kind": "call",
+     "path": "huggingface_hub.repo_type_and_id_from_hf_id",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "timm_modified/timm/models/_hub.py:295"
+     ]
+    },
+    {
+     "key": "abe57d8454d5a527",
+     "kind": "name",
+     "path": "huggingface_hub.repo_type_and_id_from_hf_id",
+     "change": "removed",
+     "where": [
+      "timm_modified/timm/models/_hub.py:33",
+      "timm_modified/timm/models/_hub.py:295"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-zstar1003__ragflow-plus-mistralai-up",
+   "set": "2026-11",
+   "repo": "https://github.com/zstar1003/ragflow-plus",
+   "source": "zstar1003__ragflow-plus@8127c6d97c6c359adca2712a1b9aaac9d0b04084",
+   "dir": "",
+   "package": "mistralai",
+   "from": "0.4.2",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-07",
+   "breaks": [
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "rag/llm/chat_model.py:688",
+      "rag/llm/embedding_model.py:450"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "rag/llm/chat_model.py:687",
+      "rag/llm/chat_model.py:688",
+      "rag/llm/embedding_model.py:449"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-dwani-ai__llm-recipes-mistralai-up",
+   "set": "2026-11",
+   "repo": "https://github.com/dwani-ai/llm-recipes",
+   "source": "dwani-ai__llm-recipes@138690d323cb2112062a2ec1c72de817fd740d6e",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.5.0",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-07",
+   "breaks": [
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "python/aquila/src/audio/main.py:33",
+      "python/notebooklm/script_parser.py:116",
+      "python/shopping-bot/base/llm.py:16"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "python/aquila/src/audio/main.py:4",
+      "python/aquila/src/audio/main.py:33",
+      "python/notebooklm/script_parser.py:3"
+     ]
+    },
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "tutorials/mistral/autogen_mistral_client.py:39"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "tutorials/mistral/autogen_mistral_client.py:14",
+      "tutorials/mistral/autogen_mistral_client.py:39"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-just-krivi__option-pricing-models-streamlit-up",
+   "set": "2026-11",
+   "repo": "https://github.com/just-krivi/option-pricing-models",
+   "source": "just-krivi__option-pricing-models@1fa63c374d7c65109097bba5de7595d216438f58",
+   "dir": "",
+   "package": "streamlit",
+   "from": "1.29.0",
+   "to": "1.67.0",
+   "python": "3.11",
+   "env": "streamlit==1.67.0@2026-11-07",
+   "breaks": [
+    {
+     "key": "a8a80b7dfc5a912b",
+     "kind": "call",
+     "path": "streamlit.pyplot",
+     "npos": 0,
+     "kwargs": [],
+     "change": "param_now_required",
+     "where": [
+      "streamlit_app.py:170"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-netscaler__netscaler-adc-metrics-exporter-urllib3-up",
+   "set": "2026-11",
+   "repo": "https://github.com/netscaler/netscaler-adc-metrics-exporter",
+   "source": "netscaler__netscaler-adc-metrics-exporter@f42d88592f7c02247c110017021203bb524a5e6e",
+   "dir": "",
+   "package": "urllib3",
+   "from": "1.26.5",
+   "to": "2.8.0",
+   "python": "3.11",
+   "env": "urllib3==2.8.0@2026-10-15",
+   "breaks": [
+    {
+     "key": "55d80ec20ce8a31a",
+     "kind": "name",
+     "path": "urllib3.exceptions.SubjectAltNameWarning",
+     "change": "removed",
+     "where": [
+      "exporter.py:14"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-format81__ti-mindmap-gpt-mistralai-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/format81/TI-Mindmap-GPT",
+   "source": "format81__TI-Mindmap-GPT@fe882443f92b45c4d03696e2a0368b0f12b9d02f",
+   "dir": "",
+   "package": "mistralai",
+   "from": "0.1.8",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-08",
+   "breaks": [
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "timindmapgpt.py:300"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "timindmapgpt.py:33",
+      "timindmapgpt.py:300"
+     ]
+    },
+    {
+     "key": "f3e860486f994ef5",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion",
+     "change": "removed",
+     "where": [
+      "ti_5whats.py:4",
+      "ti_ai.py:11",
+      "ti_navigator.py:4"
+     ]
+    },
+    {
+     "key": "62c9a6d8ca983d3b",
+     "kind": "call",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "role"
+     ],
+     "change": "removed",
+     "where": [
+      "ti_5whats.py:68",
+      "ti_5whats.py:69",
+      "ti_ai.py:84"
+     ]
+    },
+    {
+     "key": "e9bd546defc91eaf",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "change": "removed",
+     "where": [
+      "ti_5whats.py:4",
+      "ti_5whats.py:68",
+      "ti_5whats.py:69"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-gcastano__streamlit-demo-apps-mistralai-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/gcastano/Streamlit-Demo-Apps",
+   "source": "gcastano__Streamlit-Demo-Apps@31f203d86a8c5e8ae76f3e64ba7fc2d4910e39d3",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.5.0",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-08",
+   "breaks": [
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "StreamlitGeneradorCharts/streamlitGeneradorCharts.py:34",
+      "StreamlitMistralAI/streamlitMistral.py:56"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "StreamlitGeneradorCharts/streamlitGeneradorCharts.py:11",
+      "StreamlitGeneradorCharts/streamlitGeneradorCharts.py:34",
+      "StreamlitMistralAI/streamlitMistral.py:3"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-forzaeth__llmxrobot-langchain-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/ForzaETH/LLMxRobot",
+   "source": "ForzaETH__LLMxRobot@4d896e72cf7b26908195fbb172142b7111a53358",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.3.12",
+   "to": "1.4.9",
+   "python": "3.11",
+   "env": "langchain==1.4.9@2026-11-08",
+   "breaks": [
+    {
+     "key": "3decef2d317bb3ae",
+     "kind": "name",
+     "path": "langchain.indexes",
+     "change": "removed",
+     "where": [
+      "llm_mpc.py:9",
+      "tests/decision_tester/decision_tester.py:8"
+     ]
+    },
+    {
+     "key": "d920da4a5121a337",
+     "kind": "call",
+     "path": "langchain.indexes.VectorstoreIndexCreator",
+     "npos": 0,
+     "kwargs": [
+      "embedding",
+      "text_splitter"
+     ],
+     "change": "removed",
+     "where": [
+      "llm_mpc.py:92",
+      "llm_mpc.py:103",
+      "tests/decision_tester/decision_tester.py:28"
+     ]
+    },
+    {
+     "key": "9568927d1949bce4",
+     "kind": "name",
+     "path": "langchain.indexes.VectorstoreIndexCreator",
+     "change": "removed",
+     "where": [
+      "llm_mpc.py:9",
+      "llm_mpc.py:92",
+      "llm_mpc.py:103"
+     ]
+    },
+    {
+     "key": "9724faf54941318e",
+     "kind": "call",
+     "path": "langchain.indexes.VectorstoreIndexCreator.from_loaders",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "llm_mpc.py:92",
+      "llm_mpc.py:103",
+      "tests/decision_tester/decision_tester.py:28"
+     ]
+    },
+    {
+     "key": "c5fef802e4e4bda5",
+     "kind": "name",
+     "path": "langchain.indexes.VectorstoreIndexCreator.from_loaders",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "llm_mpc.py:92",
+      "llm_mpc.py:103",
+      "tests/decision_tester/decision_tester.py:28"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-ailab-cvc__gpt4tools-langchain-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/AILab-CVC/GPT4Tools",
+   "source": "AILab-CVC__GPT4Tools@643faa8e5036310a9ec60ae1840818b6b5d4e4af",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.101",
+   "to": "1.4.9",
+   "python": "3.11",
+   "env": "langchain==1.4.9@2026-11-08",
+   "breaks": [
+    {
+     "key": "d71eed681d458e2f",
+     "kind": "name",
+     "path": "langchain.agents.initialize",
+     "change": "removed",
+     "where": [
+      "gpt4tools_demo.py:10"
+     ]
+    },
+    {
+     "key": "da047b15a8993139",
+     "kind": "name",
+     "path": "langchain.agents.initialize.initialize_agent",
+     "change": "removed",
+     "where": [
+      "gpt4tools_demo.py:10",
+      "gpt4tools_demo.py:102"
+     ]
+    },
+    {
+     "key": "5e51b734ccc813cf",
+     "kind": "name",
+     "path": "langchain.agents.tools",
+     "change": "removed",
+     "where": [
+      "gpt4tools_demo.py:11"
+     ]
+    },
+    {
+     "key": "26eb83f1f61cdb93",
+     "kind": "call",
+     "path": "langchain.agents.tools.Tool",
+     "npos": 0,
+     "kwargs": [
+      "description",
+      "func",
+      "name"
+     ],
+     "change": "removed",
+     "where": [
+      "gpt4tools_demo.py:90"
+     ]
+    },
+    {
+     "key": "0572020452c41727",
+     "kind": "name",
+     "path": "langchain.agents.tools.Tool",
+     "change": "removed",
+     "where": [
+      "gpt4tools_demo.py:11",
+      "gpt4tools_demo.py:90"
+     ]
+    },
+    {
+     "key": "5f4f950d3dc6df30",
+     "kind": "name",
+     "path": "langchain.chains.conversation.memory",
+     "change": "removed",
+     "where": [
+      "gpt4tools_demo.py:12"
+     ]
+    },
+    {
+     "key": "081a058550a19331",
+     "kind": "call",
+     "path": "langchain.chains.conversation.memory.ConversationBufferMemory",
+     "npos": 0,
+     "kwargs": [
+      "memory_key",
+      "output_key"
+     ],
+     "change": "removed",
+     "where": [
+      "gpt4tools_demo.py:92"
+     ]
+    },
+    {
+     "key": "53b54d79c676d27b",
+     "kind": "name",
+     "path": "langchain.chains.conversation.memory.ConversationBufferMemory",
+     "change": "removed",
+     "where": [
+      "gpt4tools_demo.py:12",
+      "gpt4tools_demo.py:92"
+     ]
+    },
+    {
+     "key": "aefc7074e9ccf141",
+     "kind": "name",
+     "path": "langchain.llms.base",
+     "change": "removed",
+     "where": [
+      "gpt4tools/llm.py:7"
+     ]
+    },
+    {
+     "key": "c421b7896d2ebcab",
+     "kind": "name",
+     "path": "langchain.llms.base.LLM",
+     "change": "removed",
+     "where": [
+      "gpt4tools/llm.py:7"
+     ]
+    },
+    {
+     "key": "16c60c8e7278420e",
+     "kind": "name",
+     "path": "langchain.llms.utils",
+     "change": "removed",
+     "where": [
+      "gpt4tools/llm.py:8"
+     ]
+    },
+    {
+     "key": "44d946af2bacf93a",
+     "kind": "call",
+     "path": "langchain.llms.utils.enforce_stop_tokens",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "gpt4tools/llm.py:187"
+     ]
+    },
+    {
+     "key": "103db2c1cad36cda",
+     "kind": "name",
+     "path": "langchain.llms.utils.enforce_stop_tokens",
+     "change": "removed",
+     "where": [
+      "gpt4tools/llm.py:8",
+      "gpt4tools/llm.py:187"
+     ]
+    },
+    {
+     "key": "b8699756c17c1a28",
+     "kind": "name",
+     "path": "langchain.utils",
+     "change": "removed",
+     "where": [
+      "gpt4tools/llm.py:9"
+     ]
+    },
+    {
+     "key": "b58b9550d9930387",
+     "kind": "name",
+     "path": "langchain.utils.get_from_dict_or_env",
+     "change": "removed",
+     "where": [
+      "gpt4tools/llm.py:9"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-openspg__kag-mcp-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/OpenSPG/KAG",
+   "source": "OpenSPG__KAG@fdab15b3929d2ee40dfcdd388f90233096a6afc9",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.6.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "kag/examples/baidu_map_mcp/map.py:6",
+      "kag/examples/google_web_search_mcp/google_web_search_server.py:1",
+      "kag/mcp/server/kag_mcp_server.py:89"
+     ]
+    },
+    {
+     "key": "de4b668605081f53",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.Context",
+     "change": "removed",
+     "where": [
+      "kag/examples/baidu_map_mcp/map.py:6"
+     ]
+    },
+    {
+     "key": "0fccac83061b270f",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "kag/examples/baidu_map_mcp/map.py:9",
+      "kag/examples/google_web_search_mcp/google_web_search_server.py:4",
+      "kag/mcp/server/kag_mcp_server.py:94"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "kag/examples/baidu_map_mcp/map.py:6",
+      "kag/examples/baidu_map_mcp/map.py:9",
+      "kag/examples/google_web_search_mcp/google_web_search_server.py:1"
+     ]
+    },
+    {
+     "key": "6da8d336eebd1ff4",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "kag/examples/baidu_map_mcp/map.py:445"
+     ]
+    },
+    {
+     "key": "c80ba6ed6e1a4efe",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [
+      "transport"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "kag/examples/google_web_search_mcp/google_web_search_server.py:62"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "kag/examples/baidu_map_mcp/map.py:445",
+      "kag/examples/google_web_search_mcp/google_web_search_server.py:62"
+     ]
+    },
+    {
+     "key": "cb66c0d4c256a6ab",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "kag/examples/baidu_map_mcp/map.py:51",
+      "kag/examples/baidu_map_mcp/map.py:98",
+      "kag/examples/baidu_map_mcp/map.py:145"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "kag/examples/baidu_map_mcp/map.py:51",
+      "kag/examples/baidu_map_mcp/map.py:98",
+      "kag/examples/baidu_map_mcp/map.py:145"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-edizaguirre__rosebud-pinecone-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/EdIzaguirre/Rosebud",
+   "source": "EdIzaguirre__Rosebud@1b8dde53b542306f5ca2577dc7562a96bff58478",
+   "dir": "",
+   "package": "pinecone",
+   "from": "4.0.0",
+   "to": "10.3.0",
+   "python": "3.11",
+   "env": "pinecone==10.3.0@2026-11-08",
+   "breaks": [
+    {
+     "key": "6c440b3e25469fcd",
+     "kind": "name",
+     "path": "pinecone.core.client.exceptions",
+     "change": "removed",
+     "where": [
+      "pinecone_flow.py:3"
+     ]
+    },
+    {
+     "key": "fc19e89e32447b79",
+     "kind": "name",
+     "path": "pinecone.core.client.exceptions.NotFoundException",
+     "change": "removed",
+     "where": [
+      "pinecone_flow.py:3"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-yashvirgaming__tiktikcheckercli-httpx-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/YashvirGaming/TikTikCheckerCLI",
+   "source": "YashvirGaming__TikTikCheckerCLI@46990495fdd6582d14004b3c5d3d69b81aaed8c6",
+   "dir": "",
+   "package": "httpx",
+   "from": "0.26.0",
+   "to": "0.28.1",
+   "python": "3.11",
+   "env": "httpx==0.28.1@2025-01-05",
+   "breaks": [
+    {
+     "key": "630cf8a2f8c6f1b2",
+     "kind": "call",
+     "path": "httpx.Client",
+     "npos": 0,
+     "kwargs": [
+      "cookies",
+      "follow_redirects",
+      "headers",
+      "proxies",
+      "timeout"
+     ],
+     "change": "param_removed",
+     "where": [
+      "TikTok.py:138"
+     ]
+    },
+    {
+     "key": "922eafd3882e0e3f",
+     "kind": "call",
+     "path": "httpx.Client",
+     "npos": 0,
+     "kwargs": [
+      "follow_redirects",
+      "headers",
+      "proxies",
+      "timeout"
+     ],
+     "change": "param_removed",
+     "where": [
+      "TikTok.py:118"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-tomburdge__polari-polars-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/TomBurdge/polari",
+   "source": "TomBurdge__polari@6f2ba8745eecd0b89b801fea8640a66fe629f930",
+   "dir": "",
+   "package": "polars",
+   "from": "0.20.30",
+   "to": "2.1.0",
+   "python": "3.11",
+   "env": "polars==2.1.0@2026-11-08",
+   "breaks": [
+    {
+     "key": "6dbbb8bda14db1eb",
+     "kind": "name",
+     "path": "polars.type_aliases",
+     "change": "removed",
+     "where": [
+      "polari/__init__.py:12",
+      "polari/utils.py:9"
+     ]
+    },
+    {
+     "key": "62ac723f9c278d02",
+     "kind": "name",
+     "path": "polars.type_aliases.IntoExpr",
+     "change": "removed",
+     "where": [
+      "polari/__init__.py:12",
+      "polari/utils.py:9"
+     ]
+    },
+    {
+     "key": "765bc482258b9da1",
+     "kind": "name",
+     "path": "polars.type_aliases.PolarsDataType",
+     "change": "removed",
+     "where": [
+      "polari/utils.py:9"
+     ]
+    },
+    {
+     "key": "8d1f8f7c6ace8feb",
+     "kind": "name",
+     "path": "polars.utils.udfs",
+     "change": "removed",
+     "where": [
+      "polari/__init__.py:15"
+     ]
+    },
+    {
+     "key": "c9036e21e7f93eac",
+     "kind": "call",
+     "path": "polars.utils.udfs._get_shared_lib_location",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "polari/__init__.py:17"
+     ]
+    },
+    {
+     "key": "a937b0c7a0a60f13",
+     "kind": "name",
+     "path": "polars.utils.udfs._get_shared_lib_location",
+     "change": "removed",
+     "where": [
+      "polari/__init__.py:15",
+      "polari/__init__.py:17"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-vita-mllm__vita-gradio-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/VITA-MLLM/VITA",
+   "source": "VITA-MLLM__VITA@35d064a6542a5d812136fcd66fa93d9beb27b03c",
+   "dir": "",
+   "package": "gradio",
+   "from": "4.42.0",
+   "to": "6.31.0",
+   "python": "3.11",
+   "env": "gradio==6.31.0@2026-11-08",
+   "breaks": [
+    {
+     "key": "d52d91da22160b93",
+     "kind": "call",
+     "path": "gradio.Audio",
+     "npos": 0,
+     "kwargs": [
+      "label",
+      "show_download_button",
+      "sources",
+      "type",
+      "waveform_options"
+     ],
+     "change": "param_removed",
+     "where": [
+      "web_demo/web_ability_demo.py:445"
+     ]
+    },
+    {
+     "key": "3e32328388b15141",
+     "kind": "call",
+     "path": "gradio.Blocks.launch",
+     "npos": 0,
+     "kwargs": [
+      "auth",
+      "debug",
+      "server_name",
+      "server_port",
+      "share",
+      "show_api",
+      "show_error"
+     ],
+     "via": "instance",
+     "change": "param_removed",
+     "where": [
+      "web_demo/web_ability_demo.py:484"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-bricewalker__hey-jetson-flask-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/bricewalker/Hey-Jetson",
+   "source": "bricewalker__Hey-Jetson@e5abe32e3b060552a2faf58f857a693b46fcff94",
+   "dir": "",
+   "package": "flask",
+   "from": "2.3.2",
+   "to": "3.1.3",
+   "python": "3.11",
+   "env": "flask==3.1.3@2026-03-21",
+   "breaks": [
+    {
+     "key": "b1d57819846f76ea",
+     "kind": "call",
+     "path": "flask.Markup",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "app/routes.py:247",
+      "app/routes.py:332",
+      "app/routes.py:532"
+     ]
+    },
+    {
+     "key": "baea30cdb5684d86",
+     "kind": "name",
+     "path": "flask.Markup",
+     "change": "removed",
+     "where": [
+      "app/routes.py:4",
+      "app/routes.py:247",
+      "app/routes.py:332"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-norn__bustime-redis-up",
+   "set": "2026-11b",
+   "repo": "https://github.com/norn/bustime",
+   "source": "norn__bustime@78a1a80e71d6c02eb437d34fe39da905dc49dbd2",
+   "dir": "",
+   "package": "redis",
+   "from": "5.0.8",
+   "to": "8.1.0",
+   "python": "3.11",
+   "env": "redis==8.1.0@2026-08-29",
+   "breaks": [
+    {
+     "key": "eecf84ea7e7e19ae",
+     "kind": "call",
+     "path": "redis.StrictRedis",
+     "npos": 0,
+     "kwargs": [
+      "charset",
+      "db",
+      "decode_responses",
+      "host",
+      "port"
+     ],
+     "change": "param_removed",
+     "where": [
+      "bustime/models.py:90",
+      "bustime/models.py:94"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-hkust-nlp__agentboard-anthropic-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/hkust-nlp/AgentBoard",
+   "source": "hkust-nlp__AgentBoard@bb7255e2daf1989069a186dad9e53f70680961db",
+   "dir": "",
+   "package": "anthropic",
+   "from": "0.6.0",
+   "to": "2.6.0",
+   "python": "3.11",
+   "env": "anthropic==2.6.0@2026-11-09",
+   "breaks": [
+    {
+     "key": "aaef9774a6b07941",
+     "kind": "name",
+     "path": "anthropic.AI_PROMPT",
+     "change": "removed",
+     "where": [
+      "agentboard/llm/claude.py:1"
+     ]
+    },
+    {
+     "key": "1a8b2b40e7f53c44",
+     "kind": "name",
+     "path": "anthropic.HUMAN_PROMPT",
+     "change": "removed",
+     "where": [
+      "agentboard/llm/claude.py:1"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-bowen-upenn__llm_token_bias-mistralai-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/bowen-upenn/llm_token_bias",
+   "source": "bowen-upenn__llm_token_bias@bbf3734a50cb7731a3ccfbe98b7d799f9a996c30",
+   "dir": "",
+   "package": "mistralai",
+   "from": "0.1.8",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-09",
+   "breaks": [
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "query_llm.py:346"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "query_llm.py:25",
+      "query_llm.py:346"
+     ]
+    },
+    {
+     "key": "1b2d88e16ee0c1ea",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient.chat",
+     "npos": 0,
+     "kwargs": [
+      "messages",
+      "model"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "query_llm.py:349"
+     ]
+    },
+    {
+     "key": "03fcf76c1918a4e8",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient.chat",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "query_llm.py:349"
+     ]
+    },
+    {
+     "key": "f3e860486f994ef5",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion",
+     "change": "removed",
+     "where": [
+      "query_llm.py:26"
+     ]
+    },
+    {
+     "key": "62c9a6d8ca983d3b",
+     "kind": "call",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "role"
+     ],
+     "change": "removed",
+     "where": [
+      "query_llm.py:351"
+     ]
+    },
+    {
+     "key": "e9bd546defc91eaf",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "change": "removed",
+     "where": [
+      "query_llm.py:26",
+      "query_llm.py:351"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-curvedinf__novel-writer-mistralai-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/curvedinf/novel-writer",
+   "source": "curvedinf__novel-writer@301c79e7caa6a12fd27d82cd7f774b7730e1f263",
+   "dir": "",
+   "package": "mistralai",
+   "from": "0.1.3",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-09",
+   "breaks": [
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "writer.py:40"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "writer.py:7",
+      "writer.py:40"
+     ]
+    },
+    {
+     "key": "f3e860486f994ef5",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion",
+     "change": "removed",
+     "where": [
+      "writer.py:8"
+     ]
+    },
+    {
+     "key": "62c9a6d8ca983d3b",
+     "kind": "call",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "role"
+     ],
+     "change": "removed",
+     "where": [
+      "writer.py:51",
+      "writer.py:52"
+     ]
+    },
+    {
+     "key": "e9bd546defc91eaf",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "change": "removed",
+     "where": [
+      "writer.py:8",
+      "writer.py:51",
+      "writer.py:52"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-raj-maharajwala__ai_agent_chatbot_synapse-langchain-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/raj-maharajwala/AI_Agent_Chatbot_Synapse",
+   "source": "raj-maharajwala__AI_Agent_Chatbot_Synapse@a07e922e481fbf5b81bb116ba574c52d9333e49c",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.2.14",
+   "to": "1.4.9",
+   "python": "3.11",
+   "env": "langchain==1.4.9@2026-11-09",
+   "breaks": [
+    {
+     "key": "243e425a7a6bf780",
+     "kind": "name",
+     "path": "langchain.callbacks.streaming_stdout",
+     "change": "removed",
+     "where": [
+      "src/app.py:23",
+      "src/models/model_loader.py:5"
+     ]
+    },
+    {
+     "key": "593ca666f4fde16a",
+     "kind": "call",
+     "path": "langchain.callbacks.streaming_stdout.StreamingStdOutCallbackHandler",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "src/models/model_loader.py:55"
+     ]
+    },
+    {
+     "key": "76f0c726851977f7",
+     "kind": "name",
+     "path": "langchain.callbacks.streaming_stdout.StreamingStdOutCallbackHandler",
+     "change": "removed",
+     "where": [
+      "src/app.py:23",
+      "src/models/model_loader.py:5",
+      "src/models/model_loader.py:55"
+     ]
+    },
+    {
+     "key": "09739342c0573ded",
+     "kind": "name",
+     "path": "langchain.chains",
+     "change": "removed",
+     "where": [
+      "src/app.py:26"
+     ]
+    },
+    {
+     "key": "168fc5ac84593d94",
+     "kind": "name",
+     "path": "langchain.chains.ConversationalRetrievalChain",
+     "change": "removed",
+     "where": [
+      "src/app.py:26"
+     ]
+    },
+    {
+     "key": "bca6a147bcef19b1",
+     "kind": "name",
+     "path": "langchain.text_splitter",
+     "change": "removed",
+     "where": [
+      "src/app.py:25"
+     ]
+    },
+    {
+     "key": "73416ff8155133c3",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter",
+     "change": "removed",
+     "where": [
+      "src/app.py:25",
+      "src/app.py:459"
+     ]
+    },
+    {
+     "key": "d93896657ab36e37",
+     "kind": "call",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter.split_documents",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/app.py:463"
+     ]
+    },
+    {
+     "key": "0d4025c16b87e203",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter.split_documents",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/app.py:463"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-aws-samples__aiml-genai-multimodal-agent-langchain-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/aws-samples/aiml-genai-multimodal-agent",
+   "source": "aws-samples__aiml-genai-multimodal-agent@9dd5983f7a868a4363a37b6a79beb1f3b11be576",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.309",
+   "to": "1.4.9",
+   "python": "3.11",
+   "env": "langchain==1.4.9@2026-11-09",
+   "breaks": [
+    {
+     "key": "b725a8ab3c188566",
+     "kind": "name",
+     "path": "langchain.LLMChain",
+     "change": "removed",
+     "where": [
+      "app_complete.py:13",
+      "utility/stock_query_mm.py:1"
+     ]
+    },
+    {
+     "key": "d7b9fb5545e751ac",
+     "kind": "name",
+     "path": "langchain.PromptTemplate",
+     "change": "removed",
+     "where": [
+      "app_complete.py:13",
+      "utility/stock_query_mm.py:1"
+     ]
+    },
+    {
+     "key": "3e3ab780617d106c",
+     "kind": "call",
+     "path": "langchain.SQLDatabase",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "app_complete.py:115",
+      "utility/stock_query_mm.py:35"
+     ]
+    },
+    {
+     "key": "1860b290dc426f3b",
+     "kind": "name",
+     "path": "langchain.SQLDatabase",
+     "change": "removed",
+     "where": [
+      "app_complete.py:13",
+      "app_complete.py:115",
+      "utility/stock_query_mm.py:1"
+     ]
+    },
+    {
+     "key": "309a85dc28456a30",
+     "kind": "name",
+     "path": "langchain.agents.structured_chat",
+     "change": "removed",
+     "where": [
+      "app_complete.py:6"
+     ]
+    },
+    {
+     "key": "495a790b18f84d54",
+     "kind": "name",
+     "path": "langchain.agents.structured_chat.output_parser",
+     "change": "removed",
+     "where": [
+      "app_complete.py:6"
+     ]
+    },
+    {
+     "key": "5e51b734ccc813cf",
+     "kind": "name",
+     "path": "langchain.agents.tools",
+     "change": "removed",
+     "where": [
+      "app_complete.py:31"
+     ]
+    },
+    {
+     "key": "26eb83f1f61cdb93",
+     "kind": "call",
+     "path": "langchain.agents.tools.Tool",
+     "npos": 0,
+     "kwargs": [
+      "description",
+      "func",
+      "name"
+     ],
+     "change": "removed",
+     "where": [
+      "app_complete.py:184",
+      "app_complete.py:192",
+      "app_complete.py:200"
+     ]
+    },
+    {
+     "key": "0572020452c41727",
+     "kind": "name",
+     "path": "langchain.agents.tools.Tool",
+     "change": "removed",
+     "where": [
+      "app_complete.py:31",
+      "app_complete.py:184",
+      "app_complete.py:192"
+     ]
+    },
+    {
+     "key": "ba0920a48c9790f2",
+     "kind": "name",
+     "path": "langchain.chains.RetrievalQA",
+     "change": "removed",
+     "where": [
+      "utility/kendra_tool_mm.py:2"
+     ]
+    },
+    {
+     "key": "262c39710e64e72a",
+     "kind": "name",
+     "path": "langchain.chains.RetrievalQA.from_chain_type",
+     "change": "removed",
+     "where": [
+      "utility/kendra_tool_mm.py:43"
+     ]
+    },
+    {
+     "key": "b146a19dd808d2b2",
+     "kind": "name",
+     "path": "langchain.chat_models.ChatAnthropic",
+     "change": "removed",
+     "where": [
+      "utility/kendra_tool_mm.py:5"
+     ]
+    },
+    {
+     "key": "4c57b924e93d066c",
+     "kind": "name",
+     "path": "langchain.docstore.document",
+     "change": "removed",
+     "where": [
+      "app_complete.py:12"
+     ]
+    },
+    {
+     "key": "5cabc6d02854e026",
+     "kind": "name",
+     "path": "langchain.llms.bedrock",
+     "change": "removed",
+     "where": [
+      "app_complete.py:29",
+      "utility/kendra_tool_mm.py:9",
+      "utility/stock_query_mm.py:8"
+     ]
+    },
+    {
+     "key": "bf5406133c4a2557",
+     "kind": "name",
+     "path": "langchain.memory",
+     "change": "removed",
+     "where": [
+      "app_complete.py:36"
+     ]
+    },
+    {
+     "key": "966e75dac9c6b1ad",
+     "kind": "call",
+     "path": "langchain.memory.ConversationBufferMemory",
+     "npos": 0,
+     "kwargs": [
+      "chat_memory",
+      "memory_key",
+      "return_messages"
+     ],
+     "change": "removed",
+     "where": [
+      "app_complete.py:273"
+     ]
+    },
+    {
+     "key": "5bb2fcb2ad43c877",
+     "kind": "name",
+     "path": "langchain.memory.ConversationBufferMemory",
+     "change": "removed",
+     "where": [
+      "app_complete.py:36",
+      "app_complete.py:273"
+     ]
+    },
+    {
+     "key": "e9ec98c692e32708",
+     "kind": "name",
+     "path": "langchain.memory.chat_message_histories",
+     "change": "removed",
+     "where": [
+      "app_complete.py:37"
+     ]
+    },
+    {
+     "key": "290fa80c13581fc1",
+     "kind": "name",
+     "path": "langchain.memory.chat_message_histories.DynamoDBChatMessageHistory",
+     "change": "removed",
+     "where": [
+      "app_complete.py:37",
+      "app_complete.py:261"
+     ]
+    },
+    {
+     "key": "c9731328924a2044",
+     "kind": "call",
+     "path": "langchain.memory.chat_message_histories.DynamoDBChatMessageHistory.add_ai_message",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "app_complete.py:281"
+     ]
+    },
+    {
+     "key": "b719868a2c2dc1e9",
+     "kind": "name",
+     "path": "langchain.memory.chat_message_histories.DynamoDBChatMessageHistory.add_ai_message",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "app_complete.py:281"
+     ]
+    },
+    {
+     "key": "a152c05e213173bf",
+     "kind": "name",
+     "path": "langchain.prompts",
+     "change": "removed",
+     "where": [
+      "app_complete.py:22",
+      "utility/kendra_tool_mm.py:3"
+     ]
+    },
+    {
+     "key": "27929c67ff3ad573",
+     "kind": "name",
+     "path": "langchain.prompts.AIMessagePromptTemplate",
+     "change": "removed",
+     "where": [
+      "app_complete.py:22"
+     ]
+    },
+    {
+     "key": "0839aa0505002e0c",
+     "kind": "name",
+     "path": "langchain.prompts.ChatPromptTemplate",
+     "change": "removed",
+     "where": [
+      "app_complete.py:22"
+     ]
+    },
+    {
+     "key": "b9f0153665ae4500",
+     "kind": "name",
+     "path": "langchain.prompts.ChatPromptTemplate.from_messages",
+     "change": "removed",
+     "where": [
+      "app_complete.py:267"
+     ]
+    },
+    {
+     "key": "f5e0d0a06ba239cb",
+     "kind": "name",
+     "path": "langchain.prompts.HumanMessagePromptTemplate",
+     "change": "removed",
+     "where": [
+      "app_complete.py:22"
+     ]
+    },
+    {
+     "key": "3d264faec0824ec0",
+     "kind": "call",
+     "path": "langchain.prompts.PromptTemplate",
+     "npos": 0,
+     "kwargs": [
+      "input_variables",
+      "template"
+     ],
+     "change": "removed",
+     "where": [
+      "app_complete.py:151",
+      "utility/kendra_tool_mm.py:37"
+     ]
+    },
+    {
+     "key": "f7d89fe18cd0b819",
+     "kind": "call",
+     "path": "langchain.prompts.SystemMessagePromptTemplate.from_template",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "app_complete.py:265"
+     ]
+    },
+    {
+     "key": "b068520d086fe368",
+     "kind": "name",
+     "path": "langchain.prompts.SystemMessagePromptTemplate.from_template",
+     "change": "removed",
+     "where": [
+      "app_complete.py:265"
+     ]
+    },
+    {
+     "key": "d40778880fee2abc",
+     "kind": "name",
+     "path": "langchain.prompts.prompt",
+     "change": "removed",
+     "where": [
+      "app_complete.py:15",
+      "utility/stock_query_mm.py:3"
+     ]
+    },
+    {
+     "key": "d532a0049158cfab",
+     "kind": "name",
+     "path": "langchain.prompts.prompt.PromptTemplate",
+     "change": "removed",
+     "where": [
+      "app_complete.py:15",
+      "utility/stock_query_mm.py:3",
+      "utility/stock_query_mm.py:73"
+     ]
+    },
+    {
+     "key": "49be3b71907be07b",
+     "kind": "name",
+     "path": "langchain.retrievers",
+     "change": "removed",
+     "where": [
+      "utility/kendra_tool_mm.py:1"
+     ]
+    },
+    {
+     "key": "eb07a613fbecc27f",
+     "kind": "name",
+     "path": "langchain.retrievers.AmazonKendraRetriever",
+     "change": "removed",
+     "where": [
+      "utility/kendra_tool_mm.py:1",
+      "utility/kendra_tool_mm.py:26"
+     ]
+    },
+    {
+     "key": "d707d9b65db534b2",
+     "kind": "name",
+     "path": "langchain.tools.base.StructuredTool",
+     "change": "removed",
+     "where": [
+      "utility/portfolio_tool.py:9"
+     ]
+    },
+    {
+     "key": "4be2c7ecb810391f",
+     "kind": "name",
+     "path": "langchain.tools.python.tool",
+     "change": "removed",
+     "where": [
+      "app_complete.py:35"
+     ]
+    },
+    {
+     "key": "3fb4a6347c34d108",
+     "kind": "call",
+     "path": "langchain.tools.python.tool.PythonREPLTool",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "app_complete.py:199"
+     ]
+    },
+    {
+     "key": "53ca27bcb33f1aed",
+     "kind": "name",
+     "path": "langchain.tools.python.tool.PythonREPLTool",
+     "change": "removed",
+     "where": [
+      "app_complete.py:35",
+      "app_complete.py:199"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-proneverfake__kios-langgraph-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/ProNeverFake/kios",
+   "source": "ProNeverFake__kios@e9f16f5bd110ab647242077d55d5cb0a71e4fcd9",
+   "dir": "",
+   "package": "langgraph",
+   "from": "0.0.24",
+   "to": "1.2.20",
+   "python": "3.11",
+   "env": "langgraph==1.2.20@2026-11-09",
+   "breaks": [
+    {
+     "key": "02a9336e8de32e8f",
+     "kind": "call",
+     "path": "langgraph.prebuilt.create_agent_executor",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "experiments/chair/graph.py:34",
+      "experiments/gearset1/graph.py:40",
+      "experiments/lamp/graph.py:34"
+     ]
+    },
+    {
+     "key": "4088cb3997870794",
+     "kind": "name",
+     "path": "langgraph.prebuilt.create_agent_executor",
+     "change": "removed",
+     "where": [
+      "experiments/chair/graph.py:32",
+      "experiments/chair/graph.py:34",
+      "experiments/gearset1/graph.py:38"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-microsoft__agenticcookbook-llama-index-core-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/microsoft/AgenticCookBook",
+   "source": "microsoft__AgenticCookBook@32c6b754cff666962b6cd4679a2bdd9183fbe28e",
+   "dir": "",
+   "package": "llama-index-core",
+   "from": "0.10.44",
+   "to": "0.14.25",
+   "python": "3.11",
+   "env": "llama-index-core==0.14.25@2026-10-21",
+   "breaks": [
+    {
+     "key": "1dc89e4d5a0ff680",
+     "kind": "call",
+     "path": "llama_index.core.agent.ReActAgent.from_tools",
+     "npos": 0,
+     "kwargs": [
+      "llm",
+      "max_iterations",
+      "memory",
+      "tools",
+      "verbose"
+     ],
+     "change": "removed",
+     "where": [
+      "05_travel_agency_with_front_and_back_office/main.py:122"
+     ]
+    },
+    {
+     "key": "b2d675d679959252",
+     "kind": "name",
+     "path": "llama_index.core.agent.ReActAgent.from_tools",
+     "change": "removed",
+     "where": [
+      "05_travel_agency_with_front_and_back_office/main.py:122"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-wanxingai__lightagent-mcp-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/wanxingai/LightAgent",
+   "source": "wanxingai__LightAgent@c0849e65d7fd08a14f390d93f9af1eac9698855e",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.10.1",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "803f670a24bea217",
+     "kind": "name",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "change": "removed",
+     "where": [
+      "LightAgent/mcp_client_manager.py:18"
+     ]
+    },
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/mcpServer_demo_stdio.py:3",
+      "mcp/mcpServers/mcpServer_weather_sse.py:37",
+      "mcp/mcpServers/weather.py:17"
+     ]
+    },
+    {
+     "key": "0fccac83061b270f",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/mcpServer_demo_stdio.py:6",
+      "mcp/mcpServers/weather.py:21"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/mcpServer_demo_stdio.py:3",
+      "mcp/mcpServers/mcpServer_demo_stdio.py:6",
+      "mcp/mcpServers/mcpServer_weather_sse.py:37"
+     ]
+    },
+    {
+     "key": "a3a61606ae54f054",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.list_tools",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/weather.py:202"
+     ]
+    },
+    {
+     "key": "0292a608480fde3a",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.list_tools",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/weather.py:202"
+     ]
+    },
+    {
+     "key": "6da8d336eebd1ff4",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/mcpServer_demo_stdio.py:39"
+     ]
+    },
+    {
+     "key": "c80ba6ed6e1a4efe",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [
+      "transport"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/mcpServer_weather_sse.py:86"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/mcpServer_demo_stdio.py:39",
+      "mcp/mcpServers/mcpServer_weather_sse.py:86"
+     ]
+    },
+    {
+     "key": "cb66c0d4c256a6ab",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/mcpServer_demo_stdio.py:9",
+      "mcp/mcpServers/mcpServer_demo_stdio.py:15",
+      "mcp/mcpServers/mcpServer_weather_sse.py:42"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/mcpServer_demo_stdio.py:9",
+      "mcp/mcpServers/mcpServer_demo_stdio.py:15",
+      "mcp/mcpServers/mcpServer_weather_sse.py:42"
+     ]
+    },
+    {
+     "key": "4c7014b16ce4728a",
+     "kind": "call",
+     "path": "mcp.shared.memory.create_connected_server_and_client_session",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/weather.py:160"
+     ]
+    },
+    {
+     "key": "e4acd5ca58daa7af",
+     "kind": "name",
+     "path": "mcp.shared.memory.create_connected_server_and_client_session",
+     "change": "removed",
+     "where": [
+      "mcp/mcpServers/weather.py:18",
+      "mcp/mcpServers/weather.py:160"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-intel__intel-ai-builder-mcp-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/intel/intel-ai-builder",
+   "source": "intel__intel-ai-builder@f80de2d6f70d4768b314b8f1a4198822d754527d",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.10.1",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "superbuilder/mcp/mcp_servers/mcp_google_flight/server.py:12",
+      "superbuilder/mcp/mcp_servers/mcp_google_hotel/server.py:12",
+      "superbuilder/mcp/mcp_servers/mcp_math/server.py:10"
+     ]
+    },
+    {
+     "key": "0fccac83061b270f",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "superbuilder/mcp/mcp_servers/mcp_google_flight/server.py:492",
+      "superbuilder/mcp/mcp_servers/mcp_google_flight/server.py:805",
+      "superbuilder/mcp/mcp_servers/mcp_google_hotel/server.py:383"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "superbuilder/mcp/mcp_servers/mcp_google_flight/server.py:12",
+      "superbuilder/mcp/mcp_servers/mcp_google_flight/server.py:492",
+      "superbuilder/mcp/mcp_servers/mcp_google_flight/server.py:494"
+     ]
+    },
+    {
+     "key": "6da8d336eebd1ff4",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "superbuilder/mcp/mcp_servers/mcp_mind_map/server.py:561",
+      "superbuilder/mcp/mcp_servers/mcp_mind_map/server.py:589"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "superbuilder/mcp/mcp_servers/mcp_mind_map/server.py:561",
+      "superbuilder/mcp/mcp_servers/mcp_mind_map/server.py:589"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-theagenticai__cortexon-pydantic-ai-slim-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/TheAgenticAI/CortexON",
+   "source": "TheAgenticAI__CortexON@3b00aab495861d6a7826c317101f8e069a3677f0",
+   "dir": "",
+   "package": "pydantic-ai-slim",
+   "from": "0.0.17",
+   "to": "2.66.0",
+   "python": "3.11",
+   "env": "pydantic-ai-slim==2.66.0@2026-11-09",
+   "breaks": [
+    {
+     "key": "8a339842b7303430",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "deps_type",
+      "model",
+      "name",
+      "result_type",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "cortex_on/agents/code_agent.py:246"
+     ]
+    },
+    {
+     "key": "b6bad1eec97f2a14",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "model",
+      "model_settings",
+      "name",
+      "result_tool_description",
+      "result_tool_name",
+      "result_type",
+      "retries",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "ta-browser/core/orchestrator.py:417"
+     ]
+    },
+    {
+     "key": "8746d2d1b2a67de3",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "model",
+      "model_settings",
+      "name",
+      "result_type",
+      "retries",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "ta-browser/core/orchestrator.py:320",
+      "ta-browser/core/orchestrator.py:431",
+      "ta-browser/core/orchestrator.py:441"
+     ]
+    },
+    {
+     "key": "63e8c4c9aad61f9c",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "model",
+      "name",
+      "result_type",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "cortex_on/agents/planner_agent.py:184"
+     ]
+    },
+    {
+     "key": "b05a1bb3a929acdd",
+     "kind": "call",
+     "path": "pydantic_ai.messages.ArgsJson",
+     "npos": 0,
+     "kwargs": [
+      "args_json"
+     ],
+     "change": "removed",
+     "where": [
+      "cortex_on/agents/web_surfer.py:116",
+      "cortex_on/agents/web_surfer.py:145"
+     ]
+    },
+    {
+     "key": "3f21f6daa42f12eb",
+     "kind": "name",
+     "path": "pydantic_ai.messages.ArgsJson",
+     "change": "removed",
+     "where": [
+      "cortex_on/agents/web_surfer.py:14",
+      "cortex_on/agents/web_surfer.py:116",
+      "cortex_on/agents/web_surfer.py:145"
+     ]
+    },
+    {
+     "key": "1bac12d9d6c4054e",
+     "kind": "name",
+     "path": "pydantic_ai.result.Usage",
+     "change": "removed",
+     "where": [
+      "ta-browser/core/orchestrator.py:14"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-jolibrain__colette-gradio-up",
+   "set": "2026-11c",
+   "repo": "https://github.com/jolibrain/colette",
+   "source": "jolibrain__colette@e94ea264e8decab8e60e63cd82c218a48f5bbdf6",
+   "dir": "",
+   "package": "gradio",
+   "from": "5.47.0",
+   "to": "6.31.0",
+   "python": "3.11",
+   "env": "gradio==6.31.0@2026-11-09",
+   "breaks": [
+    {
+     "key": "68466aad4a5ca558",
+     "kind": "call",
+     "path": "gradio.Chatbot",
+     "npos": 0,
+     "kwargs": [
+      "elem_id",
+      "examples",
+      "height",
+      "type"
+     ],
+     "change": "param_removed",
+     "where": [
+      "src/colette/ui/app.py:122"
+     ]
+    },
+    {
+     "key": "538e0fdb59189f76",
+     "kind": "call",
+     "path": "gradio.Chatbot.like",
+     "npos": 3,
+     "kwargs": [
+      "like_user_message"
+     ],
+     "via": "instance",
+     "change": "param_removed",
+     "where": [
+      "src/colette/ui/app.py:150"
+     ]
+    },
+    {
+     "key": "986fbbec9df1a963",
+     "kind": "call",
+     "path": "gradio.Image",
+     "npos": 1,
+     "kwargs": [
+      "container",
+      "elem_id",
+      "height",
+      "interactive",
+      "show_download_button",
+      "show_fullscreen_button",
+      "show_label",
+      "show_share_button",
+      "width"
+     ],
+     "change": "param_removed",
+     "where": [
+      "src/colette/ui/app.py:67"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-hjjshine__rag-llm-cancer-paper-mistralai-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/hjjshine/rag-llm-cancer-paper",
+   "source": "hjjshine__rag-llm-cancer-paper@71caf553c47d117bee2631ab36ba9640a03b7ef7",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.9.11",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "llm/run_LLM.py:98",
+      "llm/run_LLM.py:105",
+      "llm/run_RAGLLM.py:212"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "llm/run_LLM.py:19",
+      "llm/run_LLM.py:98",
+      "llm/run_LLM.py:105"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-unit8co__mistral-hackathon-finetuning-mistralai-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/unit8co/mistral-hackathon-finetuning",
+   "source": "unit8co__mistral-hackathon-finetuning@8e047ea41bf27a9d1d434f1e6aa44e872c5334d5",
+   "dir": "",
+   "package": "mistralai",
+   "from": "0.4.0",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "src/backend/classifier.py:31",
+      "src/backend/rag.py:40",
+      "src/backend/rag.py:91"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "src/backend/classifier.py:2",
+      "src/backend/classifier.py:31",
+      "src/backend/rag.py:19"
+     ]
+    },
+    {
+     "key": "f3e860486f994ef5",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion",
+     "change": "removed",
+     "where": [
+      "src/backend/classifier.py:3",
+      "src/backend/rag.py:20"
+     ]
+    },
+    {
+     "key": "62c9a6d8ca983d3b",
+     "kind": "call",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "role"
+     ],
+     "change": "removed",
+     "where": [
+      "src/backend/classifier.py:38"
+     ]
+    },
+    {
+     "key": "e9bd546defc91eaf",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "change": "removed",
+     "where": [
+      "src/backend/classifier.py:3",
+      "src/backend/classifier.py:38",
+      "src/backend/rag.py:20"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-googlecloudplatform__nl2sql-studio-langchain-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/GoogleCloudPlatform/nl2sql-studio",
+   "source": "GoogleCloudPlatform__nl2sql-studio@4eafd942604dbba6fed3be50eeb1dc00d3c928da",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.1.12",
+   "to": "1.4.9",
+   "python": "3.11",
+   "env": "langchain==1.4.9@2026-11-10",
+   "breaks": [
+    {
+     "key": "fd7b2df9da08c558",
+     "kind": "name",
+     "path": "langchain.agents.agent_toolkits.SQLDatabaseToolkit",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/sql_generation/react.py:21",
+      "nl2sql_library/nl2sql/tasks/sql_generation/react.py:63"
+     ]
+    },
+    {
+     "key": "78cf80d6ad4d4c4c",
+     "kind": "name",
+     "path": "langchain.agents.agent_types",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/sql_generation/react.py:22"
+     ]
+    },
+    {
+     "key": "efc183dce869f770",
+     "kind": "name",
+     "path": "langchain.agents.agent_types.AgentType",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/sql_generation/react.py:22"
+     ]
+    },
+    {
+     "key": "22c4fda53fe7a55f",
+     "kind": "name",
+     "path": "langchain.agents.create_sql_agent",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/sql_generation/react.py:20",
+      "nl2sql_library/nl2sql/tasks/sql_generation/react.py:61"
+     ]
+    },
+    {
+     "key": "e54597175ffaa6d7",
+     "kind": "name",
+     "path": "langchain.chains.sql_database.prompt",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/sql_generation/core.py:21",
+      "nl2sql_library/nl2sql/tasks/table_selection/core.py:21"
+     ]
+    },
+    {
+     "key": "86f437cc94809218",
+     "kind": "name",
+     "path": "langchain.chains.sql_database.prompt.DECIDER_PROMPT",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/table_selection/core.py:65"
+     ]
+    },
+    {
+     "key": "07fcb54fc39c8246",
+     "kind": "name",
+     "path": "langchain.chains.sql_database.prompt.PROMPT",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/sql_generation/core.py:21"
+     ]
+    },
+    {
+     "key": "8765c5846510e5d7",
+     "kind": "name",
+     "path": "langchain.chains.sql_database.prompt.SQL_PROMPTS",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/sql_generation/core.py:21"
+     ]
+    },
+    {
+     "key": "11cfe4844071fcf9",
+     "kind": "call",
+     "path": "langchain.embeddings.VertexAIEmbeddings",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:29"
+     ]
+    },
+    {
+     "key": "a7b79f2d3beb7692",
+     "kind": "name",
+     "path": "langchain.embeddings.VertexAIEmbeddings",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:20",
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:29"
+     ]
+    },
+    {
+     "key": "6db70a828092ff9d",
+     "kind": "call",
+     "path": "langchain.llms.VertexAI",
+     "npos": 0,
+     "kwargs": [
+      "max_output_tokens",
+      "model_name",
+      "temperature"
+     ],
+     "change": "removed",
+     "where": [
+      "nl2sql_src/utils/table_filter_test.py:7"
+     ]
+    },
+    {
+     "key": "d531c21823efb271",
+     "kind": "name",
+     "path": "langchain.llms.VertexAI",
+     "change": "removed",
+     "where": [
+      "nl2sql_src/utils/table_filter_test.py:7"
+     ]
+    },
+    {
+     "key": "aefc7074e9ccf141",
+     "kind": "name",
+     "path": "langchain.llms.base",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/executors/__init__.py:25",
+      "nl2sql_library/nl2sql/tasks/column_selection/core.py:21",
+      "nl2sql_library/nl2sql/tasks/eval_fix/core.py:21"
+     ]
+    },
+    {
+     "key": "240c6dcd4045075a",
+     "kind": "name",
+     "path": "langchain.llms.google_palm",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/llms/google_palm.py:20"
+     ]
+    },
+    {
+     "key": "e8be3a301e43b035",
+     "kind": "name",
+     "path": "langchain.llms.google_palm.GooglePalm",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/llms/google_palm.py:20"
+     ]
+    },
+    {
+     "key": "d9a7a970942f3129",
+     "kind": "name",
+     "path": "langchain.llms.vertexai",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/llms/vertexai.py:20"
+     ]
+    },
+    {
+     "key": "5dea8374bd65884b",
+     "kind": "name",
+     "path": "langchain.llms.vertexai.VertexAI",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/llms/vertexai.py:20"
+     ]
+    },
+    {
+     "key": "d86fc83fe3cc8b24",
+     "kind": "name",
+     "path": "langchain.output_parsers",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/column_selection/core.py:22",
+      "nl2sql_library/nl2sql/tasks/eval_fix/core.py:22",
+      "nl2sql_library/nl2sql/tasks/join_selection/core.py:22"
+     ]
+    },
+    {
+     "key": "d6a61a33c48839ee",
+     "kind": "call",
+     "path": "langchain.output_parsers.ResponseSchema",
+     "npos": 0,
+     "kwargs": [
+      "description",
+      "name"
+     ],
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/column_selection/core.py:57",
+      "nl2sql_library/nl2sql/tasks/column_selection/core.py:65",
+      "nl2sql_library/nl2sql/tasks/eval_fix/core.py:55"
+     ]
+    },
+    {
+     "key": "47c2ad699350253e",
+     "kind": "name",
+     "path": "langchain.output_parsers.StructuredOutputParser.from_response_schemas",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/column_selection/core.py:55",
+      "nl2sql_library/nl2sql/tasks/eval_fix/core.py:53",
+      "nl2sql_library/nl2sql/tasks/join_selection/core.py:52"
+     ]
+    },
+    {
+     "key": "e150f531e1260239",
+     "kind": "name",
+     "path": "langchain.prompts.PromptTemplate",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/datasets/base.py:26"
+     ]
+    },
+    {
+     "key": "d40778880fee2abc",
+     "kind": "name",
+     "path": "langchain.prompts.prompt",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/assets/prompts/__init__.py:24",
+      "nl2sql_library/nl2sql/tasks/column_selection/core.py:23",
+      "nl2sql_library/nl2sql/tasks/eval_fix/core.py:23"
+     ]
+    },
+    {
+     "key": "021b45fc9b17c245",
+     "kind": "call",
+     "path": "langchain.prompts.prompt.PromptTemplate.from_template",
+     "npos": 0,
+     "kwargs": [
+      "template",
+      "template_format"
+     ],
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/assets/prompts/__init__.py:38"
+     ]
+    },
+    {
+     "key": "2553a003326339eb",
+     "kind": "name",
+     "path": "langchain.prompts.prompt.PromptTemplate.from_template",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/assets/prompts/__init__.py:38"
+     ]
+    },
+    {
+     "key": "0ffa89f74427fa79",
+     "kind": "name",
+     "path": "langchain.schema",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:21",
+      "nl2sql_library/nl2sql/tasks/column_selection/core.py:24",
+      "nl2sql_library/nl2sql/tasks/eval_fix/core.py:24"
+     ]
+    },
+    {
+     "key": "90d0d95cc8afb014",
+     "kind": "name",
+     "path": "langchain.schema.BasePromptTemplate",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/tasks/column_selection/core.py:24",
+      "nl2sql_library/nl2sql/tasks/eval_fix/core.py:24",
+      "nl2sql_library/nl2sql/tasks/join_selection/core.py:24"
+     ]
+    },
+    {
+     "key": "d94a7234e3b0c49a",
+     "kind": "call",
+     "path": "langchain.schema.Document",
+     "npos": 0,
+     "kwargs": [
+      "metadata",
+      "page_content"
+     ],
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:26",
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:27"
+     ]
+    },
+    {
+     "key": "014c5f7ddd823cca",
+     "kind": "name",
+     "path": "langchain.sql_database",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/datasets/base.py:27"
+     ]
+    },
+    {
+     "key": "4e6dceb446f2028e",
+     "kind": "call",
+     "path": "langchain.sql_database.SQLDatabase",
+     "npos": 0,
+     "kwargs": [
+      "engine",
+      "ignore_tables",
+      "view_support"
+     ],
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/datasets/base.py:459"
+     ]
+    },
+    {
+     "key": "103df5dbf27bd831",
+     "kind": "call",
+     "path": "langchain.sql_database.SQLDatabase",
+     "npos": 0,
+     "kwargs": [
+      "engine",
+      "view_support"
+     ],
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/datasets/base.py:353"
+     ]
+    },
+    {
+     "key": "659c74a6bbd6a4b2",
+     "kind": "name",
+     "path": "langchain.sql_database.SQLDatabase",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/datasets/base.py:27",
+      "nl2sql_library/nl2sql/datasets/base.py:353",
+      "nl2sql_library/nl2sql/datasets/base.py:459"
+     ]
+    },
+    {
+     "key": "f51b016e3674cbd9",
+     "kind": "call",
+     "path": "langchain.sql_database.SQLDatabase._get_sample_rows",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/datasets/base.py:569"
+     ]
+    },
+    {
+     "key": "5ced69192be81bdc",
+     "kind": "name",
+     "path": "langchain.sql_database.SQLDatabase._get_sample_rows",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/datasets/base.py:569"
+     ]
+    },
+    {
+     "key": "36c3cafada8c2940",
+     "kind": "name",
+     "path": "langchain.vectorstores.chroma",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:22"
+     ]
+    },
+    {
+     "key": "eae0f0eab6dc5028",
+     "kind": "name",
+     "path": "langchain.vectorstores.chroma.Chroma",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:22"
+     ]
+    },
+    {
+     "key": "9af9635f970a8eba",
+     "kind": "call",
+     "path": "langchain.vectorstores.chroma.Chroma.from_documents",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:24"
+     ]
+    },
+    {
+     "key": "d9300948ebeb9d25",
+     "kind": "name",
+     "path": "langchain.vectorstores.chroma.Chroma.from_documents",
+     "change": "removed",
+     "where": [
+      "nl2sql_library/nl2sql/commons/utils/classifiers.py:24"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-vishwasg217__fin-sight-llama-index-core-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/vishwasg217/fin-sight",
+   "source": "vishwasg217__fin-sight@8d4ad5b8f7fdfc2347ff0a8cf2306776eee57f61",
+   "dir": "",
+   "package": "llama-index-core",
+   "from": "0.10.30",
+   "to": "0.14.25",
+   "python": "3.11",
+   "env": "llama-index-core==0.14.25@2026-10-21",
+   "breaks": [
+    {
+     "key": "33afeba54de815aa",
+     "kind": "call",
+     "path": "llama_index.core.ServiceContext.from_defaults",
+     "npos": 0,
+     "kwargs": [
+      "embed_model"
+     ],
+     "change": "removed",
+     "where": [
+      "pages/2_\ud83d\uddc2\ufe0f_Annual_Report_Analyzer.py:59"
+     ]
+    },
+    {
+     "key": "ebbe261bb879167d",
+     "kind": "call",
+     "path": "llama_index.core.ServiceContext.from_defaults",
+     "npos": 0,
+     "kwargs": [
+      "llm"
+     ],
+     "change": "removed",
+     "where": [
+      "pages/2_\ud83d\uddc2\ufe0f_Annual_Report_Analyzer.py:115"
+     ]
+    },
+    {
+     "key": "e8199075cb95b1fd",
+     "kind": "name",
+     "path": "llama_index.core.ServiceContext.from_defaults",
+     "change": "removed",
+     "where": [
+      "pages/2_\ud83d\uddc2\ufe0f_Annual_Report_Analyzer.py:59",
+      "pages/2_\ud83d\uddc2\ufe0f_Annual_Report_Analyzer.py:115"
+     ]
+    },
+    {
+     "key": "a334b73d38fa608e",
+     "kind": "call",
+     "path": "llama_index.core.query_engine.SubQuestionQueryEngine.from_defaults",
+     "npos": 0,
+     "kwargs": [
+      "query_engine_tools",
+      "service_context"
+     ],
+     "change": "param_removed",
+     "where": [
+      "pages/2_\ud83d\uddc2\ufe0f_Annual_Report_Analyzer.py:126"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-aiplanethub__beyondllm-llama-index-core-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/aiplanethub/beyondllm",
+   "source": "aiplanethub__beyondllm@ff0455732d337b46cf376dbf54f6a737ed9003f8",
+   "dir": "",
+   "package": "llama-index-core",
+   "from": "0.10.34",
+   "to": "0.14.25",
+   "python": "3.11",
+   "env": "llama-index-core==0.14.25@2026-10-21",
+   "breaks": [
+    {
+     "key": "f435f1ef955c6cb7",
+     "kind": "name",
+     "path": "llama_index.core.evaluation.EmbeddingQAFinetuneDataset",
+     "change": "removed",
+     "where": [
+      "src/beyondllm/embeddings/finetune.py:3",
+      "src/beyondllm/embeddings/utils.py:6",
+      "src/beyondllm/embeddings/utils.py:74"
+     ]
+    },
+    {
+     "key": "3e6605474661e6d8",
+     "kind": "call",
+     "path": "llama_index.core.evaluation.EmbeddingQAFinetuneDataset.from_json",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "src/beyondllm/embeddings/finetune.py:56",
+      "src/beyondllm/embeddings/finetune.py:57"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-securityfortech__secops-mcp-mcp-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/securityfortech/secops-mcp",
+   "source": "securityfortech__secops-mcp@6e09eb7d1b3b6ea784e36d6a0e977b0b7d6615e7",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.6.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "main.py:7"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "main.py:7",
+      "main.py:26"
+     ]
+    },
+    {
+     "key": "c80ba6ed6e1a4efe",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [
+      "transport"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "main.py:279"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "main.py:279"
+     ]
+    },
+    {
+     "key": "cb66c0d4c256a6ab",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "main.py:31",
+      "main.py:42",
+      "main.py:52"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "main.py:31",
+      "main.py:42",
+      "main.py:52"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-clarifai__docs-mcp-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/Clarifai/docs",
+   "source": "Clarifai__docs@76eefab5275d027043a09fa1762240d1f2fbcb09",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.9.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:9"
+     ]
+    },
+    {
+     "key": "de4b668605081f53",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.Context",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:9"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:9",
+      "code_snippets/runners-examples/web-search.py:143"
+     ]
+    },
+    {
+     "key": "bf455ea6f7a1a92c",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.prompt",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:243"
+     ]
+    },
+    {
+     "key": "62ddae6859fa3279",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.prompt",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:243"
+     ]
+    },
+    {
+     "key": "90ac64792acfd5f2",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.resource",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:237"
+     ]
+    },
+    {
+     "key": "13a0ae28b810115e",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.resource",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:237"
+     ]
+    },
+    {
+     "key": "6da8d336eebd1ff4",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:311"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:311"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "code_snippets/runners-examples/web-search.py:156",
+      "code_snippets/runners-examples/web-search.py:175",
+      "code_snippets/runners-examples/web-search.py:211"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-thierryc__glyphs-mcp-fastmcp-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/thierryc/Glyphs-mcp",
+   "source": "thierryc__Glyphs-mcp@774b14c1be9fe549447e799a33846c493c8aee0d",
+   "dir": "",
+   "package": "fastmcp",
+   "from": "2.12.0",
+   "to": "4.1.6",
+   "python": "3.11",
+   "env": "fastmcp==4.1.6@2026-11-10",
+   "breaks": [
+    {
+     "key": "a6d577c3189ff12a",
+     "kind": "call",
+     "path": "fastmcp.FastMCP.get_tools",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/glyphs-mcp/tests/test_tool_catalog.py:162"
+     ]
+    },
+    {
+     "key": "70caeef4220782eb",
+     "kind": "name",
+     "path": "fastmcp.FastMCP.get_tools",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/glyphs-mcp/tests/test_tool_catalog.py:162"
+     ]
+    },
+    {
+     "key": "d0ebfebafde6767d",
+     "kind": "name",
+     "path": "fastmcp.prompts.prompt.Message",
+     "change": "removed",
+     "where": [
+      "plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py:7",
+      "plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py:21",
+      "plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/prompt_examples.py:37"
+     ]
+    },
+    {
+     "key": "dc9ff8176da3dfff",
+     "kind": "name",
+     "path": "fastmcp.resources.ResourceManager",
+     "change": "removed",
+     "where": [
+      "src/sidecar/glyphs_mcp_sidecar/proxy.py:4"
+     ]
+    },
+    {
+     "key": "9e44e30a67561311",
+     "kind": "call",
+     "path": "fastmcp.resources.ResourceManager.get_resources",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "src/sidecar/glyphs_mcp_sidecar/proxy.py:20"
+     ]
+    },
+    {
+     "key": "bb78d2b03a1025c9",
+     "kind": "name",
+     "path": "fastmcp.server.proxy.ProxyResource",
+     "change": "removed",
+     "where": [
+      "src/sidecar/glyphs_mcp_sidecar/proxy.py:5"
+     ]
+    },
+    {
+     "key": "12a7804ccee31b56",
+     "kind": "call",
+     "path": "fastmcp.tools.tool.ToolResult",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "structured_content"
+     ],
+     "change": "removed",
+     "where": [
+      "plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py:464",
+      "plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py:495",
+      "plugin-manager/Glyphs MCP.glyphsPlugin/Contents/Resources/mcp_tools_document_changes.py:511"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-theagenticai__theagenticbrowser-pydantic-ai-slim-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/TheAgenticAI/TheAgenticBrowser",
+   "source": "TheAgenticAI__TheAgenticBrowser@71daa285d65584333e0c69b963360f8b74fd980f",
+   "dir": "",
+   "package": "pydantic-ai-slim",
+   "from": "0.0.17",
+   "to": "2.66.0",
+   "python": "3.11",
+   "env": "pydantic-ai-slim==2.66.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "8746d2d1b2a67de3",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "model",
+      "model_settings",
+      "name",
+      "result_type",
+      "retries",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "core/agents/critique_agent.py:102",
+      "core/agents/planner_agent.py:213"
+     ]
+    },
+    {
+     "key": "1bac12d9d6c4054e",
+     "kind": "name",
+     "path": "pydantic_ai.result.Usage",
+     "change": "removed",
+     "where": [
+      "core/orchestrator.py:6"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-cbruyndoncx__crewai-xls-crewai-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/cbruyndoncx/crewAI-xls",
+   "source": "cbruyndoncx__crewAI-xls@b0b6d78a2037bd169a5d014cd401da0e1e78b5a3",
+   "dir": "",
+   "package": "crewai",
+   "from": "0.28.8",
+   "to": "1.15.39",
+   "python": "3.11",
+   "env": "crewai==1.15.39@2026-11-10",
+   "breaks": [
+    {
+     "key": "8d6ef82442de09ee",
+     "kind": "call",
+     "path": "crewai.Task.execute",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/tools/browser_tools.py:36"
+     ]
+    },
+    {
+     "key": "096e814df41d79a3",
+     "kind": "name",
+     "path": "crewai.Task.execute",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/tools/browser_tools.py:36"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-easonxiao-888__mambatree-huggingface-hub-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/EasonXiao-888/MambaTree",
+   "source": "EasonXiao-888__MambaTree@0857f0a12f6e46873d05e4b9a73d987e97b149c3",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.21.3",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "25a907eb3110bff7",
+     "kind": "name",
+     "path": "huggingface_hub.HfFolder",
+     "change": "removed",
+     "where": [
+      "GrootL/transformers/tools/agents.py:25",
+      "GrootL/transformers/tools/agents.py:632"
+     ]
+    },
+    {
+     "key": "9d54d5977b6d1f40",
+     "kind": "call",
+     "path": "huggingface_hub.HfFolder.get_token",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "GrootL/transformers/tools/agents.py:632"
+     ]
+    },
+    {
+     "key": "fec071d956272853",
+     "kind": "call",
+     "path": "huggingface_hub.Repository",
+     "npos": 1,
+     "kwargs": [
+      "clone_from",
+      "token"
+     ],
+     "change": "removed",
+     "where": [
+      "GrootL/transformers/keras_callbacks.py:343"
+     ]
+    },
+    {
+     "key": "5f273ed25adbf966",
+     "kind": "call",
+     "path": "huggingface_hub.Repository.git_add",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "GrootL/transformers/models/owlvit/convert_owlvit_original_flax_to_hf.py:365"
+     ]
+    },
+    {
+     "key": "70ec16b43666e4d7",
+     "kind": "call",
+     "path": "huggingface_hub.Repository.git_add",
+     "npos": 0,
+     "kwargs": [
+      "auto_lfs_track"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "GrootL/transformers/commands/pt_to_tf.py:383"
+     ]
+    },
+    {
+     "key": "a61ca15bcb70afcf",
+     "kind": "call",
+     "path": "huggingface_hub.file_download.http_get",
+     "npos": 2,
+     "kwargs": [
+      "proxies"
+     ],
+     "change": "param_removed",
+     "where": [
+      "GrootL/transformers/utils/hub.py:589"
+     ]
+    },
+    {
+     "key": "0b94ace64acb9360",
+     "kind": "call",
+     "path": "huggingface_hub.hf_hub_download",
+     "npos": 0,
+     "kwargs": [
+      "filename",
+      "force_filename",
+      "local_dir_use_symlinks",
+      "repo_id"
+     ],
+     "change": "param_removed",
+     "where": [
+      "GrootL/transformers/models/clvp/convert_clvp_to_hf.py:186",
+      "GrootL/transformers/models/phi/convert_phi_weights_to_hf.py:97"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-fedirz__parler-tts-server-huggingface-hub-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/fedirz/parler-tts-server",
+   "source": "fedirz__parler-tts-server@148ceba6f0f2f80f4131a648e40fa8bc2470f729",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.23.1",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "5f027475e24745a5",
+     "kind": "call",
+     "path": "huggingface_hub.list_models",
+     "npos": 0,
+     "kwargs": [
+      "model_name"
+     ],
+     "change": "param_removed",
+     "where": [
+      "parler_tts_server/main.py:81",
+      "parler_tts_server/main.py:97"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-jgcri__pygcam-pandas-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/JGCRI/pygcam",
+   "source": "JGCRI__pygcam@b9fa5b995b04f96f50bcb216d16a9784ad011434",
+   "dir": "",
+   "package": "pandas",
+   "from": "1.5.2",
+   "to": "3.1.1",
+   "python": "3.11",
+   "env": "pandas==3.1.1@2026-11-10",
+   "breaks": [
+    {
+     "key": "71a8776a6e79d2e0",
+     "kind": "name",
+     "path": "pandas.DataFrame.append",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "pygcam/mcs/explorer.py:393"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-clchrislombardo__churn-prediction-bank-polars-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/CLCHRISLOMBARDO/churn-prediction-bank",
+   "source": "CLCHRISLOMBARDO__churn-prediction-bank@690ef6418cccce16bf7d5cef8c3aac0f91f6172a",
+   "dir": "",
+   "package": "polars",
+   "from": "1.33.1",
+   "to": "2.1.0",
+   "python": "3.11",
+   "env": "polars==2.1.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "26ba21c1132d621f",
+     "kind": "name",
+     "path": "polars.ComputeError",
+     "change": "removed",
+     "where": [
+      "src/optimization_ZS.py:188"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-ltgoslo__definition_modeling-scikit-learn-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/ltgoslo/definition_modeling",
+   "source": "ltgoslo__definition_modeling@f7daddecdd86ad07067e578978cf809bfc152cd9",
+   "dir": "",
+   "package": "scikit-learn",
+   "from": "1.3.1",
+   "to": "1.9.1",
+   "python": "3.11",
+   "env": "scikit-learn==1.9.1@2026-10-10",
+   "breaks": [
+    {
+     "key": "7b63e2fe3a87512b",
+     "kind": "call",
+     "path": "sklearn.manifold.TSNE",
+     "npos": 0,
+     "kwargs": [
+      "init",
+      "metric",
+      "n_components",
+      "n_iter",
+      "perplexity"
+     ],
+     "change": "param_removed",
+     "where": [
+      "code/proto_explanations/sense_label.py:24"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-njadnissi__ai_from_scratch-streamlit-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/njadNissi/AI_from_scratch",
+   "source": "njadNissi__AI_from_scratch@5efd49ece085e4ee3f9fda14624dfd8bcc389d10",
+   "dir": "",
+   "package": "streamlit",
+   "from": "1.35.0",
+   "to": "1.67.0",
+   "python": "3.11",
+   "env": "streamlit==1.67.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "ba3b4aa08caa5c60",
+     "kind": "call",
+     "path": "streamlit.experimental_rerun",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "pages/ml_iot/smartphone_visio/app_flask_st.py:203"
+     ]
+    },
+    {
+     "key": "906ef38369e23422",
+     "kind": "name",
+     "path": "streamlit.experimental_rerun",
+     "change": "removed",
+     "where": [
+      "pages/ml_iot/smartphone_visio/app_flask_st.py:203"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-bytedance__lance-gradio-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/bytedance/Lance",
+   "source": "bytedance__Lance@4baeee086648996f6ab12e673cbe461b0b149997",
+   "dir": "",
+   "package": "gradio",
+   "from": "5.31.0",
+   "to": "6.31.0",
+   "python": "3.11",
+   "env": "gradio==6.31.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "4a6345e9ef6adc1e",
+     "kind": "call",
+     "path": "gradio.Button.click",
+     "npos": 0,
+     "kwargs": [
+      "fn",
+      "inputs",
+      "outputs",
+      "queue",
+      "show_api"
+     ],
+     "via": "instance",
+     "change": "param_removed",
+     "where": [
+      "common/gradio_utils/render.py:356",
+      "common/gradio_utils/render.py:371",
+      "common/gradio_utils/render.py:379"
+     ]
+    },
+    {
+     "key": "d993186f3b1c5485",
+     "kind": "call",
+     "path": "gradio.Dropdown.change",
+     "npos": 0,
+     "kwargs": [
+      "fn",
+      "inputs",
+      "outputs",
+      "queue",
+      "show_api"
+     ],
+     "via": "instance",
+     "change": "param_removed",
+     "where": [
+      "common/gradio_utils/render.py:336",
+      "common/gradio_utils/render.py:347"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-shivammehta25__matcha-tts-gradio-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/shivammehta25/Matcha-TTS",
+   "source": "shivammehta25__Matcha-TTS@bd4d90d93214b37f7a159cf205ae85762c2c10aa",
+   "dir": "",
+   "package": "gradio",
+   "from": "3.43.2",
+   "to": "6.31.0",
+   "python": "3.11",
+   "env": "gradio==6.31.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "bbfc9237b97bab9a",
+     "kind": "call",
+     "path": "gradio.Box",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "matcha/app.py:171",
+      "matcha/app.py:179",
+      "matcha/app.py:223"
+     ]
+    },
+    {
+     "key": "4090c29216c64872",
+     "kind": "name",
+     "path": "gradio.Box",
+     "change": "removed",
+     "where": [
+      "matcha/app.py:171",
+      "matcha/app.py:179",
+      "matcha/app.py:223"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-level12__flask-webtest-flask-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/level12/flask-webtest",
+   "source": "level12__flask-webtest@1e8f907fc1794d301c7acfc1f78a22554dc5df08",
+   "dir": "",
+   "package": "flask",
+   "from": "2.2.3",
+   "to": "3.1.3",
+   "python": "3.11",
+   "env": "flask==3.1.3@2026-03-21",
+   "breaks": [
+    {
+     "key": "5d05d69a1fa7df46",
+     "kind": "name",
+     "path": "flask._app_ctx_stack",
+     "change": "removed",
+     "where": [
+      "flask_webtest.py:80"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ex-mypaios__mypaios-mcp-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/mypaios/mypaios",
+   "source": "mypaios__mypaios@78ef0676242f9f77dba7d1d6149b4b1ad0c30d56",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.28.1",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "2aed01716d83c46f",
+     "kind": "call",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "npos": 1,
+     "kwargs": [
+      "auth"
+     ],
+     "change": "removed",
+     "where": [
+      "src/mcp_manager.py:295"
+     ]
+    },
+    {
+     "key": "803f670a24bea217",
+     "kind": "name",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "change": "removed",
+     "where": [
+      "src/mcp_manager.py:281",
+      "src/mcp_manager.py:295"
+     ]
+    },
+    {
+     "key": "9481e96d81390a3f",
+     "kind": "call",
+     "path": "mcp.server.Server.call_tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp_servers/email_server.py:1310",
+      "mcp_servers/image_gen_server.py:42",
+      "mcp_servers/memory_server.py:75"
+     ]
+    },
+    {
+     "key": "a4aa3840e5e69933",
+     "kind": "name",
+     "path": "mcp.server.Server.call_tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp_servers/email_server.py:1310",
+      "mcp_servers/image_gen_server.py:42",
+      "mcp_servers/memory_server.py:75"
+     ]
+    },
+    {
+     "key": "83bc72506510d3d7",
+     "kind": "call",
+     "path": "mcp.server.Server.list_tools",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp_servers/email_server.py:1054",
+      "mcp_servers/image_gen_server.py:22",
+      "mcp_servers/memory_server.py:47"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ex-ydb-platform__ydb-mcp-mcp-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/ydb-platform/ydb-mcp",
+   "source": "ydb-platform__ydb-mcp@1ee9df3598abed71ffb83dbdec1375374f89f866",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.12.4",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "ydb_mcp/server.py:10"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "ydb_mcp/server.py:10"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ex-illinoisdata__deepola-polars-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/illinoisdata/DeepOLA",
+   "source": "illinoisdata__DeepOLA@1bee01ec208852a9e4630d2d1f00975e0259e9cd",
+   "dir": "",
+   "package": "polars",
+   "from": "0.15.1",
+   "to": "2.1.0",
+   "python": "3.11",
+   "env": "polars==2.1.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "c68400fe1a04c911",
+     "kind": "call",
+     "path": "polars.read_csv",
+     "npos": 1,
+     "kwargs": [
+      "has_header",
+      "new_columns",
+      "sep"
+     ],
+     "change": "param_removed",
+     "where": [
+      "baselines/progressive/clean-data.py:10",
+      "scripts/clean-data.py:10"
+     ]
+    },
+    {
+     "key": "e50be574232a912d",
+     "kind": "call",
+     "path": "polars.scan_csv",
+     "npos": 1,
+     "kwargs": [
+      "has_header",
+      "parse_dates",
+      "sep"
+     ],
+     "change": "param_removed",
+     "where": [
+      "baselines/polars/tpch/polars_queries/utils.py:37"
+     ]
+    },
+    {
+     "key": "208d1c1a6e2b4762",
+     "kind": "call",
+     "path": "polars.testing.assert_frame_equal",
+     "npos": 2,
+     "kwargs": [
+      "check_dtype"
+     ],
+     "change": "param_removed",
+     "where": [
+      "scripts/test-correctness.py:63"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ex-gesad-lab__benchmark-artifacts-pydantic-up",
+   "set": "2026-11d",
+   "repo": "https://github.com/gesad-lab/Benchmark-Artifacts",
+   "source": "gesad-lab__Benchmark-Artifacts@c5ddd9d0a805c0658c9cb5c9345e4771b32baa23",
+   "dir": "",
+   "package": "pydantic",
+   "from": "1.10.12",
+   "to": "2.14.3",
+   "python": "3.11",
+   "env": "pydantic==2.14.3@2026-11-10",
+   "breaks": [
+    {
+     "key": "d5729da6d10e4754",
+     "kind": "name",
+     "path": "pydantic.EmailStr.validate",
+     "change": "removed",
+     "where": [
+      "runs/ghspec/332c760d-ed7e-4279-a8cd-d89d145e46cb/sprint_002/generated_artifacts/specs/001-baes-experiment/src/src/api/users.py:107",
+      "runs/ghspec/332c760d-ed7e-4279-a8cd-d89d145e46cb/sprint_002/generated_artifacts/specs/001-baes-experiment/src/src/api/users.py:129",
+      "runs/ghspec/332c760d-ed7e-4279-a8cd-d89d145e46cb/sprint_002/generated_artifacts/specs/001-baes-experiment/src/src/api/users.py:343"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-fouxy84__evaluez_performances_llm-mistralai-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/Fouxy84/Evaluez_performances_LLM",
+   "source": "Fouxy84__Evaluez_performances_LLM@e615430d72107cef19959a61f19359f0b9872a7e",
+   "dir": "",
+   "package": "mistralai",
+   "from": "0.4.2",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "MistralChat.py:34",
+      "evaluate_ragas.py:232",
+      "utils/vector_store.py:53"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "MistralChat.py:5",
+      "MistralChat.py:34",
+      "evaluate_ragas.py:102"
+     ]
+    },
+    {
+     "key": "c9e9f9a6965ac638",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient.chat",
+     "npos": 0,
+     "kwargs": [
+      "messages",
+      "model",
+      "temperature"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "MistralChat.py:101"
+     ]
+    },
+    {
+     "key": "03fcf76c1918a4e8",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient.chat",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "MistralChat.py:101"
+     ]
+    },
+    {
+     "key": "a7a964bf9184e611",
+     "kind": "name",
+     "path": "mistralai.exceptions",
+     "change": "removed",
+     "where": [
+      "utils/vector_store.py:9"
+     ]
+    },
+    {
+     "key": "20364835be343798",
+     "kind": "name",
+     "path": "mistralai.exceptions.MistralAPIException",
+     "change": "removed",
+     "where": [
+      "utils/vector_store.py:9"
+     ]
+    },
+    {
+     "key": "f3e860486f994ef5",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion",
+     "change": "removed",
+     "where": [
+      "MistralChat.py:6",
+      "evaluate_ragas.py:103"
+     ]
+    },
+    {
+     "key": "62c9a6d8ca983d3b",
+     "kind": "call",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "role"
+     ],
+     "change": "removed",
+     "where": [
+      "MistralChat.py:169",
+      "evaluate_ragas.py:292"
+     ]
+    },
+    {
+     "key": "e9bd546defc91eaf",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "change": "removed",
+     "where": [
+      "MistralChat.py:6",
+      "MistralChat.py:169",
+      "evaluate_ragas.py:103"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-brunov21__aicore-mistralai-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/BrunoV21/AiCore",
+   "source": "BrunoV21__AiCore@e3a3beb54a6c226c1e37a46bbdf5cb3a60082526",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.7.0",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "0079ae955adb9953",
+     "kind": "name",
+     "path": "mistralai.CompletionEvent",
+     "change": "removed",
+     "where": [
+      "aicore/llm/providers/mistral.py:8"
+     ]
+    },
+    {
+     "key": "40df82e11361370c",
+     "kind": "name",
+     "path": "mistralai.CompletionResponseStreamChoice",
+     "change": "removed",
+     "where": [
+      "aicore/llm/providers/mistral.py:8"
+     ]
+    },
+    {
+     "key": "761b799f41bd2fb1",
+     "kind": "name",
+     "path": "mistralai.EmbeddingResponse",
+     "change": "removed",
+     "where": [
+      "aicore/embeddings/providers/mistral.py:3"
+     ]
+    },
+    {
+     "key": "dc980e8674f39a10",
+     "kind": "name",
+     "path": "mistralai.EmbeddingResponseData",
+     "change": "removed",
+     "where": [
+      "aicore/embeddings/providers/mistral.py:3"
+     ]
+    },
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "aicore/embeddings/providers/mistral.py:13",
+      "aicore/llm/providers/mistral.py:19"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "aicore/embeddings/providers/mistral.py:3",
+      "aicore/embeddings/providers/mistral.py:13",
+      "aicore/llm/providers/mistral.py:8"
+     ]
+    },
+    {
+     "key": "9288912dd3fa335c",
+     "kind": "name",
+     "path": "mistralai.models",
+     "change": "removed",
+     "where": [
+      "aicore/llm/providers/mistral.py:8"
+     ]
+    },
+    {
+     "key": "cc3826328c71fdf1",
+     "kind": "name",
+     "path": "mistralai.models.SDKError",
+     "change": "removed",
+     "where": [
+      "aicore/llm/providers/mistral.py:22"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-dzlab__deeplearning.ai-langchain-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/dzlab/deeplearning.ai",
+   "source": "dzlab__deeplearning.ai@f2c7420f57e4a6c3e4cec504bb7b9360ae3477cb",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.326",
+   "to": "1.4.9",
+   "python": "3.11",
+   "env": "langchain==1.4.9@2026-11-10",
+   "breaks": [
+    {
+     "key": "e6ffb7384671f38a",
+     "kind": "call",
+     "path": "langchain.chat_models.ChatOpenAI",
+     "npos": 0,
+     "kwargs": [
+      "model",
+      "temperature"
+     ],
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:83",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:17",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:34"
+     ]
+    },
+    {
+     "key": "a0eeeaee69953e03",
+     "kind": "name",
+     "path": "langchain.chat_models.ChatOpenAI",
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:2",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:83",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:4"
+     ]
+    },
+    {
+     "key": "a152c05e213173bf",
+     "kind": "name",
+     "path": "langchain.prompts",
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:1",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:3",
+      "2024/01/AutomatedTestingforLLMOps/Lesson3/app.py:1"
+     ]
+    },
+    {
+     "key": "0839aa0505002e0c",
+     "kind": "name",
+     "path": "langchain.prompts.ChatPromptTemplate",
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:1",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:3",
+      "2024/01/AutomatedTestingforLLMOps/Lesson3/app.py:1"
+     ]
+    },
+    {
+     "key": "fceb6a704f057f20",
+     "kind": "call",
+     "path": "langchain.prompts.ChatPromptTemplate.from_messages",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:86",
+      "2024/01/AutomatedTestingforLLMOps/Lesson3/app.py:70",
+      "2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py:30"
+     ]
+    },
+    {
+     "key": "b9f0153665ae4500",
+     "kind": "name",
+     "path": "langchain.prompts.ChatPromptTemplate.from_messages",
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:86",
+      "2024/01/AutomatedTestingforLLMOps/Lesson3/app.py:70",
+      "2024/01/AutomatedTestingforLLMOps/Lesson3/test_release_evals.py:30"
+     ]
+    },
+    {
+     "key": "0ffa89f74427fa79",
+     "kind": "name",
+     "path": "langchain.schema",
+     "change": "removed",
+     "where": [
+      "2025/09/BuildingandEvaluatingDataAgents/L2/helper.py:38",
+      "2025/09/BuildingandEvaluatingDataAgents/L2/prompts.py:2",
+      "2025/09/BuildingandEvaluatingDataAgents/L3/helper.py:38"
+     ]
+    },
+    {
+     "key": "14cc99f3b7d330d4",
+     "kind": "call",
+     "path": "langchain.schema.HumanMessage",
+     "npos": 0,
+     "kwargs": [
+      "content"
+     ],
+     "change": "removed",
+     "where": [
+      "2025/09/BuildingandEvaluatingDataAgents/L2/helper.py:474",
+      "2025/09/BuildingandEvaluatingDataAgents/L2/prompts.py:223",
+      "2025/09/BuildingandEvaluatingDataAgents/L2/prompts.py:297"
+     ]
+    },
+    {
+     "key": "2f394f48fb4d394b",
+     "kind": "name",
+     "path": "langchain.schema.HumanMessage",
+     "change": "removed",
+     "where": [
+      "2025/09/BuildingandEvaluatingDataAgents/L2/helper.py:38",
+      "2025/09/BuildingandEvaluatingDataAgents/L2/helper.py:134",
+      "2025/09/BuildingandEvaluatingDataAgents/L2/helper.py:184"
+     ]
+    },
+    {
+     "key": "98494a7cdc136577",
+     "kind": "name",
+     "path": "langchain.schema.output_parser",
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:3",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:5",
+      "2024/01/AutomatedTestingforLLMOps/Lesson3/app.py:3"
+     ]
+    },
+    {
+     "key": "989c9e5b28bd9df6",
+     "kind": "call",
+     "path": "langchain.schema.output_parser.StrOutputParser",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:84",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:18",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:35"
+     ]
+    },
+    {
+     "key": "a0b2536004ab05f9",
+     "kind": "name",
+     "path": "langchain.schema.output_parser.StrOutputParser",
+     "change": "removed",
+     "where": [
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:3",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/app.py:84",
+      "2024/01/AutomatedTestingforLLMOps/Lesson2/test_assistant.py:5"
+     ]
+    },
+    {
+     "key": "bca6a147bcef19b1",
+     "kind": "name",
+     "path": "langchain.text_splitter",
+     "change": "removed",
+     "where": [
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:3",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py:3",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py:3"
+     ]
+    },
+    {
+     "key": "73416ff8155133c3",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter",
+     "change": "removed",
+     "where": [
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:3",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:20",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py:3"
+     ]
+    },
+    {
+     "key": "384f5e27c33a42ff",
+     "kind": "call",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter.split_text",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:25",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py:25",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py:25"
+     ]
+    },
+    {
+     "key": "ebb95d9b24c83049",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter.split_text",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:25",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py:25",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py:25"
+     ]
+    },
+    {
+     "key": "ed1d0d352722b63e",
+     "kind": "call",
+     "path": "langchain.text_splitter.SentenceTransformersTokenTextSplitter",
+     "npos": 0,
+     "kwargs": [
+      "chunk_overlap",
+      "tokens_per_chunk"
+     ],
+     "change": "removed",
+     "where": [
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:27",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py:27",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py:27"
+     ]
+    },
+    {
+     "key": "fce76390e87918c1",
+     "kind": "name",
+     "path": "langchain.text_splitter.SentenceTransformersTokenTextSplitter",
+     "change": "removed",
+     "where": [
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:3",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:27",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py:3"
+     ]
+    },
+    {
+     "key": "333cd672de5eeaaa",
+     "kind": "call",
+     "path": "langchain.text_splitter.SentenceTransformersTokenTextSplitter.split_text",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:31",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py:31",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py:31"
+     ]
+    },
+    {
+     "key": "f94c1bb3ca01557f",
+     "kind": "name",
+     "path": "langchain.text_splitter.SentenceTransformersTokenTextSplitter.split_text",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson1/helper_utils.py:31",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson2/helper_utils.py:31",
+      "2024/01/AdvancedRetrievalforAIwithChroma/Lesson3/helper_utils.py:31"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-j0sephsasson__fine-tune-llms-langchain-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/j0sephsasson/fine-tune-LLMs",
+   "source": "j0sephsasson__fine-tune-LLMs@1bb7396da913981cde0516ab63669b8bacd3ae57",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.123",
+   "to": "1.4.9",
+   "python": "3.11",
+   "env": "langchain==1.4.9@2026-11-10",
+   "breaks": [
+    {
+     "key": "a0eeeaee69953e03",
+     "kind": "name",
+     "path": "langchain.chat_models.ChatOpenAI",
+     "change": "removed",
+     "where": [
+      "llm/tune.py:4",
+      "llm/tune.py:13"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-bkdevs__async-server-langgraph-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/bkdevs/async-server",
+   "source": "bkdevs__async-server@d743728b88eb802181595b6a7a13d61b829f56b2",
+   "dir": "",
+   "package": "langgraph",
+   "from": "0.3.31",
+   "to": "1.2.20",
+   "python": "3.11",
+   "env": "langgraph==1.2.20@2026-11-10",
+   "breaks": [
+    {
+     "key": "223e17c233b2f68e",
+     "kind": "name",
+     "path": "langgraph.graph.graph",
+     "change": "removed",
+     "where": [
+      "src/agent/agent_metadata.py:8"
+     ]
+    },
+    {
+     "key": "24c482c1bbcc6a3e",
+     "kind": "name",
+     "path": "langgraph.graph.graph.CompiledGraph",
+     "change": "removed",
+     "where": [
+      "src/agent/agent_metadata.py:8"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-ciscodevnet__meraki-magic-mcp-community-mcp-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/CiscoDevNet/meraki-magic-mcp-community",
+   "source": "CiscoDevNet__meraki-magic-mcp-community@8797f24b51e0fe3758a9f4f8394157c3c0d0b4e8",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.28.1",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:17",
+      "meraki-mcp.py:13",
+      "tests/test_config_and_safety.py:345"
+     ]
+    },
+    {
+     "key": "25d97838d95f993c",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "npos": 1,
+     "kwargs": [
+      "host",
+      "port"
+     ],
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:36",
+      "meraki-mcp.py:27"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:17",
+      "meraki-mcp-dynamic.py:36",
+      "meraki-mcp.py:13"
+     ]
+    },
+    {
+     "key": "90ac64792acfd5f2",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.resource",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "meraki-mcp.py:1106"
+     ]
+    },
+    {
+     "key": "13a0ae28b810115e",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.resource",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "meraki-mcp.py:1106"
+     ]
+    },
+    {
+     "key": "c80ba6ed6e1a4efe",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [
+      "transport"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:888",
+      "meraki-mcp.py:1119"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:888",
+      "meraki-mcp.py:1119"
+     ]
+    },
+    {
+     "key": "31ef8fca3353a555",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.streamable_http_app",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:881",
+      "meraki-mcp.py:1112"
+     ]
+    },
+    {
+     "key": "59439bcd90f291a0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.streamable_http_app",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:881",
+      "meraki-mcp.py:1112"
+     ]
+    },
+    {
+     "key": "cb66c0d4c256a6ab",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:419",
+      "meraki-mcp-dynamic.py:455",
+      "meraki-mcp-dynamic.py:460"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "meraki-mcp-dynamic.py:419",
+      "meraki-mcp-dynamic.py:455",
+      "meraki-mcp-dynamic.py:460"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-allenai__ai2-scholarqa-lib-transformers-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/allenai/ai2-scholarqa-lib",
+   "source": "allenai__ai2-scholarqa-lib@19e6827ba9e7fe05068624d0851f38cd74ff5efc",
+   "dir": "",
+   "package": "transformers",
+   "from": "4.44.1",
+   "to": "5.22.2",
+   "python": "3.11",
+   "env": "transformers==5.22.2@2026-11-10",
+   "breaks": [
+    {
+     "key": "ad1d73a158fd8676",
+     "kind": "call",
+     "path": "transformers.utils.move_cache",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "api/scholarqa/rag/reranker/modal_deploy/ai2-scholar-qa-reranker.py:43"
+     ]
+    },
+    {
+     "key": "d3f51aa6232b40d5",
+     "kind": "name",
+     "path": "transformers.utils.move_cache",
+     "change": "removed",
+     "where": [
+      "api/scholarqa/rag/reranker/modal_deploy/ai2-scholar-qa-reranker.py:35",
+      "api/scholarqa/rag/reranker/modal_deploy/ai2-scholar-qa-reranker.py:43"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-mohamedsamy853__ner-for-resume-entity-extraction-using-xlmroberta-transformers-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/MohamedSamy853/NER-For-Resume-Entity-Extraction-Using-XLMRoberta",
+   "source": "MohamedSamy853__NER-For-Resume-Entity-Extraction-Using-XLMRoberta@b4c5fc65a06b973e932ab08876497ccf03b8f3c7",
+   "dir": "",
+   "package": "transformers",
+   "from": "4.36.2",
+   "to": "5.22.2",
+   "python": "3.11",
+   "env": "transformers==5.22.2@2026-11-10",
+   "breaks": [
+    {
+     "key": "d479bf3e8dec7231",
+     "kind": "name",
+     "path": "transformers.AdamW",
+     "change": "removed",
+     "where": [
+      "utils/model.py:15",
+      "utils/model.py:122"
+     ]
+    },
+    {
+     "key": "cd0111cedbf91ac1",
+     "kind": "call",
+     "path": "transformers.TrainingArguments",
+     "npos": 1,
+     "kwargs": [
+      "disable_tqdm",
+      "evaluation_strategy",
+      "learning_rate",
+      "num_train_epochs",
+      "optim",
+      "push_to_hub",
+      "save_strategy"
+     ],
+     "change": "param_removed",
+     "where": [
+      "utils/model.py:130"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-itamarzimm__unifiedimplicitattnrepr-huggingface-hub-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/Itamarzimm/UnifiedImplicitAttnRepr",
+   "source": "Itamarzimm__UnifiedImplicitAttnRepr@fadeaee1d5631f4dc6a87559042b66c2736e6f4a",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.19.4",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "2624cc2ea6a246b4",
+     "kind": "name",
+     "path": "huggingface_hub.HfFolder.get_token",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "HF/transformers/src/transformers/tools/agents.py:632"
+     ]
+    },
+    {
+     "key": "32b5b20154dc50ce",
+     "kind": "name",
+     "path": "huggingface_hub.HfFolder.save_token",
+     "change": "removed",
+     "where": [
+      "HF/transformers/tests/generation/test_configuration_utils.py:229",
+      "HF/transformers/tests/models/auto/test_processor_auto.py:374",
+      "HF/transformers/tests/pipelines/test_pipelines_common.py:824"
+     ]
+    },
+    {
+     "key": "887e475e293490b9",
+     "kind": "call",
+     "path": "huggingface_hub.Repository",
+     "npos": 0,
+     "kwargs": [
+      "clone_from",
+      "local_dir",
+      "token"
+     ],
+     "change": "removed",
+     "where": [
+      "HF/transformers/utils/create_dummy_models.py:816"
+     ]
+    },
+    {
+     "key": "7dfb40417d552c27",
+     "kind": "call",
+     "path": "huggingface_hub.Repository",
+     "npos": 1,
+     "kwargs": [
+      "clone_from"
+     ],
+     "change": "removed",
+     "where": [
+      "HF/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py:209",
+      "HF/transformers/src/transformers/models/owlvit/convert_owlvit_original_flax_to_hf.py:330"
+     ]
+    },
+    {
+     "key": "fec071d956272853",
+     "kind": "call",
+     "path": "huggingface_hub.Repository",
+     "npos": 1,
+     "kwargs": [
+      "clone_from",
+      "token"
+     ],
+     "change": "removed",
+     "where": [
+      "HF/transformers/examples/pytorch/language-modeling/run_fim_no_trainer.py:376",
+      "HF/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py:267",
+      "HF/transformers/src/transformers/keras_callbacks.py:343"
+     ]
+    },
+    {
+     "key": "c1420ec6a2e45aa9",
+     "kind": "call",
+     "path": "huggingface_hub.cached_download",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "HF/transformers/src/transformers/models/cvt/convert_cvt_original_pytorch_checkpoint_to_pytorch.py:287",
+      "HF/transformers/src/transformers/models/deformable_detr/convert_deformable_detr_to_pytorch.py:113",
+      "HF/transformers/src/transformers/models/deprecated/van/convert_van_to_pytorch.py:131"
+     ]
+    },
+    {
+     "key": "536c66924f4bc902",
+     "kind": "call",
+     "path": "huggingface_hub.hf_api.HfFolder.get_token",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "HF/transformers/src/transformers/commands/user.py:120",
+      "HF/transformers/src/transformers/commands/user.py:154"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-leonard-ssj__sistema-gestion-de-proyectos-marshmallow-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/Leonard-ssj/Sistema-Gestion-de-Proyectos",
+   "source": "Leonard-ssj__Sistema-Gestion-de-Proyectos@90e91b804662c4e43ec1f1c089b51f9d0b490767",
+   "dir": "",
+   "package": "marshmallow",
+   "from": "3.20.1",
+   "to": "4.4.0",
+   "python": "3.11",
+   "env": "marshmallow==4.4.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "25fe8d03abd3bc05",
+     "kind": "call",
+     "path": "marshmallow.fields.Str",
+     "npos": 0,
+     "kwargs": [
+      "missing",
+      "required",
+      "validate"
+     ],
+     "change": "param_removed",
+     "where": [
+      "project-management-backend/app/schemas/task_schema.py:28",
+      "project-management-backend/app/schemas/task_schema.py:29"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ex-psp3dcg__tdfold-huggingface-hub-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/psp3dcg/TDFold",
+   "source": "psp3dcg__TDFold@11ef8bc3d53226e81d85c4776388025dca7a4a57",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.23.0",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "c62b11641ed04758",
+     "kind": "name",
+     "path": "huggingface_hub.HfFolder.get_token",
+     "change": "removed",
+     "where": [
+      "examples/dreambooth/train_dreambooth.py:439",
+      "examples/dreambooth/train_dreambooth_flax.py:313",
+      "examples/research_projects/colossalai/train_dreambooth_colossalai.py:349"
+     ]
+    },
+    {
+     "key": "7dfb40417d552c27",
+     "kind": "call",
+     "path": "huggingface_hub.Repository",
+     "npos": 1,
+     "kwargs": [
+      "clone_from"
+     ],
+     "change": "removed",
+     "where": [
+      "examples/dreambooth/train_dreambooth.py:539",
+      "examples/dreambooth/train_dreambooth_flax.py:390",
+      "examples/research_projects/colossalai/train_dreambooth_colossalai.py:418"
+     ]
+    },
+    {
+     "key": "e73bf73866ad5f5d",
+     "kind": "name",
+     "path": "huggingface_hub.Repository",
+     "change": "removed",
+     "where": [
+      "examples/dreambooth/train_dreambooth.py:26",
+      "examples/dreambooth/train_dreambooth.py:539",
+      "examples/dreambooth/train_dreambooth_flax.py:30"
+     ]
+    },
+    {
+     "key": "4e1fc647a172de37",
+     "kind": "call",
+     "path": "huggingface_hub.Repository.push_to_hub",
+     "npos": 0,
+     "kwargs": [
+      "auto_lfs_prune",
+      "blocking",
+      "commit_message"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "examples/dreambooth/train_dreambooth.py:839",
+      "examples/dreambooth/train_dreambooth_flax.py:659",
+      "examples/research_projects/colossalai/train_dreambooth_colossalai.py:684"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ex-zhengkid__parallel_thinking_via_mot-huggingface-hub-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/zhengkid/Parallel_Thinking_via_MoT",
+   "source": "zhengkid__Parallel_Thinking_via_MoT@a4fa0656653ceda465cbc54473986e8daef80bb9",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.29.1",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "fec071d956272853",
+     "kind": "call",
+     "path": "huggingface_hub.Repository",
+     "npos": 1,
+     "kwargs": [
+      "clone_from",
+      "token"
+     ],
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:33"
+     ]
+    },
+    {
+     "key": "caf01384111caed6",
+     "kind": "call",
+     "path": "huggingface_hub.Repository",
+     "npos": 1,
+     "kwargs": [
+      "token"
+     ],
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:35"
+     ]
+    },
+    {
+     "key": "e73bf73866ad5f5d",
+     "kind": "name",
+     "path": "huggingface_hub.Repository",
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:19",
+      "utils/upload_huggingface.py:33",
+      "utils/upload_huggingface.py:35"
+     ]
+    },
+    {
+     "key": "70ec16b43666e4d7",
+     "kind": "call",
+     "path": "huggingface_hub.Repository.git_add",
+     "npos": 0,
+     "kwargs": [
+      "auto_lfs_track"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:46"
+     ]
+    },
+    {
+     "key": "540f4dcce37f5034",
+     "kind": "name",
+     "path": "huggingface_hub.Repository.git_add",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:46"
+     ]
+    },
+    {
+     "key": "9cd548ea6b2a1b11",
+     "kind": "call",
+     "path": "huggingface_hub.Repository.git_commit",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:47"
+     ]
+    },
+    {
+     "key": "65543d93477cdeab",
+     "kind": "name",
+     "path": "huggingface_hub.Repository.git_commit",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:47"
+     ]
+    },
+    {
+     "key": "d6317ba4d043114c",
+     "kind": "call",
+     "path": "huggingface_hub.Repository.git_push",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:50"
+     ]
+    },
+    {
+     "key": "bce3ef0b41b6117c",
+     "kind": "name",
+     "path": "huggingface_hub.Repository.git_push",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "utils/upload_huggingface.py:50"
+     ]
+    }
+   ]
+  }
+ ],
+ "trial": [
+  {
+   "id": "pin-wayveai__driving-with-llms-openai-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/wayveai/Driving-with-LLMs",
+   "source": "wayveai__Driving-with-LLMs@fb323d6d11dd6b7fbd220f13238a8430ddc6b69c",
+   "dir": "",
+   "package": "openai",
+   "from": "0.27.0",
+   "to": "3.48.0",
+   "python": "3.11",
+   "env": "openai==3.48.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "963cb843fd2abcd1",
+     "kind": "name",
+     "path": "openai.ChatCompletion.create",
+     "change": "removed",
+     "where": [
+      "scripts/collect_vqa.py:55",
+      "scripts/grade_vqa.py:134"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-vivekkeshore__flask-dantic-pydantic-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/vivekkeshore/flask-dantic",
+   "source": "vivekkeshore__flask-dantic@35c6a27b59b2c5b8e62584ddfde025adb00e2de1",
+   "dir": "",
+   "package": "pydantic",
+   "from": "1.10.9",
+   "to": "2.14.3",
+   "python": "3.11",
+   "env": "pydantic==2.14.3@2026-11-10",
+   "breaks": [
+    {
+     "key": "6c767a7525d7be5e",
+     "kind": "name",
+     "path": "pydantic.class_validators.Validator",
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:5"
+     ]
+    },
+    {
+     "key": "294002e30ee983e3",
+     "kind": "call",
+     "path": "pydantic.fields.FieldInfo",
+     "npos": 1,
+     "kwargs": [],
+     "change": "positional",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:24"
+     ]
+    },
+    {
+     "key": "81b50b6a2d8b3e62",
+     "kind": "call",
+     "path": "pydantic.fields.ModelField",
+     "npos": 0,
+     "kwargs": [
+      "alias",
+      "class_validators",
+      "default",
+      "field_info",
+      "model_config",
+      "name",
+      "required",
+      "type_"
+     ],
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:28"
+     ]
+    },
+    {
+     "key": "a87d318dba491f77",
+     "kind": "name",
+     "path": "pydantic.fields.ModelField",
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:6",
+      "flask_dantic/pydantic_serializer/serializer.py:28",
+      "tests/test_serializer.py:7"
+     ]
+    },
+    {
+     "key": "36d071c8ead15d6f",
+     "kind": "name",
+     "path": "pydantic.fields.UndefinedType",
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:6"
+     ]
+    },
+    {
+     "key": "982ae68dd961b2a6",
+     "kind": "name",
+     "path": "pydantic.json.ENCODERS_BY_TYPE",
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/encoders.py:13"
+     ]
+    }
+   ]
+  }
+ ]
+}

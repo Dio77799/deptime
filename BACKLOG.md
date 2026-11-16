@@ -109,8 +109,8 @@ Sonnet fixed 80% of 25 real broken updates alone and 64% with `/deptime:fix-upgr
 (`bench/agent-fix/results-2026-11-16.md`). With the plugin installed and not named it called DepTime every time and
 kept 80%. DT-GTM-08 reworked the command. DT-OSS-17 waits for:
 - [ ] **DT-QA-26**: DT-QA-05 again on the reworked hand-off · `P1` `S` · deps: GTM-08, a release with it
-  - A new protocol before its first run, on new broken updates (DT-QA-05's 25 are now in-sample for the command).
-    Same `dontAsk` shell (`claude -p` can't ask a person): the reworked command needs no pipe or redirect.
+  - Protocol `bench/agent-fix/qa26/README.md`: 66 broken updates from the 2026-11 to 2026-11e holdouts (379
+    confirmed breaks), arms A and B once each, DT-QA-05's bar; if missed, 1.0 leaves the command out of its promise.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
