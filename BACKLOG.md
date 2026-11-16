@@ -104,9 +104,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
 
 **Phase 4, the fix (the model's part, outside DepTime).**
-- [ ] **DT-QA-23**: Qwen3.5 9B with the new tools on the upgrade checks · `P2` `S` · deps: CORE-67, CORE-68
-  - DT-QA-20's upgrade half again, with `check_upgrade` offered: does one answer per upgrade keep DepTime's
-    precision? Protocol first.
+- [ ] **DT-CORE-75**: Say when the code passed to `check_upgrade` never imports the package · `P2` `S`
+  - DT-QA-23: 18 of the model's 83 calls passed code with no import of the package, which reads as no break with
+    `uses: 0` and no note, so an agent can't tell "nothing breaks" from "nothing was read".
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
@@ -116,6 +116,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-23** (2026-11-16): Qwen3.5 9B with the six tools on the upgrade checks: 75.0% of breaks found and 3.5%
+  of working uses flagged (five tools: 82.2%, 4.5%), missing the bar (90%, 1%). 65 of its 83 `check_upgrade` calls
+  passed code the tool couldn't read (`bench/model-alone/check-upgrade/results-2026-11-16.md`).
 - [x] **DT-CORE-74** (2026-11-16): `check-upgrade` reads `uv.lock` and `poetry.lock` in any directory (a lockfile's
   own project isn't a dependency); the Action's documented trigger paths match. On DT-QA-22's set (in-sample,
   unscored): one more update read, the Renovate monorepo update's title change among 21 checked, no new break.
