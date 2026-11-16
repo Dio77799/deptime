@@ -20,10 +20,10 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 - **Released:** 0.2.0 (2026-11-16) is on PyPI, the MCP Registry and GitHub: the upgrade check, as a command
   (`check-upgrade`), a GitHub Action, an MCP tool (`check_upgrade`) and a Claude Code plugin command.
-- **Index:** 53 packages and 6,800 releases on 2026-11-13 (`SNAPSHOT_FORMAT` 26, schema 2); `index.sqlite.xz` is
-  51.0 MB and the `.gz` 78.5 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
+- **Index:** 53 packages and 6,816 releases on 2026-11-16 (`SNAPSHOT_FORMAT` 27, schema 2); `index.sqlite.xz` is
+  51.3 MB and the `.gz` 79.1 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
-  build of about 3.7 hours.
+  build of about 3 hours (format 27's: 2 h 48 min).
 - **Checks that run without anyone:** `ci` on every push (502 offline tests), and `bench` on every code change and
   every published index. `bench` fails on a benchmark drop of more than 2 points or a false-positive rate up by more
   than 1, and on the published index itself (`tests/test_golden.py`, DT-QA-03): older than 48 h, a package's newest
@@ -95,11 +95,17 @@ What still needs a person, about once a month:
 In order. The first line of each phase is what it delivers.
 
 Phases 2 and 3 (the command and the GitHub Action) shipped in 0.2.0. DT-QA-22 met every bar on real update pull
-requests; its three wrong answers have fixes in the next index (DT-CORE-72, DT-DATA-82, DT-DATA-51), and one miss is left:
+requests; its three wrong answers are fixed in the published index (DT-CORE-72, DT-DATA-82, DT-DATA-51: a second,
+in-sample run flags 0 of 3,291 working uses and fails no pull request without a confirmed break,
+`bench/upgrade-check/prs/results-2026-11-16-run2.md`). Left:
 - [ ] **DT-CORE-73**: Members of a name that became an alias read `unknown` · `P2` `S`
   - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project). In 2.0
     `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
+- [ ] **DT-CORE-74**: Read a lockfile in a subfolder · `P2` `S`
+  - Three of DT-QA-22's ten unread updates change only a `uv.lock` in a subfolder: two Renovate updates to several
+    projects at once, and one `backend/uv.lock` beside a root `uv.lock` that is read instead. Each lockfile is its own
+    project, so the check reads each one's pins against the code under its folder.
 
 **Phase 4, the fix (the model's part, outside DepTime).**
 - [ ] **DT-QA-23**: Qwen3.5 9B with the new tools on the upgrade checks · `P2` `S` · deps: CORE-67, CORE-68
@@ -131,7 +137,8 @@ requests; its three wrong answers have fixes in the next index (DT-CORE-72, DT-D
   where `UsageBase.__init__` takes `**kwargs`. Extraction, in the next `SNAPSHOT_FORMAT` batch.
 - [x] **DT-CORE-71** (2026-11-15): `check-upgrade` reads `requirements*.txt` and `requirements/*.txt` in any
   directory, leaving out virtual environments, build output and hidden directories; the Action's documented trigger
-  paths match them. DT-QA-22's 7 unread subdirectory updates are read (in-sample, no break reported, as labelled).
+  paths match them. Of DT-QA-22's 7 unread subfolder updates, 6 are now read (in-sample, no break reported, as
+  labelled); the seventh has two files pinning different versions.
 - [x] **DT-QA-22** (2026-11-16): the check on 264 real Dependabot and Renovate update pull requests (247 projects),
   protocol committed first: all five bars met. Updates read 93.9%, breaks found 95.8% (46/48), working uses
   flagged 1 of 3,291, pull requests failed with no confirmed break 0.8% (2/264), labelled uses read 99.6%; every pull
