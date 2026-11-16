@@ -102,10 +102,6 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
   - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project). In 2.0
     `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
-- [ ] **DT-CORE-74**: Read a lockfile in a subfolder · `P2` `S`
-  - Three of DT-QA-22's ten unread updates change only a `uv.lock` in a subfolder: two Renovate updates to several
-    projects at once, and one `backend/uv.lock` beside a root `uv.lock` that is read instead. Each lockfile is its own
-    project, so the check reads each one's pins against the code under its folder.
 
 **Phase 4, the fix (the model's part, outside DepTime).**
 - [ ] **DT-QA-23**: Qwen3.5 9B with the new tools on the upgrade checks · `P2` `S` · deps: CORE-67, CORE-68
@@ -120,6 +116,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 
 ## Done since 2026-11-13
 
+- [x] **DT-CORE-74** (2026-11-16): `check-upgrade` reads `uv.lock` and `poetry.lock` in any directory (a lockfile's
+  own project isn't a dependency); the Action's documented trigger paths match. On DT-QA-22's set (in-sample,
+  unscored): one more update read, the Renovate monorepo update's title change among 21 checked, no new break.
 - [x] **DT-OSS-16** (2026-11-16): 0.2.0 released with the command, the Action, the tool and the plugin command; the
   README's new "Check a dependency update" section carries DT-QA-22's first-run numbers.
 - [x] **DT-GTM-07** (2026-11-16): the report's "For a coding agent" block (plain names only) and the plugin's

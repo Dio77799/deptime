@@ -48,7 +48,7 @@ def _write(root: Path, files: dict[str, str]) -> None:
 def test_lockfiles_give_every_resolved_version(tmp_path):
     _write(tmp_path, {"uv.lock": UV_LOCK, "poetry.lock": POETRY_LOCK})
     pins = read_pins(tmp_path)
-    assert pins.by_file["uv.lock"] == {"httpx": "0.27.2", "pydantic-core": "2.20.1", "my-project": "0.1.0"}
+    assert pins.by_file["uv.lock"] == {"httpx": "0.27.2", "pydantic-core": "2.20.1"}  # not its own project
     assert pins.by_file["poetry.lock"] == {"numpy": "1.26.4"}
     assert pins.versions("Pydantic-Core") == {"uv.lock": "2.20.1"}
 
@@ -176,7 +176,7 @@ def test_a_revision_is_read_without_checking_it_out(repo):
     (svc / "uv.lock").write_text(UV_LOCK.replace('version = "0.27.2"', 'version = "0.28.1"'))
     base, head = read_pins(svc, "HEAD"), read_pins(svc)
     assert base.by_file == {
-        "uv.lock": {"httpx": "0.27.2", "pydantic-core": "2.20.1", "my-project": "0.1.0"},
+        "uv.lock": {"httpx": "0.27.2", "pydantic-core": "2.20.1"},
         "requirements.txt": {"httpx": "0.27.2"},
     }
     assert changes(base, head) == [Change("httpx", "0.27.2", "0.28.1", "requirements.txt")]
@@ -214,5 +214,33 @@ def test_a_subdirectory_requirements_update_is_read_from_the_repository_root(rep
     """The same at a git revision: the root project sees the change to `svc/requirements.txt`."""
     (repo / "svc" / "requirements.txt").write_text("httpx==0.28.1\n")
     base, head = read_pins(repo, "HEAD"), read_pins(repo)
-    assert base.by_file == {"svc/requirements.txt": {"httpx": "0.27.2"}}
+    assert base.by_file["svc/requirements.txt"] == {"httpx": "0.27.2"}
     assert changes(base, head) == [Change("httpx", "0.27.2", "0.28.1", "svc/requirements.txt")]
+
+
+def test_lockfiles_in_subdirectories_are_read_at_any_depth(tmp_path):
+    """DT-CORE-74: Renovate updates `llm/uv.lock` and `mcp/client/uv.lock` in one pull request, and the Action runs at
+    the root. The root lockfile comes first; each lockfile's own project is no dependency."""
+    _write(
+        tmp_path,
+        {
+            "uv.lock": UV_LOCK,
+            "llm/uv.lock": UV_LOCK.replace('"0.27.2"', '"0.28.1"').replace("my-project", "llm"),
+            "mcp/client/poetry.lock": POETRY_LOCK,
+            ".venv/uv.lock": UV_LOCK,
+            "node_modules/x/poetry.lock": POETRY_LOCK,
+        },
+    )
+    pins = read_pins(tmp_path)
+    assert list(pins.by_file) == ["uv.lock", "llm/uv.lock", "mcp/client/poetry.lock"]
+    assert pins.versions("httpx") == {"uv.lock": "0.27.2", "llm/uv.lock": "0.28.1"}
+    assert pins.by_file["mcp/client/poetry.lock"] == {"numpy": "1.26.4"}
+
+
+def test_a_subdirectory_lockfile_update_is_read_from_the_repository_root(repo):
+    (repo / "svc" / "uv.lock").write_text(
+        UV_LOCK.replace('version = "0.27.2"', 'version = "0.28.1"').replace('"0.1.0"', '"0.2.0"')
+    )
+    assert changes(read_pins(repo, "HEAD"), read_pins(repo)) == [
+        Change("httpx", "0.27.2", "0.28.1", "svc/uv.lock")
+    ]

@@ -378,8 +378,8 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser(
         "check-upgrade",
         help="what a dependency update breaks in a project's code (exit 1 on a confirmed break)",
-        description="Compare the project's pinned versions (uv.lock, poetry.lock, pyproject.toml, requirements*.txt"
-        " in any directory)"
+        description="Compare the project's pinned versions (uv.lock, poetry.lock and requirements*.txt in any"
+        " directory, pyproject.toml)"
         " at --base (default HEAD) with the working tree, or check one package with --package and --to, then check"
         " every use of each changed covered package in the project's Python files at the new version.",
     )

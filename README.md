@@ -41,7 +41,7 @@ On a pull request from Dependabot, Renovate or a person, the GitHub Action finds
 # .github/workflows/upgrade-check.yml
 on:
   pull_request:
-    paths: ["uv.lock", "poetry.lock", "pyproject.toml", "**/requirements*.txt", "**/requirements/**"]
+    paths: ["**/uv.lock", "**/poetry.lock", "pyproject.toml", "**/requirements*.txt", "**/requirements/**"]
 permissions:
   contents: read
 jobs:

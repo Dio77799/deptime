@@ -24,6 +24,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## [Unreleased]
 
+### Changed
+- `check-upgrade` reads `uv.lock` and `poetry.lock` in any directory, as it does requirements files, so an update to
+  one project of a monorepo (`backend/uv.lock`) is checked; a lockfile's own project isn't read as a dependency. The
+  Action's documented trigger paths match them (DT-CORE-74)
+
 ## [0.2.0] - 2026-11-16
 
 The upgrade check: what a dependency update breaks in a project's code, decided by the index alone, with no model

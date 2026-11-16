@@ -2,7 +2,8 @@
 
 Read as text, never installed or imported (Invariant 1). A project's pins come from, in this order:
 
-- `uv.lock` or `poetry.lock`: the resolved version of every package (`[[package]]` tables);
+- `uv.lock` or `poetry.lock`, at any depth (DT-CORE-74: one project per folder of a monorepo): the resolved version
+  of every package (`[[package]]` tables) but the lockfile's own project;
 - `requirements*.txt` and the `.txt` files under a `requirements/` directory, at any depth (DT-CORE-71: Dependabot
   updates `backend/requirements.txt` with no directory in its title), following `-r` includes inside the project:
   lines that pin one version with `==` (or `===`). Virtual environments, build output and hidden directories are left
@@ -132,6 +133,17 @@ def _is_requirements(rel: str) -> bool:
     return name.startswith("requirements") or "requirements" in dirs
 
 
+def _is_lockfile(rel: str) -> bool:
+    *dirs, name = rel.split("/")
+    return name in LOCKFILES and not any(_skipped(d) for d in dirs)
+
+
+def _own_project(pkg: dict) -> bool:
+    """uv's entry for the project the lockfile belongs to: `source = { editable = "." }` (or `virtual`)."""
+    source = pkg.get("source")
+    return isinstance(source, dict) and "." in (source.get("editable"), source.get("virtual"))
+
+
 def _version(raw: str) -> str | None:
     try:
         return str(Version(raw))
@@ -143,7 +155,7 @@ def _lock_pins(text: str) -> dict[str, str]:
     data = tomllib.loads(text)
     out = {}
     for pkg in data.get("package", []):
-        if not isinstance(pkg, dict) or not isinstance(pkg.get("name"), str):
+        if not isinstance(pkg, dict) or not isinstance(pkg.get("name"), str) or _own_project(pkg):
             continue
         if isinstance(pkg.get("version"), str) and (v := _version(pkg["version"])) is not None:
             out[canonicalize_name(pkg["name"])] = v
@@ -234,12 +246,12 @@ def read_pins(root: Path, rev: str | None = None) -> Pins:
     tree = Tree(root, rev)
     pins = Pins()
     files = tree.files()
-    for lock in LOCKFILES:
-        if lock in files:
-            try:
-                pins.by_file[lock] = _lock_pins(tree.read(lock) or "")
-            except (tomllib.TOMLDecodeError, OSError) as exc:
-                pins.problems.append(f"{lock}: {type(exc).__name__}: {exc}")
+    locks = sorted((f for f in files if _is_lockfile(f)), key=lambda f: (f.count("/"), f))
+    for lock in locks:
+        try:
+            pins.by_file[lock] = _lock_pins(tree.read(lock) or "")
+        except (tomllib.TOMLDecodeError, OSError) as exc:
+            pins.problems.append(f"{lock}: {type(exc).__name__}: {exc}")
     reqs = sorted((f for f in files if _is_requirements(f)), key=lambda f: (f.count("/"), f))
     for rel in reqs:
         try:
