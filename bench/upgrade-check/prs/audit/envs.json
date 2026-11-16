@@ -1,0 +1,371 @@
+{
+"envs": [
+{
+"id": "chromadb==1.5.9@2026-06-04",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-06-04",
+"requires": [
+"chromadb==1.5.9"
+],
+"uses": [
+{
+"key": "2b6dd037b3068998",
+"path": "chromadb.errors.InvalidCollectionException",
+"kind": "name"
+}
+]
+},
+{
+"id": "dspy==3.4.1@2026-11-11",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"dspy==3.4.1"
+],
+"uses": [
+{
+"key": "75bb1a785616ea0e",
+"path": "dspy.GEPA",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"metric",
+"auto",
+"num_threads",
+"track_stats",
+"use_merge",
+"reflection_lm",
+"seed"
+]
+},
+{
+"key": "87a507e0c0a0e96f",
+"path": "dspy.retrieve",
+"kind": "name"
+}
+]
+},
+{
+"id": "gradio==6.16.0@2026-07-03",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-07-03",
+"requires": [
+"gradio==6.16.0"
+],
+"uses": [
+{
+"key": "6d6e87ad136ece50",
+"path": "gradio.Gallery",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"label",
+"elem_id",
+"columns",
+"object_fit",
+"preview",
+"allow_preview",
+"show_fullscreen_button",
+"show_download_button",
+"height"
+]
+}
+]
+},
+{
+"id": "httpx==0.28.1@2025-01-05",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2025-01-05",
+"requires": [
+"httpx==0.28.1"
+],
+"uses": [
+{
+"key": "6de187c9add4e958",
+"path": "httpx.AsyncClient",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"app",
+"base_url",
+"headers"
+]
+}
+]
+},
+{
+"id": "langchain==1.3.9@2026-07-12",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-07-12",
+"requires": [
+"langchain==1.3.9"
+],
+"uses": [
+{
+"key": "148fea2b5a17361f",
+"path": "langchain.text_splitter.RecursiveCharacterTextSplitter.split_text",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "2a6c1aaeb75fa30e",
+"path": "langchain.vectorstores.FAISS",
+"kind": "name"
+},
+{
+"key": "4456fd3f75bed302",
+"path": "langchain.vectorstores.FAISS.load_local",
+"kind": "name"
+},
+{
+"key": "4566b84c5500b454",
+"path": "langchain.vectorstores.FAISS.from_texts",
+"kind": "name"
+},
+{
+"key": "48a9c36da5cda949",
+"path": "langchain.chains.question_answering",
+"kind": "name"
+},
+{
+"key": "4b2ea34f23526e7c",
+"path": "langchain.vectorstores",
+"kind": "name"
+},
+{
+"key": "6b37f00940d0bece",
+"path": "langchain.prompts",
+"kind": "name"
+},
+{
+"key": "7f4f75b262127c30",
+"path": "langchain.text_splitter.RecursiveCharacterTextSplitter",
+"kind": "name"
+},
+{
+"key": "a129e1a6e5adb55b",
+"path": "langchain.prompts.PromptTemplate",
+"kind": "name"
+},
+{
+"key": "e81f5de703c17dd0",
+"path": "langchain.chains.question_answering.load_qa_chain",
+"kind": "name"
+},
+{
+"key": "ecc882ac129f2650",
+"path": "langchain.text_splitter",
+"kind": "name"
+}
+]
+},
+{
+"id": "marshmallow==4.4.0@2026-11-15",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-15",
+"requires": [
+"marshmallow==4.4.0"
+],
+"uses": [
+{
+"key": "8330f9df70f53376",
+"path": "marshmallow.fields.Str",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"required",
+"validate",
+"load_default",
+"data_key",
+"default",
+"allow_none",
+"missing"
+]
+}
+]
+},
+{
+"id": "mcp==2.3.0@2026-11-01",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-11-01",
+"requires": [
+"mcp==2.3.0"
+],
+"uses": [
+{
+"key": "1d8524239251b289",
+"path": "mcp.server.fastmcp.exceptions",
+"kind": "name"
+},
+{
+"key": "38f0afea163fa59d",
+"path": "mcp.server.fastmcp",
+"kind": "name"
+},
+{
+"key": "8e98f8fcdb0bdd80",
+"path": "mcp.server.fastmcp.exceptions.ToolError",
+"kind": "name"
+},
+{
+"key": "c71e7d741644f36a",
+"path": "mcp.server.fastmcp.FastMCP",
+"kind": "name"
+},
+{
+"key": "dccd8c9b4b6d50b7",
+"path": "mcp.server.fastmcp.FastMCP.tool",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "f2ebaa62f719a35f",
+"path": "mcp.client.streamable_http.streamablehttp_client",
+"kind": "name"
+},
+{
+"key": "fe671d16a368dd6e",
+"path": "mcp.server.fastmcp.FastMCP.run",
+"kind": "name",
+"via": "instance"
+}
+]
+},
+{
+"id": "pydantic-ai-slim==2.63.0@2026-11-15",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-15",
+"requires": [
+"pydantic-ai-slim==2.63.0"
+],
+"uses": [
+{
+"key": "7314ba6a0699d5c9",
+"path": "pydantic_ai.usage.RequestUsage",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"input_tokens",
+"output_tokens"
+]
+}
+]
+},
+{
+"id": "sqlalchemy==2.1.8@2026-11-15",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-15",
+"requires": [
+"sqlalchemy==2.1.8"
+],
+"uses": [
+{
+"key": "1e2b173657a9340a",
+"path": "sqlalchemy.MetaData",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"bind"
+]
+},
+{
+"key": "4011551ad1402e7b",
+"path": "sqlalchemy.schema.Table.drop",
+"kind": "call",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "4d414c27c574fe02",
+"path": "sqlalchemy.schema.Table.exists",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "6077e6a2a8bc14ba",
+"path": "sqlalchemy.MetaData.drop_all",
+"kind": "call",
+"npos": 0,
+"kwargs": [
+"tables"
+],
+"via": "instance"
+},
+{
+"key": "aa2c4ecd85ebb460",
+"path": "sqlalchemy.orm.mapper",
+"kind": "call",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "d62f8d8083f1a9a8",
+"path": "sqlalchemy.MetaData.reflect",
+"kind": "call",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "d836f575073b0f1b",
+"path": "sqlalchemy.orm.collections.attribute_mapped_collection",
+"kind": "name"
+},
+{
+"key": "da6ae250ece340a8",
+"path": "sqlalchemy.Table.exists",
+"kind": "name",
+"via": "instance"
+},
+{
+"key": "e2ebfc463c5b40aa",
+"path": "sqlalchemy.orm.relation",
+"kind": "name"
+}
+]
+}
+]
+}

@@ -108,6 +108,19 @@ def run_check(path: Path) -> tuple[int, str, str]:
 
 
 # --------------------------------------------------------------------------------------------------------------- run
+def parse_result(out: str) -> UpgradeCheckResult:
+    """The CLI's JSON (written with `exclude_none`), with the version fields it leaves out restored as None: a package
+    added or removed has no `from_version` or `to_version`."""
+    doc = json.loads(out)
+    changes = (
+        [c["change"] for c in doc.get("checked", [])] + doc.get("not_covered", []) + doc.get("skipped", [])
+    )
+    for c in changes:
+        c.setdefault("from_version", None)
+        c.setdefault("to_version", None)
+    return UpgradeCheckResult.model_validate(doc)
+
+
 def cmd_run(a: argparse.Namespace) -> int:
     dt = _dt()
     labels = {
@@ -123,7 +136,7 @@ def cmd_run(a: argparse.Namespace) -> int:
             code, out, err = 2, "", f"no directory {row['dir']!r} at the head"
         else:
             code, out, err = run_check(path)
-        result = UpgradeCheckResult.model_validate_json(out) if code in (0, 1) and out.strip() else None
+        result = parse_result(out) if code in (0, 1) and out.strip() else None
         checked = result.checked if result else []
         titled = next((c for c in checked if c.change.package == row["package"]), None)
         update_read = bool(
