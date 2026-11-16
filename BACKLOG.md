@@ -108,13 +108,11 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 DT-QA-23 couldn't test them on real code. Before 1.0 freezes the hand-off:
 - [ ] **DT-QA-05**: Does an agent fix an update's breaks better with DepTime's hand-off? · `P1` `M` · deps: CORE-74,
   CORE-75
-  - Tasks: real updates whose break is confirmed by running it: DT-QA-22's 13 failing-for-a-reason pull requests and
-    the 2026-11f holdout's 27 broken upgrades, each as a repository at the new version. Two arms, same agent
-    (Claude Code, `claude -p`), same prompt ("this dependency update broke the code; fix it"): alone, and with the
-    plugin's `/deptime:fix-upgrade`. Success: the confirmed breaks no longer fail (the audit's probe on each use),
-    and no line DepTime didn't report is changed, where a project's own tests can't run. Bar, protocol and runs per
-    arm fixed before the first run; reported in the README whichever way it comes out. Also answers DT-SPIKE-06
-    (does the agent call DepTime unprompted) in the alone-with-plugin-installed arm, if the protocol includes it.
+  - Protocol committed (`bench/agent-fix/README.md`): 25 tasks (2026-11f's 12 broken upgrades to a newer version,
+    DT-QA-22's 13 pull requests with a labelled break; 137 confirmed breaks), Claude Code on Sonnet 5.5 alone (A),
+    with `/deptime:fix-upgrade` (B), and with the plugin installed but not named (C, answers DT-SPIKE-06). Success by
+    the probe on the fixed code. Bar: B fixes ≥ 80% of sessions, at least as many as A, with no more new breaks.
+    Next: `run.py`, `score.py`, the trial, then the runs.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
