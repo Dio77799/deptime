@@ -1,0 +1,10 @@
+{
+ "about": "Labels changed by hand, each with the library source that shows it (bench/holdout/README.md: call breaks found by binding are checked against the source at `to`, read from the release's wheel). A use overridden here is excluded. All seven call breaks the probe found by binding were checked; none is overridden, and each is listed under `kept` with the source that confirms it.",
+ "overrides": [],
+ "kept": [
+  {"use": "gradio.Gallery(show_download_button=, show_fullscreen_button=, ...)", "upgrades": ["pr-mikecastrodemaria__crispz-moss-1-gradio"], "to": "6.16.0", "why": "gradio/components/gallery.py: Gallery.__init__ (line 78) has neither keyword and no **kwargs; `buttons` (line 110) replaces them"},
+  {"use": "httpx.AsyncClient(app=, base_url=[, headers=])", "upgrades": ["pr-ichekarovaa__iva_chekarova_ccs6442-10-httpx", "pr-erlisasadiku__erlisa_sadiku_ccs6442-13-httpx"], "to": "0.28.1", "why": "httpx/_client.py: AsyncClient.__init__ (lines 1353-1375) has no `app` and no **kwargs"},
+  {"use": "marshmallow.fields.Str(default=, required=, validate=)", "upgrades": ["pr-johnmungandiall__openalgo-kotak-7-marshmallow"], "to": "4.4.0", "why": "marshmallow/fields.py: Str = String (line 2141), which defines no __init__; Field.__init__ (line 180) takes load_default and dump_default, no `default` and no **kwargs"},
+  {"use": "sqlalchemy.MetaData.reflect()", "upgrades": ["pr-levon003__wiki-ores-feedback-120-sqlalchemy"], "to": "2.1.8", "why": "sqlalchemy/sql/schema.py: MetaData.reflect(self, bind: Union[Engine, Connection], ...) (line 6559): `bind` has no default"}
+ ]
+}
