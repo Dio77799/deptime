@@ -1,0 +1,105 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 7,
+  "duration_ms": 18026,
+  "total_cost_usd": 0.05489970000000001,
+  "usage": {
+   "input_tokens": 12,
+   "cache_creation_input_tokens": 6402,
+   "cache_read_input_tokens": 85277,
+   "output_tokens": 2074,
+   "output_tokens_details": {
+    "thinking_tokens": 357
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 6402,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 781,
+     "cache_read_input_tokens": 16497,
+     "cache_creation_input_tokens": 371,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 371
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.68,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.22,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 2,
+  "Read": 1,
+  "mcp__plugin_deptime_deptime__check_symbols": 2,
+  "Edit": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.1 check-upgrade . --package dspy --to 3.4.1 --format json",
+  "check_symbols",
+  "check_symbols",
+  "uvx deptime==0.2.1 check-upgrade . --package dspy --to 3.4.1 --format json | head -c 1500; echo \"exit: ${pipestatus[1]}\""
+ ],
+ "other_bash": 0,
+ "fetched": [],
+ "denied": 2,
+ "task": "pr-burriedalien666__prompt-quality-lab-6-dspy",
+ "arm": "B",
+ "label": "B2",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 19.9,
+ "service_error": false
+}

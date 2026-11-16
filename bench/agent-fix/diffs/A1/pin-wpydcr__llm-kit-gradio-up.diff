@@ -1,0 +1,504 @@
+diff --git a/requirements.txt b/requirements.txt
+index eb57462..f478e52 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,7 +1,7 @@
+ accelerate==0.23.0
+ cpm_kernels==1.0.11
+ datasets==2.8.0
+-gradio==3.35.2
++gradio==6.31.0
+ langchain==0.0.146
+ loguru==0.7.0
+ matplotlib==3.7.1
+diff --git a/ui/apply.py b/ui/apply.py
+index d5a8c51..3948715 100644
+--- a/ui/apply.py
++++ b/ui/apply.py
+@@ -4,9 +4,11 @@ from ui.apply_knowledge import apply_knowledge
+ from ui.apply_text_image_generation import apply_text_image_generation
+ 
+ def apply_page(localizer):
+-    with gr.Tab(localizer("角色扮演")) as avatar_tab:
++    with gr.Tab(localizer("角色扮演")):
+         avatar = Avtar()
+-        avatar_tab.select(avatar.apply_video(localizer), outputs=[])
++        # apply_video builds the page directly (it returns nothing); binding its result to the tab's
++        # select event did nothing and gradio 6 rejects events without a function.
++        avatar.apply_video(localizer)
+     with gr.Tab(localizer('知识库')):
+         apply_knowledge(localizer)
+     with gr.Tab(localizer('文生图')):
+diff --git a/ui/apply_knowledge.py b/ui/apply_knowledge.py
+index a2707c2..6feaeca 100644
+--- a/ui/apply_knowledge.py
++++ b/ui/apply_knowledge.py
+@@ -2,6 +2,7 @@ import gradio as gr
+ import os
+ from utils.ui_utils import chat_base_model
+ from utils.local_doc import local_doc_qa
++from utils.gradio_compat import chatbot_pairs
+ from modules.agent.chatdb.mysql import MySQLDB
+ import pandas as pd
+ 
+@@ -515,7 +516,7 @@ def apply_knowledge(localizer):
+                     doc0 = gr.Radio(label=localizer("*选择SQL知识库"),value=None)
+                     mysql_tables = gr.Radio(label=localizer("选择表"),choices=[],value=None)
+         with gr.Row():
+-            table_data = gr.DataFrame(interactive=False,visible=False)
++            table_data = gr.Dataframe(interactive=False,visible=False)
+ 
+ 
+     history = gr.State([])
+@@ -526,7 +527,7 @@ def apply_knowledge(localizer):
+     embedding_total_params = [embedding_openai_api_key, embedding_openai_port, embedding_openai_api_base, embedding_openai_api_model, embedding_azure_api_key, embedding_azure_endpoint, embedding_azure_engine]
+     faiss_Refresh.click(refresh_directories_faiss, outputs=[faiss_model_list,faiss_lora_list,doc1,emb_model_list])
+     faiss_save.click(load_faiss_params, [faiss_api_list,faiss_model_list,faiss_lora_list]+fasiss_total_params, [faiss_user_input,faiss_submitGroup],show_progress=True)
+-    faiss_submitBtn.click(vec_search, [faiss_user_input, faiss_chatbot, history,faiss_net,faiss_search,faiss_search_key,faiss_result_len,doc1], [faiss_chatbot, history,faiss_user_input],show_progress=True)
++    faiss_submitBtn.click(chatbot_pairs(vec_search, inputs=(1,), outputs=(0,)), [faiss_user_input, faiss_chatbot, history,faiss_net,faiss_search,faiss_search_key,faiss_result_len,doc1], [faiss_chatbot, history,faiss_user_input],show_progress=True)
+ 
+     faiss_emptyBtn.click(chat_model.reset_state, outputs=[faiss_chatbot,history,faiss_user_input])
+     faiss_emptymodelBtn.click(chat_model.clear, outputs=[faiss_chatbot,history,faiss_user_input,faiss_api_list,faiss_model_list,faiss_lora_list,faiss_submitGroup])
+@@ -545,7 +546,7 @@ def apply_knowledge(localizer):
+     connect.click(get_databases, inputs=[host,user,password,port],outputs=[doc0])
+     mysql_Refresh.click(refresh_directories_mysql, outputs=[mysql_model_list])
+     mysql_save.click(load_mysql_params, [mysql_api_list,mysql_model_list]+mysql_total_params, [mysql_user_input,mysql_submitGroup],show_progress=True)
+-    mysql_submitBtn.click(chat_model.query_from_mysql, [mysql_user_input,mysql_chatbot,doc0,host,
++    mysql_submitBtn.click(chatbot_pairs(chat_model.query_from_mysql, inputs=(1,), outputs=(0,)), [mysql_user_input,mysql_chatbot,doc0,host,
+                                          user, password, port,doc0,mysql_tables], [mysql_chatbot,mysql_user_input,doc0,mysql_tables,table_data],show_progress=True)
+ 
+     mysql_emptyBtn.click(chat_model.reset_state, outputs=[mysql_chatbot,history,mysql_user_input])
+diff --git a/ui/apply_video.py b/ui/apply_video.py
+index f77624e..1147316 100644
+--- a/ui/apply_video.py
++++ b/ui/apply_video.py
+@@ -2,6 +2,7 @@ import gradio as gr
+ import os
+ from utils.ui_utils import video_apply, handle_online_tts
+ import uuid
++from utils.gradio_compat import chatbot_pairs, file_path
+ 
+ def get_file(path,unuse,ftype):
+     return [d for d in os.listdir(path) if d.endswith(ftype) and d not in unuse]
+@@ -168,9 +169,10 @@ def switch_show_type(show_type):
+ 
+ def switch_background(path_list):
+     for path in path_list:
+-        with open(path.name, "rb") as source_file:
++        path = file_path(path)
++        with open(path, "rb") as source_file:
+             picture_data = source_file.read()
+-        file_name = os.path.split(path.name)[-1]
++        file_name = os.path.split(path)[-1]
+         real_path= os.path.split(os.path.realpath(__file__))[0]
+         target_file = os.path.join(real_path, "..","data","apply","images",str(uuid.uuid4())+file_name)
+         with open(target_file, "wb") as destination_file:
+@@ -191,7 +193,7 @@ class Avtar():
+             with gr.Column(scale=2):
+                 audio = gr.Audio(autoplay=False, show_label=False, visible=False,elem_id='audio-div')
+                 loud = gr.HTML(value=None, visible=False,elem_id='loud')
+-                canvas = gr.Sketchpad(value=None,interactive=False,shape=(2,1),show_label = False, visible=False,elem_id='live2d-div')
++                canvas = gr.Sketchpad(value=None,interactive=False,canvas_size=(2,1),show_label = False, visible=False,elem_id='live2d-div')
+                 chatbot = gr.Chatbot()
+                 user_input = gr.Textbox(show_label=False, placeholder="Input...", lines=10,elem_id='player-user-input')
+                 with gr.Accordion(label='',visible=False,elem_id='player-submitGroup') as submitGroup:
+@@ -292,7 +294,7 @@ class Avtar():
+         Refresh.click(refresh_file, outputs=[play,memory,background,emb_model_list,model_list,lora_list])
+         save1.click(load_config_params, [play,time_c,emoticon,user_name,net,search,search_key,result_len,memory,background,emb_api_list,emb_model_list]+total_config_params, [user_input,chatbot],show_progress=True)
+         save2.click(load_llm_params, [api_list,model_list,lora_list]+total_params, [user_input,submitGroup],show_progress=True)
+-        submitBtn.click(chat_api.predict, [user_input,chatbot,gen_type,lang,voice_style,show_type], [user_input,chatbot,loud,audio],show_progress=False)
++        submitBtn.click(chatbot_pairs(chat_api.predict, inputs=(1,), outputs=(1,)), [user_input,chatbot,gen_type,lang,voice_style,show_type], [user_input,chatbot,loud,audio],show_progress=False)
+         emptyBtn.click(chat_api.reset_state, outputs=[user_input,chatbot], show_progress=True)
+         emptymodelBtn.click(chat_api.clear, outputs=[chatbot,user_input,api_list,model_list,lora_list,submitGroup])
+         emptyConfigBtn.click(chat_api.clear_config, outputs=[play,time_c,emoticon,user_name,memory,background,emb_api_list,emb_model_list,net,search_key], show_progress=True)
+diff --git a/ui/chat.py b/ui/chat.py
+index d97c302..4c5c5f0 100644
+--- a/ui/chat.py
++++ b/ui/chat.py
+@@ -2,6 +2,7 @@ import gradio as gr
+ import os
+ from utils.ui_utils import chat_base_model
+ from utils.parallel_api import Parallel_api, ParallelLocalModel
++from utils.gradio_compat import chatbot_pairs
+ import json
+ 
+ def get_directories(path, unuse):
+@@ -703,7 +704,7 @@ def chat_page(localizer):
+                 with gr.Accordion(localizer("载入的向量数据库"),open=True):
+                     status = gr.Dataframe(headers=["Chatbot1", "Chatbot2"],
+                                         datatype=["str", "str"],
+-                                        show_label=False,row_count = (1,"fixed"),col_count=(2,"fixed"))
++                                        show_label=False,row_count=1,row_limits=(1,1),column_count=2,column_limits=(2,2))
+ 
+                 with gr.Accordion(localizer("模型设置")):
+                     parallel_local_model_model_list = gr.Radio(models, show_label=False, value=None)
+@@ -790,7 +791,7 @@ def chat_page(localizer):
+                                                                         parallel_local_model_model_list,parallel_local_model_lora_list,\
+                                                                         parallel_local_model_submitGroup])
+ 
+-    parallel_local_model_submitBtn.click(chat_model.parallel_predict, [parallel_local_model_textinput, local_chatbot1,local_chatbot2,\
++    parallel_local_model_submitBtn.click(chatbot_pairs(chat_model.parallel_predict, inputs=(1, 2), outputs=(0, 1)), [parallel_local_model_textinput, local_chatbot1,local_chatbot2,\
+                                                                     parallel_history1,parallel_history2, parallel_local_model_net,\
+                                                                     parallel_local_model_search, parallel_local_model_search_key,\
+                                                                     parallel_local_model_result_len, parallel_local_model_prompt,status],
+@@ -803,10 +804,10 @@ def chat_page(localizer):
+ 
+     Refresh.click(refresh_directories, outputs=[model_list, lora_list])
+ 
+-    save.click(chat_model.reset_state_claude,[chatbot, history, user_input], outputs=[
+-                   chatbot, history, user_input])    
++    save.click(chatbot_pairs(chat_model.reset_state_claude, inputs=(0,), outputs=(0,)),[chatbot, history, user_input], outputs=[
++                   chatbot, history, user_input])
+     save.click(load_params, [api_list, model_list, lora_list]+total_params,
+-               outputs=[user_input, submitGroup], show_progress=True)
++               outputs=[user_input, submitGroup], show_progress="full")
+ 
+     parallel_local_model_total_params = [parallel_local_model_prompt, openai_api_key, openai_port, azure_api_key, azure_endpoint, azure_engine, ernie_api_key, ernie_secret_key, ernie_temperature, ernie_top_p, ernie_penalty_score, ernie_turbo_api_key,
+                     ernie_turbo_secret_key, chatglm_api_key, chatglm_temperature, chatglm_top_p, chatglm_type, spark_appid, spark_api_key, spark_secret_key, spark_api_version, spark_temperature, spark_top_k, spark_max_tokens, qwen_api_key, ali_top_p, ali_top_k, ali_kuake_search, parallel_local_model_quantization, parallel_local_model_max_length, parallel_local_model_top_p, parallel_local_model_temperature, parallel_local_model_use_deepspeed]
+@@ -815,8 +816,8 @@ def chat_page(localizer):
+     parallel_local_model_save.click(load_params, [parallel_local_model_model_list, parallel_local_model_model_list, parallel_local_model_lora_list]+parallel_local_model_total_params,
+                outputs=[parallel_local_model_textinput, parallel_local_model_submitGroup], show_progress=True)
+ 
+-    submitBtn.click(chat_model.predict, [user_input, chatbot, history, stream, net, search, search_key, result_len, prompt], [
+-                    chatbot, history, user_input], show_progress=True)
++    submitBtn.click(chatbot_pairs(chat_model.predict, inputs=(1,), outputs=(0,)), [user_input, chatbot, history, stream, net, search, search_key, result_len, prompt], [
++                    chatbot, history, user_input], show_progress="full")
+ 
+     emptyBtn.click(chat_model.reset_state, total_params, outputs=[chatbot, history, user_input])
+ 
+@@ -851,31 +852,35 @@ def chat_page(localizer):
+     api_emptyBtn.click(clear_history, outputs=[api_openai_chatbot, api_openai_knowledge_chatbot, api_azure_chatbot, api_azure_knowledge_chatbot, api_ernie_chatbot, api_ernie_knowledge_chatbot, api_ernie_turbo_chatbot,
+                        api_ernie_turbo_knowledge_chatbot, api_chatglm_chatbot, api_chatglm_knowledge_chatbot, api_spark_chatbot, api_spark_knowledge_chatbot, api_ali_chatbot, api_ali_knowledge_chatbot], show_progress=True)
+ 
+-    api_submitBtn.click(parallel_api.call_openai, [user_input, api_openai_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_openai_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_openai_knowledge, [api_user_input, api_openai_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_openai_knowledge_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_azure, [api_user_input, api_azure_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_azure_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_azure_knowledge, [api_user_input, api_azure_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_azure_knowledge_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_ernie, [api_user_input, api_ernie_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ernie_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_ernie_knowledge, [api_user_input, api_ernie_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ernie_knowledge_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_ernie_turbo, [api_user_input, api_ernie_turbo_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ernie_turbo_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_ernie_turbo_knowledge, [api_user_input, api_ernie_turbo_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ernie_turbo_knowledge_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_chatglm, [api_user_input, api_chatglm_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_chatglm_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_chatglm_kmowledge, [api_user_input, api_chatglm_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_chatglm_knowledge_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_spark, [api_user_input, api_spark_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_spark_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_spark_knowledge, [api_user_input, api_spark_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_spark_knowledge_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_ali, [api_user_input, api_ali_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ali_chatbot, api_user_input], show_progress=True)
+-    api_submitBtn.click(parallel_api.call_ali_knowledge, [api_user_input, api_ali_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ali_knowledge_chatbot, api_user_input], show_progress=True)
++    # The call_* handlers work on [[user, bot], ...] pairs, gradio 6 chatbots use messages.
++    def api_chat(fn):
++        return chatbot_pairs(fn, inputs=(1,), outputs=(0,))
++
++    api_submitBtn.click(api_chat(parallel_api.call_openai), [user_input, api_openai_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_openai_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_openai_knowledge), [api_user_input, api_openai_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_openai_knowledge_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_azure), [api_user_input, api_azure_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_azure_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_azure_knowledge), [api_user_input, api_azure_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_azure_knowledge_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_ernie), [api_user_input, api_ernie_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_ernie_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_ernie_knowledge), [api_user_input, api_ernie_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_ernie_knowledge_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_ernie_turbo), [api_user_input, api_ernie_turbo_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_ernie_turbo_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_ernie_turbo_knowledge), [api_user_input, api_ernie_turbo_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_ernie_turbo_knowledge_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_chatglm), [api_user_input, api_chatglm_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_chatglm_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_chatglm_kmowledge), [api_user_input, api_chatglm_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_chatglm_knowledge_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_spark), [api_user_input, api_spark_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_spark_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_spark_knowledge), [api_user_input, api_spark_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_spark_knowledge_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_ali), [api_user_input, api_ali_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_ali_chatbot, api_user_input], show_progress="full")
++    api_submitBtn.click(api_chat(parallel_api.call_ali_knowledge), [api_user_input, api_ali_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
++        api_ali_knowledge_chatbot, api_user_input], show_progress="full")
+diff --git a/utils/embedding_val.py b/utils/embedding_val.py
+index 5a3c2e2..25937e8 100644
+--- a/utils/embedding_val.py
++++ b/utils/embedding_val.py
+@@ -1,5 +1,6 @@
+ 
+ import gradio as gr
++from utils.gradio_compat import file_path
+ from modules.model.emb_auto import AutoEmb
+ from modules.model.use_api import *
+ import os
+@@ -65,7 +66,7 @@ class embedding_visualization_plot():
+             上传文件处理, 读取label和内容
+         '''
+         words_persentence=80        # 定义切分文章每句子长度
+-        fname=temp_file.name
++        fname=file_path(temp_file)
+         suffix = str(fname).split('.')[-1]
+ 
+         if suffix == "json":
+diff --git a/utils/gradio_compat.py b/utils/gradio_compat.py
+new file mode 100644
+index 0000000..06b779d
+--- /dev/null
++++ b/utils/gradio_compat.py
+@@ -0,0 +1,114 @@
++"""Helpers bridging the gradio 3 style data this project was written for and what gradio 6 hands to / expects from
++event handlers.
++
++* ``gr.Chatbot`` only supports the "messages" format in gradio 6 (``[{"role": ..., "content": ...}]``), while the
++  chat logic in this project builds and mutates ``[[user, bot], ...]`` pairs. ``chatbot_pairs`` wraps an event handler
++  so the handler keeps working with pairs.
++* ``gr.File`` / ``gr.UploadButton`` hand over plain file paths instead of tempfile objects with a ``.name``.
++"""
++import functools
++import inspect
++
++
++def file_path(file):
++    """Returns the path of an uploaded file, whether gradio passes a path (gradio 4+) or a tempfile object."""
++    if isinstance(file, (str, bytes)) or hasattr(file, '__fspath__'):
++        return str(file)
++    if isinstance(file, dict):
++        return file.get('path') or file.get('name')
++    return file.name
++
++
++def _content_to_text(content):
++    if content is None:
++        return ''
++    if isinstance(content, str):
++        return content
++    if isinstance(content, dict):
++        if 'text' in content:
++            return str(content['text'])
++        return ''
++    if isinstance(content, (list, tuple)):
++        return ''.join(_content_to_text(c) for c in content)
++    return str(content)
++
++
++def messages_to_pairs(messages):
++    """Converts chatbot messages to ``[[user, bot], ...]`` pairs (lists, so they can be mutated in place)."""
++    if not isinstance(messages, (list, tuple)):
++        return messages
++    pairs = []
++    for message in messages:
++        if isinstance(message, (list, tuple)):  # already a pair
++            pairs.append([message[0], message[1]])
++            continue
++        role = message.get('role') if isinstance(message, dict) else getattr(message, 'role', None)
++        content = message.get('content') if isinstance(message, dict) else getattr(message, 'content', None)
++        text = _content_to_text(content)
++        if role == 'user':
++            pairs.append([text, ''])
++        elif pairs and pairs[-1][1] == '':
++            pairs[-1][1] = text
++        else:
++            pairs.append(['', text])
++    return pairs
++
++
++def pairs_to_messages(pairs):
++    """Converts ``[[user, bot], ...]`` pairs to chatbot messages. Values that are not lists (e.g. ``gr.update``)
++    are returned untouched."""
++    if not isinstance(pairs, (list, tuple)):
++        return pairs
++    messages = []
++    for pair in pairs:
++        if isinstance(pair, dict):  # already a message
++            messages.append(pair)
++            continue
++        user, bot = pair[0], pair[1]
++        if user is not None and user != '':
++            messages.append({'role': 'user', 'content': str(user)})
++        if bot is not None and bot != '':
++            messages.append({'role': 'assistant', 'content': str(bot)})
++    return messages
++
++
++def chatbot_pairs(fn, inputs=(), outputs=()):
++    """Wraps an event handler written for the tuple chatbot format.
++
++    Args:
++        fn: The handler (a function, bound method, or generator function).
++        inputs: Positions of the handler arguments that receive a chatbot value, converted to pairs.
++        outputs: Positions of the returned (or yielded) values that are chatbot values, converted to messages.
++            A handler returning a single value is treated as position 0.
++    """
++    inputs = tuple(inputs)
++    outputs = tuple(outputs)
++
++    def convert_in(args):
++        args = list(args)
++        for i in inputs:
++            if i < len(args):
++                args[i] = messages_to_pairs(args[i])
++        return args
++
++    def convert_out(result):
++        if not outputs:
++            return result
++        if not isinstance(result, tuple):
++            return pairs_to_messages(result) if 0 in outputs else result
++        result = list(result)
++        for i in outputs:
++            if i < len(result):
++                result[i] = pairs_to_messages(result[i])
++        return tuple(result)
++
++    if inspect.isgeneratorfunction(fn):
++        @functools.wraps(fn)
++        def wrapper(*args):
++            for result in fn(*convert_in(args)):
++                yield convert_out(result)
++    else:
++        @functools.wraps(fn)
++        def wrapper(*args):
++            return convert_out(fn(*convert_in(args)))
++    return wrapper
+diff --git a/utils/local_doc.py b/utils/local_doc.py
+index 78007c3..09a0583 100644
+--- a/utils/local_doc.py
++++ b/utils/local_doc.py
+@@ -8,6 +8,7 @@ from utils.chinese_text_splitter import ChineseTextSplitter
+ from utils.MyFAISS import MyFAISS
+ import datetime
+ import gradio as gr
++from utils.gradio_compat import file_path
+ from modules.agent.chatdb.mysql import MySQLDB
+ 
+ real_path = os.path.split(os.path.realpath(__file__))[0]
+@@ -148,7 +149,7 @@ class local_doc_qa():
+         loaded_files = ''
+         docs = []
+         for file in files:
+-            file=file.name
++            file=file_path(file)
+             try:
+                 docs += self.load_file(file)
+                 loaded_files+=os.path.split(file)[-1]+'已成功加载\n'
+@@ -240,7 +241,7 @@ class local_doc_qa():
+                """
+         docs = []
+         for file in files:
+-            docs += self.load_file(file.name)
++            docs += self.load_file(file_path(file))
+         self.vector_store.add_files(docs,database_name)
+         return gr.update(choices=self.vector_store.list_docs(), interactive=True)
+ 
+diff --git a/utils/ui_utils.py b/utils/ui_utils.py
+index 27a1bda..740a47a 100644
+--- a/utils/ui_utils.py
++++ b/utils/ui_utils.py
+@@ -7,6 +7,7 @@
+ import sys
+ import gradio as gr
+ from utils.dl_data import *
++from utils.gradio_compat import file_path
+ from collections import OrderedDict
+ from modules.model.use_api import *
+ from modules.apply.role_play import role_play
+@@ -238,7 +239,7 @@ class data_process():
+         return self.json_dict
+ 
+     def upload_data(self, temp_file):
+-        fname = temp_file.name
++        fname = file_path(temp_file)
+         with open(fname, 'r', encoding='utf-8') as f:
+             self.answer_list = [i.strip() for i in f.readlines()]
+         return self.answer_list[0]
+@@ -246,7 +247,7 @@ class data_process():
+     def upload_data_out(self, temp_file, a, b, models2, models3):
+         if models3 == '新建':
+             self.upload_dict = OrderedDict()
+-        fname = temp_file.name
++        fname = file_path(temp_file)
+         if models2 == 'json':
+             try:
+                 with open(fname, 'r', encoding='utf-8') as f:
+@@ -270,7 +271,7 @@ class data_process():
+ 
+     def upload_embed_data(self, embed_upload):
+         self.sentence_pair = []
+-        fname = embed_upload.name
++        fname = file_path(embed_upload)
+         with open(fname, 'r', encoding='utf-8') as f:
+             content = f.read()
+             content = content.replace('\n', '')
+@@ -285,7 +286,7 @@ class data_process():
+     def upload_embed_exchange_data(self, embed_exchange_upload, type_):
+         if type_ == '新建':
+             self.embedding_json_dict = OrderedDict()
+-        fname = embed_exchange_upload.name
++        fname = file_path(embed_exchange_upload)
+         with open(fname, 'r', encoding='utf8') as f:
+             lines = f.readlines()
+             for line in lines:
+@@ -484,7 +485,7 @@ class data_process():
+             if not self.mysql.create_database(new_database):
+                 raise gr.Error('数据库创建失败')
+         for file in files:
+-            name = file.name
++            name = file_path(file)
+             if name.split('.')[-1] == 'xlsx' or name.split('.')[-1] == 'xls':
+                 df = pd.read_excel(name, header=0, engine='openpyxl')
+             elif name.split('.')[-1] == 'csv':
+@@ -1797,16 +1798,18 @@ def handle_online_tts(choice):
+ 
+ 
+ def load_javascript():
+-    GradioTemplateResponseOriginal = gr.routes.templates.TemplateResponse
+-    print("loading javascript...")
+-    js = '''
+-    <script src="file=data/config/js/custom.js"></script>
+-    '''
++    """Builds the html to inject into the <head> of the page, which loads the custom javascript.
+ 
+-    def template_response(*args, **kwargs):
+-        res = GradioTemplateResponseOriginal(*args, **kwargs)
+-        res.body = res.body.replace(b'</html>', f'{js}</html>'.encode("utf8"))
+-        res.init_headers()
+-        return res
++    Gradio 3 allowed monkey patching `gr.routes.templates.TemplateResponse` to append a script tag to the
++    page. That hook is gone, so the script is inlined and passed to `launch(head=...)` instead (inlining also
++    avoids depending on the `file=` route, which now needs `allowed_paths`).
+ 
+-    gr.routes.templates.TemplateResponse = template_response
++    Returns:
++        str: The html for `launch(head=...)`, empty if the custom javascript file does not exist.
++    """
++    print("loading javascript...")
++    js_path = os.path.join(real_path, "..", "data", "config", "js", "custom.js")
++    if not os.path.isfile(js_path):
++        return ""
++    with open(js_path, "r", encoding="utf-8") as f:
++        return f"<script>{f.read()}</script>"
+diff --git a/webui.py b/webui.py
+index 4031944..ba2871f 100644
+--- a/webui.py
++++ b/webui.py
+@@ -22,7 +22,8 @@ with gr.Blocks(analytics_enabled=False) as demo:
+     with gr.Tab(localizer("训练")):
+         train.train_page(localizer)
+ 
+-load_javascript()
+-demo.queue(concurrency_count=3).launch(_frontend=False,inbrowser=True)
++# In gradio 6 custom <head> content (e.g. scripts) is passed to launch() instead of Blocks().
++head = load_javascript()
++demo.queue(default_concurrency_limit=3).launch(_frontend=False,inbrowser=True,head=head)
+ 
+ 

@@ -1,0 +1,43 @@
+diff --git a/infer_requirements.txt b/infer_requirements.txt
+index 10e72c0..6b16454 100644
+--- a/infer_requirements.txt
++++ b/infer_requirements.txt
+@@ -1,4 +1,4 @@
+-anthropic==0.26.0
++anthropic==2.8.0
+ huggingface-hub==0.23.0
+ llama @ git+ssh://git@github.com/meta-llama/llama.git@be327c427cc5e89cc1d3ab3d3fec4484df771245
+ openai==0.28.0
+diff --git a/mango/inference/models/claude.py b/mango/inference/models/claude.py
+index 3c593a8..c346ae2 100644
+--- a/mango/inference/models/claude.py
++++ b/mango/inference/models/claude.py
+@@ -1,7 +1,7 @@
+ import os
+ 
+ import tiktoken
+-from anthropic import AI_PROMPT, HUMAN_PROMPT, Anthropic
++from anthropic import Anthropic
+ 
+ # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
+ from tenacity import (
+@@ -31,12 +31,15 @@ class ClaudeModel:
+         ), "claude models currently only supprt querying one sample at a time."
+         prompt = prompt_list[0]
+ 
+-        response = self.model_class.completions.create(
++        message = self.model_class.messages.create(
+             model=self.model_name,
+-            max_tokens_to_sample=self.max_tokens_to_sample,
+-            prompt=f"{HUMAN_PROMPT} {prompt}{AI_PROMPT}",
++            max_tokens=self.max_tokens_to_sample,
++            messages=[{"role": "user", "content": prompt}],
+             temperature=self.temperature,
+-        ).completion
++        )
++        response = "".join(
++            block.text for block in message.content if block.type == "text"
++        )
+ 
+         return [response]
+ 

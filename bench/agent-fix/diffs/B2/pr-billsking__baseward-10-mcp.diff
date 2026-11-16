@@ -1,0 +1,97 @@
+diff --git a/app/main.py b/app/main.py
+index 469d79e..0b57f09 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request
+ from fastapi.exceptions import RequestValidationError
+ from fastapi.responses import JSONResponse, RedirectResponse
+ from fastapi.staticfiles import StaticFiles
++from mcp.server.transport_security import TransportSecuritySettings
+ from starlette.exceptions import HTTPException as StarletteHTTPException
+ 
+ from app.admin.rendering import BASE_DIR, render_error, render_login
+@@ -51,7 +52,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
+     services = Services(resolved)
+     mcp = build_mcp(services)
+     # Must run before mounting: session_manager is created lazily and raises RuntimeError afterwards.
+-    mcp_app = mcp.streamable_http_app()
++    mcp_app = mcp.streamable_http_app(
++        stateless_http=True,
++        streamable_http_path="/",
++        transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
++    )
+     export_server = None
+ 
+     @asynccontextmanager
+diff --git a/app/mcp/pipeline.py b/app/mcp/pipeline.py
+index 01ad97d..85e3ca2 100644
+--- a/app/mcp/pipeline.py
++++ b/app/mcp/pipeline.py
+@@ -8,7 +8,7 @@ import time
+ from datetime import datetime, timezone
+ from uuid import uuid4
+ 
+-from mcp.server.fastmcp.exceptions import ToolError
++from mcp.server.mcpserver.exceptions import ToolError
+ from sqlglot import exp
+ 
+ from app.credentials.service import CREDENTIAL_ISSUE_DENIED
+diff --git a/app/mcp/server.py b/app/mcp/server.py
+index 9cf4ec0..05fb43b 100644
+--- a/app/mcp/server.py
++++ b/app/mcp/server.py
+@@ -4,9 +4,8 @@ from __future__ import annotations
+ 
+ import json
+ 
+-from mcp.server.fastmcp import FastMCP
+-from mcp.server.fastmcp.exceptions import ToolError
+-from mcp.server.transport_security import TransportSecuritySettings
++from mcp.server.mcpserver import MCPServer
++from mcp.server.mcpserver.exceptions import ToolError
+ 
+ from app.mcp import pipeline
+ from app.mcp.texts import mcp_texts
+@@ -31,14 +30,11 @@ def _principal_or_error(texts: dict[str, str]):
+     return principal
+ 
+ 
+-def build_mcp(services) -> FastMCP:
++def build_mcp(services) -> MCPServer:
+     texts = mcp_texts(services.settings.mcp_language)
+-    mcp = FastMCP(
++    mcp = MCPServer(
+         "baseward",
+         instructions=texts["instructions"],
+-        stateless_http=True,
+-        streamable_http_path="/",
+-        transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
+     )
+ 
+     @mcp.tool(description=texts["tool.list_datasources"])
+diff --git a/tests/unit/test_mcp_handoff.py b/tests/unit/test_mcp_handoff.py
+index e7ab171..be73d78 100644
+--- a/tests/unit/test_mcp_handoff.py
++++ b/tests/unit/test_mcp_handoff.py
+@@ -11,7 +11,7 @@ from datetime import datetime
+ from types import SimpleNamespace
+ 
+ import pytest
+-from mcp.server.fastmcp.exceptions import ToolError
++from mcp.server.mcpserver.exceptions import ToolError
+ 
+ from app.config import Settings
+ from app.credentials.service import AutoIssuedCredential
+diff --git a/tests/unit/test_pipeline_failclosed.py b/tests/unit/test_pipeline_failclosed.py
+index 6b9c0ec..da8aca1 100644
+--- a/tests/unit/test_pipeline_failclosed.py
++++ b/tests/unit/test_pipeline_failclosed.py
+@@ -3,7 +3,7 @@
+ from types import SimpleNamespace
+ 
+ import pytest
+-from mcp.server.fastmcp.exceptions import ToolError
++from mcp.server.mcpserver.exceptions import ToolError
+ 
+ from app.datasources import databases as databases_module
+ from app.datasources.databases import DatabasePolicy

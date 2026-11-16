@@ -1,0 +1,78 @@
+diff --git a/scripts/check_live_mcp.py b/scripts/check_live_mcp.py
+index 057ec3d..67a9f3e 100644
+--- a/scripts/check_live_mcp.py
++++ b/scripts/check_live_mcp.py
+@@ -14,7 +14,7 @@ import tomllib
+ import urllib.error
+ import urllib.parse
+ import urllib.request
+-from datetime import datetime, timedelta, timezone
++from datetime import datetime, timezone
+ from pathlib import Path
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+@@ -196,20 +196,23 @@ def validate_catalog(tools, expected=None):
+ async def sdk_discovery(url, expected):
+     # Preserve the SDK's normal User-Agent while marking this owner-run monitor.
+     # The marker affects telemetry classification only, never access or billing.
++    import httpx2
+     from mcp import ClientSession
+-    from mcp.client.streamable_http import streamablehttp_client
++    from mcp.client.streamable_http import streamable_http_client
+ 
+-    async with streamablehttp_client(
+-        url,
++    async with httpx2.AsyncClient(
+         headers={"X-Client-Id": OWNER_CLIENT_ID},
+-        timeout=timedelta(seconds=20),
+-        sse_read_timeout=timedelta(seconds=20),
+-        terminate_on_close=False,
+-    ) as (read, write, _):
+-        async with ClientSession(read, write) as session:
+-            initialized = await session.initialize()
+-            catalog = await session.list_tools()
+-            return {"protocol": initialized.protocolVersion, "tools": validate_catalog(catalog.tools, expected)}
++        timeout=httpx2.Timeout(20.0),
++    ) as http_client:
++        async with streamable_http_client(
++            url,
++            http_client=http_client,
++            terminate_on_close=False,
++        ) as (read, write, _):
++            async with ClientSession(read, write) as session:
++                initialized = await session.initialize()
++                catalog = await session.list_tools()
++                return {"protocol": initialized.protocolVersion, "tools": validate_catalog(catalog.tools, expected)}
+ 
+ 
+ def dependency_ready(data, require_snapshot=False):
+diff --git a/tests/test_native_mcp_trial_client.py b/tests/test_native_mcp_trial_client.py
+index 9f2e5fb..bda59f8 100644
+--- a/tests/test_native_mcp_trial_client.py
++++ b/tests/test_native_mcp_trial_client.py
+@@ -10,7 +10,9 @@ import pytest
+ 
+ pytest.importorskip("mcp")
+ from mcp import ClientSession  # noqa: E402
+-from mcp.client.streamable_http import streamablehttp_client  # noqa: E402
++from mcp.client.streamable_http import streamable_http_client  # noqa: E402
++
++import httpx2  # noqa: E402
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ PROFILES = (
+@@ -47,9 +49,12 @@ def test_official_mcp_client_can_check_and_execute_each_profile_without_http_ada
+ 
+         async def check():
+             for profile in PROFILES:
+-                async with streamablehttp_client(
+-                    f"http://127.0.0.1:{port}/{profile}/mcp/agent",
++                async with httpx2.AsyncClient(
+                     headers={"X-Client-Id": "agenda-owner-native-sdk-test"},
++                    timeout=httpx2.Timeout(30.0, read=300.0),
++                ) as http_client, streamable_http_client(
++                    f"http://127.0.0.1:{port}/{profile}/mcp/agent",
++                    http_client=http_client,
+                     terminate_on_close=False,
+                 ) as (read, write, _):
+                     async with ClientSession(read, write) as session:

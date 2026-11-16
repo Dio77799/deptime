@@ -1,0 +1,145 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 88fd120..cf49a70 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -27,7 +27,7 @@ dependencies = [
+ [project.optional-dependencies]
+ optimize = [
+     "requests>=2.25.0",
+-    "dspy==2.6.13",
++    "dspy==3.4.1",
+     "numpy>=2.2.0",
+     "scipy>=1.15.0",
+     "pandas>=2.2.0",
+diff --git a/src/prompt_ops/core/evaluation.py b/src/prompt_ops/core/evaluation.py
+index 629972a..96728f1 100644
+--- a/src/prompt_ops/core/evaluation.py
++++ b/src/prompt_ops/core/evaluation.py
+@@ -98,7 +98,19 @@ class Evaluator:
+             If return_outputs is False, returns the average score.
+             If return_outputs is True, returns (score, outputs).
+         """
+-        return self._dspy_evaluator(program, return_outputs=return_outputs)
++        # In DSPy 3.x, Evaluate returns an EvaluationResult (with .score and
++        # .results) and no longer accepts return_outputs.
++        result = self._dspy_evaluator(program)
++        score = self._extract_score(result)
++        if return_outputs:
++            return score, getattr(result, "results", None)
++        return score
++
++    @staticmethod
++    def _extract_score(result) -> float:
++        """Extract a float score from a DSPy EvaluationResult (or a raw number)."""
++        score = getattr(result, "score", result)
++        return float(score)
+ 
+ 
+ class StatisticalEvaluator(Evaluator):
+@@ -151,8 +163,8 @@ class StatisticalEvaluator(Evaluator):
+         all_scores = []
+ 
+         for _ in range(self.n_runs):
+-            score = self._dspy_evaluator(program, **kwargs)
+-            all_scores.append(score)
++            result = self._dspy_evaluator(program, **kwargs)
++            all_scores.append(self._extract_score(result))
+ 
+         stats_dict = self.calculate_statistics(all_scores)
+ 
+diff --git a/src/prompt_ops/core/model.py b/src/prompt_ops/core/model.py
+index 2852eab..578a096 100644
+--- a/src/prompt_ops/core/model.py
++++ b/src/prompt_ops/core/model.py
+@@ -181,11 +181,6 @@ class DSPyModelAdapter(ModelAdapter):
+         # This is critical for DSPy's optimizers to work properly
+         dspy.configure(lm=self._model)
+ 
+-        # Ensure the model is globally accessible for DSPy
+-        # This is needed for some DSPy components that don't explicitly take a model parameter
+-        if hasattr(dspy, "settings"):
+-            dspy.settings.lm = self._model
+-
+         # Set the global LM in the DSPy module for backward compatibility
+         # Some DSPy components access this directly
+         if hasattr(dspy, "LM"):
+@@ -225,11 +220,9 @@ class DSPyModelAdapter(ModelAdapter):
+ 
+         try:
+             # Use the model to generate a completion
+-            if temp_config:
+-                with dspy.settings(**temp_config):
+-                    response = self._model(prompt)
+-            else:
+-                response = self._model(prompt)
++            # dspy.settings is no longer callable in DSPy 3.x and doesn't hold
++            # LM generation params, so pass overrides directly to the LM call.
++            response = self._model(prompt, **temp_config)
+ 
+             return response
+ 
+diff --git a/src/prompt_ops/core/prompt_strategies.py b/src/prompt_ops/core/prompt_strategies.py
+index 6bdb959..e409dbd 100644
+--- a/src/prompt_ops/core/prompt_strategies.py
++++ b/src/prompt_ops/core/prompt_strategies.py
+@@ -387,6 +387,15 @@ class BasicOptimizationStrategy(BaseStrategy):
+             if hasattr(prompt_model, "_model"):
+                 prompt_model = prompt_model._model
+ 
++            # DSPy 3.x raises a ValueError if num_candidates/num_trials are set
++            # while an auto mode is active (the auto mode determines them).
++            auto_overrides_search_size = dspy_auto_mode is not None
++            if auto_overrides_search_size:
++                logging.info(
++                    f"Auto mode '{dspy_auto_mode}' determines num_candidates/num_trials; "
++                    f"ignoring num_candidates={self.num_candidates}, num_trials={self.num_trials}"
++                )
++
+             # Configure the optimizer with all parameters
+             optimizer = dspy.MIPROv2(
+                 metric=self.metric,
+@@ -395,7 +404,9 @@ class BasicOptimizationStrategy(BaseStrategy):
+                 max_bootstrapped_demos=self.max_bootstrapped_demos,
+                 max_labeled_demos=self.max_labeled_demos,
+                 auto=dspy_auto_mode,  # Use the mapped value
+-                num_candidates=self.num_candidates,
++                num_candidates=(
++                    None if auto_overrides_search_size else self.num_candidates
++                ),
+                 num_threads=self.num_threads,
+                 max_errors=self.max_errors,
+                 seed=self.seed,
+@@ -616,7 +627,9 @@ class BasicOptimizationStrategy(BaseStrategy):
+                         program,
+                         trainset=self.trainset,
+                         valset=self.valset,
+-                        num_trials=self.num_trials,
++                        num_trials=(
++                            None if auto_overrides_search_size else self.num_trials
++                        ),
+                         minibatch=self.minibatch,
+                         minibatch_size=self.minibatch_size,
+                         minibatch_full_eval_steps=self.minibatch_full_eval_steps,
+@@ -625,7 +638,8 @@ class BasicOptimizationStrategy(BaseStrategy):
+                         view_data_batch_size=self.view_data_batch_size,
+                         tip_aware_proposer=self.tip_aware_proposer,
+                         fewshot_aware_proposer=self.fewshot_aware_proposer,
+-                        requires_permission_to_run=self.requires_permission_to_run,
++                        # requires_permission_to_run is deprecated in DSPy 3.x
++                        # (True raises, False only warns), so it is not passed.
+                         provide_traceback=True,  # Add this line
+                     )
+                     logging.info("Optimizer.compile completed successfully")
+diff --git a/src/prompt_ops/datasets/hotpotqa/adapter.py b/src/prompt_ops/datasets/hotpotqa/adapter.py
+index bca3128..58507f5 100644
+--- a/src/prompt_ops/datasets/hotpotqa/adapter.py
++++ b/src/prompt_ops/datasets/hotpotqa/adapter.py
+@@ -90,7 +90,7 @@ class HotpotQAAdapter(DatasetAdapter):
+             try:
+                 # Import here to avoid dependency issues
+                 # Only import if retriever is actually needed
+-                from dspy.retrieve import ColBERTv2
++                from dspy.dsp.colbertv2 import ColBERTv2
+ 
+                 self.retriever = ColBERTv2(url=retriever_url)
+                 logger.info(f"Initialized retriever with URL: {retriever_url}")

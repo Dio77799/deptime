@@ -1,0 +1,99 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 63,
+  "duration_ms": 165068,
+  "total_cost_usd": 0.47284919999999997,
+  "usage": {
+   "input_tokens": 42,
+   "cache_creation_input_tokens": 48617,
+   "cache_read_input_tokens": 680509,
+   "output_tokens": 17267,
+   "output_tokens_details": {
+    "thinking_tokens": 1593
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 48617,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1210,
+     "cache_read_input_tokens": 53882,
+     "cache_creation_input_tokens": 919,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 919
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.56,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.21,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 14,
+  "Glob": 2,
+  "WebSearch": 2,
+  "WebFetch": 3,
+  "Read": 12,
+  "Edit": 29
+ },
+ "deptime_calls": [],
+ "other_bash": 0,
+ "fetched": [
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/"
+ ],
+ "denied": 0,
+ "task": "pr-billsking__baseward-10-mcp",
+ "arm": "A",
+ "label": "A2",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 165.7,
+ "service_error": false
+}

@@ -1,0 +1,67 @@
+diff --git a/tests/conftest.py b/tests/conftest.py
+index d6a217f..bc118e4 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -4,7 +4,7 @@ import pytest
+ from asgi_lifespan import LifespanManager
+ from asyncpg.pool import Pool
+ from fastapi import FastAPI
+-from httpx import AsyncClient
++from httpx import ASGITransport, AsyncClient
+ 
+ from app.db.repositories.articles import ArticlesRepository
+ from app.db.repositories.users import UsersRepository
+@@ -38,7 +38,7 @@ def pool(initialized_app: FastAPI) -> Pool:
+ @pytest.fixture
+ async def client(initialized_app: FastAPI) -> AsyncClient:
+     async with AsyncClient(
+-        app=initialized_app,
++        transport=ASGITransport(app=initialized_app),
+         base_url="http://testserver",
+         headers={"Content-Type": "application/json"},
+     ) as client:
+diff --git a/tests/test_api/test_errors/test_422_error.py b/tests/test_api/test_errors/test_422_error.py
+index e3102b7..a245af4 100644
+--- a/tests/test_api/test_errors/test_422_error.py
++++ b/tests/test_api/test_errors/test_422_error.py
+@@ -1,6 +1,6 @@
+ import pytest
+ from fastapi import FastAPI
+-from httpx import AsyncClient
++from httpx import ASGITransport, AsyncClient
+ from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
+ 
+ pytestmark = pytest.mark.asyncio
+@@ -11,7 +11,9 @@ async def test_frw_validation_error_format(app: FastAPI):
+     def route_for_test(param: int) -> None:  # pragma: no cover
+         pass
+ 
+-    async with AsyncClient(base_url="http://testserver", app=app) as client:
++    async with AsyncClient(
++        base_url="http://testserver", transport=ASGITransport(app=app)
++    ) as client:
+         response = await client.get("/wrong_path/asd")
+ 
+     assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
+diff --git a/tests/test_api/test_errors/test_error.py b/tests/test_api/test_errors/test_error.py
+index 841cdd1..db58351 100644
+--- a/tests/test_api/test_errors/test_error.py
++++ b/tests/test_api/test_errors/test_error.py
+@@ -1,13 +1,15 @@
+ import pytest
+ from fastapi import FastAPI
+-from httpx import AsyncClient
++from httpx import ASGITransport, AsyncClient
+ from starlette.status import HTTP_404_NOT_FOUND
+ 
+ pytestmark = pytest.mark.asyncio
+ 
+ 
+ async def test_frw_validation_error_format(app: FastAPI):
+-    async with AsyncClient(base_url="http://testserver", app=app) as client:
++    async with AsyncClient(
++        base_url="http://testserver", transport=ASGITransport(app=app)
++    ) as client:
+         response = await client.get("/wrong_path/asd")
+ 
+     assert response.status_code == HTTP_404_NOT_FOUND

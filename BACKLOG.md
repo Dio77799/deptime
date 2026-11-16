@@ -38,7 +38,7 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 | Milestone | Exit criterion | Status |
 |---|---|---|
-| **M0 Spikes** | S1 go/no-go (false-absent ≤ 10%); S2–S7 answered | S1 to S4 passed (S1 at 1.2%); S5 done but for the GUI clients; S6 and S7 open, below |
+| **M0 Spikes** | S1 go/no-go (false-absent ≤ 10%); S2–S7 answered | S1 to S4 passed (S1 at 1.2%); S5 done but for the GUI clients; S6 answered by DT-QA-05 (yes, 25 of 25); S7 open, below |
 | **M1 Local alpha** | Public repo; index published; `uvx deptime mcp` works from PyPI; benchmark ≥ 70% | Met: every holdout's first run is above 70% |
 | **M2 Distribution** | Registries, plugin, snippets, demo GIF, 5 rename-map pages | Registries, plugin, pages and the demo done; the hosting is below |
 | **M3 Optional hosted** | Public endpoint for web clients | Not planned |
@@ -104,15 +104,17 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
     `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
 
-**Phase 4, the fix (the model's part, outside DepTime).** The tool and the hand-off shipped (DT-CORE-68, DT-GTM-07);
-DT-QA-23 couldn't test them on real code. Before 1.0 freezes the hand-off:
-- [ ] **DT-QA-05**: Does an agent fix an update's breaks better with DepTime's hand-off? · `P1` `M` · deps: CORE-74,
-  CORE-75
-  - Protocol committed (`bench/agent-fix/README.md`): 25 tasks (2026-11f's 12 broken upgrades to a newer version,
-    DT-QA-22's 13 pull requests with a labelled break; 137 confirmed breaks), Claude Code on Sonnet 5.5 alone (A),
-    with `/deptime:fix-upgrade` (B), and with the plugin installed but not named (C, answers DT-SPIKE-06). Success by
-    the probe on the fixed code. Bar: B fixes ≥ 80% of sessions, at least as many as A, with no more new breaks.
-    Next: `run.py`, `score.py`, the trial, then the runs.
+**Phase 4, the fix (the model's part, outside DepTime).** DT-QA-05 measured the hand-off and it lost: Claude Code on
+Sonnet fixed 80% of 25 real broken updates alone and 64% with `/deptime:fix-upgrade`
+(`bench/agent-fix/results-2026-11-16.md`). With the plugin installed and not named it called DepTime every time and
+kept 80%. DT-OSS-17 waits for:
+- [ ] **DT-GTM-08**: Rework the fix-upgrade hand-off from DT-QA-05's losses · `P1` `S`
+  - `unknown` notices are breaks DepTime can't rule out: the agent checks them itself (4 lost sessions); on exit 2
+    "pass --from", rerun with the version the user named (2); write the report with `--output` and read it, or a
+    shorter agent format, so a report past the shell's limit is still read whole (2, plus both largest tasks).
+- [ ] **DT-QA-26**: DT-QA-05 again on the reworked hand-off · `P1` `S` · deps: GTM-08
+  - A new protocol before its first run, on new broken updates (DT-QA-05's 25 are now in-sample for the command), with
+    a shell that asks rather than denies, as a person's does.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
@@ -122,6 +124,9 @@ DT-QA-23 couldn't test them on real code. Before 1.0 freezes the hand-off:
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-05** (2026-11-16): bar missed. Sessions fixed: alone 80%, `/deptime:fix-upgrade` 64% (a third of the
+  turns, no new breaks), plugin installed and not named 80%. Also DT-SPIKE-06: unprompted, the agent called DepTime in
+  25 of 25 sessions.
 - [x] **DT-CORE-75** (2026-11-16): `check_upgrade`'s note says when the code never imports the package (DT-QA-23: 18
   of 83 calls), where it read as no break with `uses: 0` and nothing else.
 - [x] **DT-QA-23** (2026-11-16): Qwen3.5 9B with the six tools on the upgrade checks: 75.0% of breaks found and 3.5%

@@ -1,0 +1,26 @@
+diff --git a/scripts/mistral_ocr.py b/scripts/mistral_ocr.py
+index 283c2f7..8d6c106 100644
+--- a/scripts/mistral_ocr.py
++++ b/scripts/mistral_ocr.py
+@@ -11,7 +11,7 @@ import base64
+ import mimetypes
+ from pathlib import Path
+ from dotenv import load_dotenv
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ 
+ # Load environment variables from .env file
+ load_dotenv()
+diff --git a/scripts/onenote_pdf_to_markdown.py b/scripts/onenote_pdf_to_markdown.py
+index 87edfc3..c442697 100644
+--- a/scripts/onenote_pdf_to_markdown.py
++++ b/scripts/onenote_pdf_to_markdown.py
+@@ -202,7 +202,7 @@ def ocr_pngs_with_mistral(
+         sys.exit(1)
+ 
+     import base64
+-    from mistralai import Mistral
++    from mistralai.client import Mistral
+ 
+     client = Mistral(api_key=api_key)
+ 

@@ -1,0 +1,54 @@
+diff --git a/requirements.txt b/requirements.txt
+index dc400f6..049f0f6 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,2 +1,2 @@
+-mcp==1.13.1
++mcp==2.3.0
+ minds_sdk==1.3.3
+diff --git a/server.py b/server.py
+index 375ff59..d739257 100644
+--- a/server.py
++++ b/server.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, List
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from minds.client import Client
+ 
+ # Import configuration
+@@ -7,21 +7,15 @@ from config import (
+     MINDS_BASE_URL,
+     FASTMCP_DEBUG,
+     FASTMCP_LOG_LEVEL,
+-    FASTMCP_HOST,
+-    FASTMCP_PORT,
+-    FASTMCP_SSE_PATH,
+-    FASTMCP_MESSAGE_PATH,
+ )
+ 
+-# Create the MCP server with customized settings
+-mcp = FastMCP(
++# Create the MCP server with customized settings.
++# In mcp 2.x the transport settings (host, port, sse_path, message_path) are
++# no longer constructor arguments; they are passed to run() for HTTP/SSE.
++mcp = MCPServer(
+     'Minds Enterprise',
+     debug=FASTMCP_DEBUG,
+     log_level=FASTMCP_LOG_LEVEL,
+-    host=FASTMCP_HOST,
+-    port=FASTMCP_PORT,
+-    sse_path=FASTMCP_SSE_PATH,
+-    message_path=FASTMCP_MESSAGE_PATH,
+ )
+ 
+ 
+@@ -98,5 +92,7 @@ def completion(mind_name: str, message: str, api_key: str) -> str:
+ 
+ 
+ if __name__ == '__main__':
+-    # Run the server - FastMCP already has host and port from initialization
++    # Runs over stdio (the default transport), as before. To serve over SSE,
++    # use: mcp.run(transport='sse', host=FASTMCP_HOST, port=FASTMCP_PORT,
++    #              sse_path=FASTMCP_SSE_PATH, message_path=FASTMCP_MESSAGE_PATH)
+     mcp.run()

@@ -1,0 +1,138 @@
+diff --git a/restx_api/data_schemas.py b/restx_api/data_schemas.py
+index 1b6acb7..344f68d 100644
+--- a/restx_api/data_schemas.py
++++ b/restx_api/data_schemas.py
+@@ -131,7 +131,7 @@ class TickerSchema(Schema):
+     )  # YYYY-MM-DD or millisecond timestamp
+     adjusted = fields.Bool(required=False, default=True)  # Adjust for splits
+     sort = fields.Str(
+-        required=False, default="asc", validate=validate.OneOf(["asc", "desc"])
++        required=False, dump_default="asc", validate=validate.OneOf(["asc", "desc"])
+     )  # Sort direction
+ 
+ 
+diff --git a/restx_api/schemas.py b/restx_api/schemas.py
+index 04a3d2c..3c2758e 100644
+--- a/restx_api/schemas.py
++++ b/restx_api/schemas.py
+@@ -89,7 +89,7 @@ class ValiditySchemaMixin:
+     """
+ 
+     validity = fields.Str(
+-        missing=DEFAULT_VALIDITY,
++        load_default=DEFAULT_VALIDITY,
+         validate=_validate_validity,
+     )  # Order validity: DAY (default) or IOC
+ 
+@@ -108,9 +108,9 @@ class OrderSchema(ValiditySchemaMixin, Schema):
+         required=True, validate=validate.Range(min=0, min_inclusive=False, error="Quantity must be a positive number.")
+     )
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
++    product = fields.Str(load_default="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
+     price = fields.Float(
+         missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+@@ -146,9 +146,9 @@ class SmartOrderSchema(ValiditySchemaMixin, Schema):
+     )
+     position_size = fields.Float(required=True)
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
++    product = fields.Str(load_default="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
+     price = fields.Float(
+         missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+@@ -227,9 +227,9 @@ class BasketOrderItemSchema(ValiditySchemaMixin, Schema):
+         required=True, validate=validate.Range(min=0, min_inclusive=False, error="Quantity must be a positive number.")
+     )
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
++    product = fields.Str(load_default="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
+     price = fields.Float(
+         missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+@@ -273,9 +273,9 @@ class SplitOrderSchema(ValiditySchemaMixin, Schema):
+         validate=validate.Range(min=1, error="Split size must be a positive integer."),
+     )  # Size of each split
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
++    product = fields.Str(load_default="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
+     price = fields.Float(
+         missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+@@ -323,10 +323,10 @@ class OptionsOrderSchema(Schema):
+         allow_none=True,
+     )  # Optional: If > 0, splits order into multiple orders of this size
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+     product = fields.Str(
+-        missing="MIS", validate=validate.OneOf(["MIS", "NRML"])
++        load_default="MIS", validate=validate.OneOf(["MIS", "NRML"])
+     )  # Options only support MIS and NRML
+     price = fields.Float(
+         missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+@@ -364,10 +364,10 @@ class OptionsMultiOrderLegSchema(Schema):
+         required=False
+     )  # Optional per-leg expiry (DDMMMYY format) - for diagonal/calendar spreads
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+     product = fields.Str(
+-        missing="MIS", validate=validate.OneOf(["MIS", "NRML"])
++        load_default="MIS", validate=validate.OneOf(["MIS", "NRML"])
+     )  # Options only support MIS and NRML
+     price = fields.Float(
+         missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+@@ -432,8 +432,8 @@ class MarginPositionSchema(Schema):
+     pricetype = fields.Str(
+         required=True, validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    price = fields.Str(missing="0")  # String to match API contract
+-    trigger_price = fields.Str(missing="0")  # String to match API contract
++    price = fields.Str(load_default="0")  # String to match API contract
++    trigger_price = fields.Str(load_default="0")  # String to match API contract
+ 
+ 
+ class MarginCalculatorSchema(Schema):
+@@ -564,7 +564,7 @@ class PlaceGTTOrderSchema(Schema):
+         required=True,
+         validate=validate.Range(min=0, min_inclusive=False, error="Quantity must be a positive number."),
+     )
+-    pricetype = fields.Str(missing="LIMIT", validate=validate.OneOf(["LIMIT", "MARKET"]))
++    pricetype = fields.Str(load_default="LIMIT", validate=validate.OneOf(["LIMIT", "MARKET"]))
+     price = fields.Float(
+         required=True,
+         validate=validate.Range(min=0, error="Price must be a non-negative number."),
+@@ -579,7 +579,7 @@ class PlaceGTTOrderSchema(Schema):
+     )
+     stoploss = fields.Float(missing=None, allow_none=True)
+     target = fields.Float(missing=None, allow_none=True)
+-    expires_at = fields.Str(missing=None, allow_none=True)
++    expires_at = fields.Str(load_default=None, allow_none=True)
+     mpp_percentage = fields.Float(
+         missing=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+@@ -626,7 +626,7 @@ class ModifyGTTOrderSchema(Schema):
+         required=True,
+         validate=validate.Range(min=0, min_inclusive=False, error="Quantity must be a positive number."),
+     )
+-    pricetype = fields.Str(missing="LIMIT", validate=validate.OneOf(["LIMIT", "MARKET"]))
++    pricetype = fields.Str(load_default="LIMIT", validate=validate.OneOf(["LIMIT", "MARKET"]))
+     price = fields.Float(
+         required=True,
+         validate=validate.Range(min=0, error="Price must be a non-negative number."),

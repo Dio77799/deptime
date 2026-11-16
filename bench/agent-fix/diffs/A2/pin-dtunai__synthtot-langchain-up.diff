@@ -1,0 +1,171 @@
+diff --git a/setup-requirements.txt b/setup-requirements.txt
+index e29cefa..280d38e 100644
+--- a/setup-requirements.txt
++++ b/setup-requirements.txt
+@@ -1,10 +1,6 @@
+ click>=7.0,<9.0
+ click-help-colors>=0.9.1,<0.10
+ rich>=11.0,<14.0
+-langchain==0.2.1
+-langchain-community==0.2.1
+-langchain-core==0.2.1
+-langchain-experimental==0.0.59
+-langchain-openai==0.1.7
+-langchain-text-splitters==0.2.0
+-langchainhub==0.1.16
+\ No newline at end of file
++langchain==1.4.10
++langchain-core>=1.7.7,<2.0
++langchain-openai>=1.0,<2.0
+diff --git a/synthtot/generator/generator.py b/synthtot/generator/generator.py
+index cf402b5..d7cdf8d 100644
+--- a/synthtot/generator/generator.py
++++ b/synthtot/generator/generator.py
+@@ -3,11 +3,11 @@
+ 
+ import os
+ import json
+-from typing import List, Dict, Any
+-from langchain.chains import LLMChain, SequentialChain
+-from langchain.llms import OpenAI
+-from langchain.prompts import PromptTemplate
+-from langchain.chat_models import ChatOpenAI
++from typing import List, Dict, Any, Tuple
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.prompts import PromptTemplate
++from langchain_core.runnables import Runnable, RunnablePassthrough
++from langchain_openai import ChatOpenAI
+ from templates.thought_templates import (
+     template_step1,
+     template_step2,
+@@ -60,33 +60,31 @@ class ChainGenerator:
+             "data_out",
+         ]
+ 
+-    def create_llm_chain(self, template: str, output_key: str) -> LLMChain:
++    def create_llm_chain(self, template: str, output_key: str) -> Tuple[str, Runnable]:
+         """
+-        Initialize an LLMChain.
++        Create a single prompt | llm | parser step.
+ 
+         Args:
+             template (str): Template for the prompt.
+             output_key (str): Key for the output.
+ 
+         Returns:
+-            LLMChain: Generated LLMChain.
++            Tuple[str, Runnable]: The output key and the runnable producing its value.
+         """
+-        return LLMChain(
+-            llm=ChatOpenAI(
+-                temperature=self.temperature,
+-                max_tokens=self.max_tokens,
+-                model=self.model,
+-            ),
+-            prompt=PromptTemplate(input_variables=["input"], template=template),
+-            output_key=output_key,
++        llm = ChatOpenAI(
++            temperature=self.temperature,
++            max_tokens=self.max_tokens,
++            model=self.model,
+         )
++        prompt = PromptTemplate.from_template(template)
++        return output_key, prompt | llm | StrOutputParser()
+ 
+-    def create_all_chains(self) -> List[LLMChain]:
++    def create_all_chains(self) -> List[Tuple[str, Runnable]]:
+         """
+-        Create all LLMChains.
++        Create all chain steps.
+ 
+         Returns:
+-            List[LLMChain]: List of generated LLMChains.
++            List[Tuple[str, Runnable]]: List of (output_key, runnable) steps.
+         """
+         return [
+             self.create_llm_chain(template, output_key)
+@@ -94,44 +92,50 @@ class ChainGenerator:
+         ]
+ 
+ 
+-def create_sequential_chain(all_chains: List[LLMChain]) -> SequentialChain:
++INPUT_VARIABLES = [
++    "input",
++    "perfect_consideration",
++    "number",
++    "perspective",
++    "prompt_template",
++]
++OUTPUT_VARIABLES = [
++    "solutions",
++    "review",
++    "thought_process",
++    "sorted_solutions",
++    "data_out",
++]
++
++
++def create_sequential_chain(all_chains: List[Tuple[str, Runnable]]) -> Runnable:
+     """
+-    Create a SequentialChain.
++    Create a sequential chain: each step's output is added to the state under its
++    output key, so later steps can use earlier outputs in their prompts.
+ 
+     Args:
+-        all_chains (List[LLMChain]): List of LLMChains.
++        all_chains (List[Tuple[str, Runnable]]): List of (output_key, runnable) steps.
+ 
+     Returns:
+-        SequentialChain: Generated SequentialChain.
++        Runnable: Runnable taking the input variables and returning a dict with the
++        input variables and all output variables.
+     """
+-    return SequentialChain(
+-        chains=all_chains,
+-        input_variables=[
+-            "input",
+-            "perfect_consideration",
+-            "number",
+-            "perspective",
+-            "prompt_template",
+-        ],
+-        output_variables=[
+-            "solutions",
+-            "review",
+-            "thought_process",
+-            "sorted_solutions",
+-            "data_out",
+-        ],
+-        verbose=True,
+-    )
++    chain: Runnable = RunnablePassthrough()
++    for output_key, step in all_chains:
++        chain = chain | RunnablePassthrough.assign(**{output_key: step})
++    # Match the old SequentialChain output: inputs plus output variables only.
++    keep = INPUT_VARIABLES + OUTPUT_VARIABLES
++    return chain | (lambda state: {k: state[k] for k in keep if k in state})
+ 
+ 
+ def process_input_data(
+-    chain: SequentialChain, input_data: List[Dict[str, Any]], prompt_template
++    chain: Runnable, input_data: List[Dict[str, Any]], prompt_template
+ ) -> List[Dict[str, Any]]:
+     """
+-    Process input data using the SequentialChain.
++    Process input data using the sequential chain.
+ 
+     Args:
+-        chain (SequentialChain): SequentialChain for processing data.
++        chain (Runnable): Chain for processing data.
+         input_data (List[Dict[str, Any]]): Input data to be processed.
+ 
+     Returns:
+@@ -142,7 +146,7 @@ def process_input_data(
+         try:
+             data["prompt_template"] = prompt_template
+             print(data)
+-            output_data = chain(data)
++            output_data = chain.invoke(data)
+             all_outputs.append(output_data)
+         except Exception as e:
+             logging.error(f"Error processing data: {data} - {e}")

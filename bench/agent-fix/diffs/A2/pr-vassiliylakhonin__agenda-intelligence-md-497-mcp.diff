@@ -1,0 +1,413 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 9d882af..d00a7d4 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -31,7 +31,7 @@ Documentation = "https://github.com/vassiliylakhonin/agenda-intelligence-md/tree
+ 
+ [project.optional-dependencies]
+ reviews = ["cryptography>=43", "rfc8785>=0.1.4"]
+-mcp-check = ["mcp==1.30.0; python_version >= '3.10'"]
++mcp-check = ["mcp==2.3.0; python_version >= '3.10'"]
+ dev = [
+     "cryptography>=43",
+     "rfc8785>=0.1.4",
+diff --git a/scripts/check_live_mcp.py b/scripts/check_live_mcp.py
+index 057ec3d..a1e5651 100644
+--- a/scripts/check_live_mcp.py
++++ b/scripts/check_live_mcp.py
+@@ -14,7 +14,7 @@ import tomllib
+ import urllib.error
+ import urllib.parse
+ import urllib.request
+-from datetime import datetime, timedelta, timezone
++from datetime import datetime, timezone
+ from pathlib import Path
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+@@ -89,11 +89,11 @@ def transient_transport_error(error):
+         return True
+     # SDK HTTP transport failures may be wrapped in an AnyIO exception group.
+     try:
+-        import httpx
++        import httpx2
+     except ImportError:
+         return False
+ 
+-    return isinstance(error, (httpx.TimeoutException, httpx.NetworkError, httpx.RemoteProtocolError))
++    return isinstance(error, (httpx2.TimeoutException, httpx2.NetworkError, httpx2.RemoteProtocolError))
+ 
+ 
+ async def transport_retry(operation, label, events, delay=0.5):
+@@ -183,7 +183,7 @@ def validate_catalog(tools, expected=None):
+     if len(names) != len(set(names)):
+         raise ValueError("Duplicate MCP tool names")
+     for tool in tools:
+-        if tool.inputSchema.get("type") != "object":
++        if tool.input_schema.get("type") != "object":
+             raise ValueError(f"Invalid input schema: {tool.name}")
+     if expected is not None and set(names) != set(expected):
+         raise ValueError(
+@@ -196,20 +196,17 @@ def validate_catalog(tools, expected=None):
+ async def sdk_discovery(url, expected):
+     # Preserve the SDK's normal User-Agent while marking this owner-run monitor.
+     # The marker affects telemetry classification only, never access or billing.
++    import httpx2
+     from mcp import ClientSession
+-    from mcp.client.streamable_http import streamablehttp_client
+-
+-    async with streamablehttp_client(
+-        url,
+-        headers={"X-Client-Id": OWNER_CLIENT_ID},
+-        timeout=timedelta(seconds=20),
+-        sse_read_timeout=timedelta(seconds=20),
+-        terminate_on_close=False,
+-    ) as (read, write, _):
+-        async with ClientSession(read, write) as session:
+-            initialized = await session.initialize()
+-            catalog = await session.list_tools()
+-            return {"protocol": initialized.protocolVersion, "tools": validate_catalog(catalog.tools, expected)}
++    from mcp.client.streamable_http import streamable_http_client
++
++    # mcp 2.x takes headers and timeouts on the httpx2 client, not the transport.
++    async with httpx2.AsyncClient(headers={"X-Client-Id": OWNER_CLIENT_ID}, timeout=20) as http_client:
++        async with streamable_http_client(url, http_client=http_client, terminate_on_close=False) as (read, write):
++            async with ClientSession(read, write) as session:
++                initialized = await session.initialize()
++                catalog = await session.list_tools()
++                return {"protocol": initialized.protocol_version, "tools": validate_catalog(catalog.tools, expected)}
+ 
+ 
+ def dependency_ready(data, require_snapshot=False):
+diff --git a/src/agenda_intelligence/mcp_check.py b/src/agenda_intelligence/mcp_check.py
+index 9b7cc1f..52574c1 100644
+--- a/src/agenda_intelligence/mcp_check.py
++++ b/src/agenda_intelligence/mcp_check.py
+@@ -8,7 +8,6 @@ import json
+ import os
+ import sys
+ import urllib.parse
+-import warnings
+ from contextlib import AsyncExitStack
+ from importlib.metadata import version
+ from pathlib import Path
+@@ -89,9 +88,9 @@ def validate_catalog(tools: list[Any]) -> None:
+     if len(set(names)) != len(names):
+         raise ValueError("Duplicate tool names")
+     for tool in tools:
+-        if not 1 <= len(tool.name) <= 128 or tool.inputSchema.get("type") != "object":
++        if not 1 <= len(tool.name) <= 128 or tool.input_schema.get("type") != "object":
+             raise ValueError("Invalid tool name or inputSchema root")
+-        for schema in (tool.inputSchema, tool.outputSchema):
++        for schema in (tool.input_schema, tool.output_schema):
+             if schema is not None:
+                 if len(json.dumps(schema)) > 262144:
+                     raise ValueError("Tool schema exceeds 256 KiB")
+@@ -99,7 +98,7 @@ def validate_catalog(tools: list[Any]) -> None:
+ 
+ 
+ async def _check(config: dict) -> dict:
+-    import httpx  # type: ignore[import-not-found]
++    import httpx2  # type: ignore[import-not-found]
+     from mcp import (  # type: ignore[import-not-found]
+         ClientSession,
+         StdioServerParameters,
+@@ -125,7 +124,7 @@ async def _check(config: dict) -> dict:
+             raise ValueError("Invalid bearer credential")
+         headers["Authorization"] = "Bearer " + token
+ 
+-    class BoundedStream(httpx.AsyncByteStream):
++    class BoundedStream(httpx2.AsyncByteStream):
+         def __init__(self, stream):
+             self.stream = stream
+ 
+@@ -140,9 +139,9 @@ async def _check(config: dict) -> dict:
+         async def aclose(self):
+             await self.stream.aclose()
+ 
+-    class BoundedTransport(httpx.AsyncBaseTransport):
++    class BoundedTransport(httpx2.AsyncBaseTransport):
+         def __init__(self):
+-            self.inner = httpx.AsyncHTTPTransport()
++            self.inner = httpx2.AsyncHTTPTransport()
+ 
+         async def handle_async_request(self, request):
+             response = await self.inner.handle_async_request(request)
+@@ -162,7 +161,7 @@ async def _check(config: dict) -> dict:
+             checks.append({"check": "authorization", "status": "passed", "scope": "local process access only"})
+         else:
+             client = await stack.enter_async_context(
+-                httpx.AsyncClient(headers=headers, timeout=15, follow_redirects=False, transport=BoundedTransport())
++                httpx2.AsyncClient(headers=headers, timeout=15, follow_redirects=False, transport=BoundedTransport())
+             )
+             if config["auth"] == "required":
+                 body = {
+@@ -213,7 +212,7 @@ async def _check(config: dict) -> dict:
+                 )
+             else:
+                 checks.append({"check": "authorization", "status": "passed", "scope": "explicitly public endpoint"})
+-            read, write, _ = await stack.enter_async_context(
++            read, write = await stack.enter_async_context(
+                 streamable_http_client(config["url"], http_client=client, terminate_on_close=True)
+             )
+         session = await stack.enter_async_context(ClientSession(read, write))
+@@ -222,17 +221,17 @@ async def _check(config: dict) -> dict:
+             {
+                 "check": "initialize",
+                 "status": "passed",
+-                "protocol": initialized.protocolVersion,
+-                "server": initialized.serverInfo.model_dump(),
++                "protocol": initialized.protocol_version,
++                "server": initialized.server_info.model_dump(by_alias=True, mode="json"),
+             }
+         )
+         tools: list[Any] = []
+         cursor = None
+         cursors: set[str] = set()
+         for _ in range(10):
+-            page = await session.list_tools(cursor=cursor)
++            page = await session.list_tools(params=types.PaginatedRequestParams(cursor=cursor))
+             tools.extend(page.tools)
+-            cursor = page.nextCursor
++            cursor = page.next_cursor
+             if not cursor:
+                 break
+             if cursor in cursors:
+@@ -242,18 +241,13 @@ async def _check(config: dict) -> dict:
+             raise ValueError("Tool pagination exceeds ten pages")
+         validate_catalog(tools)
+         checks.append({"check": "discovery_and_schemas", "status": "passed", "tools": [tool.name for tool in tools]})
+-        # This deliberately invalid diagnostic is outside ClientRequest's union.
+-        # Confine the typing escape to its payload, not the SDK/session itself.
+-        unsupported = cast(Any, types.Request(method="agenda/unsupported-check", params={}))
+-        unknown = types.ClientRequest.model_construct(root=unsupported)
++        # This deliberately invalid diagnostic is outside the ClientRequest union;
++        # send_request accepts a bare Request, so no wrapper or warning filter is needed.
++        unknown = cast(Any, types.Request(method="agenda/unsupported-check", params={}))
+         try:
+-            # This one constant probe intentionally falls outside the SDK's
+-            # supported request union. Do not hide warnings from other calls.
+-            with warnings.catch_warnings():
+-                warnings.filterwarnings("ignore", message="Pydantic serializer warnings:", category=UserWarning)
+-                await session.send_request(unknown, types.EmptyResult)
++            await session.send_request(unknown, types.EmptyResult)
+         except Exception as exc:
+-            if getattr(getattr(exc, "error", None), "code", None) != -32601:
++            if getattr(exc, "code", None) != -32601:
+                 raise ValueError("Unknown method did not return JSON-RPC -32601") from exc
+         else:
+             raise ValueError("Unknown method was reported as successful")
+@@ -273,21 +267,21 @@ async def _check(config: dict) -> dict:
+                 tool = catalog.get(example["tool"])
+                 if tool is None:
+                     raise ValueError("Example names an undiscovered tool")
+-                Draft202012Validator(tool.inputSchema, registry=Registry()).validate(example["arguments"])
++                Draft202012Validator(tool.input_schema, registry=Registry()).validate(example["arguments"])
+                 result = await session.call_tool(tool.name, example["arguments"])
+-                if result.isError != example["expected_is_error"]:
++                if result.is_error != example["expected_is_error"]:
+                     raise ValueError("Example isError differs from expected result")
+-                if tool.outputSchema is not None and not result.isError:
+-                    if result.structuredContent is None:
++                if tool.output_schema is not None and not result.is_error:
++                    if result.structured_content is None:
+                         raise ValueError("Tool outputSchema requires structuredContent")
+-                    Draft202012Validator(tool.outputSchema, registry=Registry()).validate(result.structuredContent)
++                    Draft202012Validator(tool.output_schema, registry=Registry()).validate(result.structured_content)
+                 checks.append(
+                     {
+                         "check": "example",
+                         "status": "passed",
+                         "tool": tool.name,
+-                        "is_error": result.isError,
+-                        "output_schema_checked": tool.outputSchema is not None and not result.isError,
++                        "is_error": result.is_error,
++                        "output_schema_checked": tool.output_schema is not None and not result.is_error,
+                     }
+                 )
+     return {
+diff --git a/tests/test_live_mcp_monitor.py b/tests/test_live_mcp_monitor.py
+index f163fd1..fb50b65 100644
+--- a/tests/test_live_mcp_monitor.py
++++ b/tests/test_live_mcp_monitor.py
+@@ -39,32 +39,51 @@ def test_default_urllib_probe_is_marked_without_changing_user_agent(monkeypatch)
+ 
+ def test_sdk_monitor_is_marked_without_overriding_default_user_agent(monkeypatch):
+     options = []
++    clients = []
++
++    class AsyncClient:
++        def __init__(self, **kwargs):
++            clients.append(kwargs)
++
++        async def __aenter__(self):
++            return self
++
++        async def __aexit__(self, *exc):
++            return None
+ 
+     @asynccontextmanager
+     async def transport(url, **kwargs):
+         options.append(kwargs)
+-        yield None, None, None
++        yield None, None
+ 
+     class Session:
+         async def initialize(self):
+-            return SimpleNamespace(protocolVersion="2025-11-25")
++            return SimpleNamespace(protocol_version="2025-11-25")
+ 
+         async def list_tools(self):
+-            return SimpleNamespace(tools=[SimpleNamespace(name="example", inputSchema={"type": "object"})])
++            return SimpleNamespace(tools=[SimpleNamespace(name="example", input_schema={"type": "object"})])
+ 
+     @asynccontextmanager
+     async def session(read, write):
+         yield Session()
+ 
++    httpx2 = ModuleType("httpx2")
++    httpx2.AsyncClient = AsyncClient
+     mcp = ModuleType("mcp")
+     mcp.ClientSession = session
+     client = ModuleType("mcp.client")
+     stream = ModuleType("mcp.client.streamable_http")
+-    stream.streamablehttp_client = transport
+-    for name, module in [("mcp", mcp), ("mcp.client", client), ("mcp.client.streamable_http", stream)]:
++    stream.streamable_http_client = transport
++    for name, module in [
++        ("httpx2", httpx2),
++        ("mcp", mcp),
++        ("mcp.client", client),
++        ("mcp.client.streamable_http", stream),
++    ]:
+         monkeypatch.setitem(sys.modules, name, module)
+     assert asyncio.run(monitor.sdk_discovery("https://example.test/mcp", ["example"]))["tools"] == ["example"]
+-    assert options[0]["headers"] == {"X-Client-Id": monitor.OWNER_CLIENT_ID}
++    assert clients[0]["headers"] == {"X-Client-Id": monitor.OWNER_CLIENT_ID}
++    assert options[0]["terminate_on_close"] is False
+ 
+ 
+ def test_edge_attribution_requires_cloudflare_evidence():
+@@ -278,14 +297,14 @@ def test_check_host_recovers_health_transport_but_reports_default_403(monkeypatc
+ def test_sdk_wrapped_certificate_failure_is_not_transient():
+     import ssl
+ 
+-    httpx = pytest.importorskip("httpx")
++    httpx2 = pytest.importorskip("httpx2")
+ 
+     try:
+         try:
+             raise ssl.SSLCertVerificationError("invalid certificate")
+         except ssl.SSLCertVerificationError as error:
+-            raise httpx.ConnectError("TLS connect failed") from error
+-    except httpx.ConnectError as error:
++            raise httpx2.ConnectError("TLS connect failed") from error
++    except httpx2.ConnectError as error:
+         assert not monitor.transient_transport_error(error)
+ 
+ 
+@@ -295,7 +314,7 @@ def test_transport_classification_works_without_optional_sdk(monkeypatch):
+     original_import = builtins.__import__
+ 
+     def without_httpx(name, *args, **kwargs):
+-        if name == "httpx":
++        if name == "httpx2":
+             raise ImportError("SDK not installed")
+         return original_import(name, *args, **kwargs)
+ 
+diff --git a/tests/test_mcp_check.py b/tests/test_mcp_check.py
+index ba57b36..1e87eeb 100644
+--- a/tests/test_mcp_check.py
++++ b/tests/test_mcp_check.py
+@@ -45,12 +45,12 @@ def test_http_credentials_and_insecure_remote_are_refused():
+ 
+ 
+ def test_schema_failures_and_duplicate_names_cannot_pass():
+-    tool = SimpleNamespace(name="example", inputSchema={"type": "object"}, outputSchema={"type": "object"})
++    tool = SimpleNamespace(name="example", input_schema={"type": "object"}, output_schema={"type": "object"})
+     validate_catalog([tool])
+     with pytest.raises(ValueError):
+         validate_catalog([tool, tool])
+     broken = copy.deepcopy(tool)
+-    broken.inputSchema = {"type": "invented-type"}
++    broken.input_schema = {"type": "invented-type"}
+     with pytest.raises(Exception):
+         validate_catalog([broken])
+ 
+@@ -59,7 +59,7 @@ def test_schema_failures_and_duplicate_names_cannot_pass():
+ def test_official_sdk_discovers_real_stdio_server_and_executes_opted_in_example():
+     report = check_mcp(CONFIG)
+     assert report["status"] == "passed"
+-    assert report["client_version"] == "1.30.0"
++    assert report["client_version"] == "2.3.0"
+     assert any(row["check"] == "unknown_method_error" and row["code"] == -32601 for row in report["checks"])
+     assert any(row["check"] == "example" and row["tool"] == "list_signals" for row in report["checks"])
+ 
+diff --git a/tests/test_native_mcp_trial_client.py b/tests/test_native_mcp_trial_client.py
+index 9f2e5fb..9ddabb2 100644
+--- a/tests/test_native_mcp_trial_client.py
++++ b/tests/test_native_mcp_trial_client.py
+@@ -9,8 +9,9 @@ from pathlib import Path
+ import pytest
+ 
+ pytest.importorskip("mcp")
++import httpx2  # noqa: E402
+ from mcp import ClientSession  # noqa: E402
+-from mcp.client.streamable_http import streamablehttp_client  # noqa: E402
++from mcp.client.streamable_http import streamable_http_client  # noqa: E402
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ PROFILES = (
+@@ -47,29 +48,30 @@ def test_official_mcp_client_can_check_and_execute_each_profile_without_http_ada
+ 
+         async def check():
+             for profile in PROFILES:
+-                async with streamablehttp_client(
+-                    f"http://127.0.0.1:{port}/{profile}/mcp/agent",
+-                    headers={"X-Client-Id": "agenda-owner-native-sdk-test"},
+-                    terminate_on_close=False,
+-                ) as (read, write, _):
+-                    async with ClientSession(read, write) as session:
+-                        await session.initialize()
+-                        tools = (await session.list_tools()).tools
+-                        trial = next(tool for tool in tools if tool.name == "free_trial")
+-                        status = await session.call_tool("free_trial_status", {})
+-                        assert not status.isError
+-                        before = status.structuredContent["availability"]["remaining_attempts"]
+-                        assert before == (5 if profile == "agent_output_verification" else 2)
+-                        invalid = await session.call_tool("free_trial", {})
+-                        assert invalid.isError and invalid.structuredContent is None
+-                        example = trial.meta["com.agenda/readiness"]["example_arguments"]
+-                        result = await session.call_tool("free_trial", example)
+-                        assert not result.isError
+-                        assert result.structuredContent["trial"]["agent_profile"] == profile
+-                        assert result.structuredContent["trial"]["payment_required"] is False
+-                        assert result.structuredContent["trial"]["completion_recorded"] is True
+-                        after = await session.call_tool("free_trial_status", {})
+-                        assert after.structuredContent["availability"]["remaining_attempts"] == before - 1
++                async with httpx2.AsyncClient(headers={"X-Client-Id": "agenda-owner-native-sdk-test"}) as http_client:
++                    async with streamable_http_client(
++                        f"http://127.0.0.1:{port}/{profile}/mcp/agent",
++                        http_client=http_client,
++                        terminate_on_close=False,
++                    ) as (read, write):
++                        async with ClientSession(read, write) as session:
++                            await session.initialize()
++                            tools = (await session.list_tools()).tools
++                            trial = next(tool for tool in tools if tool.name == "free_trial")
++                            status = await session.call_tool("free_trial_status", {})
++                            assert not status.is_error
++                            before = status.structured_content["availability"]["remaining_attempts"]
++                            assert before == (5 if profile == "agent_output_verification" else 2)
++                            invalid = await session.call_tool("free_trial", {})
++                            assert invalid.is_error and invalid.structured_content is None
++                            example = trial.meta["com.agenda/readiness"]["example_arguments"]
++                            result = await session.call_tool("free_trial", example)
++                            assert not result.is_error
++                            assert result.structured_content["trial"]["agent_profile"] == profile
++                            assert result.structured_content["trial"]["payment_required"] is False
++                            assert result.structured_content["trial"]["completion_recorded"] is True
++                            after = await session.call_tool("free_trial_status", {})
++                            assert after.structured_content["availability"]["remaining_attempts"] == before - 1
+ 
+         asyncio.run(check())
+     finally:

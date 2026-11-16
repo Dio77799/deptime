@@ -1,0 +1,35 @@
+diff --git a/demo.py b/demo.py
+index 3e9c030..697e587 100644
+--- a/demo.py
++++ b/demo.py
+@@ -116,11 +116,11 @@ disclaimer = """
+             """
+ 
+ def set_example_xray(example: list) -> dict:
+-    return gr.Image.update(value=example[0])
++    return gr.Image(value=example[0])
+ 
+ 
+ def set_example_text_input(example_text: str) -> dict:
+-    return gr.Textbox.update(value=example_text[0])
++    return gr.Textbox(value=example_text[0])
+ 
+ #TODO show examples below
+ 
+@@ -189,7 +189,7 @@ with gr.Blocks() as demo:
+                                         ["Based on the findings in this chest x-ray image, what is the overall impression?"],
+                                     ],)
+     
+-    example_xrays.click(fn=set_example_xray, inputs=example_xrays, outputs=example_xrays.components)
++    example_xrays.click(fn=set_example_xray, inputs=example_xrays, outputs=[image])
+ 
+     upload_button.click(upload_img, [image, text_input, chat_state], [image, text_input, upload_button, chat_state, img_list])
+     
+@@ -205,4 +205,4 @@ with gr.Blocks() as demo:
+     
+     gr.Markdown(disclaimer)
+ 
+-demo.launch(share=True, enable_queue=True)
+\ No newline at end of file
++demo.launch(share=True)
+\ No newline at end of file

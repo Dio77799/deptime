@@ -1,0 +1,22 @@
+diff --git a/cz_ui.py b/cz_ui.py
+index 269f825..298bb9a 100644
+--- a/cz_ui.py
++++ b/cz_ui.py
+@@ -4256,7 +4256,7 @@ def build_ui():
+             with gr.Column(scale=3):
+                 out = gr.Gallery(label="Result", elem_id="cz_result", columns=2,
+                                  object_fit="contain", preview=True, allow_preview=True,
+-                                 show_fullscreen_button=True, show_download_button=True)
++                                 buttons=["fullscreen", "download"])
+                 # The gallery's native download names the file "image" (a Gradio
+                 # limitation). This button downloads the REAL file (its real name) of the
+                 # image clicked.
+@@ -4268,7 +4268,7 @@ def build_ui():
+                     gr.Markdown("*Renders made in this session (in-memory, not the disk folder). "
+                                 "Use 'Load output folder' to pull saved files in.*")
+                     history_gallery = gr.Gallery(label=None, height=240, columns=6,
+-                                                 object_fit="cover", show_download_button=True)
++                                                 object_fit="cover", buttons=["download"])
+                     with gr.Row():
+                         load_out_btn = gr.Button("Load output folder", size="sm")
+                         clear_hist_btn = gr.Button("Clear history", size="sm")

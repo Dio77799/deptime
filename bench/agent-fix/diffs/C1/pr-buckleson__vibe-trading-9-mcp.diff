@@ -1,0 +1,74 @@
+diff --git a/mcp/mcpserver.py b/mcp/mcpserver.py
+index 5d850d2..2e178c7 100644
+--- a/mcp/mcpserver.py
++++ b/mcp/mcpserver.py
+@@ -7,7 +7,7 @@ from typing import Any
+ 
+ import httpx
+ import pandas as pd
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from mcp.types import ToolAnnotations
+ from openalgo import api, ta
+ 
+@@ -159,7 +159,7 @@ def _default_derivatives_exchange(symbol: str) -> str:
+ 
+ 
+ # Create MCP server
+-mcp = FastMCP("openalgo")
++mcp = MCPServer("openalgo")
+ 
+ 
+ def _to_json(payload: Any) -> str:
+diff --git a/pyproject.toml b/pyproject.toml
+index cc0db32..277595a 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -75,7 +75,7 @@ dependencies = [
+   "MarkupSafe==2.1.5",
+   "marshmallow==3.26.2",
+   "matplotlib-inline==0.2.2",
+-  "mcp==1.30.0",
++  "mcp==2.3.0",
+   "mdurl==0.1.2",
+   "msgpack==1.2.3",
+   "narwhals==2.25.0",
+@@ -167,9 +167,9 @@ dependencies = [
+   "zipp==3.23.1",
+   "opengreeks>=0.2.0",
+   "openstatz==0.4.1",
+-  # litellm's MCP gateway needs mcp 2.x, while mcp stays on 1.x for the FastMCP
+-  # server in mcp/mcpserver.py. services/agent/litellm_mcp_gateway.py keeps that
+-  # gateway out of agent requests; run test/test_agent_litellm_*.py on a bump.
++  # litellm's MCP gateway needs mcp 2.x, which is what the MCPServer in
++  # mcp/mcpserver.py now uses too. services/agent/litellm_mcp_gateway.py still
++  # keeps that gateway out of agent requests; run test/test_agent_litellm_*.py on a bump.
+   "litellm==1.106.6",
+   "agno==3.0.5",
+   "ddgs>=9.16.0",
+diff --git a/requirements-nginx.txt b/requirements-nginx.txt
+index 2332a79..715823e 100644
+--- a/requirements-nginx.txt
++++ b/requirements-nginx.txt
+@@ -70,7 +70,7 @@ markdown-it-py==4.2.0
+ MarkupSafe==2.1.5
+ marshmallow==3.26.2
+ matplotlib-inline==0.2.2
+-mcp==1.30.0
++mcp==2.3.0
+ mdurl==0.1.2
+ msgpack==1.2.3
+ multidict==6.9.1
+diff --git a/requirements.txt b/requirements.txt
+index 4644088..8826986 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -70,7 +70,7 @@ markdown-it-py==4.2.0
+ MarkupSafe==2.1.5
+ marshmallow==3.26.2
+ matplotlib-inline==0.2.2
+-mcp==1.30.0
++mcp==2.3.0
+ mdurl==0.1.2
+ msgpack==1.2.3
+ multidict==6.9.1

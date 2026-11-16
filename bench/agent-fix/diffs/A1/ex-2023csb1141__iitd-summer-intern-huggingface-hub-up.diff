@@ -1,0 +1,1708 @@
+diff --git a/Code/Molecule captioning/transformers/examples/flax/image-captioning/run_image_captioning_flax.py b/Code/Molecule captioning/transformers/examples/flax/image-captioning/run_image_captioning_flax.py
+index c2772db..f3a82cc 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/image-captioning/run_image_captioning_flax.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/image-captioning/run_image_captioning_flax.py	
+@@ -44,7 +44,7 @@ from flax import jax_utils, traverse_util
+ from flax.jax_utils import unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard, shard_prng_key
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AutoFeatureExtractor,
+     AutoTokenizer,
+diff --git a/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_clm_flax.py b/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_clm_flax.py
+index 7746400..a206674 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_clm_flax.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_clm_flax.py	
+@@ -46,7 +46,7 @@ from flax import jax_utils, traverse_util
+ from flax.jax_utils import unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard, shard_prng_key
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_CAUSAL_LM_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_mlm_flax.py b/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_mlm_flax.py
+index 2a65b6f..8401a78 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_mlm_flax.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_mlm_flax.py	
+@@ -45,7 +45,7 @@ import optax
+ from flax import jax_utils, traverse_util
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_MASKED_LM_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_t5_mlm_flax.py b/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_t5_mlm_flax.py
+index 2845d9c..b4d4f44 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_t5_mlm_flax.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/language-modeling/run_t5_mlm_flax.py	
+@@ -43,7 +43,7 @@ import optax
+ from flax import jax_utils, traverse_util
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_MASKED_LM_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/flax/question-answering/run_qa.py b/Code/Molecule captioning/transformers/examples/flax/question-answering/run_qa.py
+index 751ede2..258c55a 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/question-answering/run_qa.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/question-answering/run_qa.py	
+@@ -43,7 +43,7 @@ from flax import struct, traverse_util
+ from flax.jax_utils import replicate, unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AutoConfig,
+     AutoTokenizer,
+diff --git a/Code/Molecule captioning/transformers/examples/flax/summarization/run_summarization_flax.py b/Code/Molecule captioning/transformers/examples/flax/summarization/run_summarization_flax.py
+index 9bb43b8..59d719f 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/summarization/run_summarization_flax.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/summarization/run_summarization_flax.py	
+@@ -44,7 +44,7 @@ from flax import jax_utils, traverse_util
+ from flax.jax_utils import unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard, shard_prng_key
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/flax/text-classification/run_flax_glue.py b/Code/Molecule captioning/transformers/examples/flax/text-classification/run_flax_glue.py
+index 057eaca..49696fa 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/text-classification/run_flax_glue.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/text-classification/run_flax_glue.py	
+@@ -38,7 +38,7 @@ from flax import struct, traverse_util
+ from flax.jax_utils import replicate, unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AutoConfig,
+     AutoTokenizer,
+diff --git a/Code/Molecule captioning/transformers/examples/flax/token-classification/run_flax_ner.py b/Code/Molecule captioning/transformers/examples/flax/token-classification/run_flax_ner.py
+index 5c4de96..edb35c0 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/token-classification/run_flax_ner.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/token-classification/run_flax_ner.py	
+@@ -39,7 +39,7 @@ from flax import struct, traverse_util
+ from flax.jax_utils import replicate, unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AutoConfig,
+     AutoTokenizer,
+diff --git a/Code/Molecule captioning/transformers/examples/flax/vision/run_image_classification.py b/Code/Molecule captioning/transformers/examples/flax/vision/run_image_classification.py
+index 5c6d002..6c34158 100644
+--- a/Code/Molecule captioning/transformers/examples/flax/vision/run_image_classification.py	
++++ b/Code/Molecule captioning/transformers/examples/flax/vision/run_image_classification.py	
+@@ -43,7 +43,7 @@ from flax import jax_utils
+ from flax.jax_utils import unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard, shard_prng_key
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_IMAGE_CLASSIFICATION_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/language-modeling/run_clm_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/language-modeling/run_clm_no_trainer.py
+index 9d8820a..13819df 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/language-modeling/run_clm_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/language-modeling/run_clm_no_trainer.py	
+@@ -38,7 +38,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator, DistributedType
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/language-modeling/run_mlm_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/language-modeling/run_mlm_no_trainer.py
+index adadb4d..7f50d07 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/language-modeling/run_mlm_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/language-modeling/run_mlm_no_trainer.py	
+@@ -38,7 +38,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator, DistributedType
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/multiple-choice/run_swag_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/multiple-choice/run_swag_no_trainer.py
+index 6f0f38a..a6ec17d 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/multiple-choice/run_swag_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/multiple-choice/run_swag_no_trainer.py	
+@@ -36,7 +36,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/question-answering/run_qa_beam_search_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/question-answering/run_qa_beam_search_no_trainer.py
+index 19d3f08..ba6ce8f 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/question-answering/run_qa_beam_search_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/question-answering/run_qa_beam_search_no_trainer.py	
+@@ -34,7 +34,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AdamW,
+     DataCollatorWithPadding,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/question-answering/run_qa_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/question-answering/run_qa_no_trainer.py
+index 759c0f5..415df80 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/question-answering/run_qa_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/question-answering/run_qa_no_trainer.py	
+@@ -34,7 +34,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/speech-pretraining/run_wav2vec2_pretraining_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/speech-pretraining/run_wav2vec2_pretraining_no_trainer.py
+index c7134cb..ce3ef62 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/speech-pretraining/run_wav2vec2_pretraining_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/speech-pretraining/run_wav2vec2_pretraining_no_trainer.py	
+@@ -31,7 +31,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AdamW,
+     SchedulerType,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/summarization/run_summarization_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/summarization/run_summarization_no_trainer.py
+index 2036d57..87d93d5 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/summarization/run_summarization_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/summarization/run_summarization_no_trainer.py	
+@@ -36,7 +36,7 @@ from tqdm.auto import tqdm
+ import transformers
+ from accelerate import Accelerator
+ from filelock import FileLock
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/text-classification/run_glue_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/text-classification/run_glue_no_trainer.py
+index 43de2c4..e0b7aa1 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/text-classification/run_glue_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/text-classification/run_glue_no_trainer.py	
+@@ -27,7 +27,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AdamW,
+     AutoConfig,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/token-classification/run_ner_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/token-classification/run_ner_no_trainer.py
+index e292331..adcc017 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/token-classification/run_ner_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/token-classification/run_ner_no_trainer.py	
+@@ -33,7 +33,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/pytorch/translation/run_translation_no_trainer.py b/Code/Molecule captioning/transformers/examples/pytorch/translation/run_translation_no_trainer.py
+index 838957a..248bfca 100644
+--- a/Code/Molecule captioning/transformers/examples/pytorch/translation/run_translation_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/pytorch/translation/run_translation_no_trainer.py	
+@@ -34,7 +34,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule captioning/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py b/Code/Molecule captioning/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py
+index 9cc42d3..3f6f7ef 100644
+--- a/Code/Molecule captioning/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py	
++++ b/Code/Molecule captioning/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py	
+@@ -13,7 +13,7 @@ import transformers
+ import wandb
+ from accelerate import Accelerator
+ from arguments import TrainingArguments
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import AdamW, AutoModelForCausalLM, AutoTokenizer, HfArgumentParser, get_scheduler, set_seed
+ 
+ 
+diff --git a/Code/Molecule captioning/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py b/Code/Molecule captioning/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py
+index c7a9763..390335d 100644
+--- a/Code/Molecule captioning/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py	
++++ b/Code/Molecule captioning/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py	
+@@ -33,7 +33,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator, DistributedDataParallelKwargs
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from luke_utils import DataCollatorForLukeTokenClassification, is_punctuation, padding_tensor
+ from transformers import (
+     AdamW,
+diff --git a/Code/Molecule captioning/transformers/setup.py b/Code/Molecule captioning/transformers/setup.py
+index dd5401f..ecd16e9 100644
+--- a/Code/Molecule captioning/transformers/setup.py	
++++ b/Code/Molecule captioning/transformers/setup.py	
+@@ -107,7 +107,7 @@ _deps = [
+     "flax>=0.3.5",
+     "fugashi>=1.0",
+     "GitPython<3.1.19",
+-    "huggingface-hub>=0.1.0,<1.0",
++    "huggingface-hub>=0.32.2",
+     "importlib_metadata",
+     "ipadic>=1.0.0,<2.0",
+     "isort>=5.5.4",
+diff --git a/Code/Molecule captioning/transformers/src/transformers/commands/user.py b/Code/Molecule captioning/transformers/src/transformers/commands/user.py
+index a3919b4..23ec702 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/commands/user.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/commands/user.py	
+@@ -17,8 +17,8 @@ from argparse import ArgumentParser
+ from getpass import getpass
+ from typing import List, Union
+ 
+-from huggingface_hub.hf_api import HfFolder, create_repo, list_repos_objs, login, logout, whoami
+-from requests.exceptions import HTTPError
++from huggingface_hub import constants, create_repo, get_token, login, logout, whoami
++from huggingface_hub.utils import HfHubHTTPError as HTTPError
+ 
+ from . import BaseTransformersCLICommand
+ 
+@@ -160,19 +160,17 @@ class LoginCommand(BaseUserCommand):
+ 
+         """
+         )
+-        username = input("Username: ")
+-        password = getpass()
++        # Logging in with a username and a password is not supported by the Hub anymore: an access token is needed.
++        token = getpass("Access token (create one at https://huggingface.co/settings/tokens): ")
+         try:
+-            token = login(username, password)
++            login(token=token, add_to_git_credential=False)
+         except HTTPError as e:
+-            # probably invalid credentials, display error message.
++            # probably invalid token, display error message.
+             print(e)
+             print(ANSI.red(e.response.text))
+             exit(1)
+-        HfFolder.save_token(token)
+         print("Login successful")
+-        print("Your token:", token, "\n")
+-        print("Your token has been saved to", HfFolder.path_token)
++        print("Your token has been saved to", constants.HF_TOKEN_PATH)
+ 
+ 
+ class WhoamiCommand(BaseUserCommand):
+@@ -183,13 +181,14 @@ class WhoamiCommand(BaseUserCommand):
+                 "`huggingface-cli whoami` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+         try:
+-            user, orgs = whoami(token)
+-            print(user)
++            info = whoami(token)
++            print(info["name"])
++            orgs = [org["name"] for org in info.get("orgs", [])]
+             if orgs:
+                 print(ANSI.bold("orgs: "), ",".join(orgs))
+         except HTTPError as e:
+@@ -206,12 +205,11 @@ class LogoutCommand(BaseUserCommand):
+                 "`huggingface-cli logout` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+-        HfFolder.delete_token()
+-        logout(token)
++        logout()
+         print("Successfully logged out.")
+ 
+ 
+@@ -247,21 +245,18 @@ class ListReposObjsCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
+-        try:
+-            objs = list_repos_objs(token, organization=self.args.organization)
+-        except HTTPError as e:
+-            print(e)
+-            print(ANSI.red(e.response.text))
+-            exit(1)
+-        if len(objs) == 0:
+-            print("No shared file yet")
+-            exit()
+-        rows = [[obj.filename, obj.lastModified, obj.commit, obj.size] for obj in objs]
+-        print(tabulate(rows, headers=["Filename", "LastModified", "Commit-Sha", "Size"]))
++        # `list_repos_objs` does not exist in `huggingface_hub` anymore, list the files of the repos on the Hub instead.
++        print(
++            ANSI.red(
++                "Command removed: listing all the files of your repos is not supported by `huggingface_hub` anymore. "
++                "Use `huggingface-cli` or `huggingface_hub.list_repo_files` instead."
++            )
++        )
++        exit(1)
+ 
+ 
+ class RepoCreateCommand(BaseUserCommand):
+@@ -272,7 +267,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
+@@ -295,7 +290,7 @@ class RepoCreateCommand(BaseUserCommand):
+             )
+         print("")
+ 
+-        user, _ = whoami(token)
++        user = whoami(token)["name"]
+         namespace = self.args.organization if self.args.organization is not None else user
+         full_name = f"{namespace}/{self.args.name}"
+         print(f"You are about to create {ANSI.bold(full_name)}")
+@@ -306,7 +301,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 print("Abort")
+                 exit()
+         try:
+-            url = create_repo(token, name=self.args.name, organization=self.args.organization)
++            url = create_repo(full_name, token=token)
+         except HTTPError as e:
+             print(e)
+             print(ANSI.red(e.response.text))
+diff --git a/Code/Molecule captioning/transformers/src/transformers/dependency_versions_table.py b/Code/Molecule captioning/transformers/src/transformers/dependency_versions_table.py
+index b1e08fc..293fe43 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/dependency_versions_table.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/dependency_versions_table.py	
+@@ -17,7 +17,7 @@ deps = {
+     "flax": "flax>=0.3.5",
+     "fugashi": "fugashi>=1.0",
+     "GitPython": "GitPython<3.1.19",
+-    "huggingface-hub": "huggingface-hub>=0.1.0,<1.0",
++    "huggingface-hub": "huggingface-hub>=0.32.2",
+     "importlib_metadata": "importlib_metadata",
+     "ipadic": "ipadic>=1.0.0,<2.0",
+     "isort": "isort>=5.5.4",
+diff --git a/Code/Molecule captioning/transformers/src/transformers/dynamic_module_utils.py b/Code/Molecule captioning/transformers/src/transformers/dynamic_module_utils.py
+index 7ce71ac..ebde715 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/dynamic_module_utils.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/dynamic_module_utils.py	
+@@ -22,7 +22,7 @@ import sys
+ from pathlib import Path
+ from typing import Dict, Optional, Union
+ 
+-from huggingface_hub import HfFolder, model_info
++from huggingface_hub import get_token, model_info
+ 
+ from .file_utils import HF_MODULES_CACHE, TRANSFORMERS_DYNAMIC_MODULE_NAME, cached_path, hf_bucket_url, is_offline_mode
+ from .utils import logging
+@@ -258,7 +258,7 @@ def get_cached_module_file(
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token is True:
+-            token = HfFolder.get_token()
++            token = get_token()
+         else:
+             token = None
+ 
+diff --git a/Code/Molecule captioning/transformers/src/transformers/file_utils.py b/Code/Molecule captioning/transformers/src/transformers/file_utils.py
+index 1a4387d..422c32a 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/file_utils.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/file_utils.py	
+@@ -48,12 +48,14 @@ from packaging import version
+ 
+ import requests
+ from filelock import FileLock
+-from huggingface_hub import HfFolder, Repository, create_repo, list_repo_files, whoami
++from huggingface_hub import create_repo, get_token, list_repo_files, whoami
++from huggingface_hub.utils import HfHubHTTPError
+ from requests.exceptions import HTTPError
+ from transformers.utils.logging import tqdm
+ from transformers.utils.versions import importlib_metadata
+ 
+ from . import __version__
++from .hub_repository import Repository
+ from .utils import logging
+ 
+ 
+@@ -2095,7 +2097,7 @@ def get_from_cache(
+     if isinstance(use_auth_token, str):
+         headers["authorization"] = f"Bearer {use_auth_token}"
+     elif use_auth_token:
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
+         headers["authorization"] = f"Bearer {token}"
+@@ -2349,7 +2351,7 @@ def has_file(
+     if isinstance(use_auth_token, str):
+         headers["authorization"] = f"Bearer {use_auth_token}"
+     elif use_auth_token:
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
+         headers["authorization"] = f"Bearer {token}"
+@@ -2419,13 +2421,13 @@ def get_list_of_files(
+     if isinstance(use_auth_token, str):
+         token = use_auth_token
+     elif use_auth_token is True:
+-        token = HfFolder.get_token()
++        token = get_token()
+     else:
+         token = None
+ 
+     try:
+         return list_repo_files(path_or_repo, revision=revision, token=token)
+-    except HTTPError as e:
++    except (HTTPError, HfHubHTTPError) as e:
+         raise ValueError(
+             f"{path_or_repo} is not a local path or a model identifier on the model Hub. Did you make a typo?"
+         ) from e
+@@ -2919,7 +2921,7 @@ class PushToHubMixin:
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token:
+-            token = HfFolder.get_token()
++            token = get_token()
+             if token is None:
+                 raise ValueError(
+                     "You must login to the Hugging Face hub on this computer by typing `transformers-cli login` and "
+@@ -2930,14 +2932,8 @@ class PushToHubMixin:
+             token = None
+ 
+         # Special provision for the test endpoint (CI)
+-        return create_repo(
+-            token,
+-            repo_name,
+-            organization=organization,
+-            private=private,
+-            repo_type=None,
+-            exist_ok=True,
+-        )
++        repo_id = f"{organization}/{repo_name}" if organization is not None else repo_name
++        return str(create_repo(repo_id, token=token, private=private, repo_type=None, exist_ok=True))
+ 
+     @classmethod
+     def _create_or_get_repo(
+@@ -2986,7 +2982,7 @@ class PushToHubMixin:
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/Code/Molecule captioning/transformers/src/transformers/hub_repository.py b/Code/Molecule captioning/transformers/src/transformers/hub_repository.py
+new file mode 100644
+index 0000000..21785f5
+--- /dev/null
++++ b/Code/Molecule captioning/transformers/src/transformers/hub_repository.py	
+@@ -0,0 +1,154 @@
++# coding=utf-8
++# Copyright 2022 The HuggingFace Team. All rights reserved.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++"""
++Minimal replacement for the `huggingface_hub.Repository` class, which was removed in `huggingface_hub` v1.0.
++
++Instead of driving the `git` CLI, this implementation talks to the Hub through the HTTP based `HfApi`. It only covers
++the subset of the old API used in this code base: creating/"cloning" a repo into a local folder, and pushing the
++content of that local folder to the Hub with `push_to_hub`.
++"""
++
++import os
++from concurrent.futures import Future
++from typing import Optional, Tuple, Union
++from urllib.parse import urlparse
++
++from huggingface_hub import HfApi, constants, create_repo, get_token
++
++
++class PushInProgress:
++    """
++    Tracks a push started with `Repository.push_to_hub(blocking=False)` (stand-in for the old `CommandInProgress`).
++    """
++
++    def __init__(self, future: Future):
++        self._future = future
++
++    @property
++    def is_done(self) -> bool:
++        return self._future.done()
++
++    @property
++    def failed(self) -> bool:
++        return self._future.done() and self._future.exception() is not None
++
++    @property
++    def status(self) -> int:
++        """0 if the push succeeded, -1 if it failed, `None` if it is still running."""
++        if not self._future.done():
++            return None
++        return -1 if self._future.exception() is not None else 0
++
++    def result(self):
++        return self._future.result()
++
++
++def _repo_id_from_clone_from(clone_from: str) -> str:
++    """Accepts either a `namespace/name` repo id or a full `https://huggingface.co/namespace/name` url."""
++    clone_from = str(clone_from)
++    if clone_from.startswith(("http://", "https://")):
++        clone_from = urlparse(clone_from).path
++    repo_id = clone_from.strip("/")
++    if repo_id.endswith(".git"):
++        repo_id = repo_id[: -len(".git")]
++    return repo_id
++
++
++def _read_gitignore_patterns(local_dir: str):
++    path = os.path.join(local_dir, ".gitignore")
++    if not os.path.isfile(path):
++        return []
++    with open(path, "r", encoding="utf-8") as f:
++        return [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
++
++
++class Repository:
++    """
++    Helper to upload the content of a local folder to a repo on the Hub.
++
++    Args:
++        local_dir (`str`):
++            Local folder whose content is pushed to the Hub.
++        clone_from (`str`, *optional*):
++            Repo id (`namespace/name`) or url of the Hub repo to push to. The repo is created if it does not exist yet.
++            Unlike the old git-based class, existing remote files are *not* downloaded in `local_dir`.
++        use_auth_token (`str` or `bool`, *optional*):
++            Token to use. If `True` (or `None`), the token saved by `huggingface-cli login` is used.
++        token (`str` or `bool`, *optional*):
++            Alias of `use_auth_token`.
++    """
++
++    def __init__(
++        self,
++        local_dir: Union[str, os.PathLike],
++        clone_from: Optional[str] = None,
++        use_auth_token: Optional[Union[bool, str]] = None,
++        token: Optional[Union[bool, str]] = None,
++        **kwargs
++    ):
++        self.local_dir = os.path.abspath(str(local_dir))
++        self.token = token if token is not None else use_auth_token
++        if isinstance(self.token, bool):
++            # `True` means "use the saved token", `False` means no token.
++            self.token = get_token() if self.token else None
++        self.api = HfApi(token=self.token)
++        os.makedirs(self.local_dir, exist_ok=True)
++
++        self.repo_id = None
++        if clone_from is not None:
++            self.repo_id = _repo_id_from_clone_from(clone_from)
++            create_repo(self.repo_id, token=self.token, exist_ok=True)
++
++    @property
++    def remote_url(self) -> str:
++        return f"{constants.ENDPOINT}/{self.repo_id}"
++
++    def git_pull(self, rebase: bool = False, **kwargs):
++        """No-op, kept for backward compatibility: there is no local git clone to update anymore."""
++
++    def push_to_hub(
++        self,
++        commit_message: str = "commit files to HF hub",
++        blocking: bool = True,
++        clean_ok: bool = True,
++        auto_lfs_prune: bool = False,
++    ) -> Union[str, Tuple[str, Optional[PushInProgress]]]:
++        """
++        Uploads the content of `local_dir` to the Hub in a single commit.
++
++        Patterns listed in a `.gitignore` file at the root of `local_dir` are skipped.
++
++        Returns:
++            The url of the commit if `blocking=True`, otherwise a tuple with the url of the repo and a
++            [`PushInProgress`] to track the upload.
++        """
++        if self.repo_id is None:
++            raise ValueError("This repository has no `clone_from` target, so there is nothing to push to.")
++
++        ignore_patterns = [".git", ".git/*"] + _read_gitignore_patterns(self.local_dir)
++        kwargs = dict(
++            repo_id=self.repo_id,
++            folder_path=self.local_dir,
++            commit_message=commit_message,
++            ignore_patterns=ignore_patterns,
++            token=self.token,
++        )
++        if blocking:
++            commit_info = self.api.upload_folder(**kwargs)
++            # `upload_folder` returns a `CommitInfo` in recent versions (and a url string in older ones).
++            return getattr(commit_info, "commit_url", None) or str(commit_info)
++
++        future = self.api.upload_folder(run_as_future=True, **kwargs)
++        return self.remote_url, PushInProgress(future)
+diff --git a/Code/Molecule captioning/transformers/src/transformers/keras_callbacks.py b/Code/Molecule captioning/transformers/src/transformers/keras_callbacks.py
+index e36161b..73a6812 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/keras_callbacks.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/keras_callbacks.py	
+@@ -9,10 +9,9 @@ import tensorflow as tf
+ from packaging.version import parse
+ from tensorflow.keras.callbacks import Callback
+ 
+-from huggingface_hub import Repository
+-
+ from . import IntervalStrategy, PreTrainedTokenizerBase
+ from .file_utils import get_full_repo_name
++from .hub_repository import Repository
+ from .modelcard import TrainingSummary
+ 
+ 
+diff --git a/Code/Molecule captioning/transformers/src/transformers/modelcard.py b/Code/Molecule captioning/transformers/src/transformers/modelcard.py
+index 560998a..56a4882 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/modelcard.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/modelcard.py	
+@@ -23,9 +23,9 @@ from dataclasses import dataclass
+ from pathlib import Path
+ from typing import Any, Dict, List, Optional, Union
+ 
+-import requests
+ import yaml
+ from huggingface_hub import model_info
++from huggingface_hub.utils import HfHubHTTPError
+ 
+ from . import __version__
+ from .file_utils import (
+@@ -402,7 +402,7 @@ class TrainingSummary:
+                 for tag in info.tags:
+                     if tag.startswith("license:"):
+                         self.license = tag[8:]
+-            except requests.exceptions.HTTPError:
++            except HfHubHTTPError:
+                 pass
+ 
+     def create_model_index(self, metric_mapping):
+diff --git a/Code/Molecule captioning/transformers/src/transformers/modeling_tf_utils.py b/Code/Molecule captioning/transformers/src/transformers/modeling_tf_utils.py
+index 7a53055..c74fc5b 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/modeling_tf_utils.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/modeling_tf_utils.py	
+@@ -31,7 +31,7 @@ from tensorflow.python.keras.engine import data_adapter
+ from tensorflow.python.keras.engine.keras_tensor import KerasTensor
+ from tensorflow.python.keras.saving import hdf5_format
+ 
+-from huggingface_hub import Repository, list_repo_files
++from huggingface_hub import list_repo_files, snapshot_download
+ from requests import HTTPError
+ 
+ from .configuration_utils import PretrainedConfig
+@@ -806,8 +806,7 @@ class TFPreTrainedModel(tf.keras.Model, TFModelUtilsMixin, TFGenerationMixin, Pu
+                 repo_path_or_name = self.get_full_repo_name(repo_path_or_name)
+             else:
+                 model_id = repo_path_or_name.split("/")[-1]
+-            repo = Repository(model_id, clone_from=f"https://huggingface.co/{repo_path_or_name}")
+-            local_dir = repo.local_dir
++            local_dir = snapshot_download(repo_path_or_name, local_dir=model_id)
+         else:
+             local_dir = repo_path_or_name
+ 
+diff --git a/Code/Molecule captioning/transformers/src/transformers/trainer.py b/Code/Molecule captioning/transformers/src/transformers/trainer.py
+index 5d6f538..ef5fc17 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/trainer.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/trainer.py	
+@@ -57,8 +57,6 @@ from torch import nn
+ from torch.utils.data import DataLoader, Dataset, IterableDataset, RandomSampler, SequentialSampler
+ from torch.utils.data.distributed import DistributedSampler
+ 
+-from huggingface_hub import Repository
+-
+ from . import __version__
+ from .configuration_utils import PretrainedConfig
+ from .data.data_collator import DataCollator, DataCollatorWithPadding, default_data_collator
+@@ -76,6 +74,7 @@ from .file_utils import (
+     is_sagemaker_mp_enabled,
+     is_torch_tpu_available,
+ )
++from .hub_repository import Repository
+ from .modelcard import TrainingSummary
+ from .modeling_utils import PreTrainedModel, unwrap_model
+ from .models.auto.modeling_auto import MODEL_FOR_QUESTION_ANSWERING_MAPPING_NAMES
+diff --git a/Code/Molecule captioning/transformers/tests/test_configuration_common.py b/Code/Molecule captioning/transformers/tests/test_configuration_common.py
+index 034ad56..37c8947 100644
+--- a/Code/Molecule captioning/transformers/tests/test_configuration_common.py	
++++ b/Code/Molecule captioning/transformers/tests/test_configuration_common.py	
+@@ -23,7 +23,8 @@ import unittest
+ import unittest.mock
+ from pathlib import Path
+ 
+-from huggingface_hub import Repository, delete_repo, login
++from huggingface_hub import delete_repo, login
++from transformers.hub_repository import Repository
+ from requests.exceptions import HTTPError
+ from transformers import AutoConfig, BertConfig, GPT2Config, is_torch_available
+ from transformers.configuration_utils import PretrainedConfig
+diff --git a/Code/Molecule captioning/transformers/tests/test_modeling_common.py b/Code/Molecule captioning/transformers/tests/test_modeling_common.py
+index 420b775..3c46138 100644
+--- a/Code/Molecule captioning/transformers/tests/test_modeling_common.py	
++++ b/Code/Molecule captioning/transformers/tests/test_modeling_common.py	
+@@ -30,7 +30,8 @@ from typing import Dict, List, Tuple
+ import numpy as np
+ 
+ import transformers
+-from huggingface_hub import Repository, delete_repo, login
++from huggingface_hub import delete_repo, login
++from transformers.hub_repository import Repository
+ from requests.exceptions import HTTPError
+ from transformers import (
+     AutoConfig,
+diff --git a/Code/Molecule captioning/transformers/tests/test_tokenization_common.py b/Code/Molecule captioning/transformers/tests/test_tokenization_common.py
+index 44c55b4..5f27c2e 100644
+--- a/Code/Molecule captioning/transformers/tests/test_tokenization_common.py	
++++ b/Code/Molecule captioning/transformers/tests/test_tokenization_common.py	
+@@ -29,7 +29,8 @@ from itertools import takewhile
+ from pathlib import Path
+ from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Union
+ 
+-from huggingface_hub import Repository, delete_repo, login
++from huggingface_hub import delete_repo, login
++from transformers.hub_repository import Repository
+ from requests.exceptions import HTTPError
+ from transformers import (
+     AlbertTokenizer,
+diff --git a/Code/Molecule captioning/transformers/tests/test_trainer.py b/Code/Molecule captioning/transformers/tests/test_trainer.py
+index 4c4ecb5..31d71d6 100644
+--- a/Code/Molecule captioning/transformers/tests/test_trainer.py	
++++ b/Code/Molecule captioning/transformers/tests/test_trainer.py	
+@@ -27,7 +27,8 @@ from unittest.mock import Mock, patch
+ 
+ import numpy as np
+ 
+-from huggingface_hub import Repository, delete_repo, login
++from huggingface_hub import delete_repo, login
++from transformers.hub_repository import Repository
+ from parameterized import parameterized
+ from requests.exceptions import HTTPError
+ from transformers import (
+diff --git a/Code/Molecule captioning/transformers/utils/update_metadata.py b/Code/Molecule captioning/transformers/utils/update_metadata.py
+index 945740f..cc5f0bf 100644
+--- a/Code/Molecule captioning/transformers/utils/update_metadata.py	
++++ b/Code/Molecule captioning/transformers/utils/update_metadata.py	
+@@ -23,7 +23,7 @@ import tempfile
+ import pandas as pd
+ from datasets import Dataset
+ 
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ 
+ 
+ # All paths are set with the intent you should run this script from the root of the repo with the command
+diff --git a/Code/Molecule generation/transformers/examples/flax/image-captioning/run_image_captioning_flax.py b/Code/Molecule generation/transformers/examples/flax/image-captioning/run_image_captioning_flax.py
+index c2772db..f3a82cc 100644
+--- a/Code/Molecule generation/transformers/examples/flax/image-captioning/run_image_captioning_flax.py	
++++ b/Code/Molecule generation/transformers/examples/flax/image-captioning/run_image_captioning_flax.py	
+@@ -44,7 +44,7 @@ from flax import jax_utils, traverse_util
+ from flax.jax_utils import unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard, shard_prng_key
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AutoFeatureExtractor,
+     AutoTokenizer,
+diff --git a/Code/Molecule generation/transformers/examples/flax/language-modeling/run_clm_flax.py b/Code/Molecule generation/transformers/examples/flax/language-modeling/run_clm_flax.py
+index 7746400..a206674 100644
+--- a/Code/Molecule generation/transformers/examples/flax/language-modeling/run_clm_flax.py	
++++ b/Code/Molecule generation/transformers/examples/flax/language-modeling/run_clm_flax.py	
+@@ -46,7 +46,7 @@ from flax import jax_utils, traverse_util
+ from flax.jax_utils import unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard, shard_prng_key
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_CAUSAL_LM_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/flax/language-modeling/run_mlm_flax.py b/Code/Molecule generation/transformers/examples/flax/language-modeling/run_mlm_flax.py
+index 2a65b6f..8401a78 100644
+--- a/Code/Molecule generation/transformers/examples/flax/language-modeling/run_mlm_flax.py	
++++ b/Code/Molecule generation/transformers/examples/flax/language-modeling/run_mlm_flax.py	
+@@ -45,7 +45,7 @@ import optax
+ from flax import jax_utils, traverse_util
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_MASKED_LM_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/flax/language-modeling/run_t5_mlm_flax.py b/Code/Molecule generation/transformers/examples/flax/language-modeling/run_t5_mlm_flax.py
+index 2845d9c..b4d4f44 100644
+--- a/Code/Molecule generation/transformers/examples/flax/language-modeling/run_t5_mlm_flax.py	
++++ b/Code/Molecule generation/transformers/examples/flax/language-modeling/run_t5_mlm_flax.py	
+@@ -43,7 +43,7 @@ import optax
+ from flax import jax_utils, traverse_util
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_MASKED_LM_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/flax/question-answering/run_qa.py b/Code/Molecule generation/transformers/examples/flax/question-answering/run_qa.py
+index 751ede2..258c55a 100644
+--- a/Code/Molecule generation/transformers/examples/flax/question-answering/run_qa.py	
++++ b/Code/Molecule generation/transformers/examples/flax/question-answering/run_qa.py	
+@@ -43,7 +43,7 @@ from flax import struct, traverse_util
+ from flax.jax_utils import replicate, unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AutoConfig,
+     AutoTokenizer,
+diff --git a/Code/Molecule generation/transformers/examples/flax/summarization/run_summarization_flax.py b/Code/Molecule generation/transformers/examples/flax/summarization/run_summarization_flax.py
+index 9bb43b8..59d719f 100644
+--- a/Code/Molecule generation/transformers/examples/flax/summarization/run_summarization_flax.py	
++++ b/Code/Molecule generation/transformers/examples/flax/summarization/run_summarization_flax.py	
+@@ -44,7 +44,7 @@ from flax import jax_utils, traverse_util
+ from flax.jax_utils import unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard, shard_prng_key
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/flax/text-classification/run_flax_glue.py b/Code/Molecule generation/transformers/examples/flax/text-classification/run_flax_glue.py
+index 057eaca..49696fa 100644
+--- a/Code/Molecule generation/transformers/examples/flax/text-classification/run_flax_glue.py	
++++ b/Code/Molecule generation/transformers/examples/flax/text-classification/run_flax_glue.py	
+@@ -38,7 +38,7 @@ from flax import struct, traverse_util
+ from flax.jax_utils import replicate, unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AutoConfig,
+     AutoTokenizer,
+diff --git a/Code/Molecule generation/transformers/examples/flax/token-classification/run_flax_ner.py b/Code/Molecule generation/transformers/examples/flax/token-classification/run_flax_ner.py
+index 5c4de96..edb35c0 100644
+--- a/Code/Molecule generation/transformers/examples/flax/token-classification/run_flax_ner.py	
++++ b/Code/Molecule generation/transformers/examples/flax/token-classification/run_flax_ner.py	
+@@ -39,7 +39,7 @@ from flax import struct, traverse_util
+ from flax.jax_utils import replicate, unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AutoConfig,
+     AutoTokenizer,
+diff --git a/Code/Molecule generation/transformers/examples/flax/vision/run_image_classification.py b/Code/Molecule generation/transformers/examples/flax/vision/run_image_classification.py
+index 5c6d002..6c34158 100644
+--- a/Code/Molecule generation/transformers/examples/flax/vision/run_image_classification.py	
++++ b/Code/Molecule generation/transformers/examples/flax/vision/run_image_classification.py	
+@@ -43,7 +43,7 @@ from flax import jax_utils
+ from flax.jax_utils import unreplicate
+ from flax.training import train_state
+ from flax.training.common_utils import get_metrics, onehot, shard, shard_prng_key
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     FLAX_MODEL_FOR_IMAGE_CLASSIFICATION_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/language-modeling/run_clm_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/language-modeling/run_clm_no_trainer.py
+index 9d8820a..13819df 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/language-modeling/run_clm_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/language-modeling/run_clm_no_trainer.py	
+@@ -38,7 +38,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator, DistributedType
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/language-modeling/run_mlm_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/language-modeling/run_mlm_no_trainer.py
+index adadb4d..7f50d07 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/language-modeling/run_mlm_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/language-modeling/run_mlm_no_trainer.py	
+@@ -38,7 +38,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator, DistributedType
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/multiple-choice/run_swag_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/multiple-choice/run_swag_no_trainer.py
+index 6f0f38a..a6ec17d 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/multiple-choice/run_swag_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/multiple-choice/run_swag_no_trainer.py	
+@@ -36,7 +36,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/question-answering/run_qa_beam_search_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/question-answering/run_qa_beam_search_no_trainer.py
+index 19d3f08..ba6ce8f 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/question-answering/run_qa_beam_search_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/question-answering/run_qa_beam_search_no_trainer.py	
+@@ -34,7 +34,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AdamW,
+     DataCollatorWithPadding,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/question-answering/run_qa_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/question-answering/run_qa_no_trainer.py
+index 759c0f5..415df80 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/question-answering/run_qa_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/question-answering/run_qa_no_trainer.py	
+@@ -34,7 +34,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/speech-pretraining/run_wav2vec2_pretraining_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/speech-pretraining/run_wav2vec2_pretraining_no_trainer.py
+index c7134cb..ce3ef62 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/speech-pretraining/run_wav2vec2_pretraining_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/speech-pretraining/run_wav2vec2_pretraining_no_trainer.py	
+@@ -31,7 +31,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AdamW,
+     SchedulerType,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/summarization/run_summarization_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/summarization/run_summarization_no_trainer.py
+index 2036d57..87d93d5 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/summarization/run_summarization_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/summarization/run_summarization_no_trainer.py	
+@@ -36,7 +36,7 @@ from tqdm.auto import tqdm
+ import transformers
+ from accelerate import Accelerator
+ from filelock import FileLock
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/text-classification/run_glue_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/text-classification/run_glue_no_trainer.py
+index 43de2c4..e0b7aa1 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/text-classification/run_glue_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/text-classification/run_glue_no_trainer.py	
+@@ -27,7 +27,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     AdamW,
+     AutoConfig,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/token-classification/run_ner_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/token-classification/run_ner_no_trainer.py
+index e292331..adcc017 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/token-classification/run_ner_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/token-classification/run_ner_no_trainer.py	
+@@ -33,7 +33,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/pytorch/translation/run_translation_no_trainer.py b/Code/Molecule generation/transformers/examples/pytorch/translation/run_translation_no_trainer.py
+index 838957a..248bfca 100644
+--- a/Code/Molecule generation/transformers/examples/pytorch/translation/run_translation_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/pytorch/translation/run_translation_no_trainer.py	
+@@ -34,7 +34,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import (
+     CONFIG_MAPPING,
+     MODEL_MAPPING,
+diff --git a/Code/Molecule generation/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py b/Code/Molecule generation/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py
+index 9cc42d3..3f6f7ef 100644
+--- a/Code/Molecule generation/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py	
++++ b/Code/Molecule generation/transformers/examples/research_projects/codeparrot/scripts/codeparrot_training.py	
+@@ -13,7 +13,7 @@ import transformers
+ import wandb
+ from accelerate import Accelerator
+ from arguments import TrainingArguments
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from transformers import AdamW, AutoModelForCausalLM, AutoTokenizer, HfArgumentParser, get_scheduler, set_seed
+ 
+ 
+diff --git a/Code/Molecule generation/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py b/Code/Molecule generation/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py
+index c7a9763..390335d 100644
+--- a/Code/Molecule generation/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py	
++++ b/Code/Molecule generation/transformers/examples/research_projects/luke/run_luke_ner_no_trainer.py	
+@@ -33,7 +33,7 @@ from tqdm.auto import tqdm
+ 
+ import transformers
+ from accelerate import Accelerator, DistributedDataParallelKwargs
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ from luke_utils import DataCollatorForLukeTokenClassification, is_punctuation, padding_tensor
+ from transformers import (
+     AdamW,
+diff --git a/Code/Molecule generation/transformers/setup.py b/Code/Molecule generation/transformers/setup.py
+index dd5401f..ecd16e9 100644
+--- a/Code/Molecule generation/transformers/setup.py	
++++ b/Code/Molecule generation/transformers/setup.py	
+@@ -107,7 +107,7 @@ _deps = [
+     "flax>=0.3.5",
+     "fugashi>=1.0",
+     "GitPython<3.1.19",
+-    "huggingface-hub>=0.1.0,<1.0",
++    "huggingface-hub>=0.32.2",
+     "importlib_metadata",
+     "ipadic>=1.0.0,<2.0",
+     "isort>=5.5.4",
+diff --git a/Code/Molecule generation/transformers/src/transformers/commands/user.py b/Code/Molecule generation/transformers/src/transformers/commands/user.py
+index a3919b4..23ec702 100644
+--- a/Code/Molecule generation/transformers/src/transformers/commands/user.py	
++++ b/Code/Molecule generation/transformers/src/transformers/commands/user.py	
+@@ -17,8 +17,8 @@ from argparse import ArgumentParser
+ from getpass import getpass
+ from typing import List, Union
+ 
+-from huggingface_hub.hf_api import HfFolder, create_repo, list_repos_objs, login, logout, whoami
+-from requests.exceptions import HTTPError
++from huggingface_hub import constants, create_repo, get_token, login, logout, whoami
++from huggingface_hub.utils import HfHubHTTPError as HTTPError
+ 
+ from . import BaseTransformersCLICommand
+ 
+@@ -160,19 +160,17 @@ class LoginCommand(BaseUserCommand):
+ 
+         """
+         )
+-        username = input("Username: ")
+-        password = getpass()
++        # Logging in with a username and a password is not supported by the Hub anymore: an access token is needed.
++        token = getpass("Access token (create one at https://huggingface.co/settings/tokens): ")
+         try:
+-            token = login(username, password)
++            login(token=token, add_to_git_credential=False)
+         except HTTPError as e:
+-            # probably invalid credentials, display error message.
++            # probably invalid token, display error message.
+             print(e)
+             print(ANSI.red(e.response.text))
+             exit(1)
+-        HfFolder.save_token(token)
+         print("Login successful")
+-        print("Your token:", token, "\n")
+-        print("Your token has been saved to", HfFolder.path_token)
++        print("Your token has been saved to", constants.HF_TOKEN_PATH)
+ 
+ 
+ class WhoamiCommand(BaseUserCommand):
+@@ -183,13 +181,14 @@ class WhoamiCommand(BaseUserCommand):
+                 "`huggingface-cli whoami` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+         try:
+-            user, orgs = whoami(token)
+-            print(user)
++            info = whoami(token)
++            print(info["name"])
++            orgs = [org["name"] for org in info.get("orgs", [])]
+             if orgs:
+                 print(ANSI.bold("orgs: "), ",".join(orgs))
+         except HTTPError as e:
+@@ -206,12 +205,11 @@ class LogoutCommand(BaseUserCommand):
+                 "`huggingface-cli logout` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+-        HfFolder.delete_token()
+-        logout(token)
++        logout()
+         print("Successfully logged out.")
+ 
+ 
+@@ -247,21 +245,18 @@ class ListReposObjsCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
+-        try:
+-            objs = list_repos_objs(token, organization=self.args.organization)
+-        except HTTPError as e:
+-            print(e)
+-            print(ANSI.red(e.response.text))
+-            exit(1)
+-        if len(objs) == 0:
+-            print("No shared file yet")
+-            exit()
+-        rows = [[obj.filename, obj.lastModified, obj.commit, obj.size] for obj in objs]
+-        print(tabulate(rows, headers=["Filename", "LastModified", "Commit-Sha", "Size"]))
++        # `list_repos_objs` does not exist in `huggingface_hub` anymore, list the files of the repos on the Hub instead.
++        print(
++            ANSI.red(
++                "Command removed: listing all the files of your repos is not supported by `huggingface_hub` anymore. "
++                "Use `huggingface-cli` or `huggingface_hub.list_repo_files` instead."
++            )
++        )
++        exit(1)
+ 
+ 
+ class RepoCreateCommand(BaseUserCommand):
+@@ -272,7 +267,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
+@@ -295,7 +290,7 @@ class RepoCreateCommand(BaseUserCommand):
+             )
+         print("")
+ 
+-        user, _ = whoami(token)
++        user = whoami(token)["name"]
+         namespace = self.args.organization if self.args.organization is not None else user
+         full_name = f"{namespace}/{self.args.name}"
+         print(f"You are about to create {ANSI.bold(full_name)}")
+@@ -306,7 +301,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 print("Abort")
+                 exit()
+         try:
+-            url = create_repo(token, name=self.args.name, organization=self.args.organization)
++            url = create_repo(full_name, token=token)
+         except HTTPError as e:
+             print(e)
+             print(ANSI.red(e.response.text))
+diff --git a/Code/Molecule generation/transformers/src/transformers/dependency_versions_table.py b/Code/Molecule generation/transformers/src/transformers/dependency_versions_table.py
+index b1e08fc..293fe43 100644
+--- a/Code/Molecule generation/transformers/src/transformers/dependency_versions_table.py	
++++ b/Code/Molecule generation/transformers/src/transformers/dependency_versions_table.py	
+@@ -17,7 +17,7 @@ deps = {
+     "flax": "flax>=0.3.5",
+     "fugashi": "fugashi>=1.0",
+     "GitPython": "GitPython<3.1.19",
+-    "huggingface-hub": "huggingface-hub>=0.1.0,<1.0",
++    "huggingface-hub": "huggingface-hub>=0.32.2",
+     "importlib_metadata": "importlib_metadata",
+     "ipadic": "ipadic>=1.0.0,<2.0",
+     "isort": "isort>=5.5.4",
+diff --git a/Code/Molecule generation/transformers/src/transformers/dynamic_module_utils.py b/Code/Molecule generation/transformers/src/transformers/dynamic_module_utils.py
+index 7ce71ac..ebde715 100644
+--- a/Code/Molecule generation/transformers/src/transformers/dynamic_module_utils.py	
++++ b/Code/Molecule generation/transformers/src/transformers/dynamic_module_utils.py	
+@@ -22,7 +22,7 @@ import sys
+ from pathlib import Path
+ from typing import Dict, Optional, Union
+ 
+-from huggingface_hub import HfFolder, model_info
++from huggingface_hub import get_token, model_info
+ 
+ from .file_utils import HF_MODULES_CACHE, TRANSFORMERS_DYNAMIC_MODULE_NAME, cached_path, hf_bucket_url, is_offline_mode
+ from .utils import logging
+@@ -258,7 +258,7 @@ def get_cached_module_file(
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token is True:
+-            token = HfFolder.get_token()
++            token = get_token()
+         else:
+             token = None
+ 
+diff --git a/Code/Molecule generation/transformers/src/transformers/file_utils.py b/Code/Molecule generation/transformers/src/transformers/file_utils.py
+index 1a4387d..422c32a 100644
+--- a/Code/Molecule generation/transformers/src/transformers/file_utils.py	
++++ b/Code/Molecule generation/transformers/src/transformers/file_utils.py	
+@@ -48,12 +48,14 @@ from packaging import version
+ 
+ import requests
+ from filelock import FileLock
+-from huggingface_hub import HfFolder, Repository, create_repo, list_repo_files, whoami
++from huggingface_hub import create_repo, get_token, list_repo_files, whoami
++from huggingface_hub.utils import HfHubHTTPError
+ from requests.exceptions import HTTPError
+ from transformers.utils.logging import tqdm
+ from transformers.utils.versions import importlib_metadata
+ 
+ from . import __version__
++from .hub_repository import Repository
+ from .utils import logging
+ 
+ 
+@@ -2095,7 +2097,7 @@ def get_from_cache(
+     if isinstance(use_auth_token, str):
+         headers["authorization"] = f"Bearer {use_auth_token}"
+     elif use_auth_token:
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
+         headers["authorization"] = f"Bearer {token}"
+@@ -2349,7 +2351,7 @@ def has_file(
+     if isinstance(use_auth_token, str):
+         headers["authorization"] = f"Bearer {use_auth_token}"
+     elif use_auth_token:
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
+         headers["authorization"] = f"Bearer {token}"
+@@ -2419,13 +2421,13 @@ def get_list_of_files(
+     if isinstance(use_auth_token, str):
+         token = use_auth_token
+     elif use_auth_token is True:
+-        token = HfFolder.get_token()
++        token = get_token()
+     else:
+         token = None
+ 
+     try:
+         return list_repo_files(path_or_repo, revision=revision, token=token)
+-    except HTTPError as e:
++    except (HTTPError, HfHubHTTPError) as e:
+         raise ValueError(
+             f"{path_or_repo} is not a local path or a model identifier on the model Hub. Did you make a typo?"
+         ) from e
+@@ -2919,7 +2921,7 @@ class PushToHubMixin:
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token:
+-            token = HfFolder.get_token()
++            token = get_token()
+             if token is None:
+                 raise ValueError(
+                     "You must login to the Hugging Face hub on this computer by typing `transformers-cli login` and "
+@@ -2930,14 +2932,8 @@ class PushToHubMixin:
+             token = None
+ 
+         # Special provision for the test endpoint (CI)
+-        return create_repo(
+-            token,
+-            repo_name,
+-            organization=organization,
+-            private=private,
+-            repo_type=None,
+-            exist_ok=True,
+-        )
++        repo_id = f"{organization}/{repo_name}" if organization is not None else repo_name
++        return str(create_repo(repo_id, token=token, private=private, repo_type=None, exist_ok=True))
+ 
+     @classmethod
+     def _create_or_get_repo(
+@@ -2986,7 +2982,7 @@ class PushToHubMixin:
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+         username = whoami(token)["name"]
+         return f"{username}/{model_id}"
+diff --git a/Code/Molecule generation/transformers/src/transformers/hub_repository.py b/Code/Molecule generation/transformers/src/transformers/hub_repository.py
+new file mode 100644
+index 0000000..21785f5
+--- /dev/null
++++ b/Code/Molecule generation/transformers/src/transformers/hub_repository.py	
+@@ -0,0 +1,154 @@
++# coding=utf-8
++# Copyright 2022 The HuggingFace Team. All rights reserved.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++"""
++Minimal replacement for the `huggingface_hub.Repository` class, which was removed in `huggingface_hub` v1.0.
++
++Instead of driving the `git` CLI, this implementation talks to the Hub through the HTTP based `HfApi`. It only covers
++the subset of the old API used in this code base: creating/"cloning" a repo into a local folder, and pushing the
++content of that local folder to the Hub with `push_to_hub`.
++"""
++
++import os
++from concurrent.futures import Future
++from typing import Optional, Tuple, Union
++from urllib.parse import urlparse
++
++from huggingface_hub import HfApi, constants, create_repo, get_token
++
++
++class PushInProgress:
++    """
++    Tracks a push started with `Repository.push_to_hub(blocking=False)` (stand-in for the old `CommandInProgress`).
++    """
++
++    def __init__(self, future: Future):
++        self._future = future
++
++    @property
++    def is_done(self) -> bool:
++        return self._future.done()
++
++    @property
++    def failed(self) -> bool:
++        return self._future.done() and self._future.exception() is not None
++
++    @property
++    def status(self) -> int:
++        """0 if the push succeeded, -1 if it failed, `None` if it is still running."""
++        if not self._future.done():
++            return None
++        return -1 if self._future.exception() is not None else 0
++
++    def result(self):
++        return self._future.result()
++
++
++def _repo_id_from_clone_from(clone_from: str) -> str:
++    """Accepts either a `namespace/name` repo id or a full `https://huggingface.co/namespace/name` url."""
++    clone_from = str(clone_from)
++    if clone_from.startswith(("http://", "https://")):
++        clone_from = urlparse(clone_from).path
++    repo_id = clone_from.strip("/")
++    if repo_id.endswith(".git"):
++        repo_id = repo_id[: -len(".git")]
++    return repo_id
++
++
++def _read_gitignore_patterns(local_dir: str):
++    path = os.path.join(local_dir, ".gitignore")
++    if not os.path.isfile(path):
++        return []
++    with open(path, "r", encoding="utf-8") as f:
++        return [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
++
++
++class Repository:
++    """
++    Helper to upload the content of a local folder to a repo on the Hub.
++
++    Args:
++        local_dir (`str`):
++            Local folder whose content is pushed to the Hub.
++        clone_from (`str`, *optional*):
++            Repo id (`namespace/name`) or url of the Hub repo to push to. The repo is created if it does not exist yet.
++            Unlike the old git-based class, existing remote files are *not* downloaded in `local_dir`.
++        use_auth_token (`str` or `bool`, *optional*):
++            Token to use. If `True` (or `None`), the token saved by `huggingface-cli login` is used.
++        token (`str` or `bool`, *optional*):
++            Alias of `use_auth_token`.
++    """
++
++    def __init__(
++        self,
++        local_dir: Union[str, os.PathLike],
++        clone_from: Optional[str] = None,
++        use_auth_token: Optional[Union[bool, str]] = None,
++        token: Optional[Union[bool, str]] = None,
++        **kwargs
++    ):
++        self.local_dir = os.path.abspath(str(local_dir))
++        self.token = token if token is not None else use_auth_token
++        if isinstance(self.token, bool):
++            # `True` means "use the saved token", `False` means no token.
++            self.token = get_token() if self.token else None
++        self.api = HfApi(token=self.token)
++        os.makedirs(self.local_dir, exist_ok=True)
++
++        self.repo_id = None
++        if clone_from is not None:
++            self.repo_id = _repo_id_from_clone_from(clone_from)
++            create_repo(self.repo_id, token=self.token, exist_ok=True)
++
++    @property
++    def remote_url(self) -> str:
++        return f"{constants.ENDPOINT}/{self.repo_id}"
++
++    def git_pull(self, rebase: bool = False, **kwargs):
++        """No-op, kept for backward compatibility: there is no local git clone to update anymore."""
++
++    def push_to_hub(
++        self,
++        commit_message: str = "commit files to HF hub",
++        blocking: bool = True,
++        clean_ok: bool = True,
++        auto_lfs_prune: bool = False,
++    ) -> Union[str, Tuple[str, Optional[PushInProgress]]]:
++        """
++        Uploads the content of `local_dir` to the Hub in a single commit.
++
++        Patterns listed in a `.gitignore` file at the root of `local_dir` are skipped.
++
++        Returns:
++            The url of the commit if `blocking=True`, otherwise a tuple with the url of the repo and a
++            [`PushInProgress`] to track the upload.
++        """
++        if self.repo_id is None:
++            raise ValueError("This repository has no `clone_from` target, so there is nothing to push to.")
++
++        ignore_patterns = [".git", ".git/*"] + _read_gitignore_patterns(self.local_dir)
++        kwargs = dict(
++            repo_id=self.repo_id,
++            folder_path=self.local_dir,
++            commit_message=commit_message,
++            ignore_patterns=ignore_patterns,
++            token=self.token,
++        )
++        if blocking:
++            commit_info = self.api.upload_folder(**kwargs)
++            # `upload_folder` returns a `CommitInfo` in recent versions (and a url string in older ones).
++            return getattr(commit_info, "commit_url", None) or str(commit_info)
++
++        future = self.api.upload_folder(run_as_future=True, **kwargs)
++        return self.remote_url, PushInProgress(future)
+diff --git a/Code/Molecule generation/transformers/src/transformers/keras_callbacks.py b/Code/Molecule generation/transformers/src/transformers/keras_callbacks.py
+index e36161b..73a6812 100644
+--- a/Code/Molecule generation/transformers/src/transformers/keras_callbacks.py	
++++ b/Code/Molecule generation/transformers/src/transformers/keras_callbacks.py	
+@@ -9,10 +9,9 @@ import tensorflow as tf
+ from packaging.version import parse
+ from tensorflow.keras.callbacks import Callback
+ 
+-from huggingface_hub import Repository
+-
+ from . import IntervalStrategy, PreTrainedTokenizerBase
+ from .file_utils import get_full_repo_name
++from .hub_repository import Repository
+ from .modelcard import TrainingSummary
+ 
+ 
+diff --git a/Code/Molecule generation/transformers/src/transformers/modelcard.py b/Code/Molecule generation/transformers/src/transformers/modelcard.py
+index 560998a..56a4882 100644
+--- a/Code/Molecule generation/transformers/src/transformers/modelcard.py	
++++ b/Code/Molecule generation/transformers/src/transformers/modelcard.py	
+@@ -23,9 +23,9 @@ from dataclasses import dataclass
+ from pathlib import Path
+ from typing import Any, Dict, List, Optional, Union
+ 
+-import requests
+ import yaml
+ from huggingface_hub import model_info
++from huggingface_hub.utils import HfHubHTTPError
+ 
+ from . import __version__
+ from .file_utils import (
+@@ -402,7 +402,7 @@ class TrainingSummary:
+                 for tag in info.tags:
+                     if tag.startswith("license:"):
+                         self.license = tag[8:]
+-            except requests.exceptions.HTTPError:
++            except HfHubHTTPError:
+                 pass
+ 
+     def create_model_index(self, metric_mapping):
+diff --git a/Code/Molecule generation/transformers/src/transformers/modeling_tf_utils.py b/Code/Molecule generation/transformers/src/transformers/modeling_tf_utils.py
+index 7a53055..c74fc5b 100644
+--- a/Code/Molecule generation/transformers/src/transformers/modeling_tf_utils.py	
++++ b/Code/Molecule generation/transformers/src/transformers/modeling_tf_utils.py	
+@@ -31,7 +31,7 @@ from tensorflow.python.keras.engine import data_adapter
+ from tensorflow.python.keras.engine.keras_tensor import KerasTensor
+ from tensorflow.python.keras.saving import hdf5_format
+ 
+-from huggingface_hub import Repository, list_repo_files
++from huggingface_hub import list_repo_files, snapshot_download
+ from requests import HTTPError
+ 
+ from .configuration_utils import PretrainedConfig
+@@ -806,8 +806,7 @@ class TFPreTrainedModel(tf.keras.Model, TFModelUtilsMixin, TFGenerationMixin, Pu
+                 repo_path_or_name = self.get_full_repo_name(repo_path_or_name)
+             else:
+                 model_id = repo_path_or_name.split("/")[-1]
+-            repo = Repository(model_id, clone_from=f"https://huggingface.co/{repo_path_or_name}")
+-            local_dir = repo.local_dir
++            local_dir = snapshot_download(repo_path_or_name, local_dir=model_id)
+         else:
+             local_dir = repo_path_or_name
+ 
+diff --git a/Code/Molecule generation/transformers/src/transformers/trainer.py b/Code/Molecule generation/transformers/src/transformers/trainer.py
+index 5d6f538..ef5fc17 100644
+--- a/Code/Molecule generation/transformers/src/transformers/trainer.py	
++++ b/Code/Molecule generation/transformers/src/transformers/trainer.py	
+@@ -57,8 +57,6 @@ from torch import nn
+ from torch.utils.data import DataLoader, Dataset, IterableDataset, RandomSampler, SequentialSampler
+ from torch.utils.data.distributed import DistributedSampler
+ 
+-from huggingface_hub import Repository
+-
+ from . import __version__
+ from .configuration_utils import PretrainedConfig
+ from .data.data_collator import DataCollator, DataCollatorWithPadding, default_data_collator
+@@ -76,6 +74,7 @@ from .file_utils import (
+     is_sagemaker_mp_enabled,
+     is_torch_tpu_available,
+ )
++from .hub_repository import Repository
+ from .modelcard import TrainingSummary
+ from .modeling_utils import PreTrainedModel, unwrap_model
+ from .models.auto.modeling_auto import MODEL_FOR_QUESTION_ANSWERING_MAPPING_NAMES
+diff --git a/Code/Molecule generation/transformers/tests/test_configuration_common.py b/Code/Molecule generation/transformers/tests/test_configuration_common.py
+index 034ad56..37c8947 100644
+--- a/Code/Molecule generation/transformers/tests/test_configuration_common.py	
++++ b/Code/Molecule generation/transformers/tests/test_configuration_common.py	
+@@ -23,7 +23,8 @@ import unittest
+ import unittest.mock
+ from pathlib import Path
+ 
+-from huggingface_hub import Repository, delete_repo, login
++from huggingface_hub import delete_repo, login
++from transformers.hub_repository import Repository
+ from requests.exceptions import HTTPError
+ from transformers import AutoConfig, BertConfig, GPT2Config, is_torch_available
+ from transformers.configuration_utils import PretrainedConfig
+diff --git a/Code/Molecule generation/transformers/tests/test_modeling_common.py b/Code/Molecule generation/transformers/tests/test_modeling_common.py
+index 420b775..3c46138 100644
+--- a/Code/Molecule generation/transformers/tests/test_modeling_common.py	
++++ b/Code/Molecule generation/transformers/tests/test_modeling_common.py	
+@@ -30,7 +30,8 @@ from typing import Dict, List, Tuple
+ import numpy as np
+ 
+ import transformers
+-from huggingface_hub import Repository, delete_repo, login
++from huggingface_hub import delete_repo, login
++from transformers.hub_repository import Repository
+ from requests.exceptions import HTTPError
+ from transformers import (
+     AutoConfig,
+diff --git a/Code/Molecule generation/transformers/tests/test_tokenization_common.py b/Code/Molecule generation/transformers/tests/test_tokenization_common.py
+index 44c55b4..5f27c2e 100644
+--- a/Code/Molecule generation/transformers/tests/test_tokenization_common.py	
++++ b/Code/Molecule generation/transformers/tests/test_tokenization_common.py	
+@@ -29,7 +29,8 @@ from itertools import takewhile
+ from pathlib import Path
+ from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Union
+ 
+-from huggingface_hub import Repository, delete_repo, login
++from huggingface_hub import delete_repo, login
++from transformers.hub_repository import Repository
+ from requests.exceptions import HTTPError
+ from transformers import (
+     AlbertTokenizer,
+diff --git a/Code/Molecule generation/transformers/tests/test_trainer.py b/Code/Molecule generation/transformers/tests/test_trainer.py
+index 4c4ecb5..31d71d6 100644
+--- a/Code/Molecule generation/transformers/tests/test_trainer.py	
++++ b/Code/Molecule generation/transformers/tests/test_trainer.py	
+@@ -27,7 +27,8 @@ from unittest.mock import Mock, patch
+ 
+ import numpy as np
+ 
+-from huggingface_hub import Repository, delete_repo, login
++from huggingface_hub import delete_repo, login
++from transformers.hub_repository import Repository
+ from parameterized import parameterized
+ from requests.exceptions import HTTPError
+ from transformers import (
+diff --git a/Code/Molecule generation/transformers/utils/update_metadata.py b/Code/Molecule generation/transformers/utils/update_metadata.py
+index 945740f..cc5f0bf 100644
+--- a/Code/Molecule generation/transformers/utils/update_metadata.py	
++++ b/Code/Molecule generation/transformers/utils/update_metadata.py	
+@@ -23,7 +23,7 @@ import tempfile
+ import pandas as pd
+ from datasets import Dataset
+ 
+-from huggingface_hub import Repository
++from transformers.hub_repository import Repository
+ 
+ 
+ # All paths are set with the intent you should run this script from the root of the repo with the command

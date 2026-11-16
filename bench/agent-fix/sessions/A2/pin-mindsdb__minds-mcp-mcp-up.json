@@ -1,0 +1,100 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 20,
+  "duration_ms": 69098,
+  "total_cost_usd": 0.1481244,
+  "usage": {
+   "input_tokens": 18,
+   "cache_creation_input_tokens": 15570,
+   "cache_read_input_tokens": 115716,
+   "output_tokens": 4959,
+   "output_tokens_details": {
+    "thinking_tokens": 979
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 15570,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 718,
+     "cache_read_input_tokens": 19156,
+     "cache_creation_input_tokens": 2191,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2191
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.66,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.22,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 2,
+  "Glob": 1,
+  "Read": 8,
+  "WebSearch": 1,
+  "WebFetch": 3,
+  "Bash": 1,
+  "Edit": 3
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.3.0/src/mcp/server/mcpserver/server.py"
+ ],
+ "denied": 0,
+ "task": "pin-mindsdb__minds-mcp-mcp-up",
+ "arm": "A",
+ "label": "A2",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 69.7,
+ "service_error": false
+}

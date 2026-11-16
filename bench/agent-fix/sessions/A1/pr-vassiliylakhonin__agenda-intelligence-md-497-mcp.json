@@ -1,0 +1,104 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 55,
+  "duration_ms": 166237,
+  "total_cost_usd": 0.48819629999999997,
+  "usage": {
+   "input_tokens": 38,
+   "cache_creation_input_tokens": 52267,
+   "cache_read_input_tokens": 554876,
+   "output_tokens": 18011,
+   "output_tokens_details": {
+    "thinking_tokens": 2587
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 52267,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1341,
+     "cache_read_input_tokens": 57020,
+     "cache_creation_input_tokens": 1024,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1024
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.27,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.19,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 7,
+  "Read": 9,
+  "Bash": 1,
+  "Glob": 1,
+  "WebSearch": 2,
+  "WebFetch": 7,
+  "Edit": 27
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://pypi.org/project/mcp/2.3.0/",
+  "https://github.com/modelcontextprotocol/python-sdk/blob/main/src/mcp/client/session.py",
+  "https://httpx2.pydantic.dev/migration/",
+  "https://pydantic.dev/docs/httpx2/get-started/migration/"
+ ],
+ "denied": 0,
+ "task": "pr-vassiliylakhonin__agenda-intelligence-md-497-mcp",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 166.9,
+ "service_error": false
+}

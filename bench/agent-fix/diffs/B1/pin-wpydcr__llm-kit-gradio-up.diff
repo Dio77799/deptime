@@ -1,0 +1,12 @@
+diff --git a/webui.py b/webui.py
+index 4031944..ee6e3b2 100644
+--- a/webui.py
++++ b/webui.py
+@@ -23,6 +23,6 @@ with gr.Blocks(analytics_enabled=False) as demo:
+         train.train_page(localizer)
+ 
+ load_javascript()
+-demo.queue(concurrency_count=3).launch(_frontend=False,inbrowser=True)
++demo.queue(default_concurrency_limit=3).launch(_frontend=False,inbrowser=True)
+ 
+ 

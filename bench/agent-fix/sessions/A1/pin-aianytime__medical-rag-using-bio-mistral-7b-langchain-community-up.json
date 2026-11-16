@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 30,
+  "duration_ms": 82952,
+  "total_cost_usd": 0.17397069999999998,
+  "usage": {
+   "input_tokens": 26,
+   "cache_creation_input_tokens": 17036,
+   "cache_read_input_tokens": 169175,
+   "output_tokens": 7996,
+   "output_tokens_details": {
+    "thinking_tokens": 1903
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 17036,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1073,
+     "cache_read_input_tokens": 18539,
+     "cache_creation_input_tokens": 4274,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4274
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.19,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.18,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Glob": 1,
+  "Grep": 2,
+  "Read": 3,
+  "WebFetch": 12,
+  "Edit": 11
+ },
+ "deptime_calls": [],
+ "other_bash": 0,
+ "fetched": [
+  "https://pypi.org/pypi/langchain-community/0.4.2/json",
+  "https://raw.githubusercontent.com/langchain-ai/langchain-community/main/libs/community/langchain_community/embeddings/__init__.py",
+  "https://pypi.org/pypi/langchain-classic/1.0.7/json",
+  "https://raw.githubusercontent.com/langchain-ai/langchain-community/main/libs/community/langchain_community/vectorstores/qdrant.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain-community/v0.4.2/libs/community/langchain_community/vectorstores/qdrant.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain-community/main/libs/community/langchain_community/vectorstores/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain-community/refs/tags/libs/community/v0.4.2/libs/community/langchain_community/vectorstores/__init__.py",
+  "https://pypi.org/pypi/langchain-qdrant/json",
+  "https://python.langchain.com/docs/integrations/vectorstores/qdrant/",
+  "https://docs.langchain.com/oss/python/integrations/vectorstores/qdrant",
+  "https://pypi.org/pypi/langchain-core/1.4.0/json",
+  "https://pypi.org/pypi/langchain-text-splitters/1.1.2/json"
+ ],
+ "denied": 0,
+ "task": "pin-aianytime__medical-rag-using-bio-mistral-7b-langchain-community-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 83.6,
+ "service_error": false
+}

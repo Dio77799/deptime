@@ -1,0 +1,26 @@
+diff --git a/app.py b/app.py
+index 73e6f48..df5756a 100644
+--- a/app.py
++++ b/app.py
+@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
+ from fastapi.staticfiles import StaticFiles
+ from fastapi.encoders import jsonable_encoder
+ from qdrant_client import QdrantClient
+-from langchain_community.vectorstores import Qdrant
++from langchain_qdrant import Qdrant
+ import os
+ import json
+ 
+diff --git a/ingest.py b/ingest.py
+index 11808e5..c270d86 100644
+--- a/ingest.py
++++ b/ingest.py
+@@ -2,7 +2,7 @@ import os
+ from langchain_community.embeddings import SentenceTransformerEmbeddings
+ from langchain_community.document_loaders import UnstructuredFileLoader, DirectoryLoader
+ from langchain.text_splitter import RecursiveCharacterTextSplitter
+-from langchain_community.vectorstores import Qdrant
++from langchain_qdrant import Qdrant
+ 
+ embeddings = SentenceTransformerEmbeddings(model_name="NeuML/pubmedbert-base-embeddings")
+ 

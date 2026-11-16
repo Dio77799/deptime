@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 89,
+  "duration_ms": 369030,
+  "total_cost_usd": 1.2757486000000002,
+  "usage": {
+   "input_tokens": 64,
+   "cache_creation_input_tokens": 147763,
+   "cache_read_input_tokens": 2284593,
+   "output_tokens": 42333,
+   "output_tokens_details": {
+    "thinking_tokens": 19119
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 147763,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1702,
+     "cache_read_input_tokens": 153228,
+     "cache_creation_input_tokens": 312,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 312
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.38,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.2,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Glob": 2,
+  "Grep": 18,
+  "Read": 26,
+  "Bash": 1,
+  "WebFetch": 9,
+  "WebSearch": 2,
+  "Write": 2,
+  "Edit": 28
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://www.gradio.app/main/guides/gradio-6-migration-guide",
+  "https://www.gradio.app/guides/upgrading-to-gradio-4",
+  "https://www.gradio.app/main/guides/gradio-4-migration-guide",
+  "https://www.gradio.app/main/guides/gradio-5-migration-guide",
+  "https://raw.githubusercontent.com/gradio-app/gradio/main/guides/09_other-tutorials/upgrading-to-gradio-4.md",
+  "https://www.gradio.app/guides/gradio-6-migration-guide",
+  "https://www.gradio.app/docs/gradio/sketchpad",
+  "https://www.gradio.app/docs/gradio/chatbot",
+  "https://www.gradio.app/docs/gradio/dataframe"
+ ],
+ "denied": 0,
+ "task": "pin-wpydcr__llm-kit-gradio-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 369.6,
+ "service_error": false
+}

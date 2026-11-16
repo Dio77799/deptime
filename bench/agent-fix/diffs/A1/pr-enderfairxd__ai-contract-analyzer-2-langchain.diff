@@ -1,0 +1,36 @@
+diff --git a/requirements.txt b/requirements.txt
+index 6f7bbfb..8d41aa4 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,4 +1,5 @@
+ streamlit==1.32.0
+-langchain==0.1.13
++langchain==1.3.9
++langchain-ollama>=1.1.0,<2.0.0
+ pdfplumber==0.11.0
+-python-dotenv==1.0.1
+\ No newline at end of file
++python-dotenv==1.0.1
+diff --git a/src/services/ai_service.py b/src/services/ai_service.py
+index 7d6c28d..ce83fb1 100644
+--- a/src/services/ai_service.py
++++ b/src/services/ai_service.py
+@@ -1,7 +1,7 @@
+ import os
+ from dotenv import load_dotenv
+-from langchain_community.llms import Ollama
+-from langchain.prompts import PromptTemplate
++from langchain_ollama import OllamaLLM
++from langchain_core.prompts import PromptTemplate
+ 
+ load_dotenv()
+ 
+@@ -12,7 +12,7 @@ def analyze_contract(contract_text: str) -> str:
+     
+     # Aumentamos el num_ctx a 8192 (aprox 6000 palabras / 12 páginas).
+     # Si tu servidor tiene mucha RAM/VRAM, puedes subirlo a 16384 o 32768.
+-    llm = Ollama(
++    llm = OllamaLLM(
+         base_url=base_url,
+         model="llama3.1", # o "mistral"
+         temperature=0.2,

@@ -1,0 +1,114 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 16,
+  "duration_ms": 60025,
+  "total_cost_usd": 0.1663601,
+  "usage": {
+   "input_tokens": 24,
+   "cache_creation_input_tokens": 18779,
+   "cache_read_input_tokens": 238360,
+   "output_tokens": 6189,
+   "output_tokens_details": {
+    "thinking_tokens": 1582
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 18779,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 895,
+     "cache_read_input_tokens": 28711,
+     "cache_creation_input_tokens": 534,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 534
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.13,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.18,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 1,
+  "Grep": 3,
+  "Glob": 1,
+  "Read": 2,
+  "mcp__plugin_deptime_deptime__check_upgrade": 2,
+  "mcp__plugin_deptime_deptime__check_symbols": 1,
+  "mcp__plugin_deptime_deptime__symbol_history": 1,
+  "WebFetch": 2,
+  "Edit": 2
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.1 check-upgrade . --package mcp --to 2.3.0 --format json; echo \"exit=$?\"",
+  "check_upgrade",
+  "check_symbols",
+  "symbol_history",
+  "check_upgrade"
+ ],
+ "other_bash": 0,
+ "fetched": [
+  "https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/migration.md",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/main/docs/migration.md"
+ ],
+ "denied": 1,
+ "task": "pin-mindsdb__minds-mcp-mcp-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 62.1,
+ "service_error": false
+}

@@ -1,0 +1,177 @@
+diff --git a/audit_web_client/flask/api/db.py b/audit_web_client/flask/api/db.py
+index 63c95de..aff141a 100644
+--- a/audit_web_client/flask/api/db.py
++++ b/audit_web_client/flask/api/db.py
+@@ -40,8 +40,7 @@ def get_oidb_engine():
+     mariadb_conn_url = f'mysql+mysqldb://s54660:{mariadb_pass}@{mariadb_url}/s54660__oidb?charset=utf8'
+     g.oidb_engine = create_engine(mariadb_conn_url,
+         pool_pre_ping=True,
+-        encoding='utf-8',
+-        pool_size=pool_size,  # https://docs.sqlalchemy.org/en/14/core/pooling.html#sqlalchemy.pool.QueuePool.__init__
++        pool_size=pool_size,  # https://docs.sqlalchemy.org/en/20/core/pooling.html#sqlalchemy.pool.QueuePool.__init__
+         max_overflow=0,
+     )
+     return g.oidb_engine
+@@ -173,8 +172,8 @@ def create_tables(engine):
+ def import_oidb_data(engine, import_page, import_revision):
+     logger = logging.getLogger('cli.create-db.import_oidb_data')
+ 
+-    metadata = MetaData(bind=engine)
+-    metadata.reflect()
++    metadata = MetaData()
++    metadata.reflect(bind=engine)
+     page_table = metadata.tables['page']
+     revision_table = metadata.tables['revision']
+ 
+@@ -226,10 +225,12 @@ def import_page_data(engine, page_table, page_table_filepath):
+ 
+                 if len(page_list) >= INSERT_BATCH_SIZE:
+                     conn.execute(page_table.insert(), page_list)
++                    conn.commit()
+                     logger.debug(f"Committed page insert with {len(page_list)} pages ({processed_count} total) in {datetime.now() - start}.")
+                     page_list = []
+             if len(page_list) > 0:
+                 conn.execute(page_table.insert(), page_list)
++                conn.commit()
+                 page_list = []
+             logger.debug(f"Finished constructing page table ({processed_count} total) in {datetime.now() - start}.")
+ 
+@@ -325,10 +326,12 @@ def import_revision_data(engine, revision_table, data_dir, oidb_dir, rev_tsv_fil
+ 
+                 if len(rev_list) >= INSERT_BATCH_SIZE:
+                     conn.execute(revision_table.insert(), rev_list)
++                    conn.commit()
+                     logger.debug(f"Revision insert complete ({processed_count} total) in {datetime.now() - start}.")
+                     rev_list = []
+             if len(rev_list) > 0:
+                 conn.execute(revision_table.insert(), rev_list)
++                conn.commit()
+                 rev_list = []
+             logger.debug(f"Final revision insert ({processed_count} total) complete in {datetime.now() - start}.")
+ 
+@@ -528,7 +531,8 @@ def update_ores_scores():
+                 rev_list.append(rev_scores)
+                 if len(rev_list) > UPDATE_BATCH_SIZE:
+                     res = conn.execute(update_stmt, rev_list)
+-                    if res.supports_sane_multi_rowcount:
++                    conn.commit()
++                    if conn.dialect.supports_sane_multi_rowcount:
+                         logger.debug(f"Revision updated {res.rowcount} / {len(rev_list)} ({processed_count} total) complete in {datetime.now() - start}.")
+                     else:
+                         logger.debug(f"Revision updated ? / {len(rev_list)} ({processed_count} total) complete in {datetime.now() - start}.")
+@@ -536,7 +540,8 @@ def update_ores_scores():
+                     logger.debug(f"Revision update ({processed_count} total) complete in {datetime.now() - start}.")
+             if len(rev_list) > 0:
+                 res = conn.execute(update_stmt, rev_list)
+-                if res.supports_sane_multi_rowcount:
++                conn.commit()
++                if conn.dialect.supports_sane_multi_rowcount:
+                     logger.debug(f"Revision updated {res.rowcount} / {len(rev_list)} ({processed_count} total) complete in {datetime.now() - start}.")
+                 else:
+                     logger.debug(f"Revision updated ? / {len(rev_list)} ({processed_count} total) complete in {datetime.now() - start}.")
+@@ -587,20 +592,20 @@ def drop_db_command(revision_only, page_only, drop_all):
+     logger.info("Dropping OIDB database in Tools.")
+     start = datetime.now()
+     engine = get_oidb_engine()
+-    metadata = MetaData(bind=engine)
+-    metadata.reflect()
++    metadata = MetaData()
++    metadata.reflect(bind=engine)
+     logger.info(f"Existing tables ({len(metadata.tables)} total):")
+     for key, value in metadata.tables.items():
+         logger.info(f"{key}")
+     if drop_all:
+         logger.info("Dropping all tables identified via reflection.")
+-        metadata.drop_all()
++        metadata.drop_all(engine)
+     elif revision_only:
+         logger.info("Dropping revision table.")
+-        metadata.drop_all(tables=[metadata.tables['revision'],])
+-    elif page_only: 
++        metadata.drop_all(engine, tables=[metadata.tables['revision'],])
++    elif page_only:
+         logger.info("Dropping page table.")
+-        metadata.drop_all(tables=[metadata.tables['page'],])
++        metadata.drop_all(engine, tables=[metadata.tables['page'],])
+     else:
+         logger.info("No table specified; dropping nothing.")
+     #to_drop = []
+diff --git a/audit_web_client/flask/api/replica.py b/audit_web_client/flask/api/replica.py
+index 3c190a6..dc9adc8 100644
+--- a/audit_web_client/flask/api/replica.py
++++ b/audit_web_client/flask/api/replica.py
+@@ -1,6 +1,6 @@
+ # For functions that depend on the enwiki replica database
+ 
+-from sqlalchemy import create_engine, MetaData, Table
++from sqlalchemy import create_engine, MetaData, Table, bindparam
+ from sqlalchemy.sql import text, select
+ from sqlalchemy.orm import sessionmaker, scoped_session
+ 
+@@ -26,8 +26,7 @@ def get_replica_engine():
+     mariadb_conn_url = f'mysql+mysqldb://s54660:{mariadb_pass}@{mariadb_url}/enwiki_p?charset=utf8'
+     g.replica_engine = create_engine(mariadb_conn_url,
+         pool_pre_ping=True,
+-        encoding='utf-8',
+-        pool_size=pool_size,  # https://docs.sqlalchemy.org/en/14/core/pooling.html#sqlalchemy.pool.QueuePool.__init__
++        pool_size=pool_size,  # https://docs.sqlalchemy.org/en/20/core/pooling.html#sqlalchemy.pool.QueuePool.__init__
+         max_overflow=0,
+     )
+     return g.replica_engine
+@@ -197,7 +196,8 @@ def _get_pages_in_categories(metadata, session, category_set, curr_depth=0, max_
+         JOIN categorylinks cl ON cl.cl_from = p.page_id
+         WHERE cl.cl_to IN :category_list;
+         """)
+-        s = s.bindparams(category_list=list(category_set))
++        # expanding=True renders the list as "(?, ?, ...)" for the IN clause
++        s = s.bindparams(bindparam('category_list', value=list(category_set), expanding=True))
+         logger.info(f"Generated category query: {s} (with |category_list|={len(category_set)}; curr_depth={curr_depth}; {len(page_ids)} found so far)")
+ 
+         # mark categories in query as previously searched
+diff --git a/audit_web_client/flask/api/user_db.py b/audit_web_client/flask/api/user_db.py
+index 128f148..405f62e 100644
+--- a/audit_web_client/flask/api/user_db.py
++++ b/audit_web_client/flask/api/user_db.py
+@@ -106,17 +106,17 @@ def drop_user_db_command(drop_all, table_name):
+     logger.info("Dropping user tables in Tools OIDB database.")
+     start = datetime.now()
+     engine = db.get_oidb_engine()
+-    metadata = MetaData(bind=engine)
+-    metadata.reflect()
++    metadata = MetaData()
++    metadata.reflect(bind=engine)
+     logger.info(f"Existing tables ({len(metadata.tables)} total):")
+     for key, value in metadata.tables.items():
+         logger.info(f"{key}")
+     if drop_all:
+         logger.info("Dropping all user tables identified via reflection.")
+-        metadata.drop_all(tables=[metadata.tables['rev_annotation'], metadata.tables['activity_log'], metadata.tables['annotation_history']])
++        metadata.drop_all(engine, tables=[metadata.tables['rev_annotation'], metadata.tables['activity_log'], metadata.tables['annotation_history']])
+     elif table_name != "":
+         logger.info(f"Dropping table '{table_name}'.")
+-        metadata.drop_all(tables=[metadata.tables[table_name],])
++        metadata.drop_all(engine, tables=[metadata.tables[table_name],])
+     else:
+         logger.info("Only listing tables without --all.")
+     logger.info(f"Finished dropping table data after {datetime.now() - start}.")
+diff --git a/audit_web_client/flask/requirements.txt b/audit_web_client/flask/requirements.txt
+index bd86ae0..2be0907 100644
+--- a/audit_web_client/flask/requirements.txt
++++ b/audit_web_client/flask/requirements.txt
+@@ -2,15 +2,13 @@
+ # deployment runtime). Previously these were unpinned and floated to whatever
+ # pip resolved at install time. Bump deliberately and re-test the backend.
+ #
+-# SQLAlchemy is intentionally held on the 1.4 series: the api/ code targets the
+-# 1.4 API and a 2.0 upgrade is a separate, breaking change (see DEVELOPMENT.md).
+ Flask==3.1.3
+ Werkzeug==3.1.9
+ click==8.5.0
+ tqdm==4.70.1
+ numpy==2.5.4
+ pytz==2026.6
+-SQLAlchemy==1.4.54
++SQLAlchemy==2.1.8
+ mysqlclient==2.3.0
+ pyOpenSSL==26.4.0
+ mwoauth==0.4.0

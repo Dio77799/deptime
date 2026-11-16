@@ -1,0 +1,565 @@
+diff --git a/requirements.txt b/requirements.txt
+index eb57462..f478e52 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,7 +1,7 @@
+ accelerate==0.23.0
+ cpm_kernels==1.0.11
+ datasets==2.8.0
+-gradio==3.35.2
++gradio==6.31.0
+ langchain==0.0.146
+ loguru==0.7.0
+ matplotlib==3.7.1
+diff --git a/ui/apply_knowledge.py b/ui/apply_knowledge.py
+index a2707c2..01cb7fd 100644
+--- a/ui/apply_knowledge.py
++++ b/ui/apply_knowledge.py
+@@ -525,13 +525,13 @@ def apply_knowledge(localizer):
+     fasiss_total_params = [faiss_openai_api_key, faiss_openai_port, faiss_openai_api_base, faiss_openai_api_model, faiss_azure_api_key, faiss_azure_endpoint, faiss_azure_engine, faiss_ernie_api_key, faiss_ernie_secret_key, faiss_ernie_temperature, faiss_ernie_top_p, faiss_ernie_penalty_score, faiss_ernie_turbo_api_key, faiss_ernie_turbo_secret_key, faiss_chatglm_api_key, faiss_chatglm_temperature, faiss_chatglm_top_p, faiss_chatglm_type, faiss_spark_appid, faiss_spark_api_key, faiss_spark_secret_key, faiss_spark_api_version, faiss_spark_temperature, faiss_spark_top_k, faiss_spark_max_tokens,faiss_qwen_api_key,faiss_ali_top_p,faiss_ali_top_k,faiss_ali_kuake_search,faiss_quantization,faiss_max_length,faiss_top_p,faiss_temperature,faiss_use_deepspeed]
+     embedding_total_params = [embedding_openai_api_key, embedding_openai_port, embedding_openai_api_base, embedding_openai_api_model, embedding_azure_api_key, embedding_azure_endpoint, embedding_azure_engine]
+     faiss_Refresh.click(refresh_directories_faiss, outputs=[faiss_model_list,faiss_lora_list,doc1,emb_model_list])
+-    faiss_save.click(load_faiss_params, [faiss_api_list,faiss_model_list,faiss_lora_list]+fasiss_total_params, [faiss_user_input,faiss_submitGroup],show_progress=True)
+-    faiss_submitBtn.click(vec_search, [faiss_user_input, faiss_chatbot, history,faiss_net,faiss_search,faiss_search_key,faiss_result_len,doc1], [faiss_chatbot, history,faiss_user_input],show_progress=True)
++    faiss_save.click(load_faiss_params, [faiss_api_list,faiss_model_list,faiss_lora_list]+fasiss_total_params, [faiss_user_input,faiss_submitGroup],show_progress="full")
++    faiss_submitBtn.click(vec_search, [faiss_user_input, faiss_chatbot, history,faiss_net,faiss_search,faiss_search_key,faiss_result_len,doc1], [faiss_chatbot, history,faiss_user_input],show_progress="full")
+ 
+     faiss_emptyBtn.click(chat_model.reset_state, outputs=[faiss_chatbot,history,faiss_user_input])
+     faiss_emptymodelBtn.click(chat_model.clear, outputs=[faiss_chatbot,history,faiss_user_input,faiss_api_list,faiss_model_list,faiss_lora_list,faiss_submitGroup])
+ 
+-    save0.click(load_embedding_params, [doc1,k,score_threshold,chunk_size,chunk_conent,emb_api_list,emb_model_list]+embedding_total_params, [faiss_user_input,faiss_chatbot,history],show_progress=True)
++    save0.click(load_embedding_params, [doc1,k,score_threshold,chunk_size,chunk_conent,emb_api_list,emb_model_list]+embedding_total_params, [faiss_user_input,faiss_chatbot,history],show_progress="full")
+     emptymodelBtn0.click(doc_qa.clear,outputs=[doc1,emb_api_list,emb_model_list])
+ 
+     faiss_model_list.change(model_select, inputs=[faiss_api_list,faiss_model_list,faiss_lora_list], outputs=[faiss_api_list,faiss_model_list,faiss_lora_list])
+@@ -544,9 +544,9 @@ def apply_knowledge(localizer):
+     mysql_total_params = [mysql_openai_api_key, mysql_openai_port, mysql_openai_api_base, mysql_openai_api_model, mysql_azure_api_key, mysql_azure_endpoint, mysql_azure_engine, mysql_ernie_api_key, mysql_ernie_secret_key, mysql_ernie_temperature, mysql_ernie_top_p, mysql_ernie_penalty_score, mysql_ernie_turbo_api_key, mysql_ernie_turbo_secret_key, mysql_chatglm_api_key, mysql_chatglm_temperature, mysql_chatglm_top_p, mysql_chatglm_type, mysql_spark_appid, mysql_spark_api_key, mysql_spark_secret_key, mysql_spark_api_version, mysql_spark_temperature, mysql_spark_top_k, mysql_spark_max_tokens,mysql_qwen_api_key,mysql_ali_top_p,mysql_ali_top_k,mysql_ali_kuake_search,mysql_quantization,mysql_max_length,mysql_top_p,mysql_temperature,mysql_use_deepspeed]
+     connect.click(get_databases, inputs=[host,user,password,port],outputs=[doc0])
+     mysql_Refresh.click(refresh_directories_mysql, outputs=[mysql_model_list])
+-    mysql_save.click(load_mysql_params, [mysql_api_list,mysql_model_list]+mysql_total_params, [mysql_user_input,mysql_submitGroup],show_progress=True)
++    mysql_save.click(load_mysql_params, [mysql_api_list,mysql_model_list]+mysql_total_params, [mysql_user_input,mysql_submitGroup],show_progress="full")
+     mysql_submitBtn.click(chat_model.query_from_mysql, [mysql_user_input,mysql_chatbot,doc0,host,
+-                                         user, password, port,doc0,mysql_tables], [mysql_chatbot,mysql_user_input,doc0,mysql_tables,table_data],show_progress=True)
++                                         user, password, port,doc0,mysql_tables], [mysql_chatbot,mysql_user_input,doc0,mysql_tables,table_data],show_progress="full")
+ 
+     mysql_emptyBtn.click(chat_model.reset_state, outputs=[mysql_chatbot,history,mysql_user_input])
+     mysql_emptymodelBtn.click(doc_qa.clear_mysql, outputs=[mysql_chatbot,history,mysql_user_input,mysql_api_list,mysql_model_list,mysql_submitGroup])
+diff --git a/ui/apply_text_image_generation.py b/ui/apply_text_image_generation.py
+index c3e2a9d..64fac79 100644
+--- a/ui/apply_text_image_generation.py
++++ b/ui/apply_text_image_generation.py
+@@ -29,7 +29,7 @@ def apply_text_image_generation(localizer):
+                 with gr.Accordion(label=''):
+                     set_config_btn = gr.Button(localizer("设置"))
+ 
+-    generate_btn.click(text_image.get_whole_image,inputs=[prompt],outputs=[images],show_progress=True)
+-    set_config_btn.click(text_image.setv,inputs=[channel_id,authorization,application_id,guild_id,session_id,version,id,flags],show_progress=True)
+-    images.select(get_index,show_progress=True)
+-    upscale_btn.click(text_image.upscale,outputs=[sub_image],show_progress=True)
++    generate_btn.click(text_image.get_whole_image,inputs=[prompt],outputs=[images],show_progress="full")
++    set_config_btn.click(text_image.setv,inputs=[channel_id,authorization,application_id,guild_id,session_id,version,id,flags],show_progress="full")
++    images.select(get_index,show_progress="full")
++    upscale_btn.click(text_image.upscale,outputs=[sub_image],show_progress="full")
+diff --git a/ui/apply_video.py b/ui/apply_video.py
+index f77624e..3741d80 100644
+--- a/ui/apply_video.py
++++ b/ui/apply_video.py
+@@ -191,7 +191,7 @@ class Avtar():
+             with gr.Column(scale=2):
+                 audio = gr.Audio(autoplay=False, show_label=False, visible=False,elem_id='audio-div')
+                 loud = gr.HTML(value=None, visible=False,elem_id='loud')
+-                canvas = gr.Sketchpad(value=None,interactive=False,shape=(2,1),show_label = False, visible=False,elem_id='live2d-div')
++                canvas = gr.Sketchpad(value=None,interactive=False,canvas_size=(2,1),show_label = False, visible=False,elem_id='live2d-div')
+                 chatbot = gr.Chatbot()
+                 user_input = gr.Textbox(show_label=False, placeholder="Input...", lines=10,elem_id='player-user-input')
+                 with gr.Accordion(label='',visible=False,elem_id='player-submitGroup') as submitGroup:
+@@ -290,12 +290,12 @@ class Avtar():
+ 
+         gen_type.change(handle_online_tts,inputs=gen_type,outputs= lang)
+         Refresh.click(refresh_file, outputs=[play,memory,background,emb_model_list,model_list,lora_list])
+-        save1.click(load_config_params, [play,time_c,emoticon,user_name,net,search,search_key,result_len,memory,background,emb_api_list,emb_model_list]+total_config_params, [user_input,chatbot],show_progress=True)
+-        save2.click(load_llm_params, [api_list,model_list,lora_list]+total_params, [user_input,submitGroup],show_progress=True)
+-        submitBtn.click(chat_api.predict, [user_input,chatbot,gen_type,lang,voice_style,show_type], [user_input,chatbot,loud,audio],show_progress=False)
+-        emptyBtn.click(chat_api.reset_state, outputs=[user_input,chatbot], show_progress=True)
++        save1.click(load_config_params, [play,time_c,emoticon,user_name,net,search,search_key,result_len,memory,background,emb_api_list,emb_model_list]+total_config_params, [user_input,chatbot],show_progress="full")
++        save2.click(load_llm_params, [api_list,model_list,lora_list]+total_params, [user_input,submitGroup],show_progress="full")
++        submitBtn.click(chat_api.predict, [user_input,chatbot,gen_type,lang,voice_style,show_type], [user_input,chatbot,loud,audio],show_progress="hidden")
++        emptyBtn.click(chat_api.reset_state, outputs=[user_input,chatbot], show_progress="full")
+         emptymodelBtn.click(chat_api.clear, outputs=[chatbot,user_input,api_list,model_list,lora_list,submitGroup])
+-        emptyConfigBtn.click(chat_api.clear_config, outputs=[play,time_c,emoticon,user_name,memory,background,emb_api_list,emb_model_list,net,search_key], show_progress=True)
++        emptyConfigBtn.click(chat_api.clear_config, outputs=[play,time_c,emoticon,user_name,memory,background,emb_api_list,emb_model_list,net,search_key], show_progress="full")
+ 
+         show_type.change(switch_show_type,[show_type],outputs=[audio,canvas,live2d_background,background_gallery])
+         live2d_background.upload(switch_background,inputs=[live2d_background],outputs=[background_gallery])
+diff --git a/ui/chat.py b/ui/chat.py
+index d97c302..01788b2 100644
+--- a/ui/chat.py
++++ b/ui/chat.py
+@@ -511,7 +511,7 @@ def chat_page(localizer):
+         with gr.Row():
+             save1 = gr.Button(localizer("加载"), variant="primary")
+         with gr.Row():
+-            dialog = gr.List(value=None, headers=[ '应用场景', '解释', '提示词'], col_count=(3, 'fixed'), show_label=False, wrap=True, label='提示词参考')
++            dialog = gr.List(value=None, headers=[ '应用场景', '解释', '提示词'], column_count=3, column_limits=(3, 3), show_label=False, wrap=True, label='提示词参考')
+ 
+     
+     
+@@ -703,7 +703,7 @@ def chat_page(localizer):
+                 with gr.Accordion(localizer("载入的向量数据库"),open=True):
+                     status = gr.Dataframe(headers=["Chatbot1", "Chatbot2"],
+                                         datatype=["str", "str"],
+-                                        show_label=False,row_count = (1,"fixed"),col_count=(2,"fixed"))
++                                        show_label=False,row_count=1, row_limits=(1,1), column_count=2, column_limits=(2,2))
+ 
+                 with gr.Accordion(localizer("模型设置")):
+                     parallel_local_model_model_list = gr.Radio(models, show_label=False, value=None)
+@@ -772,7 +772,7 @@ def chat_page(localizer):
+     embedding_total_params = [embedding_openai_api_key, embedding_openai_port, embedding_openai_api_base, embedding_openai_api_model, embedding_azure_api_key, embedding_azure_endpoint, embedding_azure_engine]
+ 
+     save0.click(parallel_local_model.load_embedding_params, [status,switch_chatbot,doc1, k, score_threshold, chunk_size, chunk_conent, emb_api_list,
+-                                        emb_model_list] + embedding_total_params,[status], show_progress=True)
++                                        emb_model_list] + embedding_total_params,[status], show_progress="full")
+     emptymodelBtn0.click(parallel_local_model.clear, inputs=[switch_chatbot,status],outputs=[doc1, emb_api_list, emb_model_list, status])
+ 
+     emb_api_list.change(emb_api_select, inputs=[emb_api_list, emb_model_list],
+@@ -795,7 +795,7 @@ def chat_page(localizer):
+                                                                     parallel_local_model_search, parallel_local_model_search_key,\
+                                                                     parallel_local_model_result_len, parallel_local_model_prompt,status],
+                                                                     [local_chatbot1,local_chatbot2, parallel_history1,parallel_history2,\
+-                                                                            parallel_local_model_textinput], show_progress=True)
++                                                                            parallel_local_model_textinput], show_progress="full")
+ 
+     parallel_local_model_emptyBtn.click(chat_model.reset_states, outputs=[local_chatbot1,local_chatbot2, parallel_history1,parallel_history2, user_input])
+ 
+@@ -806,17 +806,17 @@ def chat_page(localizer):
+     save.click(chat_model.reset_state_claude,[chatbot, history, user_input], outputs=[
+                    chatbot, history, user_input])    
+     save.click(load_params, [api_list, model_list, lora_list]+total_params,
+-               outputs=[user_input, submitGroup], show_progress=True)
++               outputs=[user_input, submitGroup], show_progress="full")
+ 
+     parallel_local_model_total_params = [parallel_local_model_prompt, openai_api_key, openai_port, azure_api_key, azure_endpoint, azure_engine, ernie_api_key, ernie_secret_key, ernie_temperature, ernie_top_p, ernie_penalty_score, ernie_turbo_api_key,
+                     ernie_turbo_secret_key, chatglm_api_key, chatglm_temperature, chatglm_top_p, chatglm_type, spark_appid, spark_api_key, spark_secret_key, spark_api_version, spark_temperature, spark_top_k, spark_max_tokens, qwen_api_key, ali_top_p, ali_top_k, ali_kuake_search, parallel_local_model_quantization, parallel_local_model_max_length, parallel_local_model_top_p, parallel_local_model_temperature, parallel_local_model_use_deepspeed]
+ 
+ 
+     parallel_local_model_save.click(load_params, [parallel_local_model_model_list, parallel_local_model_model_list, parallel_local_model_lora_list]+parallel_local_model_total_params,
+-               outputs=[parallel_local_model_textinput, parallel_local_model_submitGroup], show_progress=True)
++               outputs=[parallel_local_model_textinput, parallel_local_model_submitGroup], show_progress="full")
+ 
+     submitBtn.click(chat_model.predict, [user_input, chatbot, history, stream, net, search, search_key, result_len, prompt], [
+-                    chatbot, history, user_input], show_progress=True)
++                    chatbot, history, user_input], show_progress="full")
+ 
+     emptyBtn.click(chat_model.reset_state, total_params, outputs=[chatbot, history, user_input])
+ 
+@@ -847,35 +847,35 @@ def chat_page(localizer):
+                             api_chatglm_knowledge_chatbot, api_spark_chatbot, api_spark_knowledge_chatbot, api_ali_chatbot, api_ali_knowledge_chatbot, api_user_input, api_submitGroup, api_api_list, api_selected_api, use_knowledge, api_emb_model_list, api_emb_api_list, api_doc1])
+ 
+     api_save.click(load_api_page_params, inputs=[api_api_list, api_emb_api_list, api_emb_model_list, api_doc1, api_k, api_score_threshold, api_chunk_size, api_chunk_conent, api_net, api_search, api_search_key, api_result_len, api_prompt, use_knowledge]+api_total_params+api_embed_total_params, outputs=[api_openai_chatbot, api_openai_knowledge_chatbot,
+-                   api_azure_chatbot, api_azure_knowledge_chatbot, api_ernie_chatbot, api_ernie_knowledge_chatbot, api_ernie_turbo_chatbot, api_ernie_turbo_knowledge_chatbot, api_chatglm_chatbot, api_chatglm_knowledge_chatbot, api_spark_chatbot, api_spark_knowledge_chatbot, api_ali_chatbot, api_ali_knowledge_chatbot, api_user_input, api_submitGroup], show_progress=True)
++                   api_azure_chatbot, api_azure_knowledge_chatbot, api_ernie_chatbot, api_ernie_knowledge_chatbot, api_ernie_turbo_chatbot, api_ernie_turbo_knowledge_chatbot, api_chatglm_chatbot, api_chatglm_knowledge_chatbot, api_spark_chatbot, api_spark_knowledge_chatbot, api_ali_chatbot, api_ali_knowledge_chatbot, api_user_input, api_submitGroup], show_progress="full")
+     api_emptyBtn.click(clear_history, outputs=[api_openai_chatbot, api_openai_knowledge_chatbot, api_azure_chatbot, api_azure_knowledge_chatbot, api_ernie_chatbot, api_ernie_knowledge_chatbot, api_ernie_turbo_chatbot,
+-                       api_ernie_turbo_knowledge_chatbot, api_chatglm_chatbot, api_chatglm_knowledge_chatbot, api_spark_chatbot, api_spark_knowledge_chatbot, api_ali_chatbot, api_ali_knowledge_chatbot], show_progress=True)
++                       api_ernie_turbo_knowledge_chatbot, api_chatglm_chatbot, api_chatglm_knowledge_chatbot, api_spark_chatbot, api_spark_knowledge_chatbot, api_ali_chatbot, api_ali_knowledge_chatbot], show_progress="full")
+ 
+     api_submitBtn.click(parallel_api.call_openai, [user_input, api_openai_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_openai_chatbot, api_user_input], show_progress=True)
++        api_openai_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_openai_knowledge, [api_user_input, api_openai_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_openai_knowledge_chatbot, api_user_input], show_progress=True)
++        api_openai_knowledge_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_azure, [api_user_input, api_azure_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_azure_chatbot, api_user_input], show_progress=True)
++        api_azure_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_azure_knowledge, [api_user_input, api_azure_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_azure_knowledge_chatbot, api_user_input], show_progress=True)
++        api_azure_knowledge_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_ernie, [api_user_input, api_ernie_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ernie_chatbot, api_user_input], show_progress=True)
++        api_ernie_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_ernie_knowledge, [api_user_input, api_ernie_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ernie_knowledge_chatbot, api_user_input], show_progress=True)
++        api_ernie_knowledge_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_ernie_turbo, [api_user_input, api_ernie_turbo_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ernie_turbo_chatbot, api_user_input], show_progress=True)
++        api_ernie_turbo_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_ernie_turbo_knowledge, [api_user_input, api_ernie_turbo_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ernie_turbo_knowledge_chatbot, api_user_input], show_progress=True)
++        api_ernie_turbo_knowledge_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_chatglm, [api_user_input, api_chatglm_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_chatglm_chatbot, api_user_input], show_progress=True)
++        api_chatglm_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_chatglm_kmowledge, [api_user_input, api_chatglm_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_chatglm_knowledge_chatbot, api_user_input], show_progress=True)
++        api_chatglm_knowledge_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_spark, [api_user_input, api_spark_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_spark_chatbot, api_user_input], show_progress=True)
++        api_spark_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_spark_knowledge, [api_user_input, api_spark_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_spark_knowledge_chatbot, api_user_input], show_progress=True)
++        api_spark_knowledge_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_ali, [api_user_input, api_ali_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ali_chatbot, api_user_input], show_progress=True)
++        api_ali_chatbot, api_user_input], show_progress="full")
+     api_submitBtn.click(parallel_api.call_ali_knowledge, [api_user_input, api_ali_knowledge_chatbot,api_stream,net, search, search_key, result_len, prompt], [
+-        api_ali_knowledge_chatbot, api_user_input], show_progress=True)
++        api_ali_knowledge_chatbot, api_user_input], show_progress="full")
+diff --git a/ui/data.py b/ui/data.py
+index 8f296a2..09f992a 100644
+--- a/ui/data.py
++++ b/ui/data.py
+@@ -236,21 +236,21 @@ def data_page(localizer):
+     emb_refresh.click(doc_qa.refresh_emb,  outputs=[emb_model_list])
+     refresh_edit.click(doc_qa.refresh_vector,outputs=[doc0,create_emb_model_list])
+ 
+-    save1.click(data_pro.save_data, [question1, answer1],  outputs=[json_d1,question1,answer1],show_progress=True)
++    save1.click(data_pro.save_data, [question1, answer1],  outputs=[json_d1,question1,answer1],show_progress="full")
+     llm_sikp.click(data_pro.skip_qa,[answer1],outputs=[question1,answer1])
+-    gpt1.click(data_pro.ones_openai, [question1,openai_api_key,temperature,max_tokens,top_p,openai_prompt,port1],  outputs=[answer1],show_progress=True)
+-    upload2.upload(data_pro.upload_data, [upload2],  outputs=[question1],show_progress=True)
+-    download11.click(data_pro.dl_jsonl1, [download_path1,split_data11],[llm_upload_ok],show_progress=True)
++    gpt1.click(data_pro.ones_openai, [question1,openai_api_key,temperature,max_tokens,top_p,openai_prompt,port1],  outputs=[answer1],show_progress="full")
++    upload2.upload(data_pro.upload_data, [upload2],  outputs=[question1],show_progress="full")
++    download11.click(data_pro.dl_jsonl1, [download_path1,split_data11],[llm_upload_ok],show_progress="full")
+     emptyBtn10.click(data_pro.reset_state, [],[json_d1])
+     emptyBtn11.click(data_pro.reset_upload, [],[question1])
+     back1.click(data_pro.back_state, [],[json_d1])
+     start2.click(data_pro.start_openai, [openai_api_key,temperature,max_tokens,top_p,openai_prompt,port1,timesleep],[json_d1])
+     stop2.click(data_pro.stop_openai, [],[json_d1,question1])
+ 
+-    gpt3.click(data_pro.ones_openai_doc, [doc3,openai_api_key3,temperature3,max_tokens3,top_p3,openai_prompt3,port3],  outputs=[json_d3, org_json_d3],show_progress=True)
+-    upload3.upload(data_pro.upload_data, [upload3],  outputs=[doc3],show_progress=True)
+-    download31.click(data_pro.dl_jsonl1, [download_path3,split_data31],[doc_to_llm_upload_ok],show_progress=True)
+-    download33.click(data_pro.dl_jsonl1,[download_path3,split_data31],[doc_to_llm_upload_ok],show_progress=True)
++    gpt3.click(data_pro.ones_openai_doc, [doc3,openai_api_key3,temperature3,max_tokens3,top_p3,openai_prompt3,port3],  outputs=[json_d3, org_json_d3],show_progress="full")
++    upload3.upload(data_pro.upload_data, [upload3],  outputs=[doc3],show_progress="full")
++    download31.click(data_pro.dl_jsonl1, [download_path3,split_data31],[doc_to_llm_upload_ok],show_progress="full")
++    download33.click(data_pro.dl_jsonl1,[download_path3,split_data31],[doc_to_llm_upload_ok],show_progress="full")
+     emptyBtn30.click(data_pro.reset_state_doc, [],[json_d3,org_json_d3])
+     emptyBtn31.click(data_pro.reset_upload, [],[doc3])
+     back3.click(data_pro.back_state, [],[json_d3])
+@@ -258,29 +258,29 @@ def data_page(localizer):
+     stop3.click(data_pro.stop_openai_doc, [],[json_d3,org_json_d3,doc3])
+     
+     total_faiss_params = [files,vs_name,openai_api_key,openai_port, openai_api_base, openai_api_model, azure_api_key,azure_endpoint,azure_engine]
+-    upload1.upload(data_pro.upload_data_out, [upload1,question2,answer2,models2,models3],  outputs=[out],show_progress=True)
++    upload1.upload(data_pro.upload_data_out, [upload1,question2,answer2,models2,models3],  outputs=[out],show_progress="full")
+     emptyBtn2.click(data_pro.reset_upload_out, [],[out])
+-    download21.click(data_pro.dl_jsonl2, [download_path2,split_data21],[llm_exchange_upload_ok],show_progress=True)
+-    upload.click(doc_qa.upload_data,[emb_api_list,emb_model_list]+total_faiss_params,[upload_ok],show_progress=True)
++    download21.click(data_pro.dl_jsonl2, [download_path2,split_data21],[llm_exchange_upload_ok],show_progress="full")
++    upload.click(doc_qa.upload_data,[emb_api_list,emb_model_list]+total_faiss_params,[upload_ok],show_progress="full")
+ 
+ 
+-    embed_relate.click(data_pro.save_embed_data,[sentence1,sentence2,embed_relate],outputs=[embed_json_dict,sentence1,sentence2],show_progress=True)
+-    embed_unrelate.click(data_pro.save_embed_data,[sentence1,sentence2,embed_unrelate],outputs=[embed_json_dict,sentence1,sentence2],show_progress=True)
+-    embed_back.click(data_pro.back_embed_json,[],outputs=[embed_json_dict],show_progress=True)
+-    embed_download.click(data_pro.dl_embed,[embed_download_path,train_valid],[embed_upload_ok],show_progress=True)
+-    embed_empty_json.click(data_pro.empty_embed_json,[],outputs=[embed_json_dict],show_progress=True)
+-    embed_empty_upload.click(data_pro.empty_embed_upload,[],outputs=[sentence1,sentence2],show_progress=True)
+-    embed_upload.upload(data_pro.upload_embed_data,[embed_upload],[sentence1,sentence2],show_progress=True)
+-    embed_batch_generate.click(data_pro.start_openai_embed,[openai_api_key_embed,temperature_embed,max_tokens_embed,top_p_embed,openai_prompt_embed,port1_embed,timesleep_embed],[embed_json_dict,sentence1,sentence2],show_progress=True)
+-    embed_stop_generate.click(data_pro.stop_openai_embed,[],[],show_progress=True)
++    embed_relate.click(data_pro.save_embed_data,[sentence1,sentence2,embed_relate],outputs=[embed_json_dict,sentence1,sentence2],show_progress="full")
++    embed_unrelate.click(data_pro.save_embed_data,[sentence1,sentence2,embed_unrelate],outputs=[embed_json_dict,sentence1,sentence2],show_progress="full")
++    embed_back.click(data_pro.back_embed_json,[],outputs=[embed_json_dict],show_progress="full")
++    embed_download.click(data_pro.dl_embed,[embed_download_path,train_valid],[embed_upload_ok],show_progress="full")
++    embed_empty_json.click(data_pro.empty_embed_json,[],outputs=[embed_json_dict],show_progress="full")
++    embed_empty_upload.click(data_pro.empty_embed_upload,[],outputs=[sentence1,sentence2],show_progress="full")
++    embed_upload.upload(data_pro.upload_embed_data,[embed_upload],[sentence1,sentence2],show_progress="full")
++    embed_batch_generate.click(data_pro.start_openai_embed,[openai_api_key_embed,temperature_embed,max_tokens_embed,top_p_embed,openai_prompt_embed,port1_embed,timesleep_embed],[embed_json_dict,sentence1,sentence2],show_progress="full")
++    embed_stop_generate.click(data_pro.stop_openai_embed,[],[],show_progress="full")
+ 
+-    embed_exchange_upload.upload(data_pro.upload_embed_exchange_data,[embed_exchange_upload,embed_exchange_models],[embed_exchange_out],show_progress=True)
+-    embed_exchange_emptyBtn.click(data_pro.empty_embed_exchange_upload,[],[embed_exchange_out],show_progress=True)
+-    embed_exchange_download.click(data_pro.dl_embed,[embed_exchange_download_path,embed_exchange_train_valid],outputs=[embed_exchange_upload_ok],show_progress=True)
++    embed_exchange_upload.upload(data_pro.upload_embed_exchange_data,[embed_exchange_upload,embed_exchange_models],[embed_exchange_out],show_progress="full")
++    embed_exchange_emptyBtn.click(data_pro.empty_embed_exchange_upload,[],[embed_exchange_out],show_progress="full")
++    embed_exchange_download.click(data_pro.dl_embed,[embed_exchange_download_path,embed_exchange_train_valid],outputs=[embed_exchange_upload_ok],show_progress="full")
+ 
+-    connect.click(data_pro.connect_mysql,[host,user,password,port],[database],show_progress=True)
+-    database.change(data_pro.change_database,[database],[new_database],show_progress=True)
+-    mysql_upload.click(data_pro.mysql_upload,[host,user,password,port,database,new_database,mysql_files],[mysql_upload_ok],show_progress=True)
++    connect.click(data_pro.connect_mysql,[host,user,password,port],[database],show_progress="full")
++    database.change(data_pro.change_database,[database],[new_database],show_progress="full")
++    mysql_upload.click(data_pro.mysql_upload,[host,user,password,port,database,new_database,mysql_files],[mysql_upload_ok],show_progress="full")
+ 
+     emb_model_list.change(emb_model_select, inputs=[emb_api_list,emb_model_list], outputs=[emb_api_list,emb_model_list])
+     emb_api_list.change(emb_api_select, inputs=[emb_api_list,emb_model_list], outputs=[openai_params,azure_openai_params,emb_api_list,emb_model_list])
+diff --git a/ui/train.py b/ui/train.py
+index d02e5ca..c9995cb 100644
+--- a/ui/train.py
++++ b/ui/train.py
+@@ -274,13 +274,13 @@ def train_page(localizer):
+     LLM_end.click(llm_train_cofig.post_stop_request,inputs=[],outputs=[])
+                     
+     
+-    embed_start.click(embedding_train.start_train,[embed_emb0,embed_arch,embed_data1,embed_device1,embed_batch_size,embed_max_steps,embed_save_steps,embed_learning_rate,embed_logging_epochs,embed_save_dir,embed_epochs,embed_weight_decay,embed_warmup_ratio,embed_eps,embed_gradient_accumulation_steps],[embed_out],show_progress=True)
+-    embed_stop.click(embedding_train.stop_train,[],[],show_progress=True)
++    embed_start.click(embedding_train.start_train,[embed_emb0,embed_arch,embed_data1,embed_device1,embed_batch_size,embed_max_steps,embed_save_steps,embed_learning_rate,embed_logging_epochs,embed_save_dir,embed_epochs,embed_weight_decay,embed_warmup_ratio,embed_eps,embed_gradient_accumulation_steps],[embed_out],show_progress="full")
++    embed_stop.click(embedding_train.stop_train,[],[],show_progress="full")
+ 
+     total_params = [openai_api_key,openai_port,openai_api_base, openai_api_model, azure_api_key,azure_endpoint,azure_engine]
+ 
+     Refresh.click(embedding_vis.refresh_directories, outputs=[model_list])
+-    upload4.upload(embedding_vis.upload_data, inputs=[upload4],outputs=text,show_progress=True)
++    upload4.upload(embedding_vis.upload_data, inputs=[upload4],outputs=text,show_progress="full")
+     dispalyBtn.click(load_emb_val_params,inputs=[api_list,model_list]+total_params,outputs=show)
+ 
+     embed_emb0.change(switch_model_arch,inputs=[embed_emb0],outputs=[embed_arch])
+diff --git a/utils/embedding_val.py b/utils/embedding_val.py
+index 5a3c2e2..25937e8 100644
+--- a/utils/embedding_val.py
++++ b/utils/embedding_val.py
+@@ -1,5 +1,6 @@
+ 
+ import gradio as gr
++from utils.gradio_compat import file_path
+ from modules.model.emb_auto import AutoEmb
+ from modules.model.use_api import *
+ import os
+@@ -65,7 +66,7 @@ class embedding_visualization_plot():
+             上传文件处理, 读取label和内容
+         '''
+         words_persentence=80        # 定义切分文章每句子长度
+-        fname=temp_file.name
++        fname=file_path(temp_file)
+         suffix = str(fname).split('.')[-1]
+ 
+         if suffix == "json":
+diff --git a/utils/gradio_compat.py b/utils/gradio_compat.py
+new file mode 100644
+index 0000000..8c1388d
+--- /dev/null
++++ b/utils/gradio_compat.py
+@@ -0,0 +1,89 @@
++"""Compatibility helpers for Gradio 6.
++
++Gradio 6 removed the legacy "tuples" chat format: ``gr.Chatbot`` only accepts and
++returns a list of ``{"role": ..., "content": ...}`` messages. The handlers in this
++project work with ``[[user, bot], ...]`` pairs, so ``patch_chatbot`` makes
++``gr.Chatbot`` convert between the two formats at the component boundary.
++"""
++import gradio as gr
++
++
++def file_path(f):
++    """Path of an uploaded file.
++
++    ``gr.File`` used to hand handlers a tempfile wrapper with a ``.name`` attribute;
++    Gradio >= 4 passes the filepath as a plain ``str``.
++    """
++    return getattr(f, "name", f)
++
++
++def _text(content):
++    """Reduce message content (str / dict / list of parts) to what the handlers expect."""
++    if isinstance(content, list):
++        parts = [_text(c) for c in content]
++        parts = [p for p in parts if p]
++        return "\n".join(parts) if parts else ""
++    if isinstance(content, dict):
++        if "text" in content:
++            return content["text"]
++        if "path" in content:
++            return content["path"]
++        return str(content)
++    return content
++
++
++def messages_to_pairs(messages):
++    """[{"role", "content"}, ...] -> [[user, bot], ...]"""
++    pairs = []
++    for msg in messages or []:
++        if isinstance(msg, dict):
++            role, content = msg.get("role"), _text(msg.get("content"))
++        else:  # already a pair
++            pairs.append(list(msg))
++            continue
++        if role == "user":
++            pairs.append([content, None])
++        else:
++            if pairs and pairs[-1][1] is None and pairs[-1][0] is not None:
++                pairs[-1][1] = content
++            else:
++                pairs.append([None, content])
++    return pairs
++
++
++def pairs_to_messages(pairs):
++    """[[user, bot], ...] -> [{"role", "content"}, ...]"""
++    messages = []
++    for pair in pairs or []:
++        if isinstance(pair, dict):  # already a message
++            messages.append(pair)
++            continue
++        user, bot = pair[0], pair[1]
++        if user is not None:
++            messages.append({"role": "user", "content": user})
++        if bot is not None:
++            messages.append({"role": "assistant", "content": bot})
++    return messages
++
++
++def patch_chatbot():
++    """Make gr.Chatbot accept/return the legacy ``[[user, bot], ...]`` format."""
++    if getattr(gr.Chatbot, "_tuples_patched", False):
++        return
++    preprocess_ori = gr.Chatbot.preprocess
++    postprocess_ori = gr.Chatbot.postprocess
++
++    def preprocess(self, payload):
++        return messages_to_pairs(preprocess_ori(self, payload))
++
++    def postprocess(self, value):
++        if value is None:
++            return postprocess_ori(self, value)
++        return postprocess_ori(self, pairs_to_messages(value))
++
++    gr.Chatbot.preprocess = preprocess
++    gr.Chatbot.postprocess = postprocess
++    gr.Chatbot._tuples_patched = True
++
++
++patch_chatbot()
+diff --git a/utils/local_doc.py b/utils/local_doc.py
+index 78007c3..09a0583 100644
+--- a/utils/local_doc.py
++++ b/utils/local_doc.py
+@@ -8,6 +8,7 @@ from utils.chinese_text_splitter import ChineseTextSplitter
+ from utils.MyFAISS import MyFAISS
+ import datetime
+ import gradio as gr
++from utils.gradio_compat import file_path
+ from modules.agent.chatdb.mysql import MySQLDB
+ 
+ real_path = os.path.split(os.path.realpath(__file__))[0]
+@@ -148,7 +149,7 @@ class local_doc_qa():
+         loaded_files = ''
+         docs = []
+         for file in files:
+-            file=file.name
++            file=file_path(file)
+             try:
+                 docs += self.load_file(file)
+                 loaded_files+=os.path.split(file)[-1]+'已成功加载\n'
+@@ -240,7 +241,7 @@ class local_doc_qa():
+                """
+         docs = []
+         for file in files:
+-            docs += self.load_file(file.name)
++            docs += self.load_file(file_path(file))
+         self.vector_store.add_files(docs,database_name)
+         return gr.update(choices=self.vector_store.list_docs(), interactive=True)
+ 
+diff --git a/utils/ui_utils.py b/utils/ui_utils.py
+index 27a1bda..7128874 100644
+--- a/utils/ui_utils.py
++++ b/utils/ui_utils.py
+@@ -6,6 +6,7 @@
+ 
+ import sys
+ import gradio as gr
++from utils.gradio_compat import file_path
+ from utils.dl_data import *
+ from collections import OrderedDict
+ from modules.model.use_api import *
+@@ -238,7 +239,7 @@ class data_process():
+         return self.json_dict
+ 
+     def upload_data(self, temp_file):
+-        fname = temp_file.name
++        fname = file_path(temp_file)
+         with open(fname, 'r', encoding='utf-8') as f:
+             self.answer_list = [i.strip() for i in f.readlines()]
+         return self.answer_list[0]
+@@ -246,7 +247,7 @@ class data_process():
+     def upload_data_out(self, temp_file, a, b, models2, models3):
+         if models3 == '新建':
+             self.upload_dict = OrderedDict()
+-        fname = temp_file.name
++        fname = file_path(temp_file)
+         if models2 == 'json':
+             try:
+                 with open(fname, 'r', encoding='utf-8') as f:
+@@ -270,7 +271,7 @@ class data_process():
+ 
+     def upload_embed_data(self, embed_upload):
+         self.sentence_pair = []
+-        fname = embed_upload.name
++        fname = file_path(embed_upload)
+         with open(fname, 'r', encoding='utf-8') as f:
+             content = f.read()
+             content = content.replace('\n', '')
+@@ -285,7 +286,7 @@ class data_process():
+     def upload_embed_exchange_data(self, embed_exchange_upload, type_):
+         if type_ == '新建':
+             self.embedding_json_dict = OrderedDict()
+-        fname = embed_exchange_upload.name
++        fname = file_path(embed_exchange_upload)
+         with open(fname, 'r', encoding='utf8') as f:
+             lines = f.readlines()
+             for line in lines:
+@@ -484,7 +485,7 @@ class data_process():
+             if not self.mysql.create_database(new_database):
+                 raise gr.Error('数据库创建失败')
+         for file in files:
+-            name = file.name
++            name = file_path(file)
+             if name.split('.')[-1] == 'xlsx' or name.split('.')[-1] == 'xls':
+                 df = pd.read_excel(name, header=0, engine='openpyxl')
+             elif name.split('.')[-1] == 'csv':
+@@ -1796,17 +1797,19 @@ def handle_online_tts(choice):
+         return gr.update(choices=["中文"])
+ 
+ 
+-def load_javascript():
+-    GradioTemplateResponseOriginal = gr.routes.templates.TemplateResponse
+-    print("loading javascript...")
+-    js = '''
+-    <script src="file=data/config/js/custom.js"></script>
+-    '''
++def load_javascript(path='data/config/js/custom.js'):
++    """Read the custom javascript file and wrap it for ``Blocks.launch(js=...)``.
+ 
+-    def template_response(*args, **kwargs):
+-        res = GradioTemplateResponseOriginal(*args, **kwargs)
+-        res.body = res.body.replace(b'</html>', f'{js}</html>'.encode("utf8"))
+-        res.init_headers()
+-        return res
++    Gradio >= 4 no longer lets us patch ``gr.routes.templates.TemplateResponse`` to
++    inject a ``<script>`` tag, and Gradio 6 takes custom js through ``launch(js=...)``
++    as a single function that runs when the page loads.
+ 
+-    gr.routes.templates.TemplateResponse = template_response
++    Returns:
++        str | None: The js function source, or None if the file does not exist.
++    """
++    print("loading javascript...")
++    if not os.path.isfile(path):
++        return None
++    with open(path, 'r', encoding='utf8') as f:
++        code = f.read()
++    return "() => {\n" + code + "\n}"
+diff --git a/webui.py b/webui.py
+index 4031944..5fe7e21 100644
+--- a/webui.py
++++ b/webui.py
+@@ -1,6 +1,7 @@
+ import torch
+ torch.cuda.device_count()
+ import gradio as gr
++import utils.gradio_compat  # noqa: F401  (patches gr.Chatbot to keep the [[user, bot], ...] format)
+ from ui import data,train,apply,chat
+ from utils.ui_utils import load_javascript
+ from utils.language_switch_utils import Localizer
+@@ -22,7 +23,7 @@ with gr.Blocks(analytics_enabled=False) as demo:
+     with gr.Tab(localizer("训练")):
+         train.train_page(localizer)
+ 
+-load_javascript()
+-demo.queue(concurrency_count=3).launch(_frontend=False,inbrowser=True)
++custom_js = load_javascript()
++demo.queue(default_concurrency_limit=3).launch(_frontend=False,inbrowser=True,js=custom_js)
+ 
+ 

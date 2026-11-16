@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 96,
+  "duration_ms": 443268,
+  "total_cost_usd": 1.6839047000000007,
+  "usage": {
+   "input_tokens": 96,
+   "cache_creation_input_tokens": 173608,
+   "cache_read_input_tokens": 5043375,
+   "output_tokens": 45830,
+   "output_tokens_details": {
+    "thinking_tokens": 23443
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 173608,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1287,
+     "cache_read_input_tokens": 177552,
+     "cache_creation_input_tokens": 2241,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2241
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.64,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.21,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Glob": 2,
+  "Grep": 25,
+  "Read": 23,
+  "Bash": 1,
+  "WebFetch": 10,
+  "Write": 1,
+  "Edit": 33
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://www.gradio.app/guides/gradio-6-migration-guide",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/events.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/blocks.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/__init__.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/blocks.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/routes.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/templates.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/components/dataframe.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/components/chatbot.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.31.0/gradio/components/audio.py"
+ ],
+ "denied": 0,
+ "task": "pin-wpydcr__llm-kit-gradio-up",
+ "arm": "A",
+ "label": "A2",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 443.9,
+ "service_error": false
+}

@@ -1,0 +1,22 @@
+diff --git a/app.py b/app.py
+index f332f55..83c9d81 100644
+--- a/app.py
++++ b/app.py
+@@ -1,15 +1,14 @@
+ import streamlit as st
+ 
+ from PyPDF2 import PdfReader
+-from langchain.text_splitter import RecursiveCharacterTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter
+ import os
+ from langchain_google_genai import GoogleGenerativeAIEmbeddings
+ import google.generativeai as genai
+-from langchain.vectorstores import FAISS
+ from langchain_community.vectorstores import FAISS
+ from langchain_google_genai import ChatGoogleGenerativeAI
+ from langchain.chains.question_answering import load_qa_chain
+-from langchain.prompts import PromptTemplate
++from langchain_core.prompts import PromptTemplate
+ from dotenv import load_dotenv
+ 
+ load_dotenv()

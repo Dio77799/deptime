@@ -1,0 +1,151 @@
+diff --git a/cz_caption_ui.py b/cz_caption_ui.py
+index 3c091d6..b52efc3 100644
+--- a/cz_caption_ui.py
++++ b/cz_caption_ui.py
+@@ -268,7 +268,8 @@ def build_panel():
+         p["palette"] = gr.Textbox(label="Palette (hex, up to 16: #1B1B2F #E43F5A ...)", lines=1)
+         p["background"] = gr.Textbox(label="Background", lines=2)
+         p["rows"] = gr.Dataframe(headers=COLS, datatype=["str"] * len(COLS),
+-                                 col_count=(len(COLS), "fixed"), row_count=(1, "dynamic"),
++                                 column_count=len(COLS), column_limits=(len(COLS), len(COLS)),
++                                 row_count=1, row_limits=None,
+                                  type="array", interactive=True, wrap=True,
+                                  label="Elements: type = text or obj, text = the exact "
+                                        "characters, bbox = y0, x0, y1, x1 in 0..1000, "
+@@ -276,7 +277,7 @@ def build_panel():
+         with gr.Row():
+             p["target"] = gr.Dropdown([], label="Element to place with the mouse", scale=3)
+             p["clear_box"] = gr.Button("Clear its box", scale=1)
+-        p["board"] = gr.HTML(render_board(cz_caption.build(""), 1024, 1024))
++        p["board"] = gr.HTML(render_board(cz_caption.build(""), 1024, 1024), padding=True)
+         p["bridge"] = gr.Textbox(elem_id=BRIDGE_ID, show_label=False, container=False)
+         p["status"] = gr.Markdown("")
+         with gr.Accordion("Raw JSON", open=False):
+diff --git a/cz_cli.py b/cz_cli.py
+index 9522e49..9b26d71 100644
+--- a/cz_cli.py
++++ b/cz_cli.py
+@@ -824,11 +824,14 @@ def cli_main(argv=None):
+                 _log(f"auth: login page enabled ({len(_pairs)} account(s))")
+             else:
+                 _log("auth: IGNORED (expected \"user:password\")")
+-        build_ui().launch(auth=_auth,
+-                          allowed_paths=[os.path.join(HERE, "styles", "samples"),
+-                                         os.path.join(HERE, "tags"),
+-                                         _ab_resolve_dir(DEFAULT_OUTPUT_DIR),
+-                                         _thumbs_dir] + _model_dirs)
++        _demo = build_ui()
++        # Gradio 6: theme/css/js/head are launch() parameters (set by build_ui).
++        _demo.launch(auth=_auth,
++                     allowed_paths=[os.path.join(HERE, "styles", "samples"),
++                                    os.path.join(HERE, "tags"),
++                                    _ab_resolve_dir(DEFAULT_OUTPUT_DIR),
++                                    _thumbs_dir] + _model_dirs,
++                     **getattr(_demo, "cz_launch_kwargs", {}))
+         return 0
+ 
+     if not models and not args.no_esrgan:
+diff --git a/cz_ui.py b/cz_ui.py
+index 269f825..2e46bd6 100644
+--- a/cz_ui.py
++++ b/cz_ui.py
+@@ -18,12 +18,6 @@ import contextvars
+ import functools
+ import warnings
+ 
+-# Silences the Gradio DeprecationWarnings "pass theme/css/js to launch() instead":
+-# launch() does NOT accept them yet in Gradio 5.x (an early warning for Gradio 6), so they
+-# stay in Blocks(...) and only the startup noise is cut.
+-warnings.filterwarnings(
+-    "ignore", category=DeprecationWarning,
+-    message=r"The '(theme|css|js)' parameter in the Blocks constructor will be removed")
+ import base64
+ import csv
+ import glob
+@@ -4192,8 +4186,12 @@ def build_ui():
+     import cz_protocol as _czproto
+     omni_on = _czproto.OMNI_SUPPORTED and bool((cz_pipeline.OMNI_MODEL or "").strip())
+ 
+-    with gr.Blocks(title=f"crispz-ideogram {APP_VERSION}", theme=gr.themes.Default(), css=FOOOCUS_CSS,
+-                   js=js_full, head=_ui_head()) as demo:
++    # Gradio 6: theme/css/js/head belong to launch(), not to the Blocks constructor. They
++    # are kept on the Blocks (demo.cz_launch_kwargs) and splatted into launch() by the caller.
++    _launch_kwargs = dict(theme=gr.themes.Default(), css=FOOOCUS_CSS, js=js_full,
++                          head=_ui_head())
++    with gr.Blocks(title=f"crispz-ideogram {APP_VERSION}") as demo:
++        demo.cz_launch_kwargs = _launch_kwargs
+         # The output folder's gallery opens in a new tab (the Asset Browser), through
+         # the button under the preview. No inline gallery panel.
+         gallery_url = gr.Textbox(visible=False)
+@@ -4256,7 +4254,7 @@ def build_ui():
+             with gr.Column(scale=3):
+                 out = gr.Gallery(label="Result", elem_id="cz_result", columns=2,
+                                  object_fit="contain", preview=True, allow_preview=True,
+-                                 show_fullscreen_button=True, show_download_button=True)
++                                 buttons=["fullscreen", "download"])
+                 # The gallery's native download names the file "image" (a Gradio
+                 # limitation). This button downloads the REAL file (its real name) of the
+                 # image clicked.
+@@ -4268,7 +4266,7 @@ def build_ui():
+                     gr.Markdown("*Renders made in this session (in-memory, not the disk folder). "
+                                 "Use 'Load output folder' to pull saved files in.*")
+                     history_gallery = gr.Gallery(label=None, height=240, columns=6,
+-                                                 object_fit="cover", show_download_button=True)
++                                                 object_fit="cover", buttons=["download"])
+                     with gr.Row():
+                         load_out_btn = gr.Button("Load output folder", size="sm")
+                         clear_hist_btn = gr.Button("Clear history", size="sm")
+@@ -4534,7 +4532,7 @@ def build_ui():
+                                         "shapes.*" + ("" if _vec_ok else f" **{_vec_why}**"))
+                             with gr.Row():
+                                 vec_img = _crop_input("Image", 280)
+-                                vec_preview = gr.HTML(label="SVG")
++                                vec_preview = gr.HTML(label="SVG", padding=True)
+                             with gr.Row():
+                                 vec_preset = gr.Dropdown(list(cz_vector.PRESETS),
+                                                          value=cz_vector.DEFAULT_PRESET,
+@@ -5183,7 +5181,7 @@ def build_ui():
+                             ab_open_btn = gr.Button("\U0001F5BC️ Open Asset Browser",
+                                                     variant="primary", size="sm")
+                             ab_reindex_btn = gr.Button("Rebuild ALL thumbnails (force)", size="sm")
+-                        ab_open_link = gr.HTML("")
++                        ab_open_link = gr.HTML("", padding=True)
+                         ab_status = gr.Markdown("")
+ 
+                     with gr.Tab("Advanced"):
+diff --git a/requirements-lock.txt b/requirements-lock.txt
+index 30d4318..0a62065 100644
+--- a/requirements-lock.txt
++++ b/requirements-lock.txt
+@@ -65,10 +65,9 @@ bitsandbytes==0.50.2
+ outlines==1.3.3
+ outlines-core==0.2.14
+ 
+-# UI / service. gradio stays on 5.50 on purpose: the <6 bound of requirements.txt (the
+-# Brotli/h11 bug of gradio 6 that spams the console on an interrupted response); the
+-# gradio Dependabot alerts (< 6.16) are therefore OPEN and known, see CLAUDE.md lot D.
+-gradio==5.50.0
++# UI / service. gradio 6.16 closes the gradio Dependabot alerts (< 6.16). Its Brotli/h11
++# bug is neutralised at launch by cz_cli._disable_brotli().
++gradio==6.16.0
+ fastapi==0.162.0
+ uvicorn==0.54.0
+ 
+diff --git a/requirements.txt b/requirements.txt
+index 64e3b87..6dd2339 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -38,9 +38,10 @@ hf_xet
+ 
+ # The before/after comparer = an internal HTML+JS component (see _make_compare_html in app.py).
+ # No external dep -> a stable stack.
+-# The <6 bound: Gradio 6 has a Brotli middleware buggy with h11 ("Too little data for
+-# declared Content-Length") that spams the console when a response is interrupted.
+-gradio>=4.44,<6
++# Gradio 6 is required (the code uses its API: theme/css/js/head in launch(), buttons=[...]).
++# Its Brotli middleware is buggy with h11 ("Too little data for declared Content-Length");
++# cz_cli._disable_brotli() neutralises it when the UI launches.
++gradio>=6.16,<7
+ 
+ pillow
+ numpy

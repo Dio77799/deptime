@@ -1,0 +1,96 @@
+diff --git a/demo.py b/demo.py
+index 3e9c030..fa88b1e 100644
+--- a/demo.py
++++ b/demo.py
+@@ -73,7 +73,7 @@ def gradio_reset(chat_state, img_list):
+         chat_state.messages = []
+     if img_list is not None:
+         img_list = []
+-    return None, gr.update(value=None, interactive=True), gr.update(placeholder='Please upload your image first', interactive=False),gr.update(value="Upload & Start Chat", interactive=True), chat_state, img_list
++    return [], gr.update(value=None, interactive=True), gr.update(placeholder='Please upload your image first', interactive=False),gr.update(value="Upload & Start Chat", interactive=True), chat_state, img_list
+ 
+ def upload_img(gr_img, text_input, chat_state):
+     if gr_img is None:
+@@ -87,7 +87,7 @@ def gradio_ask(user_message, chatbot, chat_state):
+     if len(user_message) == 0:
+         return gr.update(interactive=True, placeholder='Input should not be empty!'), chatbot, chat_state
+     chat.ask(user_message, chat_state)
+-    chatbot = chatbot + [[user_message, None]]
++    chatbot = (chatbot or []) + [{"role": "user", "content": user_message}]
+     return '', chatbot, chat_state
+ 
+ 
+@@ -98,7 +98,7 @@ def gradio_answer(chatbot, chat_state, img_list, num_beams, temperature):
+                               temperature=temperature,
+                               max_new_tokens=300,
+                               max_length=2000)[0]
+-    chatbot[-1][1] = llm_message
++    chatbot = chatbot + [{"role": "assistant", "content": llm_message}]
+     return chatbot, chat_state, img_list
+ 
+ title = """<h1 align="center">Demo of XrayGPT</h1>"""
+@@ -116,11 +116,11 @@ disclaimer = """
+             """
+ 
+ def set_example_xray(example: list) -> dict:
+-    return gr.Image.update(value=example[0])
++    return gr.update(value=example[0])
+ 
+ 
+ def set_example_text_input(example_text: str) -> dict:
+-    return gr.Textbox.update(value=example_text[0])
++    return gr.update(value=example_text[0])
+ 
+ #TODO show examples below
+ 
+@@ -129,7 +129,7 @@ with gr.Blocks() as demo:
+     gr.Markdown(description)
+ 
+     with gr.Row():
+-        with gr.Column(scale=0.5):
++        with gr.Column(scale=1):
+             image = gr.Image(type="pil")
+             upload_button = gr.Button(value="Upload and Ask Queries", interactive=True, variant="primary")
+             clear = gr.Button("Reset")
+@@ -152,7 +152,7 @@ with gr.Blocks() as demo:
+                 label="Temperature",
+             )
+ 
+-        with gr.Column():
++        with gr.Column(scale=2):
+             chat_state = gr.State()
+             img_list = gr.State()
+             chatbot = gr.Chatbot(label='XrayGPT')
+@@ -189,7 +189,7 @@ with gr.Blocks() as demo:
+                                         ["Based on the findings in this chest x-ray image, what is the overall impression?"],
+                                     ],)
+     
+-    example_xrays.click(fn=set_example_xray, inputs=example_xrays, outputs=example_xrays.components)
++    example_xrays.click(fn=set_example_xray, inputs=example_xrays, outputs=[image])
+ 
+     upload_button.click(upload_img, [image, text_input, chat_state], [image, text_input, upload_button, chat_state, img_list])
+     
+@@ -205,4 +205,5 @@ with gr.Blocks() as demo:
+     
+     gr.Markdown(disclaimer)
+ 
+-demo.launch(share=True, enable_queue=True)
+\ No newline at end of file
++demo.queue()
++demo.launch(share=True)
+\ No newline at end of file
+diff --git a/xraygpt_requirements.txt b/xraygpt_requirements.txt
+index 24dad7c..9459c7a 100644
+--- a/xraygpt_requirements.txt
++++ b/xraygpt_requirements.txt
+@@ -65,8 +65,8 @@ gensim==4.3.1
+ gitdb==4.0.10
+ GitPython==3.1.31
+ googletrans==3.0.0
+-gradio==3.23.0
+-gradio_client==0.0.8
++gradio==6.31.0
++gradio_client==2.7.2
+ h11==0.9.0
+ h2==3.2.0
+ hiq-python==1.1.12

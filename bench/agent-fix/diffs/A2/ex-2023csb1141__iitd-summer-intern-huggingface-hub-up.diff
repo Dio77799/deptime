@@ -1,0 +1,1008 @@
+diff --git a/Code/Molecule captioning/transformers/setup.py b/Code/Molecule captioning/transformers/setup.py
+index dd5401f..1c108f6 100644
+--- a/Code/Molecule captioning/transformers/setup.py	
++++ b/Code/Molecule captioning/transformers/setup.py	
+@@ -107,7 +107,7 @@ _deps = [
+     "flax>=0.3.5",
+     "fugashi>=1.0",
+     "GitPython<3.1.19",
+-    "huggingface-hub>=0.1.0,<1.0",
++    "huggingface-hub>=0.20.0,<3.0",
+     "importlib_metadata",
+     "ipadic>=1.0.0,<2.0",
+     "isort>=5.5.4",
+diff --git a/Code/Molecule captioning/transformers/src/transformers/commands/user.py b/Code/Molecule captioning/transformers/src/transformers/commands/user.py
+index a3919b4..773c07b 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/commands/user.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/commands/user.py	
+@@ -17,8 +17,8 @@ from argparse import ArgumentParser
+ from getpass import getpass
+ from typing import List, Union
+ 
+-from huggingface_hub.hf_api import HfFolder, create_repo, list_repos_objs, login, logout, whoami
+-from requests.exceptions import HTTPError
++from huggingface_hub import create_repo, get_token, login, logout, whoami
++from huggingface_hub.errors import HfHubHTTPError as HTTPError
+ 
+ from . import BaseTransformersCLICommand
+ 
+@@ -160,19 +160,15 @@ class LoginCommand(BaseUserCommand):
+ 
+         """
+         )
+-        username = input("Username: ")
+-        password = getpass()
++        # Username/password login is no longer supported by the Hub: log in with an access token instead.
++        token = getpass("Access token (https://huggingface.co/settings/tokens): ")
+         try:
+-            token = login(username, password)
+-        except HTTPError as e:
+-            # probably invalid credentials, display error message.
++            login(token=token)
++        except (HTTPError, ValueError) as e:
++            # probably an invalid token, display error message.
+             print(e)
+-            print(ANSI.red(e.response.text))
+             exit(1)
+-        HfFolder.save_token(token)
+         print("Login successful")
+-        print("Your token:", token, "\n")
+-        print("Your token has been saved to", HfFolder.path_token)
+ 
+ 
+ class WhoamiCommand(BaseUserCommand):
+@@ -183,18 +179,18 @@ class WhoamiCommand(BaseUserCommand):
+                 "`huggingface-cli whoami` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+         try:
+-            user, orgs = whoami(token)
+-            print(user)
++            info = whoami(token=token)
++            print(info["name"])
++            orgs = [org["name"] for org in info.get("orgs", [])]
+             if orgs:
+                 print(ANSI.bold("orgs: "), ",".join(orgs))
+         except HTTPError as e:
+             print(e)
+-            print(ANSI.red(e.response.text))
+             exit(1)
+ 
+ 
+@@ -206,12 +202,11 @@ class LogoutCommand(BaseUserCommand):
+                 "`huggingface-cli logout` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+-        HfFolder.delete_token()
+-        logout(token)
++        logout()
+         print("Successfully logged out.")
+ 
+ 
+@@ -247,20 +242,35 @@ class ListReposObjsCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
++        # `list_repos_objs` no longer exists in huggingface_hub: list the files of every repo of the user instead.
++        from huggingface_hub import HfApi
++
++        api = HfApi(token=token)
+         try:
+-            objs = list_repos_objs(token, organization=self.args.organization)
++            namespace = self.args.organization if self.args.organization is not None else api.whoami()["name"]
++            rows = []
++            for model in api.list_models(author=namespace):
++                for info in api.list_repo_tree(model.id, recursive=True):
++                    if hasattr(info, "size"):
++                        last_commit = getattr(info, "last_commit", None)
++                        rows.append(
++                            [
++                                f"{model.id}/{info.path}",
++                                getattr(last_commit, "date", "") if last_commit else "",
++                                getattr(last_commit, "oid", "") if last_commit else "",
++                                info.size,
++                            ]
++                        )
+         except HTTPError as e:
+             print(e)
+-            print(ANSI.red(e.response.text))
+             exit(1)
+-        if len(objs) == 0:
++        if len(rows) == 0:
+             print("No shared file yet")
+             exit()
+-        rows = [[obj.filename, obj.lastModified, obj.commit, obj.size] for obj in objs]
+         print(tabulate(rows, headers=["Filename", "LastModified", "Commit-Sha", "Size"]))
+ 
+ 
+@@ -272,7 +282,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
+@@ -295,7 +305,7 @@ class RepoCreateCommand(BaseUserCommand):
+             )
+         print("")
+ 
+-        user, _ = whoami(token)
++        user = whoami(token=token)["name"]
+         namespace = self.args.organization if self.args.organization is not None else user
+         full_name = f"{namespace}/{self.args.name}"
+         print(f"You are about to create {ANSI.bold(full_name)}")
+@@ -306,10 +316,9 @@ class RepoCreateCommand(BaseUserCommand):
+                 print("Abort")
+                 exit()
+         try:
+-            url = create_repo(token, name=self.args.name, organization=self.args.organization)
++            url = create_repo(full_name, token=token)
+         except HTTPError as e:
+             print(e)
+-            print(ANSI.red(e.response.text))
+             exit(1)
+         print("\nYour repo now lives at:")
+         print(f"  {ANSI.bold(url)}")
+diff --git a/Code/Molecule captioning/transformers/src/transformers/dependency_versions_table.py b/Code/Molecule captioning/transformers/src/transformers/dependency_versions_table.py
+index b1e08fc..002f060 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/dependency_versions_table.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/dependency_versions_table.py	
+@@ -17,7 +17,7 @@ deps = {
+     "flax": "flax>=0.3.5",
+     "fugashi": "fugashi>=1.0",
+     "GitPython": "GitPython<3.1.19",
+-    "huggingface-hub": "huggingface-hub>=0.1.0,<1.0",
++    "huggingface-hub": "huggingface-hub>=0.20.0,<3.0",
+     "importlib_metadata": "importlib_metadata",
+     "ipadic": "ipadic>=1.0.0,<2.0",
+     "isort": "isort>=5.5.4",
+diff --git a/Code/Molecule captioning/transformers/src/transformers/dynamic_module_utils.py b/Code/Molecule captioning/transformers/src/transformers/dynamic_module_utils.py
+index 7ce71ac..ebde715 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/dynamic_module_utils.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/dynamic_module_utils.py	
+@@ -22,7 +22,7 @@ import sys
+ from pathlib import Path
+ from typing import Dict, Optional, Union
+ 
+-from huggingface_hub import HfFolder, model_info
++from huggingface_hub import get_token, model_info
+ 
+ from .file_utils import HF_MODULES_CACHE, TRANSFORMERS_DYNAMIC_MODULE_NAME, cached_path, hf_bucket_url, is_offline_mode
+ from .utils import logging
+@@ -258,7 +258,7 @@ def get_cached_module_file(
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token is True:
+-            token = HfFolder.get_token()
++            token = get_token()
+         else:
+             token = None
+ 
+diff --git a/Code/Molecule captioning/transformers/src/transformers/file_utils.py b/Code/Molecule captioning/transformers/src/transformers/file_utils.py
+index 1a4387d..000843e 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/file_utils.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/file_utils.py	
+@@ -48,7 +48,8 @@ from packaging import version
+ 
+ import requests
+ from filelock import FileLock
+-from huggingface_hub import HfFolder, Repository, create_repo, list_repo_files, whoami
++from huggingface_hub import HfApi, create_repo, get_token, list_repo_files, snapshot_download, whoami
++from huggingface_hub.errors import HfHubHTTPError
+ from requests.exceptions import HTTPError
+ from transformers.utils.logging import tqdm
+ from transformers.utils.versions import importlib_metadata
+@@ -2095,7 +2096,7 @@ def get_from_cache(
+     if isinstance(use_auth_token, str):
+         headers["authorization"] = f"Bearer {use_auth_token}"
+     elif use_auth_token:
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
+         headers["authorization"] = f"Bearer {token}"
+@@ -2349,7 +2350,7 @@ def has_file(
+     if isinstance(use_auth_token, str):
+         headers["authorization"] = f"Bearer {use_auth_token}"
+     elif use_auth_token:
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
+         headers["authorization"] = f"Bearer {token}"
+@@ -2419,13 +2420,13 @@ def get_list_of_files(
+     if isinstance(use_auth_token, str):
+         token = use_auth_token
+     elif use_auth_token is True:
+-        token = HfFolder.get_token()
++        token = get_token()
+     else:
+         token = None
+ 
+     try:
+         return list_repo_files(path_or_repo, revision=revision, token=token)
+-    except HTTPError as e:
++    except (HTTPError, HfHubHTTPError) as e:
+         raise ValueError(
+             f"{path_or_repo} is not a local path or a model identifier on the model Hub. Did you make a typo?"
+         ) from e
+@@ -2802,6 +2803,96 @@ def is_local_clone(repo_path, repo_url):
+     return repo_url in remotes.split()
+ 
+ 
++def _repo_id_from_url_or_name(repo_url_or_id: str) -> str:
++    """Extracts the `namespace/name` repo id from a hub URL (or returns the id unchanged)."""
++    repo_url_or_id = str(repo_url_or_id)
++    if repo_url_or_id.startswith(("http://", "https://")):
++        path = urlparse(repo_url_or_id).path.strip("/")
++        if path.endswith(".git"):
++            path = path[: -len(".git")]
++        return path
++    return repo_url_or_id
++
++
++class Repository:
++    """
++    Minimal replacement for `huggingface_hub.Repository` (removed in huggingface-hub v1+), built on the HTTP-based
++    `HfApi` instead of a local git clone. Files that are in `local_dir` are uploaded with `HfApi.upload_folder`, and
++    `git_pull` downloads the current content of the repo into `local_dir`.
++    """
++
++    def __init__(
++        self,
++        local_dir: Union[str, os.PathLike],
++        clone_from: Optional[str] = None,
++        use_auth_token: Optional[Union[bool, str]] = None,
++        token: Optional[Union[bool, str]] = None,
++    ):
++        self.local_dir = str(local_dir)
++        if token is None:
++            token = use_auth_token
++        if isinstance(token, str):
++            self.token = token
++        elif token:
++            self.token = get_token()
++        else:
++            self.token = None
++        self.api = HfApi(token=self.token)
++        os.makedirs(self.local_dir, exist_ok=True)
++
++        if clone_from is None:
++            raise ValueError("`clone_from` (a repo id or url) is required to create a `Repository`.")
++        self.repo_id = _repo_id_from_url_or_name(clone_from)
++        try:
++            self.api.create_repo(self.repo_id, exist_ok=True)
++        except HfHubHTTPError as e:
++            raise EnvironmentError(f"Could not access or create the repository {self.repo_id}: {e}") from e
++
++    def git_pull(self, rebase: bool = False):
++        """Downloads the files of the remote repo that are not yet in `local_dir` (existing local files are kept)."""
++        try:
++            snapshot_download(self.repo_id, local_dir=self.local_dir, token=self.token)
++        except HfHubHTTPError as e:
++            # An empty/new repo has nothing to pull.
++            logger.warning(f"Could not pull {self.repo_id}: {e}")
++
++    def _ignore_patterns(self) -> List[str]:
++        patterns = [".git", ".git/*"]
++        gitignore = os.path.join(self.local_dir, ".gitignore")
++        if os.path.isfile(gitignore):
++            with open(gitignore, encoding="utf-8") as f:
++                for line in f.read().splitlines():
++                    line = line.strip()
++                    if line and not line.startswith("#"):
++                        patterns.append(line)
++        return patterns
++
++    def push_to_hub(
++        self, commit_message: str = "commit files to the hub", blocking: bool = True, auto_lfs_prune: bool = False
++    ):
++        """
++        Uploads `local_dir` to the repo. Returns the commit url if `blocking=True`, otherwise a tuple
++        `(None, future)` where `future` is a `concurrent.futures.Future` (use `future.done()` to track progress).
++        `auto_lfs_prune` is accepted for backward compatibility and ignored.
++        """
++        if blocking:
++            commit_info = self.api.upload_folder(
++                repo_id=self.repo_id,
++                folder_path=self.local_dir,
++                commit_message=commit_message,
++                ignore_patterns=self._ignore_patterns(),
++            )
++            return commit_info.commit_url
++        future = self.api.upload_folder(
++            repo_id=self.repo_id,
++            folder_path=self.local_dir,
++            commit_message=commit_message,
++            ignore_patterns=self._ignore_patterns(),
++            run_as_future=True,
++        )
++        return None, future
++
++
+ class PushToHubMixin:
+     """
+     A Mixin containing the functionality to push a model or tokenizer to the hub.
+@@ -2919,7 +3010,7 @@ class PushToHubMixin:
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token:
+-            token = HfFolder.get_token()
++            token = get_token()
+             if token is None:
+                 raise ValueError(
+                     "You must login to the Hugging Face hub on this computer by typing `transformers-cli login` and "
+@@ -2929,11 +3020,10 @@ class PushToHubMixin:
+         else:
+             token = None
+ 
+-        # Special provision for the test endpoint (CI)
++        repo_id = f"{organization}/{repo_name}" if organization is not None else repo_name
+         return create_repo(
+-            token,
+-            repo_name,
+-            organization=organization,
++            repo_id,
++            token=token,
+             private=private,
+             repo_type=None,
+             exist_ok=True,
+@@ -2986,9 +3076,9 @@ class PushToHubMixin:
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+-        username = whoami(token)["name"]
++        username = whoami(token=token)["name"]
+         return f"{username}/{model_id}"
+     else:
+         return f"{organization}/{model_id}"
+diff --git a/Code/Molecule captioning/transformers/src/transformers/keras_callbacks.py b/Code/Molecule captioning/transformers/src/transformers/keras_callbacks.py
+index e36161b..4450749 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/keras_callbacks.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/keras_callbacks.py	
+@@ -9,10 +9,8 @@ import tensorflow as tf
+ from packaging.version import parse
+ from tensorflow.keras.callbacks import Callback
+ 
+-from huggingface_hub import Repository
+-
+ from . import IntervalStrategy, PreTrainedTokenizerBase
+-from .file_utils import get_full_repo_name
++from .file_utils import Repository, get_full_repo_name
+ from .modelcard import TrainingSummary
+ 
+ 
+@@ -332,7 +330,7 @@ class PushToHubCallback(Callback):
+ 
+     def on_train_batch_end(self, batch, logs=None):
+         if self.save_strategy == IntervalStrategy.STEPS and batch + 1 % self.save_steps == 0:
+-            if self.last_job is not None and not self.last_job.is_done:
++            if self.last_job is not None and not self.last_job.done():
+                 return  # The last upload is still running, don't start another
+             self.model.save_pretrained(self.output_dir)
+             if self.tokenizer is not None:
+@@ -347,7 +345,7 @@ class PushToHubCallback(Callback):
+             logs["epoch"] = epoch
+         self.training_history.append(logs)
+         if self.save_strategy == IntervalStrategy.EPOCH:
+-            if self.last_job is not None and not self.last_job.is_done:
++            if self.last_job is not None and not self.last_job.done():
+                 return  # The last upload is still running, don't start another
+             self.model.save_pretrained(self.output_dir)
+             if self.tokenizer is not None:
+@@ -369,9 +367,9 @@ class PushToHubCallback(Callback):
+             )
+ 
+     def on_train_end(self, logs=None):
+-        if self.last_job is not None and not self.last_job.is_done:
++        if self.last_job is not None and not self.last_job.done():
+             logger.info("Waiting for existing upload to finish...")
+-            while not self.last_job.is_done:
++            while not self.last_job.done():
+                 sleep(1)
+         self.model.save_pretrained(self.output_dir)
+         if self.tokenizer is not None:
+diff --git a/Code/Molecule captioning/transformers/src/transformers/modelcard.py b/Code/Molecule captioning/transformers/src/transformers/modelcard.py
+index 560998a..a04b9e5 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/modelcard.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/modelcard.py	
+@@ -26,6 +26,7 @@ from typing import Any, Dict, List, Optional, Union
+ import requests
+ import yaml
+ from huggingface_hub import model_info
++from huggingface_hub.errors import HfHubHTTPError
+ 
+ from . import __version__
+ from .file_utils import (
+@@ -402,7 +403,7 @@ class TrainingSummary:
+                 for tag in info.tags:
+                     if tag.startswith("license:"):
+                         self.license = tag[8:]
+-            except requests.exceptions.HTTPError:
++            except (requests.exceptions.HTTPError, HfHubHTTPError):
+                 pass
+ 
+     def create_model_index(self, metric_mapping):
+diff --git a/Code/Molecule captioning/transformers/src/transformers/modeling_tf_utils.py b/Code/Molecule captioning/transformers/src/transformers/modeling_tf_utils.py
+index 7a53055..c64132c 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/modeling_tf_utils.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/modeling_tf_utils.py	
+@@ -31,7 +31,7 @@ from tensorflow.python.keras.engine import data_adapter
+ from tensorflow.python.keras.engine.keras_tensor import KerasTensor
+ from tensorflow.python.keras.saving import hdf5_format
+ 
+-from huggingface_hub import Repository, list_repo_files
++from huggingface_hub import list_repo_files
+ from requests import HTTPError
+ 
+ from .configuration_utils import PretrainedConfig
+@@ -43,6 +43,7 @@ from .file_utils import (
+     EntryNotFoundError,
+     ModelOutput,
+     PushToHubMixin,
++    Repository,
+     RepositoryNotFoundError,
+     RevisionNotFoundError,
+     cached_path,
+@@ -807,6 +808,7 @@ class TFPreTrainedModel(tf.keras.Model, TFModelUtilsMixin, TFGenerationMixin, Pu
+             else:
+                 model_id = repo_path_or_name.split("/")[-1]
+             repo = Repository(model_id, clone_from=f"https://huggingface.co/{repo_path_or_name}")
++            repo.git_pull()
+             local_dir = repo.local_dir
+         else:
+             local_dir = repo_path_or_name
+diff --git a/Code/Molecule captioning/transformers/src/transformers/trainer.py b/Code/Molecule captioning/transformers/src/transformers/trainer.py
+index 5d6f538..7cb3755 100644
+--- a/Code/Molecule captioning/transformers/src/transformers/trainer.py	
++++ b/Code/Molecule captioning/transformers/src/transformers/trainer.py	
+@@ -57,8 +57,6 @@ from torch import nn
+ from torch.utils.data import DataLoader, Dataset, IterableDataset, RandomSampler, SequentialSampler
+ from torch.utils.data.distributed import DistributedSampler
+ 
+-from huggingface_hub import Repository
+-
+ from . import __version__
+ from .configuration_utils import PretrainedConfig
+ from .data.data_collator import DataCollator, DataCollatorWithPadding, default_data_collator
+@@ -68,6 +66,7 @@ from .dependency_versions_check import dep_version_check
+ from .file_utils import (
+     CONFIG_NAME,
+     WEIGHTS_NAME,
++    Repository,
+     get_full_repo_name,
+     is_apex_available,
+     is_datasets_available,
+@@ -2766,7 +2765,7 @@ class Trainer:
+         if not self.is_world_process_zero() or self.args.hub_strategy == HubStrategy.END:
+             return
+         # If we haven't finished the last push, we don't do this one.
+-        if self.push_in_progress is not None and not self.push_in_progress.is_done:
++        if self.push_in_progress is not None and not self.push_in_progress.done():
+             return
+ 
+         output_dir = self.args.output_dir
+diff --git a/Code/Molecule generation/transformers/setup.py b/Code/Molecule generation/transformers/setup.py
+index dd5401f..1c108f6 100644
+--- a/Code/Molecule generation/transformers/setup.py	
++++ b/Code/Molecule generation/transformers/setup.py	
+@@ -107,7 +107,7 @@ _deps = [
+     "flax>=0.3.5",
+     "fugashi>=1.0",
+     "GitPython<3.1.19",
+-    "huggingface-hub>=0.1.0,<1.0",
++    "huggingface-hub>=0.20.0,<3.0",
+     "importlib_metadata",
+     "ipadic>=1.0.0,<2.0",
+     "isort>=5.5.4",
+diff --git a/Code/Molecule generation/transformers/src/transformers/commands/user.py b/Code/Molecule generation/transformers/src/transformers/commands/user.py
+index a3919b4..773c07b 100644
+--- a/Code/Molecule generation/transformers/src/transformers/commands/user.py	
++++ b/Code/Molecule generation/transformers/src/transformers/commands/user.py	
+@@ -17,8 +17,8 @@ from argparse import ArgumentParser
+ from getpass import getpass
+ from typing import List, Union
+ 
+-from huggingface_hub.hf_api import HfFolder, create_repo, list_repos_objs, login, logout, whoami
+-from requests.exceptions import HTTPError
++from huggingface_hub import create_repo, get_token, login, logout, whoami
++from huggingface_hub.errors import HfHubHTTPError as HTTPError
+ 
+ from . import BaseTransformersCLICommand
+ 
+@@ -160,19 +160,15 @@ class LoginCommand(BaseUserCommand):
+ 
+         """
+         )
+-        username = input("Username: ")
+-        password = getpass()
++        # Username/password login is no longer supported by the Hub: log in with an access token instead.
++        token = getpass("Access token (https://huggingface.co/settings/tokens): ")
+         try:
+-            token = login(username, password)
+-        except HTTPError as e:
+-            # probably invalid credentials, display error message.
++            login(token=token)
++        except (HTTPError, ValueError) as e:
++            # probably an invalid token, display error message.
+             print(e)
+-            print(ANSI.red(e.response.text))
+             exit(1)
+-        HfFolder.save_token(token)
+         print("Login successful")
+-        print("Your token:", token, "\n")
+-        print("Your token has been saved to", HfFolder.path_token)
+ 
+ 
+ class WhoamiCommand(BaseUserCommand):
+@@ -183,18 +179,18 @@ class WhoamiCommand(BaseUserCommand):
+                 "`huggingface-cli whoami` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+         try:
+-            user, orgs = whoami(token)
+-            print(user)
++            info = whoami(token=token)
++            print(info["name"])
++            orgs = [org["name"] for org in info.get("orgs", [])]
+             if orgs:
+                 print(ANSI.bold("orgs: "), ",".join(orgs))
+         except HTTPError as e:
+             print(e)
+-            print(ANSI.red(e.response.text))
+             exit(1)
+ 
+ 
+@@ -206,12 +202,11 @@ class LogoutCommand(BaseUserCommand):
+                 "`huggingface-cli logout` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit()
+-        HfFolder.delete_token()
+-        logout(token)
++        logout()
+         print("Successfully logged out.")
+ 
+ 
+@@ -247,20 +242,35 @@ class ListReposObjsCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
++        # `list_repos_objs` no longer exists in huggingface_hub: list the files of every repo of the user instead.
++        from huggingface_hub import HfApi
++
++        api = HfApi(token=token)
+         try:
+-            objs = list_repos_objs(token, organization=self.args.organization)
++            namespace = self.args.organization if self.args.organization is not None else api.whoami()["name"]
++            rows = []
++            for model in api.list_models(author=namespace):
++                for info in api.list_repo_tree(model.id, recursive=True):
++                    if hasattr(info, "size"):
++                        last_commit = getattr(info, "last_commit", None)
++                        rows.append(
++                            [
++                                f"{model.id}/{info.path}",
++                                getattr(last_commit, "date", "") if last_commit else "",
++                                getattr(last_commit, "oid", "") if last_commit else "",
++                                info.size,
++                            ]
++                        )
+         except HTTPError as e:
+             print(e)
+-            print(ANSI.red(e.response.text))
+             exit(1)
+-        if len(objs) == 0:
++        if len(rows) == 0:
+             print("No shared file yet")
+             exit()
+-        rows = [[obj.filename, obj.lastModified, obj.commit, obj.size] for obj in objs]
+         print(tabulate(rows, headers=["Filename", "LastModified", "Commit-Sha", "Size"]))
+ 
+ 
+@@ -272,7 +282,7 @@ class RepoCreateCommand(BaseUserCommand):
+                 "Please use `huggingface-cli` instead."
+             )
+         )
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             print("Not logged in")
+             exit(1)
+@@ -295,7 +305,7 @@ class RepoCreateCommand(BaseUserCommand):
+             )
+         print("")
+ 
+-        user, _ = whoami(token)
++        user = whoami(token=token)["name"]
+         namespace = self.args.organization if self.args.organization is not None else user
+         full_name = f"{namespace}/{self.args.name}"
+         print(f"You are about to create {ANSI.bold(full_name)}")
+@@ -306,10 +316,9 @@ class RepoCreateCommand(BaseUserCommand):
+                 print("Abort")
+                 exit()
+         try:
+-            url = create_repo(token, name=self.args.name, organization=self.args.organization)
++            url = create_repo(full_name, token=token)
+         except HTTPError as e:
+             print(e)
+-            print(ANSI.red(e.response.text))
+             exit(1)
+         print("\nYour repo now lives at:")
+         print(f"  {ANSI.bold(url)}")
+diff --git a/Code/Molecule generation/transformers/src/transformers/dependency_versions_table.py b/Code/Molecule generation/transformers/src/transformers/dependency_versions_table.py
+index b1e08fc..002f060 100644
+--- a/Code/Molecule generation/transformers/src/transformers/dependency_versions_table.py	
++++ b/Code/Molecule generation/transformers/src/transformers/dependency_versions_table.py	
+@@ -17,7 +17,7 @@ deps = {
+     "flax": "flax>=0.3.5",
+     "fugashi": "fugashi>=1.0",
+     "GitPython": "GitPython<3.1.19",
+-    "huggingface-hub": "huggingface-hub>=0.1.0,<1.0",
++    "huggingface-hub": "huggingface-hub>=0.20.0,<3.0",
+     "importlib_metadata": "importlib_metadata",
+     "ipadic": "ipadic>=1.0.0,<2.0",
+     "isort": "isort>=5.5.4",
+diff --git a/Code/Molecule generation/transformers/src/transformers/dynamic_module_utils.py b/Code/Molecule generation/transformers/src/transformers/dynamic_module_utils.py
+index 7ce71ac..ebde715 100644
+--- a/Code/Molecule generation/transformers/src/transformers/dynamic_module_utils.py	
++++ b/Code/Molecule generation/transformers/src/transformers/dynamic_module_utils.py	
+@@ -22,7 +22,7 @@ import sys
+ from pathlib import Path
+ from typing import Dict, Optional, Union
+ 
+-from huggingface_hub import HfFolder, model_info
++from huggingface_hub import get_token, model_info
+ 
+ from .file_utils import HF_MODULES_CACHE, TRANSFORMERS_DYNAMIC_MODULE_NAME, cached_path, hf_bucket_url, is_offline_mode
+ from .utils import logging
+@@ -258,7 +258,7 @@ def get_cached_module_file(
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token is True:
+-            token = HfFolder.get_token()
++            token = get_token()
+         else:
+             token = None
+ 
+diff --git a/Code/Molecule generation/transformers/src/transformers/file_utils.py b/Code/Molecule generation/transformers/src/transformers/file_utils.py
+index 1a4387d..000843e 100644
+--- a/Code/Molecule generation/transformers/src/transformers/file_utils.py	
++++ b/Code/Molecule generation/transformers/src/transformers/file_utils.py	
+@@ -48,7 +48,8 @@ from packaging import version
+ 
+ import requests
+ from filelock import FileLock
+-from huggingface_hub import HfFolder, Repository, create_repo, list_repo_files, whoami
++from huggingface_hub import HfApi, create_repo, get_token, list_repo_files, snapshot_download, whoami
++from huggingface_hub.errors import HfHubHTTPError
+ from requests.exceptions import HTTPError
+ from transformers.utils.logging import tqdm
+ from transformers.utils.versions import importlib_metadata
+@@ -2095,7 +2096,7 @@ def get_from_cache(
+     if isinstance(use_auth_token, str):
+         headers["authorization"] = f"Bearer {use_auth_token}"
+     elif use_auth_token:
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
+         headers["authorization"] = f"Bearer {token}"
+@@ -2349,7 +2350,7 @@ def has_file(
+     if isinstance(use_auth_token, str):
+         headers["authorization"] = f"Bearer {use_auth_token}"
+     elif use_auth_token:
+-        token = HfFolder.get_token()
++        token = get_token()
+         if token is None:
+             raise EnvironmentError("You specified use_auth_token=True, but a huggingface token was not found.")
+         headers["authorization"] = f"Bearer {token}"
+@@ -2419,13 +2420,13 @@ def get_list_of_files(
+     if isinstance(use_auth_token, str):
+         token = use_auth_token
+     elif use_auth_token is True:
+-        token = HfFolder.get_token()
++        token = get_token()
+     else:
+         token = None
+ 
+     try:
+         return list_repo_files(path_or_repo, revision=revision, token=token)
+-    except HTTPError as e:
++    except (HTTPError, HfHubHTTPError) as e:
+         raise ValueError(
+             f"{path_or_repo} is not a local path or a model identifier on the model Hub. Did you make a typo?"
+         ) from e
+@@ -2802,6 +2803,96 @@ def is_local_clone(repo_path, repo_url):
+     return repo_url in remotes.split()
+ 
+ 
++def _repo_id_from_url_or_name(repo_url_or_id: str) -> str:
++    """Extracts the `namespace/name` repo id from a hub URL (or returns the id unchanged)."""
++    repo_url_or_id = str(repo_url_or_id)
++    if repo_url_or_id.startswith(("http://", "https://")):
++        path = urlparse(repo_url_or_id).path.strip("/")
++        if path.endswith(".git"):
++            path = path[: -len(".git")]
++        return path
++    return repo_url_or_id
++
++
++class Repository:
++    """
++    Minimal replacement for `huggingface_hub.Repository` (removed in huggingface-hub v1+), built on the HTTP-based
++    `HfApi` instead of a local git clone. Files that are in `local_dir` are uploaded with `HfApi.upload_folder`, and
++    `git_pull` downloads the current content of the repo into `local_dir`.
++    """
++
++    def __init__(
++        self,
++        local_dir: Union[str, os.PathLike],
++        clone_from: Optional[str] = None,
++        use_auth_token: Optional[Union[bool, str]] = None,
++        token: Optional[Union[bool, str]] = None,
++    ):
++        self.local_dir = str(local_dir)
++        if token is None:
++            token = use_auth_token
++        if isinstance(token, str):
++            self.token = token
++        elif token:
++            self.token = get_token()
++        else:
++            self.token = None
++        self.api = HfApi(token=self.token)
++        os.makedirs(self.local_dir, exist_ok=True)
++
++        if clone_from is None:
++            raise ValueError("`clone_from` (a repo id or url) is required to create a `Repository`.")
++        self.repo_id = _repo_id_from_url_or_name(clone_from)
++        try:
++            self.api.create_repo(self.repo_id, exist_ok=True)
++        except HfHubHTTPError as e:
++            raise EnvironmentError(f"Could not access or create the repository {self.repo_id}: {e}") from e
++
++    def git_pull(self, rebase: bool = False):
++        """Downloads the files of the remote repo that are not yet in `local_dir` (existing local files are kept)."""
++        try:
++            snapshot_download(self.repo_id, local_dir=self.local_dir, token=self.token)
++        except HfHubHTTPError as e:
++            # An empty/new repo has nothing to pull.
++            logger.warning(f"Could not pull {self.repo_id}: {e}")
++
++    def _ignore_patterns(self) -> List[str]:
++        patterns = [".git", ".git/*"]
++        gitignore = os.path.join(self.local_dir, ".gitignore")
++        if os.path.isfile(gitignore):
++            with open(gitignore, encoding="utf-8") as f:
++                for line in f.read().splitlines():
++                    line = line.strip()
++                    if line and not line.startswith("#"):
++                        patterns.append(line)
++        return patterns
++
++    def push_to_hub(
++        self, commit_message: str = "commit files to the hub", blocking: bool = True, auto_lfs_prune: bool = False
++    ):
++        """
++        Uploads `local_dir` to the repo. Returns the commit url if `blocking=True`, otherwise a tuple
++        `(None, future)` where `future` is a `concurrent.futures.Future` (use `future.done()` to track progress).
++        `auto_lfs_prune` is accepted for backward compatibility and ignored.
++        """
++        if blocking:
++            commit_info = self.api.upload_folder(
++                repo_id=self.repo_id,
++                folder_path=self.local_dir,
++                commit_message=commit_message,
++                ignore_patterns=self._ignore_patterns(),
++            )
++            return commit_info.commit_url
++        future = self.api.upload_folder(
++            repo_id=self.repo_id,
++            folder_path=self.local_dir,
++            commit_message=commit_message,
++            ignore_patterns=self._ignore_patterns(),
++            run_as_future=True,
++        )
++        return None, future
++
++
+ class PushToHubMixin:
+     """
+     A Mixin containing the functionality to push a model or tokenizer to the hub.
+@@ -2919,7 +3010,7 @@ class PushToHubMixin:
+         if isinstance(use_auth_token, str):
+             token = use_auth_token
+         elif use_auth_token:
+-            token = HfFolder.get_token()
++            token = get_token()
+             if token is None:
+                 raise ValueError(
+                     "You must login to the Hugging Face hub on this computer by typing `transformers-cli login` and "
+@@ -2929,11 +3020,10 @@ class PushToHubMixin:
+         else:
+             token = None
+ 
+-        # Special provision for the test endpoint (CI)
++        repo_id = f"{organization}/{repo_name}" if organization is not None else repo_name
+         return create_repo(
+-            token,
+-            repo_name,
+-            organization=organization,
++            repo_id,
++            token=token,
+             private=private,
+             repo_type=None,
+             exist_ok=True,
+@@ -2986,9 +3076,9 @@ class PushToHubMixin:
+ 
+ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token: Optional[str] = None):
+     if token is None:
+-        token = HfFolder.get_token()
++        token = get_token()
+     if organization is None:
+-        username = whoami(token)["name"]
++        username = whoami(token=token)["name"]
+         return f"{username}/{model_id}"
+     else:
+         return f"{organization}/{model_id}"
+diff --git a/Code/Molecule generation/transformers/src/transformers/keras_callbacks.py b/Code/Molecule generation/transformers/src/transformers/keras_callbacks.py
+index e36161b..4450749 100644
+--- a/Code/Molecule generation/transformers/src/transformers/keras_callbacks.py	
++++ b/Code/Molecule generation/transformers/src/transformers/keras_callbacks.py	
+@@ -9,10 +9,8 @@ import tensorflow as tf
+ from packaging.version import parse
+ from tensorflow.keras.callbacks import Callback
+ 
+-from huggingface_hub import Repository
+-
+ from . import IntervalStrategy, PreTrainedTokenizerBase
+-from .file_utils import get_full_repo_name
++from .file_utils import Repository, get_full_repo_name
+ from .modelcard import TrainingSummary
+ 
+ 
+@@ -332,7 +330,7 @@ class PushToHubCallback(Callback):
+ 
+     def on_train_batch_end(self, batch, logs=None):
+         if self.save_strategy == IntervalStrategy.STEPS and batch + 1 % self.save_steps == 0:
+-            if self.last_job is not None and not self.last_job.is_done:
++            if self.last_job is not None and not self.last_job.done():
+                 return  # The last upload is still running, don't start another
+             self.model.save_pretrained(self.output_dir)
+             if self.tokenizer is not None:
+@@ -347,7 +345,7 @@ class PushToHubCallback(Callback):
+             logs["epoch"] = epoch
+         self.training_history.append(logs)
+         if self.save_strategy == IntervalStrategy.EPOCH:
+-            if self.last_job is not None and not self.last_job.is_done:
++            if self.last_job is not None and not self.last_job.done():
+                 return  # The last upload is still running, don't start another
+             self.model.save_pretrained(self.output_dir)
+             if self.tokenizer is not None:
+@@ -369,9 +367,9 @@ class PushToHubCallback(Callback):
+             )
+ 
+     def on_train_end(self, logs=None):
+-        if self.last_job is not None and not self.last_job.is_done:
++        if self.last_job is not None and not self.last_job.done():
+             logger.info("Waiting for existing upload to finish...")
+-            while not self.last_job.is_done:
++            while not self.last_job.done():
+                 sleep(1)
+         self.model.save_pretrained(self.output_dir)
+         if self.tokenizer is not None:
+diff --git a/Code/Molecule generation/transformers/src/transformers/modelcard.py b/Code/Molecule generation/transformers/src/transformers/modelcard.py
+index 560998a..a04b9e5 100644
+--- a/Code/Molecule generation/transformers/src/transformers/modelcard.py	
++++ b/Code/Molecule generation/transformers/src/transformers/modelcard.py	
+@@ -26,6 +26,7 @@ from typing import Any, Dict, List, Optional, Union
+ import requests
+ import yaml
+ from huggingface_hub import model_info
++from huggingface_hub.errors import HfHubHTTPError
+ 
+ from . import __version__
+ from .file_utils import (
+@@ -402,7 +403,7 @@ class TrainingSummary:
+                 for tag in info.tags:
+                     if tag.startswith("license:"):
+                         self.license = tag[8:]
+-            except requests.exceptions.HTTPError:
++            except (requests.exceptions.HTTPError, HfHubHTTPError):
+                 pass
+ 
+     def create_model_index(self, metric_mapping):
+diff --git a/Code/Molecule generation/transformers/src/transformers/modeling_tf_utils.py b/Code/Molecule generation/transformers/src/transformers/modeling_tf_utils.py
+index 7a53055..c64132c 100644
+--- a/Code/Molecule generation/transformers/src/transformers/modeling_tf_utils.py	
++++ b/Code/Molecule generation/transformers/src/transformers/modeling_tf_utils.py	
+@@ -31,7 +31,7 @@ from tensorflow.python.keras.engine import data_adapter
+ from tensorflow.python.keras.engine.keras_tensor import KerasTensor
+ from tensorflow.python.keras.saving import hdf5_format
+ 
+-from huggingface_hub import Repository, list_repo_files
++from huggingface_hub import list_repo_files
+ from requests import HTTPError
+ 
+ from .configuration_utils import PretrainedConfig
+@@ -43,6 +43,7 @@ from .file_utils import (
+     EntryNotFoundError,
+     ModelOutput,
+     PushToHubMixin,
++    Repository,
+     RepositoryNotFoundError,
+     RevisionNotFoundError,
+     cached_path,
+@@ -807,6 +808,7 @@ class TFPreTrainedModel(tf.keras.Model, TFModelUtilsMixin, TFGenerationMixin, Pu
+             else:
+                 model_id = repo_path_or_name.split("/")[-1]
+             repo = Repository(model_id, clone_from=f"https://huggingface.co/{repo_path_or_name}")
++            repo.git_pull()
+             local_dir = repo.local_dir
+         else:
+             local_dir = repo_path_or_name
+diff --git a/Code/Molecule generation/transformers/src/transformers/trainer.py b/Code/Molecule generation/transformers/src/transformers/trainer.py
+index 5d6f538..7cb3755 100644
+--- a/Code/Molecule generation/transformers/src/transformers/trainer.py	
++++ b/Code/Molecule generation/transformers/src/transformers/trainer.py	
+@@ -57,8 +57,6 @@ from torch import nn
+ from torch.utils.data import DataLoader, Dataset, IterableDataset, RandomSampler, SequentialSampler
+ from torch.utils.data.distributed import DistributedSampler
+ 
+-from huggingface_hub import Repository
+-
+ from . import __version__
+ from .configuration_utils import PretrainedConfig
+ from .data.data_collator import DataCollator, DataCollatorWithPadding, default_data_collator
+@@ -68,6 +66,7 @@ from .dependency_versions_check import dep_version_check
+ from .file_utils import (
+     CONFIG_NAME,
+     WEIGHTS_NAME,
++    Repository,
+     get_full_repo_name,
+     is_apex_available,
+     is_datasets_available,
+@@ -2766,7 +2765,7 @@ class Trainer:
+         if not self.is_world_process_zero() or self.args.hub_strategy == HubStrategy.END:
+             return
+         # If we haven't finished the last push, we don't do this one.
+-        if self.push_in_progress is not None and not self.push_in_progress.is_done:
++        if self.push_in_progress is not None and not self.push_in_progress.done():
+             return
+ 
+         output_dir = self.args.output_dir

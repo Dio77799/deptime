@@ -1,0 +1,103 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 8,
+  "duration_ms": 21575,
+  "total_cost_usd": 0.06424440000000001,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 8307,
+   "cache_read_input_tokens": 108884,
+   "output_tokens": 2010,
+   "output_tokens_details": {
+    "thinking_tokens": 103
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 8307,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 490,
+     "cache_read_input_tokens": 18575,
+     "cache_creation_input_tokens": 198,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 198
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.64,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.21,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 5,
+  "Edit": 2
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.1 check-upgrade . --package gradio --to 6.16.0 --format json",
+  "uvx deptime==0.2.1 check-upgrade . --package gradio --to 6.16.0 --format json 2>/dev/null | jq '.checked[].breaks[] | {path,kind,kwarg,missing_args,explanation,locations,fix:.finding.fix,replacements:.finding.replacements,issue:.finding.issue}'",
+  "python3 - <<'EOF'\np='cz_ui.py'\ns=open(p,encoding='utf-8').read()\na='show_fullscreen_button=True, show_download_button=True)'\nb='object_fit=\"cover\", show_download_button=True)'\nassert s.count(a)==1 and s.count(b)==1\ns=s.replace(a,'buttons=[\"fullscreen\", \"download\"])').replace(b,'object_fit=\"cover\", b",
+  "uvx deptime==0.2.1 check-upgrade . --package gradio --to 6.16.0 --format json 2>/dev/null | jq '{breaks,b:[.checked[].breaks[]?|{path,kwarg,locations}]}'"
+ ],
+ "other_bash": 1,
+ "fetched": [],
+ "denied": 1,
+ "task": "pr-mikecastrodemaria__crispz-moss-1-gradio",
+ "arm": "B",
+ "label": "B2",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 24.1,
+ "service_error": false
+}

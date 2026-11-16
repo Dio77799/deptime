@@ -1,0 +1,113 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 32,
+  "duration_ms": 274547,
+  "total_cost_usd": 0.6822956,
+  "usage": {
+   "input_tokens": 36,
+   "cache_creation_input_tokens": 68901,
+   "cache_read_input_tokens": 850228,
+   "output_tokens": 30391,
+   "output_tokens_details": {
+    "thinking_tokens": 18617
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 68901,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1241,
+     "cache_read_input_tokens": 76014,
+     "cache_creation_input_tokens": 3353,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 3353
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.17,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.18,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 4,
+  "mcp__plugin_deptime_deptime__coverage": 1,
+  "Read": 3,
+  "mcp__plugin_deptime_deptime__check_upgrade": 1,
+  "WebFetch": 3,
+  "mcp__plugin_deptime_deptime__check_symbols": 2,
+  "Edit": 16,
+  "Write": 1
+ },
+ "deptime_calls": [
+  "coverage",
+  "check_upgrade",
+  "check_symbols",
+  "check_symbols"
+ ],
+ "other_bash": 4,
+ "fetched": [
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py",
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py",
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py"
+ ],
+ "denied": 2,
+ "task": "pin-gaa-uam__c-gb-scikit-learn-up",
+ "arm": "C",
+ "label": "C1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 276.6,
+ "service_error": false
+}

@@ -1,0 +1,74 @@
+diff --git a/config.py b/config.py
+index d91f296..1bd3923 100644
+--- a/config.py
++++ b/config.py
+@@ -6,6 +6,7 @@ MINDS_BASE_URL = os.environ.get('MINDS_BASE_URL', 'https://mdb.ai')
+ # FastMCP settings
+ FASTMCP_DEBUG = os.environ.get('FASTMCP_DEBUG', 'false').lower() == 'true'
+ FASTMCP_LOG_LEVEL = os.environ.get('FASTMCP_LOG_LEVEL', 'INFO')
++FASTMCP_TRANSPORT = os.environ.get('FASTMCP_TRANSPORT', 'stdio').lower()
+ FASTMCP_HOST = os.environ.get('FASTMCP_HOST', '0.0.0.0')
+ FASTMCP_PORT = int(os.environ.get('FASTMCP_PORT', '8000'))
+ FASTMCP_SSE_PATH = os.environ.get('FASTMCP_SSE_PATH', '/sse')
+diff --git a/requirements.txt b/requirements.txt
+index dc400f6..049f0f6 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,2 +1,2 @@
+-mcp==1.13.1
++mcp==2.3.0
+ minds_sdk==1.3.3
+diff --git a/server.py b/server.py
+index 375ff59..65ca355 100644
+--- a/server.py
++++ b/server.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, List
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from minds.client import Client
+ 
+ # Import configuration
+@@ -7,21 +7,19 @@ from config import (
+     MINDS_BASE_URL,
+     FASTMCP_DEBUG,
+     FASTMCP_LOG_LEVEL,
++    FASTMCP_TRANSPORT,
+     FASTMCP_HOST,
+     FASTMCP_PORT,
+     FASTMCP_SSE_PATH,
+     FASTMCP_MESSAGE_PATH,
+ )
+ 
+-# Create the MCP server with customized settings
+-mcp = FastMCP(
++# Create the MCP server with customized settings.
++# In mcp 2.x, host/port/path settings are passed to run(), not the constructor.
++mcp = MCPServer(
+     'Minds Enterprise',
+     debug=FASTMCP_DEBUG,
+     log_level=FASTMCP_LOG_LEVEL,
+-    host=FASTMCP_HOST,
+-    port=FASTMCP_PORT,
+-    sse_path=FASTMCP_SSE_PATH,
+-    message_path=FASTMCP_MESSAGE_PATH,
+ )
+ 
+ 
+@@ -98,5 +96,14 @@ def completion(mind_name: str, message: str, api_key: str) -> str:
+ 
+ 
+ if __name__ == '__main__':
+-    # Run the server - FastMCP already has host and port from initialization
+-    mcp.run()
++    if FASTMCP_TRANSPORT == 'sse':
++        mcp.run(
++            transport='sse',
++            host=FASTMCP_HOST,
++            port=FASTMCP_PORT,
++            sse_path=FASTMCP_SSE_PATH,
++            message_path=FASTMCP_MESSAGE_PATH,
++        )
++    else:
++        # stdio (default) takes no host/port settings
++        mcp.run()

@@ -185,9 +185,9 @@ def added_lines(t: dict, files: dict[str, dict]) -> dict[str, set[int]]:
 
 def extra_roots(t: dict, files: dict[str, dict], tree: Path) -> tuple[str, ...]:
     """Modules first imported on an added line: not the standard library, not the project's own."""
-    own = {p.name.removesuffix(".py") for p in tree.iterdir()} | {
-        p.parent.name for p in tree.rglob("__init__.py")
-    }
+    own = {p.stem for p in tree.rglob("*.py")} | {
+        p.name for p in tree.rglob("*") if p.is_dir()
+    }  # a script's sibling too
     found = set()
     for path, f in files.items():
         if not path.endswith(".py"):
@@ -265,10 +265,26 @@ def load_probe(out_dir: Path) -> tuple[dict[tuple[str, str], dict], set[str]]:
     return results, failed
 
 
-def use_verdict(r: dict | None, use: dict, called: bool) -> str:
+SOURCE = "can't tell (source)"  # settled only from the released source (README.md, "Hand checks")
+
+
+def use_verdict(r: dict | None, use: dict, called: bool, roots: tuple[str, ...]) -> str:
     """works / breaks / can't tell / unlabelled for one use at `to`, by labels.py's rule for `to`. `unlabelled`: a
     use no set ever labels, whatever the probe says (a member of an object a call that isn't a class built, a keyword
-    only **kwargs takes, an attribute that may be set on instances); it is left out of a replacement's judgement."""
+    only **kwargs takes, an attribute that may be set on instances); it is left out of a replacement's judgement.
+
+    Two answers need the library's source (SOURCE): a module of another package, which the probe's environment
+    doesn't install (it installs the task's package and what that requires), so "No module named" there says nothing
+    about the fix; and a call the probe finds doesn't bind, which the holdout's labels count as a break only once the
+    source confirms it (pydantic models whose signature shows only their camelCase aliases bind by name)."""
+    root = use["path"].split(".")[0]
+    if (
+        r is not None
+        and r.get("resolved") is False
+        and root not in roots
+        and f"No module named '{root}'" in (r.get("error") or "")
+    ):
+        return SOURCE
     if r is not None and r.get("resolved") and use.get("via") == "instance" and not r.get("builder_is_class"):
         return "unlabelled"
     ok, why = works(r, use, called)
@@ -278,6 +294,8 @@ def use_verdict(r: dict | None, use: dict, called: bool) -> str:
         return "unlabelled" if use["kind"] == "call" and var_keyword_only(r) else "works"
     if use.get("via") == "instance" and why == "removed":
         return "unlabelled"
+    if use["kind"] == "call" and why != "removed":
+        return SOURCE
     return "breaks"
 
 
@@ -293,11 +311,16 @@ def judge(t: dict, s: dict, probe: dict, hand: dict[str, dict]) -> dict:
     by_rel = {r: f for p, f in files.items() if (r := _rel(t, p)) is not None}
     calls = {u.path for u in after.values() if u.kind == "call"}
 
+    roots = _import_names(t["package"])
+    use_hand = _use_hand()
+
     def verdict_of(k: str) -> str:
         u = _use_dict(after[k])
         if labels.get(k) in ("works", "breaks") and k in read["before"]:
             return labels[k]
-        return use_verdict(probe.get((t["env"], k)), u, u["kind"] == "name" and u["path"] in calls)
+        if (t["env"], k) in use_hand:
+            return use_hand[(t["env"], k)]["verdict"]
+        return use_verdict(probe.get((t["env"], k)), u, u["kind"] == "name" and u["path"] in calls, roots)
 
     def at(rel: str, line: int) -> list[str]:
         return [k for k, u in after.items() if f"{rel}:{line}" in u.where]
@@ -332,6 +355,7 @@ def judge(t: dict, s: dict, probe: dict, hand: dict[str, dict]) -> dict:
             relevant += [k for n in code for k in at(rel, n)]
         relevant = sorted(set(relevant) - confirmed)  # a confirmed break still there is judged on its own
         verdicts = [v for k in relevant if (v := probed.get(k) or verdict_of(k)) != "unlabelled"]
+        verdicts = ["can't tell" if v == SOURCE else v for v in verdicts]
         if not replaced and not relevant:
             v = "removed"
         elif "breaks" in verdicts:
@@ -349,10 +373,12 @@ def judge(t: dict, s: dict, probe: dict, hand: dict[str, dict]) -> dict:
                 "verdict": v,
                 "id": bid,
                 "relevant": [after[k].path for k in relevant],
+                "relevant_keys": relevant,
             }
         )
 
     pinned_away = pinned_elsewhere(t, files)
+    pending = sorted(k for k, v in probed.items() if v == SOURCE and k not in read["before"])
     verdicts = Counter(b["verdict"] for b in breaks)
     if (
         verdicts["still broken"]
@@ -363,7 +389,7 @@ def judge(t: dict, s: dict, probe: dict, hand: dict[str, dict]) -> dict:
         or pinned_away
     ):
         session = "not fixed"
-    elif all(b["verdict"] == "fixed" for b in breaks):
+    elif all(b["verdict"] == "fixed" for b in breaks) and not pending:
         session = "fixed"
     else:
         session = "can't tell"
@@ -376,12 +402,19 @@ def judge(t: dict, s: dict, probe: dict, hand: dict[str, dict]) -> dict:
         "pinned_away": pinned_away,
         "unasked": unasked(t, files, breaks, after, set(read["after"]) - set(read["before"])),
         "extra_roots": list(read["extra"]),
+        "pending": [(t["env"], k, _use_dict(after[k])) for k in pending]
+        + [
+            (t["env"], k, _use_dict(after[k]))
+            for b in breaks
+            if b["verdict"] == "can't tell"
+            for k in b.get("relevant_keys", [])
+            if verdict_of(k) == SOURCE
+        ],
     }
 
 
 def pinned_elsewhere(t: dict, files: dict[str, dict]) -> list[str]:
     """Added manifest lines that pin the package to anything but `to` (README.md: such a session isn't fixed)."""
-    from packaging.specifiers import InvalidSpecifier, SpecifierSet
     from packaging.utils import canonicalize_name
 
     name = canonicalize_name(t["package"])
@@ -391,16 +424,36 @@ def pinned_elsewhere(t: dict, files: dict[str, dict]) -> list[str]:
             continue
         for b in f["blocks"]:
             for _, text in b["added"]:
-                m = re.match(r"\s*[\"']?([A-Za-z0-9_.\-]+)(?:\[[^\]]*\])?\s*([<>=!~][^;#\"',]*)", text)
+                m = re.match(
+                    r"\s*[\"']?([A-Za-z0-9_.\-]+)(?:\[[^\]]*\])?[\"']?\s*(?:=\s*[\"'])?\s*([\^~<>=!][^;#\"',]*)",
+                    text,
+                )
                 if not m or canonicalize_name(m.group(1)) != name:
                     continue
-                try:
-                    ok = t["to"] in SpecifierSet(m.group(2).strip().replace(" ", ""))
-                except InvalidSpecifier:
-                    ok = False
+                ok = _allows(m.group(2).strip().replace(" ", ""), t["to"])
                 if not ok:
                     out.append(f"{path}: {text.strip()[:120]}")
     return out
+
+
+def _allows(spec: str, version: str) -> bool:
+    """Whether a pin allows `version`: PEP 440, or Poetry's `^` and `~` (`^0.28.1` is >=0.28.1,<0.29.0)."""
+    from packaging.specifiers import InvalidSpecifier, SpecifierSet
+    from packaging.version import InvalidVersion, Version
+
+    try:
+        if spec[:1] in "^~" and not spec.startswith("~="):
+            base = Version(spec[1:])
+            rel = [*base.release, 0, 0]
+            if spec[0] == "^":
+                i = next((n for n, x in enumerate(base.release) if x), len(base.release) - 1)
+            else:
+                i = 1 if len(base.release) > 1 else 0
+            upper = [*rel[:i], rel[i] + 1]
+            return base <= Version(version) < Version(".".join(map(str, upper)))
+        return version in SpecifierSet(spec)
+    except (InvalidSpecifier, InvalidVersion):
+        return False
 
 
 def unasked(t: dict, files: dict[str, dict], breaks: list[dict], after: dict, new_keys: set[str]) -> dict:
@@ -438,11 +491,14 @@ def cmd_hand(a: argparse.Namespace) -> int:
     probe, _ = load_probe(a.probe)
     hand = _hand()
     todo = []
+    uses: dict[tuple[str, str], dict] = {}
     for s in _sessions():
         t = tasks[s["task"]]
         j = judge(t, s, probe, hand)
         if j["session"] != "can't tell":
             continue  # hand checks stop where they can't change the verdict
+        for env, key, use in j["pending"]:  # uses only the released source can settle, each checked once
+            uses[(env, key)] = {"env": env, "key": key, "package": t["package"], **use}
         files = parse_diff(s["diff"])
         for b in j["breaks"]:
             if b["verdict"] != "can't tell":
@@ -471,9 +527,18 @@ def cmd_hand(a: argparse.Namespace) -> int:
                 }
             )
     random.Random(5).shuffle(todo)
-    (HERE / "hand-todo.json").write_text(json.dumps(todo, indent=1) + "\n", encoding="utf-8")
-    print(f"hand-todo.json: {len(todo)} breaks to check by hand", file=sys.stderr)
+    use_list = sorted(uses.values(), key=lambda u: (u["env"], u["path"], u["key"]))
+    doc = {"uses": use_list, "breaks": todo}
+    (HERE / "hand-todo.json").write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8")
+    print(f"hand-todo.json: {len(use_list)} uses and {len(todo)} breaks to check by hand", file=sys.stderr)
     return 0
+
+
+def _use_hand() -> dict[tuple[str, str], dict]:
+    f = HERE / "hand-checks.json"
+    if not f.exists():
+        return {}
+    return {(c["env"], c["key"]): c for c in json.loads(f.read_text(encoding="utf-8")).get("uses", [])}
 
 
 def _hand() -> dict[str, dict]:
@@ -489,7 +554,13 @@ def _hand() -> dict[str, dict]:
 def deptime_reports(t: dict) -> list:
     """check-upgrade's breaks on the task's tree, for arm B's column (the only time DepTime is asked here)."""
     tree = WORK / "tasks" / t["id"] / t["dir"]
-    cmd = [sys.executable, "-m", "deptime", "check-upgrade", str(tree), "--package", t["package"]]
+    cmd = [
+        str(Path(sys.executable).with_name("deptime")),
+        "check-upgrade",
+        str(tree),
+        "--package",
+        t["package"],
+    ]
     cmd += ["--from", t["from"], "--to", t["to"], "--format", "json"]
     out = subprocess.run(cmd, capture_output=True, text=True, env={**os.environ, "DEPTIME_OFFLINE": "1"})
     if out.returncode not in (0, 1):

@@ -1,0 +1,67 @@
+diff --git a/audit_web_client/flask/api/db.py b/audit_web_client/flask/api/db.py
+index 63c95de..919edf4 100644
+--- a/audit_web_client/flask/api/db.py
++++ b/audit_web_client/flask/api/db.py
+@@ -173,8 +173,8 @@ def create_tables(engine):
+ def import_oidb_data(engine, import_page, import_revision):
+     logger = logging.getLogger('cli.create-db.import_oidb_data')
+ 
+-    metadata = MetaData(bind=engine)
+-    metadata.reflect()
++    metadata = MetaData()
++    metadata.reflect(bind=engine)
+     page_table = metadata.tables['page']
+     revision_table = metadata.tables['revision']
+ 
+@@ -587,20 +587,20 @@ def drop_db_command(revision_only, page_only, drop_all):
+     logger.info("Dropping OIDB database in Tools.")
+     start = datetime.now()
+     engine = get_oidb_engine()
+-    metadata = MetaData(bind=engine)
+-    metadata.reflect()
++    metadata = MetaData()
++    metadata.reflect(bind=engine)
+     logger.info(f"Existing tables ({len(metadata.tables)} total):")
+     for key, value in metadata.tables.items():
+         logger.info(f"{key}")
+     if drop_all:
+         logger.info("Dropping all tables identified via reflection.")
+-        metadata.drop_all()
++        metadata.drop_all(bind=engine)
+     elif revision_only:
+         logger.info("Dropping revision table.")
+-        metadata.drop_all(tables=[metadata.tables['revision'],])
++        metadata.drop_all(bind=engine, tables=[metadata.tables['revision'],])
+     elif page_only: 
+         logger.info("Dropping page table.")
+-        metadata.drop_all(tables=[metadata.tables['page'],])
++        metadata.drop_all(bind=engine, tables=[metadata.tables['page'],])
+     else:
+         logger.info("No table specified; dropping nothing.")
+     #to_drop = []
+diff --git a/audit_web_client/flask/api/user_db.py b/audit_web_client/flask/api/user_db.py
+index 128f148..10c14be 100644
+--- a/audit_web_client/flask/api/user_db.py
++++ b/audit_web_client/flask/api/user_db.py
+@@ -106,17 +106,17 @@ def drop_user_db_command(drop_all, table_name):
+     logger.info("Dropping user tables in Tools OIDB database.")
+     start = datetime.now()
+     engine = db.get_oidb_engine()
+-    metadata = MetaData(bind=engine)
+-    metadata.reflect()
++    metadata = MetaData()
++    metadata.reflect(bind=engine)
+     logger.info(f"Existing tables ({len(metadata.tables)} total):")
+     for key, value in metadata.tables.items():
+         logger.info(f"{key}")
+     if drop_all:
+         logger.info("Dropping all user tables identified via reflection.")
+-        metadata.drop_all(tables=[metadata.tables['rev_annotation'], metadata.tables['activity_log'], metadata.tables['annotation_history']])
++        metadata.drop_all(bind=engine, tables=[metadata.tables['rev_annotation'], metadata.tables['activity_log'], metadata.tables['annotation_history']])
+     elif table_name != "":
+         logger.info(f"Dropping table '{table_name}'.")
+-        metadata.drop_all(tables=[metadata.tables[table_name],])
++        metadata.drop_all(bind=engine, tables=[metadata.tables[table_name],])
+     else:
+         logger.info("Only listing tables without --all.")
+     logger.info(f"Finished dropping table data after {datetime.now() - start}.")

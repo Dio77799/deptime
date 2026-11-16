@@ -1,0 +1,99 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 12,
+  "duration_ms": 32958,
+  "total_cost_usd": 0.0957282,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 11911,
+   "cache_read_input_tokens": 79102,
+   "output_tokens": 2211,
+   "output_tokens_details": {
+    "thinking_tokens": 179
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 11911,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 438,
+     "cache_read_input_tokens": 16677,
+     "cache_creation_input_tokens": 1011,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1011
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.68,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.22,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 1,
+  "Read": 2,
+  "Bash": 1,
+  "WebSearch": 1,
+  "Glob": 1,
+  "WebFetch": 2,
+  "Edit": 3
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://pypi.org/project/mistralai/3.7.0/",
+  "https://docs.mistral.ai/resources/migration-guides"
+ ],
+ "denied": 0,
+ "task": "pin-ai-learning-gems__ai-learning-gems.github.io-mistralai-up",
+ "arm": "A",
+ "label": "A2",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 33.6,
+ "service_error": false
+}

@@ -1,0 +1,41 @@
+diff --git a/server.py b/server.py
+index 375ff59..9d2ba42 100644
+--- a/server.py
++++ b/server.py
+@@ -1,5 +1,5 @@
+ from typing import Dict, List
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from minds.client import Client
+ 
+ # Import configuration
+@@ -7,21 +7,13 @@ from config import (
+     MINDS_BASE_URL,
+     FASTMCP_DEBUG,
+     FASTMCP_LOG_LEVEL,
+-    FASTMCP_HOST,
+-    FASTMCP_PORT,
+-    FASTMCP_SSE_PATH,
+-    FASTMCP_MESSAGE_PATH,
+ )
+ 
+ # Create the MCP server with customized settings
+-mcp = FastMCP(
++mcp = MCPServer(
+     'Minds Enterprise',
+     debug=FASTMCP_DEBUG,
+     log_level=FASTMCP_LOG_LEVEL,
+-    host=FASTMCP_HOST,
+-    port=FASTMCP_PORT,
+-    sse_path=FASTMCP_SSE_PATH,
+-    message_path=FASTMCP_MESSAGE_PATH,
+ )
+ 
+ 
+@@ -98,5 +90,5 @@ def completion(mind_name: str, message: str, api_key: str) -> str:
+ 
+ 
+ if __name__ == '__main__':
+-    # Run the server - FastMCP already has host and port from initialization
++    # Run the server over stdio (host/port/SSE paths are only passed to run() for transport="sse")
+     mcp.run()

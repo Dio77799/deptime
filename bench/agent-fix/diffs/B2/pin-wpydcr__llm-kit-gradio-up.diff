@@ -1,0 +1,25 @@
+diff --git a/ui/apply_video.py b/ui/apply_video.py
+index f77624e..5b529e6 100644
+--- a/ui/apply_video.py
++++ b/ui/apply_video.py
+@@ -191,7 +191,7 @@ class Avtar():
+             with gr.Column(scale=2):
+                 audio = gr.Audio(autoplay=False, show_label=False, visible=False,elem_id='audio-div')
+                 loud = gr.HTML(value=None, visible=False,elem_id='loud')
+-                canvas = gr.Sketchpad(value=None,interactive=False,shape=(2,1),show_label = False, visible=False,elem_id='live2d-div')
++                canvas = gr.Sketchpad(value=None,interactive=False,show_label = False, visible=False,elem_id='live2d-div')
+                 chatbot = gr.Chatbot()
+                 user_input = gr.Textbox(show_label=False, placeholder="Input...", lines=10,elem_id='player-user-input')
+                 with gr.Accordion(label='',visible=False,elem_id='player-submitGroup') as submitGroup:
+diff --git a/webui.py b/webui.py
+index 4031944..ee6e3b2 100644
+--- a/webui.py
++++ b/webui.py
+@@ -23,6 +23,6 @@ with gr.Blocks(analytics_enabled=False) as demo:
+         train.train_page(localizer)
+ 
+ load_javascript()
+-demo.queue(concurrency_count=3).launch(_frontend=False,inbrowser=True)
++demo.queue(default_concurrency_limit=3).launch(_frontend=False,inbrowser=True)
+ 
+ 

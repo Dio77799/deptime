@@ -1,0 +1,119 @@
+diff --git a/blueprints/mcp_http.py b/blueprints/mcp_http.py
+index 66f8c68..5684a36 100644
+--- a/blueprints/mcp_http.py
++++ b/blueprints/mcp_http.py
+@@ -827,7 +827,9 @@ def _tool_descriptor(name: str) -> dict[str, Any]:
+         if annotations is not None:
+             dump = getattr(annotations, "model_dump", None)
+             if callable(dump):
+-                hints = {k: v for k, v in dump().items() if v is not None}
++                # mcp 2 fields are snake_case; by_alias restores the camelCase
++                # wire names (readOnlyHint, ...) clients expect.
++                hints = {k: v for k, v in dump(by_alias=True).items() if v is not None}
+                 if hints:
+                     descriptor["annotations"] = hints
+     except Exception as e:  # never block tools/list on a metadata bug
+diff --git a/mcp/mcpserver.py b/mcp/mcpserver.py
+index 5d850d2..943792e 100644
+--- a/mcp/mcpserver.py
++++ b/mcp/mcpserver.py
+@@ -7,7 +7,7 @@ from typing import Any
+ 
+ import httpx
+ import pandas as pd
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from mcp.types import ToolAnnotations
+ from openalgo import api, ta
+ 
+@@ -159,7 +159,7 @@ def _default_derivatives_exchange(symbol: str) -> str:
+ 
+ 
+ # Create MCP server
+-mcp = FastMCP("openalgo")
++mcp = MCPServer("openalgo")
+ 
+ 
+ def _to_json(payload: Any) -> str:
+@@ -377,10 +377,10 @@ def openalgo_tool(
+         return mcp.tool(
+             annotations=ToolAnnotations(
+                 title=title,
+-                readOnlyHint=not is_write,
+-                destructiveHint=destructive,
+-                idempotentHint=not is_write,
+-                openWorldHint=open_world,
++                read_only_hint=not is_write,
++                destructive_hint=destructive,
++                idempotent_hint=not is_write,
++                open_world_hint=open_world,
+             )
+         )(wrapper)
+ 
+diff --git a/pyproject.toml b/pyproject.toml
+index cc0db32..339b19d 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -75,7 +75,7 @@ dependencies = [
+   "MarkupSafe==2.1.5",
+   "marshmallow==3.26.2",
+   "matplotlib-inline==0.2.2",
+-  "mcp==1.30.0",
++  "mcp==2.3.0",
+   "mdurl==0.1.2",
+   "msgpack==1.2.3",
+   "narwhals==2.25.0",
+diff --git a/requirements-nginx.txt b/requirements-nginx.txt
+index 2332a79..715823e 100644
+--- a/requirements-nginx.txt
++++ b/requirements-nginx.txt
+@@ -70,7 +70,7 @@ markdown-it-py==4.2.0
+ MarkupSafe==2.1.5
+ marshmallow==3.26.2
+ matplotlib-inline==0.2.2
+-mcp==1.30.0
++mcp==2.3.0
+ mdurl==0.1.2
+ msgpack==1.2.3
+ multidict==6.9.1
+diff --git a/requirements.txt b/requirements.txt
+index 4644088..8826986 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -70,7 +70,7 @@ markdown-it-py==4.2.0
+ MarkupSafe==2.1.5
+ marshmallow==3.26.2
+ matplotlib-inline==0.2.2
+-mcp==1.30.0
++mcp==2.3.0
+ mdurl==0.1.2
+ msgpack==1.2.3
+ multidict==6.9.1
+diff --git a/test/test_mcp_integrity.py b/test/test_mcp_integrity.py
+index d452868..b37269c 100644
+--- a/test/test_mcp_integrity.py
++++ b/test/test_mcp_integrity.py
+@@ -197,7 +197,7 @@ def test_every_tool_has_annotations(fastmcp_tools):
+     for name, tool in fastmcp_tools.items():
+         assert tool.annotations is not None, f"{name} has no MCP annotations"
+         assert tool.annotations.title, f"{name} has no annotation title"
+-        assert tool.annotations.readOnlyHint is not None, f"{name} has no readOnlyHint"
++        assert tool.annotations.read_only_hint is not None, f"{name} has no readOnlyHint"
+ 
+ 
+ def test_write_tools_require_the_write_scope(server):
+@@ -232,11 +232,11 @@ def test_read_tools_do_not_require_the_write_scope(server):
+ def test_annotations_agree_with_read_only_flag(server, fastmcp_tools):
+     for name, meta in server.TOOL_META.items():
+         ann = fastmcp_tools[name].annotations
+-        assert ann.readOnlyHint is meta.read_only, f"{name}: readOnlyHint mismatch"
+-        assert ann.destructiveHint is meta.destructive, f"{name}: destructiveHint mismatch"
++        assert ann.read_only_hint is meta.read_only, f"{name}: readOnlyHint mismatch"
++        assert ann.destructive_hint is meta.destructive, f"{name}: destructiveHint mismatch"
+         # A read-only call is repeatable; a write is not, since OpenAlgo
+         # orders carry no idempotency key.
+-        assert ann.idempotentHint is meta.read_only, f"{name}: idempotentHint mismatch"
++        assert ann.idempotent_hint is meta.read_only, f"{name}: idempotentHint mismatch"
+ 
+ 
+ def test_order_tools_are_marked_destructive(server):

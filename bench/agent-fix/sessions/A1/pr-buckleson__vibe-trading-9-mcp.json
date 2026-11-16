@@ -1,0 +1,101 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 33,
+  "duration_ms": 97414,
+  "total_cost_usd": 0.26428330000000005,
+  "usage": {
+   "input_tokens": 28,
+   "cache_creation_input_tokens": 33693,
+   "cache_read_input_tokens": 303910,
+   "output_tokens": 7235,
+   "output_tokens_details": {
+    "thinking_tokens": 972
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 33693,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 909,
+     "cache_read_input_tokens": 39340,
+     "cache_creation_input_tokens": 130,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 130
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.21,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.19,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 7,
+  "Glob": 3,
+  "Read": 8,
+  "Bash": 1,
+  "WebSearch": 1,
+  "WebFetch": 4,
+  "Edit": 8
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://py.sdk.modelcontextprotocol.io/v2/migration/",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.3.0/src/mcp/server/mcpserver/server.py",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.3.0/src/mcp/server/mcpserver/tools/tool_manager.py"
+ ],
+ "denied": 0,
+ "task": "pr-buckleson__vibe-trading-9-mcp",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 98.0,
+ "service_error": false
+}

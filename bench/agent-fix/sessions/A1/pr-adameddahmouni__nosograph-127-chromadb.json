@@ -1,0 +1,104 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 23,
+  "duration_ms": 145283,
+  "total_cost_usd": 0.280813,
+  "usage": {
+   "input_tokens": 32,
+   "cache_creation_input_tokens": 33856,
+   "cache_read_input_tokens": 379542,
+   "output_tokens": 9268,
+   "output_tokens_details": {
+    "thinking_tokens": 4157
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 33856,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 817,
+     "cache_read_input_tokens": 36930,
+     "cache_creation_input_tokens": 2703,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2703
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.22,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.19,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 4,
+  "Read": 5,
+  "Bash": 1,
+  "Glob": 1,
+  "WebFetch": 8,
+  "Edit": 3
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://raw.githubusercontent.com/chroma-core/chroma/1.5.9/chromadb/errors.py",
+  "https://raw.githubusercontent.com/chroma-core/chroma/1.5.9/chromadb/api/rust.py",
+  "https://raw.githubusercontent.com/chroma-core/chroma/1.5.9/rust/python_bindings/src/bindings.rs",
+  "https://raw.githubusercontent.com/chroma-core/chroma/1.5.9/rust/python_bindings/src/errors.rs",
+  "https://docs.trychroma.com/docs/overview/migration",
+  "https://raw.githubusercontent.com/chroma-core/chroma/1.5.9/chromadb/api/types.py",
+  "https://github.com/adameddahmouni/nosograph/pulls?q=chromadb",
+  "https://github.com/adameddahmouni/nosograph/pull/127"
+ ],
+ "denied": 0,
+ "task": "pr-adameddahmouni__nosograph-127-chromadb",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 145.9,
+ "service_error": false
+}

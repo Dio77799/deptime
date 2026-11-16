@@ -1,0 +1,94 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 32,
+  "duration_ms": 77156,
+  "total_cost_usd": 0.3650548,
+  "usage": {
+   "input_tokens": 16,
+   "cache_creation_input_tokens": 56830,
+   "cache_read_input_tokens": 221728,
+   "output_tokens": 11553,
+   "output_tokens_details": {
+    "thinking_tokens": 3860
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 56830,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 946,
+     "cache_read_input_tokens": 54681,
+     "cache_creation_input_tokens": 7926,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 7926
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.47,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.2,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 4,
+  "Read": 9,
+  "Glob": 1,
+  "Bash": 1,
+  "Edit": 16
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [],
+ "denied": 0,
+ "task": "pr-levon003__wiki-ores-feedback-120-sqlalchemy",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 77.8,
+ "service_error": false
+}

@@ -1,0 +1,102 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 12,
+  "duration_ms": 20311,
+  "total_cost_usd": 0.06950769999999999,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 8121,
+   "cache_read_input_tokens": 111357,
+   "output_tokens": 2586,
+   "output_tokens_details": {
+    "thinking_tokens": 71
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 8121,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 359,
+     "cache_read_input_tokens": 19635,
+     "cache_creation_input_tokens": 299,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 299
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.35,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.19,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 5,
+  "Edit": 6
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.1 check-upgrade . --package httpx --to 0.28.1 --format json",
+  "sed -i '' -e 's/^from httpx import AsyncClient$/from httpx import ASGITransport, AsyncClient/' tests/conftest.py tests/test_api/test_errors/test_422_error.py tests/test_api/test_errors/test_error.py\nsed -i '' -e 's/        app=initialized_app,/        transport=ASGITransport(app=initialized_app),/' ",
+  "uvx deptime==0.2.1 check-upgrade . --package httpx --to 0.28.1 --format json | head -20"
+ ],
+ "other_bash": 2,
+ "fetched": [],
+ "denied": 1,
+ "task": "pr-erlisasadiku__erlisa_sadiku_ccs6442-13-httpx",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 22.4,
+ "service_error": false
+}

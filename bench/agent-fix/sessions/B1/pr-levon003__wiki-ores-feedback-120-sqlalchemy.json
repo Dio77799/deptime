@@ -1,0 +1,104 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 15,
+  "duration_ms": 28334,
+  "total_cost_usd": 0.0979214,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 12024,
+   "cache_read_input_tokens": 119974,
+   "output_tokens": 3780,
+   "output_tokens_details": {
+    "thinking_tokens": 413
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 12024,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 631,
+     "cache_read_input_tokens": 21977,
+     "cache_creation_input_tokens": 513,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 513
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.46,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.2,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 5,
+  "Read": 2,
+  "Edit": 7
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.1 check-upgrade . --package sqlalchemy --to 2.1.8 --format json",
+  "mkdir -p /tmp/dt && uvx deptime==0.2.1 check-upgrade . --package sqlalchemy --to 2.1.8 --format json > /tmp/dt/out.json; python3 -I -c \"\nimport json\nd=json.load(open('/tmp/dt/out.json'))\nfor c in d['checked']:\n  for b in c['breaks']:\n    print(b['path'],b['kind'],b.get('kwarg'),b['missing_args'],b['",
+  "uvx deptime==0.2.1 check-upgrade . --package sqlalchemy --to 2.1.8 --format json | head -c 3000; echo \"exit: ${pipestatus[1]}\"",
+  "uvx deptime==0.2.1 check-upgrade . --package sqlalchemy --to 2.1.8 --format json"
+ ],
+ "other_bash": 1,
+ "fetched": [],
+ "denied": 2,
+ "task": "pr-levon003__wiki-ores-feedback-120-sqlalchemy",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 30.0,
+ "service_error": false
+}

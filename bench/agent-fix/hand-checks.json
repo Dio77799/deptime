@@ -1,0 +1,247 @@
+{
+ "checks": [
+  {
+   "id": "93fa8975e588",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 gradio/helpers.py:1200 `def update(elem_id=None, elem_classes=None, visible=None, **kwargs)` returns the properties to set on the output component; its docstring example is `gr.update(value=value)`, so value= is the documented replacement for Component.update(value=)"
+  },
+  {
+   "id": "63b7f44c29b9",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 gradio/helpers.py:1200 `def update(elem_id=None, elem_classes=None, visible=None, **kwargs)` returns the properties to set on the output component; its docstring example is `gr.update(value=value)`, so value= is the documented replacement for Component.update(value=)"
+  },
+  {
+   "id": "72cb682ee0f7",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 gradio/helpers.py:1200 `def update(elem_id=None, elem_classes=None, visible=None, **kwargs)` returns the properties to set on the output component; its docstring example is `gr.update(value=value)`, so value= is the documented replacement for Component.update(value=)"
+  },
+  {
+   "id": "b6d51102cbb7",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 gradio/helpers.py:1200 `def update(elem_id=None, elem_classes=None, visible=None, **kwargs)` returns the properties to set on the output component; its docstring example is `gr.update(value=value)`, so value= is the documented replacement for Component.update(value=)"
+  },
+  {
+   "id": "5f8a23286aa3",
+   "verdict": "fixed",
+   "evidence": "gradio 6.16.0: the probe resolves gradio.Gallery to a class, and both new call shapes bind with every keyword a named keyword-only parameter (buttons= in place of the removed show_download_button/show_fullscreen_button); the bare name was can't-tell only because the set excluded it on an unchanged line"
+  },
+  {
+   "id": "1f38a542b278",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 gradio/helpers.py:1200 `def update(elem_id=None, elem_classes=None, visible=None, **kwargs)` returns the properties to set on the output component; its docstring example is `gr.update(value=value)`, so value= is the documented replacement for Component.update(value=)"
+  },
+  {
+   "id": "2ef2dc17f1fd",
+   "verdict": "fixed",
+   "evidence": "gradio 6.16.0: the probe resolves gradio.Gallery to a class, and both new call shapes bind with every keyword a named keyword-only parameter (buttons= in place of the removed show_download_button/show_fullscreen_button); the bare name was can't-tell only because the set excluded it on an unchanged line"
+  },
+  {
+   "id": "db93df7ee28a",
+   "verdict": "fixed",
+   "evidence": "gradio 6.16.0: the probe resolves gradio.Gallery to a class, and both new call shapes bind with every keyword a named keyword-only parameter (buttons= in place of the removed show_download_button/show_fullscreen_button); the bare name was can't-tell only because the set excluded it on an unchanged line"
+  },
+  {
+   "id": "4c200ee37b6a",
+   "verdict": "fixed",
+   "evidence": "gradio 6.16.0: the probe resolves gradio.Gallery to a class, and both new call shapes bind with every keyword a named keyword-only parameter (buttons= in place of the removed show_download_button/show_fullscreen_button); the bare name was can't-tell only because the set excluded it on an unchanged line"
+  },
+  {
+   "id": "03bf3ce1e58c",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 gradio/helpers.py:1200 `def update(elem_id=None, elem_classes=None, visible=None, **kwargs)` returns the properties to set on the output component; its docstring example is `gr.update(value=value)`, so value= is the documented replacement for Component.update(value=)"
+  },
+  {
+   "id": "0108c8380c30",
+   "verdict": "fixed",
+   "evidence": "gradio 6.16.0: the probe resolves gradio.Gallery to a class, and both new call shapes bind with every keyword a named keyword-only parameter (buttons= in place of the removed show_download_button/show_fullscreen_button); the bare name was can't-tell only because the set excluded it on an unchanged line"
+  },
+  {
+   "id": "4219c5d81364",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 gradio/helpers.py:1200 `def update(elem_id=None, elem_classes=None, visible=None, **kwargs)` returns the properties to set on the output component; its docstring example is `gr.update(value=value)`, so value= is the documented replacement for Component.update(value=)"
+  },
+  {
+   "id": "f74a5697ef65",
+   "verdict": "fixed",
+   "evidence": "gradio 6.31.0 gradio/helpers.py:1200 `def update(elem_id=None, elem_classes=None, visible=None, **kwargs)` returns the properties to set on the output component; its docstring example is `gr.update(value=value)`, so value= is the documented replacement for Component.update(value=)"
+  },
+  {
+   "id": "3d3c79b7a630",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0: ToolError is at mcp/server/mcpserver/exceptions.py:43 and MCPServer is exported from mcp/server/mcpserver/__init__.py:28, the imports the replacement uses"
+  },
+  {
+   "id": "c99750758a6a",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0: mcp/client/streamable_http.py:713 `async def streamable_http_client(url, *, http_client=None, terminate_on_close=True)`; headers and timeout move onto the HTTP client, as the replacement does (whether the project's own helper builds the client mcp expects is project code, not checked)"
+  },
+  {
+   "id": "cb4a471ce743",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0: MCPServer.__init__ takes instructions (mcp/server/mcpserver/server.py:158) and streamable_http_app takes stateless_http, streamable_http_path and transport_security (server.py:1288), the arguments the replacement moves there"
+  },
+  {
+   "id": "d7c4e485f870",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0: mcp/client/streamable_http.py:713 `async def streamable_http_client(url, *, http_client=None, terminate_on_close=True)`; headers and timeout move onto the HTTP client, as the replacement does (whether the project's own helper builds the client mcp expects is project code, not checked)"
+  },
+  {
+   "id": "90bfce027be8",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0: mcp/client/streamable_http.py:713 `async def streamable_http_client(url, *, http_client=None, terminate_on_close=True)`; headers and timeout move onto the HTTP client, as the replacement does (whether the project's own helper builds the client mcp expects is project code, not checked)"
+  },
+  {
+   "id": "1332668ba417",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0: ToolError is at mcp/server/mcpserver/exceptions.py:43 and MCPServer is exported from mcp/server/mcpserver/__init__.py:28, the imports the replacement uses"
+  },
+  {
+   "id": "0e5682b10c2c",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0: ToolError is at mcp/server/mcpserver/exceptions.py:43 and MCPServer is exported from mcp/server/mcpserver/__init__.py:28, the imports the replacement uses"
+  }
+ ],
+ "uses": [
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "bf69089d707f3de9",
+   "path": "langchain_qdrant",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "aaeac15337672404",
+   "path": "langchain_qdrant.Qdrant",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "b8ef02984347d0cb",
+   "path": "langchain_qdrant.Qdrant",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "31633cc8f1d32003",
+   "path": "langchain_qdrant.Qdrant.as_retriever",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "d061c0adb799b03c",
+   "path": "langchain_qdrant.Qdrant.as_retriever",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "0f5383047777cec4",
+   "path": "langchain_qdrant.Qdrant.from_documents",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "ac4856905e50025d",
+   "path": "langchain_qdrant.Qdrant.from_documents",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "2cd67ec3cc39aaaf",
+   "path": "langchain_qdrant.QdrantVectorStore",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "f21debc26dd1dec2",
+   "path": "langchain_qdrant.QdrantVectorStore",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "37c81144ea9beb9a",
+   "path": "langchain_qdrant.QdrantVectorStore.as_retriever",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "3937de5c792782af",
+   "path": "langchain_qdrant.QdrantVectorStore.as_retriever",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "63f7b136f9d498c1",
+   "path": "langchain_qdrant.QdrantVectorStore.from_documents",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "f83259fb4047e89d",
+   "path": "langchain_qdrant.QdrantVectorStore.from_documents",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0 (newest before 2026-06-21): __init__.py exports Qdrant (vectorstores.py:60, deprecated, __init__ client/collection_name/embeddings at :77-81, from_texts with collection_name/url/prefer_grpc at :1193) and QdrantVectorStore (qdrant.py:36, __init__ client/collection_name/embedding; from_texts collection_name/url/prefer_grpc at :339); from_documents(documents, embedding, **kwargs) and as_retriever(**kwargs, search_kwargs) are langchain-core 1.4.8's VectorStore (vectorstores/base.py:787, :905), which langchain-qdrant requires"
+  },
+  {
+   "env": "langchain==1.3.9@2026-07-12",
+   "key": "d6875c95e2e50128",
+   "path": "langchain_ollama",
+   "verdict": "works",
+   "evidence": "langchain-ollama 1.1.0 (newest before 2026-07-12): __init__.py exports OllamaLLM (llms.py:25) with fields model (:113), num_ctx (:151), temperature (:178), base_url (:211)"
+  },
+  {
+   "env": "langchain==1.3.9@2026-07-12",
+   "key": "007d1d62fa7506ae",
+   "path": "langchain_ollama.OllamaLLM",
+   "verdict": "works",
+   "evidence": "langchain-ollama 1.1.0 (newest before 2026-07-12): __init__.py exports OllamaLLM (llms.py:25) with fields model (:113), num_ctx (:151), temperature (:178), base_url (:211)"
+  },
+  {
+   "env": "langchain==1.3.9@2026-07-12",
+   "key": "c38d3d42213ce89f",
+   "path": "langchain_ollama.OllamaLLM",
+   "verdict": "works",
+   "evidence": "langchain-ollama 1.1.0 (newest before 2026-07-12): __init__.py exports OllamaLLM (llms.py:25) with fields model (:113), num_ctx (:151), temperature (:178), base_url (:211)"
+  },
+  {
+   "env": "langchain==1.4.10@2026-11-11",
+   "key": "9d7e7221b403d8bb",
+   "path": "langchain_openai",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.7.4 (newest before 2026-11-11): __init__.py exports ChatOpenAI (chat_models/base.py:2928); model is the alias of model_name (:805), temperature (:808), max_tokens (:3798, alias max_completion_tokens) with populate_by_name=True (:1306)"
+  },
+  {
+   "env": "langchain==1.4.10@2026-11-11",
+   "key": "3e5bff14487187d6",
+   "path": "langchain_openai.ChatOpenAI",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.7.4 (newest before 2026-11-11): __init__.py exports ChatOpenAI (chat_models/base.py:2928); model is the alias of model_name (:805), temperature (:808), max_tokens (:3798, alias max_completion_tokens) with populate_by_name=True (:1306)"
+  },
+  {
+   "env": "langchain==1.4.10@2026-11-11",
+   "key": "88e7618350457ab0",
+   "path": "langchain_openai.ChatOpenAI",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.7.4 (newest before 2026-11-11): __init__.py exports ChatOpenAI (chat_models/base.py:2928); model is the alias of model_name (:805), temperature (:808), max_tokens (:3798, alias max_completion_tokens) with populate_by_name=True (:1306)"
+  },
+  {
+   "env": "mcp==2.3.0@2026-11-01",
+   "key": "f4298e8a955976e3",
+   "path": "mcp.types.ToolAnnotations",
+   "verdict": "works",
+   "evidence": "mcp 2.3.0's mcp.types mirrors mcp-types 2.3.0: ToolAnnotations (_types.py:1365) has fields title, read_only_hint, destructive_hint, idempotent_hint, open_world_hint; MCPModel sets alias_generator=to_camel, populate_by_name=True (_types.py:48), so the snake_case names bind (the probe saw only the camelCase aliases in the signature)"
+  }
+ ],
+ "note": "While settling the last 7 (one task, pr-billsking__baseward-10-mcp), the maintainer's agent opened that task's five diffs by session label to read the full FastMCP replacement, which the blinded file truncated: those checks were not blind. Each is a fact about mcp 2.3.0's API, and every session of the task wrote the same calls."
+}

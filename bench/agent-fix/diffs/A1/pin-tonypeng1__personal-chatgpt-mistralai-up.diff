@@ -1,0 +1,38 @@
+diff --git a/personal-chatgpt/personal_chatgpt.py b/personal-chatgpt/personal_chatgpt.py
+index 6edc415..c45568b 100644
+--- a/personal-chatgpt/personal_chatgpt.py
++++ b/personal-chatgpt/personal_chatgpt.py
+@@ -11,7 +11,7 @@ import anthropic
+ from bs4 import BeautifulSoup
+ from google import genai
+ from google.genai.types import Tool, GenerateContentConfig, GoogleSearch, ThinkingConfig
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ from mysql.connector import connect, Error
+ import ocrspace
+ import openai
+diff --git a/personal-chatgpt/session_summary.py b/personal-chatgpt/session_summary.py
+index b0f26da..49bc028 100644
+--- a/personal-chatgpt/session_summary.py
++++ b/personal-chatgpt/session_summary.py
+@@ -1,6 +1,6 @@
+ import base64
+ 
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ from mysql.connector import Error
+ import ocrspace
+ from openai import OpenAIError, APITimeoutError, APIConnectionError
+diff --git a/requirements.txt b/requirements.txt
+index 27e3767..9f418f1 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -7,7 +7,7 @@ pycryptodome==3.19.1
+ tiktoken==0.5.2
+ Pygments==2.17.2
+ striprtf==0.0.26
+-mistralai==1.9.11
++mistralai==3.7.0
+ anthropic==0.49.0
+ ocrspace==2.3.0
+ google-genai==1.52.0

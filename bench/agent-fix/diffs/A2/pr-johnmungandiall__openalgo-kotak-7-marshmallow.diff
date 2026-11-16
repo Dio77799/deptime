@@ -1,0 +1,347 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 63388eb..c6f3d43 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -71,7 +71,7 @@ dependencies = [
+   "logzero==1.7.0",
+   "markdown-it-py==4.2.0",
+   "MarkupSafe==2.1.5",
+-  "marshmallow==3.26.2",
++  "marshmallow==4.4.0",
+   "matplotlib-inline==0.2.2",
+   "mcp==1.28.1",
+   "mdurl==0.1.2",
+diff --git a/requirements-nginx.txt b/requirements-nginx.txt
+index 10f63c3..43c53d1 100644
+--- a/requirements-nginx.txt
++++ b/requirements-nginx.txt
+@@ -65,7 +65,7 @@ logistro==2.0.1
+ logzero==1.7.0
+ markdown-it-py==4.2.0
+ MarkupSafe==2.1.5
+-marshmallow==3.26.2
++marshmallow==4.4.0
+ matplotlib-inline==0.2.2
+ mcp==1.28.1
+ mdurl==0.1.2
+diff --git a/requirements.txt b/requirements.txt
+index bebcfd7..786e2e1 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -65,7 +65,7 @@ logistro==2.0.1
+ logzero==1.7.0
+ markdown-it-py==4.2.0
+ MarkupSafe==2.1.5
+-marshmallow==3.26.2
++marshmallow==4.4.0
+ matplotlib-inline==0.2.2
+ mcp==1.28.1
+ mdurl==0.1.2
+diff --git a/restx_api/data_schemas.py b/restx_api/data_schemas.py
+index 1b6acb7..66497af 100644
+--- a/restx_api/data_schemas.py
++++ b/restx_api/data_schemas.py
+@@ -129,9 +129,9 @@ class TickerSchema(Schema):
+     to = fields.Str(
+         required=True, validate=validate_date_or_timestamp
+     )  # YYYY-MM-DD or millisecond timestamp
+-    adjusted = fields.Bool(required=False, default=True)  # Adjust for splits
++    adjusted = fields.Bool(required=False, dump_default=True)  # Adjust for splits
+     sort = fields.Str(
+-        required=False, default="asc", validate=validate.OneOf(["asc", "desc"])
++        required=False, dump_default="asc", validate=validate.OneOf(["asc", "desc"])
+     )  # Sort direction
+ 
+ 
+diff --git a/restx_api/schemas.py b/restx_api/schemas.py
+index 04a3d2c..4476245 100644
+--- a/restx_api/schemas.py
++++ b/restx_api/schemas.py
+@@ -89,7 +89,7 @@ class ValiditySchemaMixin:
+     """
+ 
+     validity = fields.Str(
+-        missing=DEFAULT_VALIDITY,
++        load_default=DEFAULT_VALIDITY,
+         validate=_validate_validity,
+     )  # Order validity: DAY (default) or IOC
+ 
+@@ -108,25 +108,25 @@ class OrderSchema(ValiditySchemaMixin, Schema):
+         required=True, validate=validate.Range(min=0, min_inclusive=False, error="Quantity must be a positive number.")
+     )
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
++    product = fields.Str(load_default="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
+     price = fields.Float(
+-        missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
++        load_default=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+     trigger_price = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="Trigger price must be a non-negative number."),
+     )
+     disclosed_quantity = fields.Int(
+-        missing=0,
++        load_default=0,
+         validate=validate.Range(min=0, error="Disclosed quantity must be a non-negative integer."),
+     )
+     underlying_ltp = fields.Float(
+-        missing=None, allow_none=True
++        load_default=None, allow_none=True
+     )  # Optional: passed from options order for execution reference
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+     @post_load
+@@ -146,22 +146,22 @@ class SmartOrderSchema(ValiditySchemaMixin, Schema):
+     )
+     position_size = fields.Float(required=True)
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
++    product = fields.Str(load_default="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
+     price = fields.Float(
+-        missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
++        load_default=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+     trigger_price = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="Trigger price must be a non-negative number."),
+     )
+     disclosed_quantity = fields.Int(
+-        missing=0,
++        load_default=0,
+         validate=validate.Range(min=0, error="Disclosed quantity must be a non-negative integer."),
+     )
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+     @post_load
+@@ -195,7 +195,7 @@ class ModifyOrderSchema(ValiditySchemaMixin, Schema):
+         validate=validate.Range(min=0, error="Trigger price must be a non-negative number."),
+     )
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+     @post_load
+@@ -227,22 +227,22 @@ class BasketOrderItemSchema(ValiditySchemaMixin, Schema):
+         required=True, validate=validate.Range(min=0, min_inclusive=False, error="Quantity must be a positive number.")
+     )
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
++    product = fields.Str(load_default="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
+     price = fields.Float(
+-        missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
++        load_default=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+     trigger_price = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="Trigger price must be a non-negative number."),
+     )
+     disclosed_quantity = fields.Int(
+-        missing=0,
++        load_default=0,
+         validate=validate.Range(min=0, error="Disclosed quantity must be a non-negative integer."),
+     )
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+     @post_load
+@@ -273,22 +273,22 @@ class SplitOrderSchema(ValiditySchemaMixin, Schema):
+         validate=validate.Range(min=1, error="Split size must be a positive integer."),
+     )  # Size of each split
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
++    product = fields.Str(load_default="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
+     price = fields.Float(
+-        missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
++        load_default=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+     trigger_price = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="Trigger price must be a non-negative number."),
+     )
+     disclosed_quantity = fields.Int(
+-        missing=0,
++        load_default=0,
+         validate=validate.Range(min=0, error="Disclosed quantity must be a non-negative integer."),
+     )
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+     @post_load
+@@ -318,29 +318,29 @@ class OptionsOrderSchema(Schema):
+         required=True, validate=validate.Range(min=1, error="Quantity must be a positive integer.")
+     )
+     splitsize = fields.Int(
+-        missing=0,
++        load_default=0,
+         validate=validate.Range(min=0, error="Split size must be a non-negative integer."),
+         allow_none=True,
+     )  # Optional: If > 0, splits order into multiple orders of this size
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+     product = fields.Str(
+-        missing="MIS", validate=validate.OneOf(["MIS", "NRML"])
++        load_default="MIS", validate=validate.OneOf(["MIS", "NRML"])
+     )  # Options only support MIS and NRML
+     price = fields.Float(
+-        missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
++        load_default=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+     trigger_price = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="Trigger price must be a non-negative number."),
+     )
+     disclosed_quantity = fields.Int(
+-        missing=0,
++        load_default=0,
+         validate=validate.Range(min=0, error="Disclosed quantity must be a non-negative integer."),
+     )
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+ 
+@@ -356,7 +356,7 @@ class OptionsMultiOrderLegSchema(Schema):
+         required=True, validate=validate.Range(min=1, error="Quantity must be a positive integer.")
+     )
+     splitsize = fields.Int(
+-        missing=0,
++        load_default=0,
+         validate=validate.Range(min=0, error="Split size must be a non-negative integer."),
+         allow_none=True,
+     )  # Optional: If > 0, splits leg into multiple orders of this size
+@@ -364,24 +364,24 @@ class OptionsMultiOrderLegSchema(Schema):
+         required=False
+     )  # Optional per-leg expiry (DDMMMYY format) - for diagonal/calendar spreads
+     pricetype = fields.Str(
+-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
++        load_default="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+     product = fields.Str(
+-        missing="MIS", validate=validate.OneOf(["MIS", "NRML"])
++        load_default="MIS", validate=validate.OneOf(["MIS", "NRML"])
+     )  # Options only support MIS and NRML
+     price = fields.Float(
+-        missing=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
++        load_default=0.0, validate=validate.Range(min=0, error="Price must be a non-negative number.")
+     )
+     trigger_price = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="Trigger price must be a non-negative number."),
+     )
+     disclosed_quantity = fields.Int(
+-        missing=0,
++        load_default=0,
+         validate=validate.Range(min=0, error="Disclosed quantity must be a non-negative integer."),
+     )
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+ 
+@@ -432,8 +432,8 @@ class MarginPositionSchema(Schema):
+     pricetype = fields.Str(
+         required=True, validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+     )
+-    price = fields.Str(missing="0")  # String to match API contract
+-    trigger_price = fields.Str(missing="0")  # String to match API contract
++    price = fields.Str(load_default="0")  # String to match API contract
++    trigger_price = fields.Str(load_default="0")  # String to match API contract
+ 
+ 
+ class MarginCalculatorSchema(Schema):
+@@ -564,24 +564,24 @@ class PlaceGTTOrderSchema(Schema):
+         required=True,
+         validate=validate.Range(min=0, min_inclusive=False, error="Quantity must be a positive number."),
+     )
+-    pricetype = fields.Str(missing="LIMIT", validate=validate.OneOf(["LIMIT", "MARKET"]))
++    pricetype = fields.Str(load_default="LIMIT", validate=validate.OneOf(["LIMIT", "MARKET"]))
+     price = fields.Float(
+         required=True,
+         validate=validate.Range(min=0, error="Price must be a non-negative number."),
+     )
+     triggerprice_sl = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="triggerprice_sl must be non-negative."),
+     )
+     triggerprice_tg = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="triggerprice_tg must be non-negative."),
+     )
+-    stoploss = fields.Float(missing=None, allow_none=True)
+-    target = fields.Float(missing=None, allow_none=True)
+-    expires_at = fields.Str(missing=None, allow_none=True)
++    stoploss = fields.Float(load_default=None, allow_none=True)
++    target = fields.Float(load_default=None, allow_none=True)
++    expires_at = fields.Str(load_default=None, allow_none=True)
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+     @pre_load
+@@ -626,23 +626,23 @@ class ModifyGTTOrderSchema(Schema):
+         required=True,
+         validate=validate.Range(min=0, min_inclusive=False, error="Quantity must be a positive number."),
+     )
+-    pricetype = fields.Str(missing="LIMIT", validate=validate.OneOf(["LIMIT", "MARKET"]))
++    pricetype = fields.Str(load_default="LIMIT", validate=validate.OneOf(["LIMIT", "MARKET"]))
+     price = fields.Float(
+         required=True,
+         validate=validate.Range(min=0, error="Price must be a non-negative number."),
+     )
+     triggerprice_sl = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="triggerprice_sl must be non-negative."),
+     )
+     triggerprice_tg = fields.Float(
+-        missing=0.0,
++        load_default=0.0,
+         validate=validate.Range(min=0, error="triggerprice_tg must be non-negative."),
+     )
+-    stoploss = fields.Float(missing=None, allow_none=True)
+-    target = fields.Float(missing=None, allow_none=True)
++    stoploss = fields.Float(load_default=None, allow_none=True)
++    target = fields.Float(load_default=None, allow_none=True)
+     mpp_percentage = fields.Float(
+-        missing=None, allow_none=True, validate=_validate_mpp_percentage
++        load_default=None, allow_none=True, validate=_validate_mpp_percentage
+     )  # Optional: caller-chosen Market Price Protection % (overrides the slab)
+ 
+     @pre_load

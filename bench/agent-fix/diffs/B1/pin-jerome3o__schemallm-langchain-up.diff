@@ -1,0 +1,14 @@
+diff --git a/legacy/homellm/llm.py b/legacy/homellm/llm.py
+index 75b2766..891ba23 100644
+--- a/legacy/homellm/llm.py
++++ b/legacy/homellm/llm.py
+@@ -1,7 +1,7 @@
+ import os
+ 
+-from langchain.llms import OpenAI
+-from langchain.chat_models import ChatOpenAI
++from langchain_community.llms import OpenAI
++from langchain_community.chat_models import ChatOpenAI
+ from jsonllm.client.langchain_client import StandardLLM
+ 
+ _openai_api_base = os.environ.get("OPENAI_API_BASE", None)

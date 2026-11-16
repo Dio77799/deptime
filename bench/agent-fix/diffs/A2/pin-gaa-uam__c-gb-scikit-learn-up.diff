@@ -1,0 +1,296 @@
+diff --git a/Base/_Base.py b/Base/_Base.py
+index bdc6f24..b4511a9 100644
+--- a/Base/_Base.py
++++ b/Base/_Base.py
+@@ -7,22 +7,21 @@
+ 
+ import numbers
+ import numpy as np
+-from scipy.sparse.csc import csc_matrix
+-from scipy.sparse.csr import csr_matrix
++from scipy.sparse import csc_array, csr_array, issparse
+ from sklearn.tree import DecisionTreeRegressor
+ from sklearn.preprocessing import LabelBinarizer
+ from ._Losses import MultiOutputLeastSquaresError, CondensedDeviance
+ from sklearn.ensemble._gb import BaseGradientBoosting, VerboseReporter
+ from sklearn.ensemble import _gradient_boosting
+ 
+-from sklearn.tree import _tree
+-from scipy.sparse.base import issparse
+ from sklearn.utils.multiclass import type_of_target
+ from sklearn.base import is_classifier
+-from sklearn.model_selection._split import train_test_split
+-from sklearn.utils.validation import check_array, check_random_state, column_or_1d, _check_sample_weight
++from sklearn.model_selection import train_test_split
++from sklearn.utils import check_array, check_random_state, column_or_1d
++from sklearn.utils.validation import _check_sample_weight, validate_data
+ 
+-DTYPE = _tree.DTYPE
++# ``sklearn.tree._tree.DTYPE`` is not exposed anymore; trees use float32 inputs.
++DTYPE = np.float32
+ 
+ 
+ class CondensedGradientBoosting(BaseGradientBoosting):
+@@ -99,8 +98,12 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+                                               k=k,
+                                               sample_weight=sample_weight)
+ 
++            # ``criterion`` defaults to "deprecated" in scikit-learn's
++            # gradient boosting estimators.
++            criterion = ("squared_error" if self.criterion == "deprecated"
++                         else self.criterion)
+             tree = DecisionTreeRegressor(
+-                criterion=self.criterion,
++                criterion=criterion,
+                 splitter='best',
+                 max_depth=self.max_depth,
+                 min_samples_split=self.min_samples_split,
+@@ -116,14 +119,16 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+ 
+                 sample_weight = sample_weight * sample_mask.astype(np.float64)
+ 
+-            X = X_csr if X_csr is not None else X
+-            tree.fit(X,
++            # Trees are fitted on CSC data and applied on CSR data when sparse
++            X_for_fit = X_csc if X_csc is not None else X
++            tree.fit(X_for_fit,
+                      residual,
+                      sample_weight=sample_weight,
+                      check_input=False)
+ 
++            X_for_tree_update = X_csr if X_csr is not None else X
+             loss.update_terminal_regions(tree.tree_,
+-                                         X,
++                                         X_for_tree_update,
+                                          y,
+                                          residual,
+                                          raw_predictions,
+@@ -163,14 +168,15 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+             verbose_reporter = VerboseReporter(verbose=self.verbose)
+             verbose_reporter.init(self, begin_at_stage)
+ 
+-        X_csc = csc_matrix(X) if issparse(X) else None
+-        X_csr = csr_matrix(X) if issparse(X) else None
++        X_csc = csc_array(X) if issparse(X) else None
++        X_csr = csr_array(X) if issparse(X) else None
+ 
+         if self.n_iter_no_change is not None:
+             loss_history = np.full(self.n_iter_no_change, np.inf)
+             # We create a generator to get the predictions for X_val after
+             # the addition of each successive stage
+-            y_val_pred_iter = self._staged_raw_predict(X_val)
++            y_val_pred_iter = self._staged_raw_predict(X_val,
++                                                       check_input=False)
+ 
+         # Transform the y shape, if the problem is classification
+         if type_of_target(y) == 'multiclass':
+@@ -205,10 +211,11 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+                 self.train_score_[i] = loss_(y[sample_mask],
+                                              raw_predictions[sample_mask],
+                                              sample_weight[sample_mask])
+-                self.oob_improvement_[i] = (
+-                    old_oob_score -
+-                    loss_(y[~sample_mask], raw_predictions[~sample_mask],
+-                          sample_weight[~sample_mask]))
++                new_oob_score = loss_(y[~sample_mask],
++                                      raw_predictions[~sample_mask],
++                                      sample_weight[~sample_mask])
++                self.oob_improvement_[i] = old_oob_score - new_oob_score
++                self.oob_scores_[i] = new_oob_score
+             else:
+                 # no need to fancy index w/ no subsampling
+                 self.train_score_[i] = loss_(y, raw_predictions, sample_weight)
+@@ -276,11 +283,12 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+         if not self.warm_start:
+             self._clear_state()
+ 
+-        X, y = self._validate_data(X,
+-                                   y,
+-                                   accept_sparse=['csr', 'csc', 'coo'],
+-                                   dtype=DTYPE,
+-                                   multi_output=True)
++        X, y = validate_data(self,
++                             X,
++                             y,
++                             accept_sparse=['csr', 'csc', 'coo'],
++                             dtype=DTYPE,
++                             multi_output=True)
+ 
+         sample_weight_is_none = sample_weight is None
+ 
+@@ -288,9 +296,14 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+ 
+         if is_classifier(self):
+             y = column_or_1d(y, warn=True)
+-            y = self._validate_y(y, sample_weight)
++            y = self._encode_y(y=y,
++                               sample_weight=(None if sample_weight_is_none
++                                              else sample_weight))
+         else:
+-            y = self._validate_y(y)
++            y = self._encode_y(y=y, sample_weight=None)
++
++        # A single (multi-output) tree is fitted per stage.
++        self.n_trees_per_iteration_ = 1
+ 
+         self._check_params()
+ 
+@@ -305,7 +318,7 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+                 stratify=stratify,
+             )
+             if is_classifier(self):
+-                if self._n_classes != np.unique(y).shape[0]:
++                if self.n_classes_ != np.unique(y).shape[0]:
+                     # We choose to error here. The problem is that the init
+                     # estimator would be trained on y, which has some missing
+                     # classes now, so its predictions would not have the
+@@ -318,7 +331,7 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+         else:
+             X_val = y_val = sample_weight_val = None
+ 
+-        if not self._is_initialized():
++        if not self._is_fitted():
+             # init state
+             self._init_state()
+ 
+@@ -360,7 +373,8 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+                     'warm_start==True' %
+                     (self.n_estimators, self.estimators_.shape[0]))
+             begin_at_stage = self.estimators_.shape[0]
+-            X = check_array(X, dtype=DTYPE, order="C", accept_sparse='csr')
++            X = check_array(X, dtype=DTYPE, order="C", accept_sparse='csr',
++                            ensure_all_finite=False)
+             raw_predictions = self._raw_predict(X)
+             self._resize_state()
+ 
+@@ -375,6 +389,10 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+             self.train_score_ = self.train_score_[:n_stages]
+             if hasattr(self, 'oob_improvement_'):
+                 self.oob_improvement_ = self.oob_improvement_[:n_stages]
++                self.oob_scores_ = self.oob_scores_[:n_stages]
++
++        if hasattr(self, 'oob_scores_'):
++            self.oob_score_ = self.oob_scores_[-1]
+ 
+         self.n_estimators_ = n_stages
+         return self
+@@ -396,17 +414,19 @@ class CondensedGradientBoosting(BaseGradientBoosting):
+         raw_predictions = self._raw_predict_init(X)
+         if raw_predictions.shape[1] == 1:
+             raw_predictions = np.squeeze(raw_predictions)
+-        for i in range(self.n_estimators):
++        for i in range(self.estimators_.shape[0]):
+             tree = self.estimators_[i, 0]
+             raw_predictions += (self.learning_rate * tree.predict(X))
+         return raw_predictions
+ 
+-    def _staged_raw_predict(self, X):
+-        X = check_array(X, dtype=DTYPE, order="C", accept_sparse='csr')
++    def _staged_raw_predict(self, X, check_input=True):
++        if check_input:
++            X = validate_data(self, X, dtype=DTYPE, order="C",
++                              accept_sparse='csr', reset=False)
+         raw_predictions = self._raw_predict_init(X)
+         if raw_predictions.shape[1] == 1:
+             raw_predictions = np.squeeze(raw_predictions)
+-        for i in range(self.n_estimators):
++        for i in range(self.estimators_.shape[0]):
+             tree = self.estimators_[i, 0]
+             raw_predictions += (self.learning_rate * tree.predict(X))
+             yield raw_predictions.copy()
+diff --git a/Base/_Losses.py b/Base/_Losses.py
+index 5bce77a..1fdbe35 100644
+--- a/Base/_Losses.py
++++ b/Base/_Losses.py
+@@ -9,7 +9,6 @@ import numpy as np
+ from sklearn.tree import _tree
+ 
+ from sklearn.dummy import DummyClassifier, DummyRegressor
+-from sklearn.ensemble import _gb_losses
+ 
+ from scipy.special import logsumexp
+ from sklearn.utils.multiclass import type_of_target
+@@ -17,7 +16,11 @@ from sklearn.utils.multiclass import type_of_target
+ TREE_LEAF = _tree.TREE_LEAF
+ 
+ 
+-class CondensedDeviance(_gb_losses.ClassificationLossFunction):
++# NOTE: scikit-learn removed ``sklearn.ensemble._gb_losses`` (replaced by the
++# private ``sklearn._loss`` module with a different interface), so the loss
++# classes below are self-contained and implement everything the condensed
++# boosting code needs.
++class CondensedDeviance:
+     def __init__(self, n_classes_):
+         self.K = 1
+         self.n_classes_ = n_classes_
+@@ -93,6 +96,10 @@ class CondensedDeviance(_gb_losses.ClassificationLossFunction):
+             np.exp(raw_predictions -
+                    (logsumexp(raw_predictions, axis=1)[:, np.newaxis])))
+ 
++    def predict_proba(self, raw_predictions):
++        # Name used by scikit-learn's GradientBoostingClassifier.predict_proba
++        return self._raw_prediction_to_proba(raw_predictions)
++
+     def _raw_prediction_to_decision(self, raw_predictions):
+         proba = self._raw_prediction_to_proba(raw_predictions)
+         return np.argmax(proba, axis=1)
+@@ -105,7 +112,11 @@ class CondensedDeviance(_gb_losses.ClassificationLossFunction):
+         return raw_predictions
+ 
+ 
+-class MultiOutputLeastSquaresError(_gb_losses.RegressionLossFunction):
++class MultiOutputLeastSquaresError:
++    def __init__(self):
++        self.K = 1
++        self.is_multi_class = False
++
+     def init_estimator(self):
+         return DummyRegressor(strategy='mean')
+ 
+diff --git a/Requirements.txt b/Requirements.txt
+index e3ccc5a..a3c5d86 100644
+--- a/Requirements.txt
++++ b/Requirements.txt
+@@ -1 +1 @@
+-scikit-learn==1.2.2
++scikit-learn==1.9.1
+diff --git a/model/cgb.py b/model/cgb.py
+index b97d6b0..e33023a 100644
+--- a/model/cgb.py
++++ b/model/cgb.py
+@@ -8,11 +8,12 @@
+ 
+ from Base._Base import CondensedGradientBoosting
+ from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
+-from sklearn.metrics import mean_squared_error, r2_score
++import numpy as np
++from sklearn.metrics import root_mean_squared_error, r2_score
+ from sklearn.utils.validation import check_array
+-from sklearn.tree import _tree
+ 
+-DTYPE = _tree.DTYPE
++# ``sklearn.tree._tree.DTYPE`` is not exposed anymore; trees use float32 inputs.
++DTYPE = np.float32
+ 
+ 
+ class cgb_clf(GradientBoostingClassifier, CondensedGradientBoosting):
+@@ -78,7 +79,7 @@ class cgb_reg(GradientBoostingRegressor, CondensedGradientBoosting):
+ 
+     def __init__(self,
+                  *,
+-                 loss='ls',
++                 loss='squared_error',
+                  learning_rate=0.1,
+                  n_estimators=100,
+                  subsample=1.0,
+@@ -131,8 +132,8 @@ class cgb_reg(GradientBoostingRegressor, CondensedGradientBoosting):
+     def score(self, X, y):
+         pred = self.predict(X)
+         if self.metric == 'rmse':
+-            err = mean_squared_error(y_true=y, y_pred=pred,
+-                                     squared=False, multioutput='raw_values')
++            err = root_mean_squared_error(y_true=y, y_pred=pred,
++                                          multioutput='raw_values')
+         else:
+             err = r2_score(y_true=y, y_pred=pred)
+         return err

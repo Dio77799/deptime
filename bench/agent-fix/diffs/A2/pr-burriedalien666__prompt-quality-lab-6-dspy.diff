@@ -1,0 +1,153 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 88fd120..cf49a70 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -27,7 +27,7 @@ dependencies = [
+ [project.optional-dependencies]
+ optimize = [
+     "requests>=2.25.0",
+-    "dspy==2.6.13",
++    "dspy==3.4.1",
+     "numpy>=2.2.0",
+     "scipy>=1.15.0",
+     "pandas>=2.2.0",
+diff --git a/src/prompt_ops/core/evaluation.py b/src/prompt_ops/core/evaluation.py
+index 629972a..4a86e9a 100644
+--- a/src/prompt_ops/core/evaluation.py
++++ b/src/prompt_ops/core/evaluation.py
+@@ -98,7 +98,22 @@ class Evaluator:
+             If return_outputs is False, returns the average score.
+             If return_outputs is True, returns (score, outputs).
+         """
+-        return self._dspy_evaluator(program, return_outputs=return_outputs)
++        # DSPy >= 3.0 no longer accepts `return_outputs`; it always returns an
++        # EvaluationResult with `.score` and `.results` (example, prediction, score).
++        result = self._dspy_evaluator(program)
++        score = self._extract_score(result)
++        if return_outputs:
++            return score, getattr(result, "results", [])
++        return score
++
++    @staticmethod
++    def _extract_score(result) -> float:
++        """Extract a numeric score from a DSPy evaluation result."""
++        if hasattr(result, "score"):
++            return result.score
++        if isinstance(result, tuple):
++            return result[0]
++        return result
+ 
+ 
+ class StatisticalEvaluator(Evaluator):
+@@ -151,8 +166,8 @@ class StatisticalEvaluator(Evaluator):
+         all_scores = []
+ 
+         for _ in range(self.n_runs):
+-            score = self._dspy_evaluator(program, **kwargs)
+-            all_scores.append(score)
++            result = self._dspy_evaluator(program, **kwargs)
++            all_scores.append(self._extract_score(result))
+ 
+         stats_dict = self.calculate_statistics(all_scores)
+ 
+diff --git a/src/prompt_ops/core/model.py b/src/prompt_ops/core/model.py
+index 2852eab..4becc24 100644
+--- a/src/prompt_ops/core/model.py
++++ b/src/prompt_ops/core/model.py
+@@ -226,8 +226,9 @@ class DSPyModelAdapter(ModelAdapter):
+         try:
+             # Use the model to generate a completion
+             if temp_config:
+-                with dspy.settings(**temp_config):
+-                    response = self._model(prompt)
++                # dspy.settings is not callable in DSPy >= 3.0; apply the overrides
++                # to a copy of the LM instead.
++                response = self._model.copy(**temp_config)(prompt)
+             else:
+                 response = self._model(prompt)
+ 
+diff --git a/src/prompt_ops/core/prompt_strategies.py b/src/prompt_ops/core/prompt_strategies.py
+index 6bdb959..67fd9de 100644
+--- a/src/prompt_ops/core/prompt_strategies.py
++++ b/src/prompt_ops/core/prompt_strategies.py
+@@ -497,11 +497,9 @@ class BasicOptimizationStrategy(BaseStrategy):
+                                 f"Using default tip parameter: {kwargs['tip'][:50] if kwargs['tip'] else 'None'}"
+                             )
+ 
+-                        # Inject our custom tip
+-                        custom_tip = optimizer.proposer_kwargs.get("tip")
+-                        if custom_tip:
+-                            logging.info(f"Injecting custom tip: {custom_tip[:50]}...")
+-                            kwargs["tip"] = custom_tip
++                        # Note: in DSPy >= 3.0 propose_instructions_for_program has no
++                        # `tip` parameter; the custom tip is injected through the
++                        # patched propose_instruction_for_predictor below.
+ 
+                         # Call the original method with enhanced error handling
+                         logging.info(
+@@ -565,10 +563,24 @@ class BasicOptimizationStrategy(BaseStrategy):
+                         # Re-raise if we can't create a fallback
+                         raise
+ 
+-                # Apply our wrapper
++                # Force our custom tip for every predictor instruction proposal
++                original_propose_for_predictor = (
++                    GroundedProposer.propose_instruction_for_predictor
++                )
++                custom_tip = optimizer.proposer_kwargs.get("tip")
++
++                def custom_propose_for_predictor(self, *args, **kwargs):
++                    if custom_tip:
++                        kwargs["tip"] = custom_tip
++                    return original_propose_for_predictor(self, *args, **kwargs)
++
++                # Apply our wrappers
+                 GroundedProposer.propose_instructions_for_program = (
+                     custom_propose_instructions
+                 )
++                GroundedProposer.propose_instruction_for_predictor = (
++                    custom_propose_for_predictor
++                )
+ 
+             # Try to apply our debug wrapper to the GroundedProposer class
+             try:
+@@ -625,8 +637,14 @@ class BasicOptimizationStrategy(BaseStrategy):
+                         view_data_batch_size=self.view_data_batch_size,
+                         tip_aware_proposer=self.tip_aware_proposer,
+                         fewshot_aware_proposer=self.fewshot_aware_proposer,
+-                        requires_permission_to_run=self.requires_permission_to_run,
+-                        provide_traceback=True,  # Add this line
++                        # requires_permission_to_run is deprecated in DSPy 3.x;
++                        # only pass it when explicitly enabled.
++                        **(
++                            {"requires_permission_to_run": True}
++                            if self.requires_permission_to_run
++                            else {}
++                        ),
++                        provide_traceback=True,
+                     )
+                     logging.info("Optimizer.compile completed successfully")
+                 except TypeError as e:
+@@ -675,6 +693,9 @@ class BasicOptimizationStrategy(BaseStrategy):
+                     GroundedProposer.propose_instructions_for_program = (
+                         original_propose_instructions
+                     )
++                    GroundedProposer.propose_instruction_for_predictor = (
++                        original_propose_for_predictor
++                    )
+ 
+             # Store model family information in the optimized program for reference
+             if hasattr(self, "model_family") and optimized_program is not None:
+diff --git a/src/prompt_ops/datasets/hotpotqa/adapter.py b/src/prompt_ops/datasets/hotpotqa/adapter.py
+index bca3128..b1b4de8 100644
+--- a/src/prompt_ops/datasets/hotpotqa/adapter.py
++++ b/src/prompt_ops/datasets/hotpotqa/adapter.py
+@@ -90,7 +90,7 @@ class HotpotQAAdapter(DatasetAdapter):
+             try:
+                 # Import here to avoid dependency issues
+                 # Only import if retriever is actually needed
+-                from dspy.retrieve import ColBERTv2
++                from dspy import ColBERTv2  # dspy.retrieve was removed in DSPy 3.x
+ 
+                 self.retriever = ColBERTv2(url=retriever_url)
+                 logger.info(f"Initialized retriever with URL: {retriever_url}")

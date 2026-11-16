@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 9,
+  "duration_ms": 26787,
+  "total_cost_usd": 0.0722556,
+  "usage": {
+   "input_tokens": 16,
+   "cache_creation_input_tokens": 8453,
+   "cache_read_input_tokens": 119217,
+   "output_tokens": 2627,
+   "output_tokens_details": {
+    "thinking_tokens": 525
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 8453,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 545,
+     "cache_read_input_tokens": 17936,
+     "cache_creation_input_tokens": 983,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 983
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.32,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.19,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 4,
+  "Read": 1,
+  "Grep": 1,
+  "WebFetch": 1,
+  "Edit": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.1 check-upgrade . --package anthropic --to 2.8.0 --format json",
+  "uvx deptime==0.2.1 check-upgrade . --package anthropic --from 0.26.0 --to 2.8.0 --format json",
+  "uvx deptime==0.2.1 check-upgrade . --package anthropic --from 0.26.0 --to 2.8.0 --format json"
+ ],
+ "other_bash": 1,
+ "fetched": [
+  "https://raw.githubusercontent.com/anthropics/anthropic-sdk-python/v0.125.0/src/anthropic/_constants.py"
+ ],
+ "denied": 1,
+ "task": "pin-oaklight__mango-anthropic-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 28.6,
+ "service_error": false
+}

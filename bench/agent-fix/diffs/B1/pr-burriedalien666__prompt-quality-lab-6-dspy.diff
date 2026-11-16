@@ -1,0 +1,13 @@
+diff --git a/src/prompt_ops/datasets/hotpotqa/adapter.py b/src/prompt_ops/datasets/hotpotqa/adapter.py
+index bca3128..ddecc0b 100644
+--- a/src/prompt_ops/datasets/hotpotqa/adapter.py
++++ b/src/prompt_ops/datasets/hotpotqa/adapter.py
+@@ -90,7 +90,7 @@ class HotpotQAAdapter(DatasetAdapter):
+             try:
+                 # Import here to avoid dependency issues
+                 # Only import if retriever is actually needed
+-                from dspy.retrieve import ColBERTv2
++                from dspy import ColBERTv2
+ 
+                 self.retriever = ColBERTv2(url=retriever_url)
+                 logger.info(f"Initialized retriever with URL: {retriever_url}")

@@ -1,0 +1,39 @@
+diff --git a/requirements.txt b/requirements.txt
+index cb76138..6dd9390 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -31,7 +31,7 @@ PyYAML==6.0.3
+ tqdm==4.67.2
+ 
+ # Mistral OCR (PDF to Markdown conversion)
+-mistralai==1.11.1
++mistralai==3.7.0
+ python-dotenv==1.2.1
+ 
+ # Authenticated Web Extraction (JS-heavy / login-gated pages)
+diff --git a/scripts/mistral_ocr.py b/scripts/mistral_ocr.py
+index 283c2f7..8d6c106 100644
+--- a/scripts/mistral_ocr.py
++++ b/scripts/mistral_ocr.py
+@@ -11,7 +11,7 @@ import base64
+ import mimetypes
+ from pathlib import Path
+ from dotenv import load_dotenv
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ 
+ # Load environment variables from .env file
+ load_dotenv()
+diff --git a/scripts/onenote_pdf_to_markdown.py b/scripts/onenote_pdf_to_markdown.py
+index 87edfc3..c442697 100644
+--- a/scripts/onenote_pdf_to_markdown.py
++++ b/scripts/onenote_pdf_to_markdown.py
+@@ -202,7 +202,7 @@ def ocr_pngs_with_mistral(
+         sys.exit(1)
+ 
+     import base64
+-    from mistralai import Mistral
++    from mistralai.client import Mistral
+ 
+     client = Mistral(api_key=api_key)
+ 

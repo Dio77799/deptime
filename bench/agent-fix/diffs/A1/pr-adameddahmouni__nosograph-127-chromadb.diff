@@ -1,0 +1,70 @@
+diff --git a/requirements-dev.txt b/requirements-dev.txt
+index 6ee0f3a2..da8f4bb1 100644
+--- a/requirements-dev.txt
++++ b/requirements-dev.txt
+@@ -7,7 +7,7 @@ pip-tools>=7.4
+ playwright>=1.48,<2
+ # Optional semantic-search integrations are exercised by the offline suite.
+ # Server-mode CVEs (CVE-2026-45829/45830/45831/45833) do not apply to embedded PersistentClient usage.
+-chromadb>=0.5.23,<1.0
++chromadb>=0.5.23,<2.0
+ sentence-transformers>=5.0
+ # Supports asyncio-aware pytest configuration used by async integration tests.
+ pytest-asyncio>=0.24
+diff --git a/src/med_research/pipeline/semantic_search/engine.py b/src/med_research/pipeline/semantic_search/engine.py
+index 4f11cecc..abfddce4 100644
+--- a/src/med_research/pipeline/semantic_search/engine.py
++++ b/src/med_research/pipeline/semantic_search/engine.py
+@@ -204,20 +204,22 @@ class SemanticSearchEngine:
+             texts = [
+                 (a.get("title", "") or "") + " " + (a.get("abstract", "") or "") for a in batch
+             ]
+-            ids = [a.get("pmid", f"art_{i + j}") for j, a in enumerate(batch)]
++            # chromadb 1.x requires str IDs and primitive, non-None metadata values.
++            ids = [str(a.get("pmid") or f"art_{i + j}") for j, a in enumerate(batch)]
+             metadatas = [
+                 {
+-                    "pmid": a.get("pmid", ""),
++                    "pmid": str(a.get("pmid") or ""),
+                     "title": (a.get("title", "") or "")[:200],
+-                    "year": a.get("year", ""),
+-                    "journal": a.get("journal", "")[:100],
++                    "year": str(a.get("year") or ""),
++                    "journal": (a.get("journal", "") or "")[:100],
+                 }
+                 for a in batch
+             ]
+ 
+             embeddings = self.model.encode(texts, show_progress_bar=False).tolist()
+ 
+-            self.collection.add(
++            # upsert: chromadb 1.x raises DuplicateIDError on repeated IDs with add()
++            self.collection.upsert(
+                 ids=ids,
+                 embeddings=embeddings,
+                 metadatas=metadatas,
+@@ -268,16 +270,22 @@ class SemanticSearchEngine:
+ 
+         self._load_model()
+         _tick(progress_callback, "semantic search", 1, 1)
++        # chromadb 1.x raises TypeError for n_results <= 0 (e.g. empty collection)
++        n_results = min(top_k, int(self.collection.count()))
++        if n_results <= 0:
++            return []
+         query_embedding = self.model.encode(query).tolist()
+         results = self.collection.query(
+             query_embeddings=[query_embedding],
+-            n_results=min(top_k, self.collection.count()),
++            n_results=n_results,
++            include=["metadatas", "distances"],
+         )
+ 
+         formatted: list[SemanticHit] = []
+         if results["ids"] and results["ids"][0]:
+             for i, doc_id in enumerate(results["ids"][0]):
+-                meta = results["metadatas"][0][i] if results["metadatas"] else {}
++                # chromadb 1.x may yield None metadata entries
++                meta = (results["metadatas"][0][i] if results["metadatas"] else None) or {}
+                 dist = results["distances"][0][i] if results["distances"] else 0
+                 # Convert distance to similarity score (cosine distance → 0-10 scale)
+                 similarity = round(max(0, (1 - dist) * 10), 2)

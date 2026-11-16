@@ -1,0 +1,190 @@
+diff --git a/mcp_server.py b/mcp_server.py
+index a72a517..bcc0fcd 100644
+--- a/mcp_server.py
++++ b/mcp_server.py
+@@ -9,7 +9,7 @@ from starlette.middleware.authentication import AuthenticationMiddleware
+ import httpx
+ from dotenv import load_dotenv
+ from fastmcp import FastMCP
+-from fastmcp.prompts.prompt import PromptMessage, TextContent
++from fastmcp.prompts import Message
+ from starlette.requests import Request
+ from starlette.responses import PlainTextResponse
+ from fastmcp.server.middleware.rate_limiting import (
+@@ -39,10 +39,7 @@ PORT = int(os.environ.get("PORT", 9000))
+ 
+ mcp = FastMCP(
+     name="nepseapi-mcp-server",
+-    on_duplicate_tools="error",
+-    on_duplicate_resources="warn",
+-    on_duplicate_prompts="replace",
+-    stateless_http=True
++    on_duplicate="error",
+ )
+ 
+ # --- Rate Limiting Middleware ---
+@@ -54,7 +51,7 @@ mcp.add_middleware(RateLimitingMiddleware(
+ mcp.add_middleware(ErrorHandlingMiddleware(
+     include_traceback=True,
+     transform_errors=True,
+-    error_callback=lambda request, exc: logger.error(f"Error in MCP server: {exc}"),
++    error_callback=lambda exc, context: logger.error(f"Error in MCP server: {exc}"),
+ ))
+ 
+ mcp.add_middleware(RetryMiddleware(
+@@ -66,81 +63,81 @@ mcp.add_middleware(RetryMiddleware(
+     name="stock-quick-lookup",
+     description="Get a quick summary of a stock's current price, volume, and latest trades."
+ )
+-def stock_quick_lookup(symbol: str) -> PromptMessage:
++def stock_quick_lookup(symbol: str) -> Message:
+     """Get a quick summary of a stock's current price, volume, and latest trades."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text=f"Show me a quick summary for {symbol}."))
++    return Message(f"Show me a quick summary for {symbol}.", role="user")
+ 
+ @mcp.prompt(
+     name="market-sentiment-snapshot",
+     description="Get a snapshot of today's top gainers, losers, and overall market mood."
+ )
+-def market_sentiment_snapshot() -> PromptMessage:
++def market_sentiment_snapshot() -> Message:
+     """Get a snapshot of today's top gainers, losers, and overall market mood."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text="Give me today's top gainers, losers, and a market summary."))
++    return Message("Give me today's top gainers, losers, and a market summary.", role="user")
+ 
+ @mcp.prompt(
+     name="sector-performance",
+     description="Analyze the performance of a specific sector today."
+ )
+-def sector_performance(sector: str) -> PromptMessage:
++def sector_performance(sector: str) -> Message:
+     """Analyze the performance of a specific sector today."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text=f"Analyze today's performance for the {sector} sector."))
++    return Message(f"Analyze today's performance for the {sector} sector.", role="user")
+ 
+ @mcp.prompt(
+     name="company-deep-dive",
+     description="Get a detailed report on a company: profile, price history, and recent trades."
+ )
+-def company_deep_dive(symbol: str) -> PromptMessage:
++def company_deep_dive(symbol: str) -> Message:
+     """Get a detailed report on a company: profile, price history, and recent trades."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text=f"Give me a detailed report for {symbol}, including profile, price history, and recent trades."))
++    return Message(f"Give me a detailed report for {symbol}, including profile, price history, and recent trades.", role="user")
+ 
+ @mcp.prompt(
+     name="live-market-watchlist",
+     description="Monitor live prices and volumes for a custom list of stocks."
+ )
+-def live_market_watchlist(symbols: str) -> PromptMessage:
++def live_market_watchlist(symbols: str) -> Message:
+     """Monitor live prices and volumes for a custom list of stocks."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text=f"Show me live prices and volumes for: {symbols}"))
++    return Message(f"Show me live prices and volumes for: {symbols}", role="user")
+ 
+ @mcp.prompt(
+     name="market-depth-analyzer",
+     description="Analyze the current bid/ask depth for a stock (only when market is open)."
+ )
+-def market_depth_analyzer(symbol: str) -> PromptMessage:
++def market_depth_analyzer(symbol: str) -> Message:
+     """Analyze the current bid/ask depth for a stock (only when market is open)."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text=f"Analyze the current market depth for {symbol}."))
++    return Message(f"Analyze the current market depth for {symbol}.", role="user")
+ 
+ @mcp.prompt(
+     name="post-market-trade-explorer",
+     description="Explore all trades for a stock after market close (floorsheet)."
+ )
+-def post_market_trade_explorer(symbol: str) -> PromptMessage:
++def post_market_trade_explorer(symbol: str) -> Message:
+     """Explore all trades for a stock after market close (floorsheet)."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text=f"Show me all trades for {symbol} after market close."))
++    return Message(f"Show me all trades for {symbol} after market close.", role="user")
+ 
+ @mcp.prompt(
+     name="validate-stock-symbol",
+     description="Check if a stock symbol is valid and get suggestions if not."
+ )
+-def validate_stock_symbol_prompt(symbol: str) -> PromptMessage:
++def validate_stock_symbol_prompt(symbol: str) -> Message:
+     """Check if a stock symbol is valid and get suggestions if not."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text=f"Validate the stock symbol: {symbol}"))
++    return Message(f"Validate the stock symbol: {symbol}", role="user")
+ 
+ @mcp.prompt(
+     name="market-open-status",
+     description="Check if the NEPSE market is currently open or closed."
+ )
+-def market_open_status() -> PromptMessage:
++def market_open_status() -> Message:
+     """Check if the NEPSE market is currently open or closed."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text="Is the NEPSE market currently open or closed?"))
++    return Message("Is the NEPSE market currently open or closed?", role="user")
+ 
+ @mcp.prompt(
+     name="setup-alert",
+     description="Set up a price or volume alert for a stock (UI clients can use this to trigger notifications)."
+ )
+-def setup_alert(symbol: str, type: str, threshold: str) -> PromptMessage:
++def setup_alert(symbol: str, type: str, threshold: str) -> Message:
+     """Set up a price or volume alert for a stock (UI clients can use this to trigger notifications)."""
+-    return PromptMessage(role="user", content=TextContent(type="text", text=f"Set up an alert for {symbol} when {type} crosses {threshold}."))
++    return Message(f"Set up an alert for {symbol} when {type} crosses {threshold}.", role="user")
+ 
+ # Pydantic Models for Type Validation
+ class Summary(BaseModel):
+@@ -1347,4 +1344,4 @@ if __name__ == "__main__":
+     # for local testing
+     # mcp.run(transport="stdio")
+     # for production / remote
+-    mcp.run(transport="http", host="0.0.0.0", port=PORT)
++    mcp.run(transport="http", host="0.0.0.0", port=PORT, stateless_http=True)
+diff --git a/pyproject.toml b/pyproject.toml
+index a9babd1..49aa52a 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -14,7 +14,7 @@ fastapi = "==0.115.6"
+ uvicorn = "==0.34.0"
+ websockets = "==14.1"
+ httptools = ">=0.6.4"
+-fastmcp = "==2.10.1"
++fastmcp = "==4.1.8"
+ 
+ [project.urls]
+ nepse = "git+https://github.com/surajrimal07/NepseUnofficialApi.git"
+diff --git a/requirements.txt b/requirements.txt
+index 23e645f..671b3b7 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -7,4 +7,4 @@ uvloop; sys_platform != 'win32'  # Install uvloop only on non-Windows platforms
+ httptools>=0.6.4
+ 
+ # MCP Server dependencies
+-fastmcp==2.10.1
+\ No newline at end of file
++fastmcp==4.1.8
+\ No newline at end of file
+diff --git a/test_mcp.py b/test_mcp.py
+index 9d17f8e..bc7f3e3 100644
+--- a/test_mcp.py
++++ b/test_mcp.py
+@@ -66,7 +66,8 @@ async def test_mcp_server():
+             print(f"\nTest {i}/{total_tests}: {tool['name']}")
+             print("-" * 40)
+             try:
+-                result = await client.call_tool(tool['name'], tool['args'])
++                call_result = await client.call_tool(tool['name'], tool['args'])
++                result = call_result.data if call_result.data is not None else call_result.structured_content
+                 print(f"✓ SUCCESS: Tool '{tool['name']}' executed successfully")
+                 if isinstance(result, list):
+                     print(f"  Data preview: List with {len(result)} items")
+@@ -99,7 +100,7 @@ async def test_tool_listing():
+             tools = await client.list_tools()
+             print(f"Available tools: {len(tools)}")
+             for tool in tools:
+-                print(f"  • {tool.get('name')}: {tool.get('description')}")
++                print(f"  • {tool.name}: {tool.description}")
+         except Exception as e:
+             print(f"Failed to list tools: {e}")
+ 

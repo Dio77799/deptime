@@ -1,0 +1,540 @@
+diff --git a/app/main.py b/app/main.py
+index 469d79e..79be82c 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -23,7 +23,7 @@ from app.exchange.routes import router as exchange_router
+ from app.i18n import t, translate_error
+ from app.i18n.middleware import LocaleMiddleware
+ from app.logging_setup import configure_logging
+-from app.mcp.server import build_mcp
++from app.mcp.server import build_mcp, mcp_app_options
+ from app.security.mcp_auth import BearerAuthMiddleware
+ from app.services import Services
+ 
+@@ -51,7 +51,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
+     services = Services(resolved)
+     mcp = build_mcp(services)
+     # Must run before mounting: session_manager is created lazily and raises RuntimeError afterwards.
+-    mcp_app = mcp.streamable_http_app()
++    mcp_app = mcp.streamable_http_app(**mcp_app_options())
+     export_server = None
+ 
+     @asynccontextmanager
+diff --git a/app/mcp/pipeline.py b/app/mcp/pipeline.py
+index 01ad97d..85e3ca2 100644
+--- a/app/mcp/pipeline.py
++++ b/app/mcp/pipeline.py
+@@ -8,7 +8,7 @@ import time
+ from datetime import datetime, timezone
+ from uuid import uuid4
+ 
+-from mcp.server.fastmcp.exceptions import ToolError
++from mcp.server.mcpserver.exceptions import ToolError
+ from sqlglot import exp
+ 
+ from app.credentials.service import CREDENTIAL_ISSUE_DENIED
+diff --git a/app/mcp/server.py b/app/mcp/server.py
+index 9cf4ec0..6cab7bb 100644
+--- a/app/mcp/server.py
++++ b/app/mcp/server.py
+@@ -1,11 +1,11 @@
+-"""Build the FastMCP instance and register tools."""
++"""Build the MCPServer instance and register tools."""
+ 
+ from __future__ import annotations
+ 
+ import json
+ 
+-from mcp.server.fastmcp import FastMCP
+-from mcp.server.fastmcp.exceptions import ToolError
++from mcp.server.mcpserver import MCPServer
++from mcp.server.mcpserver.exceptions import ToolError
+ from mcp.server.transport_security import TransportSecuritySettings
+ 
+ from app.mcp import pipeline
+@@ -31,14 +31,20 @@ def _principal_or_error(texts: dict[str, str]):
+     return principal
+ 
+ 
+-def build_mcp(services) -> FastMCP:
++def mcp_app_options() -> dict:
++    """Transport options for ``MCPServer.streamable_http_app()`` (moved off the constructor in mcp 2.x)."""
++    return {
++        "stateless_http": True,
++        "streamable_http_path": "/",
++        "transport_security": TransportSecuritySettings(enable_dns_rebinding_protection=False),
++    }
++
++
++def build_mcp(services) -> MCPServer:
+     texts = mcp_texts(services.settings.mcp_language)
+-    mcp = FastMCP(
++    mcp = MCPServer(
+         "baseward",
+         instructions=texts["instructions"],
+-        stateless_http=True,
+-        streamable_http_path="/",
+-        transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
+     )
+ 
+     @mcp.tool(description=texts["tool.list_datasources"])
+diff --git a/app/mcp/texts.py b/app/mcp/texts.py
+index 2ec9b1f..5b20b05 100644
+--- a/app/mcp/texts.py
++++ b/app/mcp/texts.py
+@@ -1,7 +1,7 @@
+ """MCP instructions and tool descriptions.
+ 
+ MCP clients have no browser language, so the language comes from
+-``GATEWAY_MCP_LANGUAGE`` and is applied once when the FastMCP instance is built.
++``GATEWAY_MCP_LANGUAGE`` and is applied once when the MCPServer instance is built.
+ """
+ 
+ from __future__ import annotations
+diff --git a/examples/actor_adapter/demo.py b/examples/actor_adapter/demo.py
+index b253ff6..6355658 100644
+--- a/examples/actor_adapter/demo.py
++++ b/examples/actor_adapter/demo.py
+@@ -13,17 +13,19 @@ import json
+ import os
+ import sys
+ 
+-import httpx
++import httpx2
+ from mcp import ClientSession
+-from mcp.client.streamable_http import streamablehttp_client
++from mcp.client.streamable_http import streamable_http_client
+ 
+ 
+-def mcp_client_factory(headers=None, timeout=None, auth=None) -> httpx.AsyncClient:
+-    """Ignore env proxies: a bare [::1] in NO_PROXY breaks httpx's env proxy parsing."""
+-    return httpx.AsyncClient(
++def mcp_http_client(headers: dict[str, str]) -> httpx2.AsyncClient:
++    """Ignore env proxies: a bare [::1] in NO_PROXY breaks httpx's env proxy parsing.
++
++    mcp 2.x takes headers/timeout from this client instead of ``streamable_http_client`` args.
++    """
++    return httpx2.AsyncClient(
+         headers=headers,
+-        timeout=timeout or httpx.Timeout(30, read=300),
+-        auth=auth,
++        timeout=httpx2.Timeout(30, read=300),
+         trust_env=False,
+     )
+ 
+@@ -60,24 +62,22 @@ async def run(args) -> int:
+         "Authorization": f"Bearer {token}",
+         **actor_headers(args.provider, args.actor_id, args.actor_name),
+     }
+-    async with streamablehttp_client(
+-        args.base_url, headers=headers, timeout=30, httpx_client_factory=mcp_client_factory
+-    ) as (
+-        read_stream,
+-        write_stream,
+-        _,
+-    ):
+-        async with ClientSession(read_stream, write_stream) as session:
+-            await session.initialize()
+-            print(json.dumps(_payload(await session.call_tool("list_datasources", {})),
+-                             ensure_ascii=False, indent=2))
+-            if args.datasource:
+-                result = await session.call_tool(
+-                    "execute_sql", {"datasource": args.datasource, "sql": args.sql}
+-                )
+-                print(json.dumps(_payload(result), ensure_ascii=False, indent=2))
+-                if getattr(result, "isError", False):
+-                    return 1
++    async with mcp_http_client(headers) as http_client:
++        async with streamable_http_client(args.base_url, http_client=http_client) as (
++            read_stream,
++            write_stream,
++        ):
++            async with ClientSession(read_stream, write_stream) as session:
++                await session.initialize()
++                print(json.dumps(_payload(await session.call_tool("list_datasources", {})),
++                                 ensure_ascii=False, indent=2))
++                if args.datasource:
++                    result = await session.call_tool(
++                        "execute_sql", {"datasource": args.datasource, "sql": args.sql}
++                    )
++                    print(json.dumps(_payload(result), ensure_ascii=False, indent=2))
++                    if result.is_error:
++                        return 1
+     return 0
+ 
+ 
+diff --git a/examples/actor_adapter/exchange_demo.py b/examples/actor_adapter/exchange_demo.py
+index 24af145..28f930c 100644
+--- a/examples/actor_adapter/exchange_demo.py
++++ b/examples/actor_adapter/exchange_demo.py
+@@ -13,11 +13,11 @@ import os
+ import sys
+ from urllib.parse import urlsplit
+ 
+-import httpx
++import httpx2
+ from mcp import ClientSession
+-from mcp.client.streamable_http import streamablehttp_client
++from mcp.client.streamable_http import streamable_http_client
+ 
+-from demo import _payload, actor_headers, mcp_client_factory
++from demo import _payload, actor_headers, mcp_http_client
+ 
+ 
+ async def exchange(
+@@ -28,7 +28,7 @@ async def exchange(
+     endpoint = f"{parts.scheme}://{parts.netloc}/api/exchange"
+     body = {} if ttl is None else {"ttl_minutes": ttl}
+     # trust_env=False: some NO_PROXY values (e.g. a bare [::1]) break httpx's env proxy parsing.
+-    async with httpx.AsyncClient(timeout=30, trust_env=False) as client:
++    async with httpx2.AsyncClient(timeout=30, trust_env=False) as client:
+         response = await client.post(
+             endpoint,
+             headers={"Authorization": f"Bearer {token}", **actor_headers(provider, actor_id, name)},
+@@ -51,24 +51,22 @@ async def run(args) -> int:
+                      ensure_ascii=False, indent=2))
+     # The short credential carries the actor; identity headers are no longer required.
+     headers = {"Authorization": f"Bearer {issued['credential']}"}
+-    async with streamablehttp_client(
+-        args.base_url, headers=headers, timeout=30, httpx_client_factory=mcp_client_factory
+-    ) as (
+-        read_stream,
+-        write_stream,
+-        _,
+-    ):
+-        async with ClientSession(read_stream, write_stream) as session:
+-            await session.initialize()
+-            print(json.dumps(_payload(await session.call_tool("list_datasources", {})),
+-                             ensure_ascii=False, indent=2))
+-            if args.datasource:
+-                result = await session.call_tool(
+-                    "execute_sql", {"datasource": args.datasource, "sql": args.sql}
+-                )
+-                print(json.dumps(_payload(result), ensure_ascii=False, indent=2))
+-                if getattr(result, "isError", False):
+-                    return 1
++    async with mcp_http_client(headers) as http_client:
++        async with streamable_http_client(args.base_url, http_client=http_client) as (
++            read_stream,
++            write_stream,
++        ):
++            async with ClientSession(read_stream, write_stream) as session:
++                await session.initialize()
++                print(json.dumps(_payload(await session.call_tool("list_datasources", {})),
++                                 ensure_ascii=False, indent=2))
++                if args.datasource:
++                    result = await session.call_tool(
++                        "execute_sql", {"datasource": args.datasource, "sql": args.sql}
++                    )
++                    print(json.dumps(_payload(result), ensure_ascii=False, indent=2))
++                    if result.is_error:
++                        return 1
+     return 0
+ 
+ 
+diff --git a/pyproject.toml b/pyproject.toml
+index bff272e..18b42a9 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -26,7 +26,7 @@ classifiers = [
+ dependencies = [
+     "fastapi>=0.115,<1.0",
+     "uvicorn[standard]>=0.30,<1.0",
+-    "mcp==1.30.0",
++    "mcp==2.3.0",
+     "mysql-mimic==3.0.5",
+     "sqlglot==30.24.0",
+     "sqlalchemy>=2.0.30,<3.0",
+@@ -50,6 +50,7 @@ dev = [
+     "pytest>=8,<9",
+     "pytest-asyncio>=0.24,<1.0",
+     "httpx>=0.27,<1.0",
++    "httpx2",
+     "asgi-lifespan>=2.1,<3.0",
+     "pymysql>=1.1,<2.0",
+     "ruff>=0.9,<1.0",
+diff --git a/requirements-dev.txt b/requirements-dev.txt
+index 6b23ca6..0b0c37b 100644
+--- a/requirements-dev.txt
++++ b/requirements-dev.txt
+@@ -2,6 +2,7 @@
+ pytest>=8,<9
+ pytest-asyncio>=0.24,<1.0
+ httpx>=0.27,<1.0
++httpx2
+ asgi-lifespan>=2.1,<3.0
+ pymysql>=1.1,<2.0
+ ruff>=0.9,<1.0
+diff --git a/requirements.txt b/requirements.txt
+index e9aeb32..6ada2e8 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,6 +1,6 @@
+ fastapi>=0.115,<1.0
+ uvicorn[standard]>=0.30,<1.0
+-mcp==1.30.0
++mcp==2.3.0
+ mysql-mimic==3.0.5
+ sqlglot==30.24.0
+ sqlalchemy>=2.0.30,<3.0
+diff --git a/scripts/smoke_export_handoff.py b/scripts/smoke_export_handoff.py
+index 2c8e8ab..37a4896 100644
+--- a/scripts/smoke_export_handoff.py
++++ b/scripts/smoke_export_handoff.py
+@@ -24,8 +24,9 @@ from dataclasses import dataclass
+ from pathlib import Path
+ 
+ import httpx
++import httpx2
+ from mcp import ClientSession
+-from mcp.client.streamable_http import streamablehttp_client
++from mcp.client.streamable_http import streamable_http_client
+ 
+ WRITE_SQL = "UPDATE gateway_smoke_probe SET id = id WHERE 1 = 0"
+ 
+@@ -64,20 +65,22 @@ class Smoke:
+ 
+     async def run(self) -> None:
+         await self._healthz()
+-        async with streamablehttp_client(
+-            f"{self.args.base_url}/mcp",
+-            headers={"Authorization": f"Bearer {self.token}"},
+-            timeout=30,
+-            sse_read_timeout=30,
+-        ) as (read_stream, write_stream, _):
+-            async with ClientSession(read_stream, write_stream) as session:
+-                await session.initialize()
+-                await self._tools(session)
+-                export = await self._explicit_issue(session)
+-                if export is not None:
+-                    await self._stream_export(export)
+-                await self._truncation_handoff(session)
+-                await self._rejections(session)
++        # mcp 2.x: headers and timeouts live on the httpx2 client handed to the transport.
++        http_client = httpx2.AsyncClient(
++            headers={"Authorization": f"Bearer {self.token}"}, timeout=30
++        )
++        async with http_client:
++            async with streamable_http_client(
++                f"{self.args.base_url}/mcp", http_client=http_client
++            ) as (read_stream, write_stream):
++                async with ClientSession(read_stream, write_stream) as session:
++                    await session.initialize()
++                    await self._tools(session)
++                    export = await self._explicit_issue(session)
++                    if export is not None:
++                        await self._stream_export(export)
++                    await self._truncation_handoff(session)
++                    await self._rejections(session)
+ 
+     async def _healthz(self) -> None:
+         async with httpx.AsyncClient(timeout=5) as client:
+@@ -105,7 +108,7 @@ class Smoke:
+ 
+     async def _call(self, session: ClientSession, name: str, arguments: dict) -> tuple[bool, dict]:
+         result = await session.call_tool(name, arguments)
+-        return bool(getattr(result, "isError", False)), _payload(result)
++        return bool(result.is_error), _payload(result)
+ 
+     async def _explicit_issue(self, session: ClientSession) -> dict | None:
+         is_error, payload = await self._call(
+diff --git a/tests/integration/conftest.py b/tests/integration/conftest.py
+index c86f778..f219cea 100644
+--- a/tests/integration/conftest.py
++++ b/tests/integration/conftest.py
+@@ -18,10 +18,11 @@ from pathlib import Path
+ from typing import Any
+ 
+ import httpx
++import httpx2
+ import pytest
+ from asgi_lifespan import LifespanManager
+ from mcp import ClientSession
+-from mcp.client.streamable_http import streamablehttp_client
++from mcp.client.streamable_http import streamable_http_client
+ from sqlalchemy import text
+ from sqlalchemy.engine import URL
+ from sqlalchemy.ext.asyncio import create_async_engine
+@@ -107,19 +108,14 @@ class GatewayEnv:
+     def services(self):
+         return self.app.state.services
+ 
+-    def mcp_http_client_factory(self):
+-        transport = httpx.ASGITransport(app=self.app)
+-
+-        def factory(headers=None, timeout=None, auth=None) -> httpx.AsyncClient:
+-            return httpx.AsyncClient(
+-                transport=transport,
+-                base_url=BASE_URL,
+-                headers=headers,
+-                timeout=timeout,
+-                auth=auth,
+-            )
+-
+-        return factory
++    def mcp_http_client(self, headers=None, timeout=None) -> httpx2.AsyncClient:
++        # mcp 2.x transports only accept httpx2 clients; headers/timeout now live on the client.
++        return httpx2.AsyncClient(
++            transport=httpx2.ASGITransport(app=self.app),
++            base_url=BASE_URL,
++            headers=headers,
++            timeout=timeout,
++        )
+ 
+ 
+ def _parse_env_file(path: Path) -> dict[str, str]:
+@@ -361,16 +357,13 @@ async def mcp_session(env: GatewayEnv, token: str | None = None, extra_headers:
+     headers = {"Authorization": f"Bearer {token or env.token}"}
+     if extra_headers:
+         headers.update(extra_headers)
+-    async with streamablehttp_client(
+-        f"{BASE_URL}/mcp",
+-        headers=headers,
+-        httpx_client_factory=env.mcp_http_client_factory(),
+-        timeout=30,
+-        sse_read_timeout=30,
+-    ) as (read_stream, write_stream, _):
+-        async with ClientSession(read_stream, write_stream) as session:
+-            await session.initialize()
+-            yield session
++    async with env.mcp_http_client(headers=headers, timeout=30) as http_client:
++        async with streamable_http_client(
++            f"{BASE_URL}/mcp", http_client=http_client
++        ) as (read_stream, write_stream):
++            async with ClientSession(read_stream, write_stream) as session:
++                await session.initialize()
++                yield session
+ 
+ 
+ def tool_payload(result) -> dict:
+@@ -384,7 +377,7 @@ def tool_payload(result) -> dict:
+     try:
+         return json.loads(text)
+     except json.JSONDecodeError:
+-        # FastMCP wraps tool exceptions as "Error executing tool <name>: {json}".
++        # MCPServer wraps tool exceptions as "Error executing tool <name>: {json}".
+         start = text.find("{")
+         end = text.rfind("}")
+         assert start != -1 and end > start, f"工具错误不是 JSON 载荷：{text_content}"
+@@ -393,7 +386,7 @@ def tool_payload(result) -> dict:
+ 
+ async def call_tool(session: ClientSession, name: str, arguments: dict) -> tuple[bool, dict]:
+     result = await session.call_tool(name, arguments)
+-    return bool(getattr(result, "isError", False)), tool_payload(result)
++    return bool(result.is_error), tool_payload(result)
+ 
+ 
+ async def admin_login(env: GatewayEnv) -> str:
+diff --git a/tests/perf/bench_gateway.py b/tests/perf/bench_gateway.py
+index c44130e..85e1d57 100644
+--- a/tests/perf/bench_gateway.py
++++ b/tests/perf/bench_gateway.py
+@@ -24,8 +24,9 @@ from dataclasses import dataclass, field
+ from datetime import datetime
+ from pathlib import Path
+ 
++import httpx2
+ from mcp import ClientSession
+-from mcp.client.streamable_http import streamablehttp_client
++from mcp.client.streamable_http import streamable_http_client
+ from sqlalchemy.engine import URL
+ from sqlalchemy.ext.asyncio import create_async_engine
+ 
+@@ -88,30 +89,30 @@ async def _mcp_worker(
+         return
+     headers = {"Authorization": f"Bearer {token}"}
+     try:
+-        async with streamablehttp_client(
+-            endpoint,
+-            headers=headers,
+-            timeout=timeout,
+-            sse_read_timeout=timeout,
+-        ) as (read_stream, write_stream, _):
+-            async with ClientSession(read_stream, write_stream) as session:
+-                await session.initialize()
+-                warmup = await session.call_tool(
+-                    "execute_sql",
+-                    {"datasource": datasource, "sql": "SELECT 1"},
+-                )
+-                if getattr(warmup, "isError", False):
+-                    raise RuntimeError("预热调用失败")
+-                for _ in range(count):
+-                    started = time.perf_counter_ns()
+-                    result = await session.call_tool(
++        # mcp 2.x: headers and timeouts live on the httpx2 client handed to the transport.
++        async with httpx2.AsyncClient(headers=headers, timeout=timeout) as http_client:
++            async with streamable_http_client(endpoint, http_client=http_client) as (
++                read_stream,
++                write_stream,
++            ):
++                async with ClientSession(read_stream, write_stream) as session:
++                    await session.initialize()
++                    warmup = await session.call_tool(
+                         "execute_sql",
+                         {"datasource": datasource, "sql": "SELECT 1"},
+                     )
+-                    elapsed = (time.perf_counter_ns() - started) / 1_000_000
+-                    if getattr(result, "isError", False):
+-                        raise RuntimeError("工具返回错误")
+-                    measurements.latencies.append(elapsed)
++                    if warmup.is_error:
++                        raise RuntimeError("预热调用失败")
++                    for _ in range(count):
++                        started = time.perf_counter_ns()
++                        result = await session.call_tool(
++                            "execute_sql",
++                            {"datasource": datasource, "sql": "SELECT 1"},
++                        )
++                        elapsed = (time.perf_counter_ns() - started) / 1_000_000
++                        if result.is_error:
++                            raise RuntimeError("工具返回错误")
++                        measurements.latencies.append(elapsed)
+     except Exception as exc:  # noqa: BLE001 - the benchmark records every failure
+         measurements.errors.append(_sanitize(f"{type(exc).__name__}: {exc}", secrets))
+ 
+diff --git a/tests/unit/test_i18n.py b/tests/unit/test_i18n.py
+index de3f888..90a5540 100644
+--- a/tests/unit/test_i18n.py
++++ b/tests/unit/test_i18n.py
+@@ -177,11 +177,13 @@ def test_mcp_texts_cover_both_languages():
+     assert mcp_texts("fr") is TEXTS["zh-CN"]
+ 
+ 
+-def test_mcp_registration_uses_selected_language():
++@pytest.mark.asyncio
++async def test_mcp_registration_uses_selected_language():
+     services = SimpleNamespace(settings=SimpleNamespace(mcp_language="en"))
+     mcp = build_mcp(services)
+     assert "Database query gateway" in mcp.instructions
+-    tools = {tool.name: tool.description for tool in mcp._tool_manager.list_tools()}
++    # Public API instead of the private _tool_manager, which mcp 2.x no longer guarantees.
++    tools = {tool.name: tool.description for tool in await mcp.list_tools()}
+     assert set(tools) == {
+         "list_datasources",
+         "describe_datasource",
+diff --git a/tests/unit/test_mcp_handoff.py b/tests/unit/test_mcp_handoff.py
+index e7ab171..be73d78 100644
+--- a/tests/unit/test_mcp_handoff.py
++++ b/tests/unit/test_mcp_handoff.py
+@@ -11,7 +11,7 @@ from datetime import datetime
+ from types import SimpleNamespace
+ 
+ import pytest
+-from mcp.server.fastmcp.exceptions import ToolError
++from mcp.server.mcpserver.exceptions import ToolError
+ 
+ from app.config import Settings
+ from app.credentials.service import AutoIssuedCredential
+diff --git a/tests/unit/test_pipeline_failclosed.py b/tests/unit/test_pipeline_failclosed.py
+index 6b9c0ec..da8aca1 100644
+--- a/tests/unit/test_pipeline_failclosed.py
++++ b/tests/unit/test_pipeline_failclosed.py
+@@ -3,7 +3,7 @@
+ from types import SimpleNamespace
+ 
+ import pytest
+-from mcp.server.fastmcp.exceptions import ToolError
++from mcp.server.mcpserver.exceptions import ToolError
+ 
+ from app.datasources import databases as databases_module
+ from app.datasources.databases import DatabasePolicy

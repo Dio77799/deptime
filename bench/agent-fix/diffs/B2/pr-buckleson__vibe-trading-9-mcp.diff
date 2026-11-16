@@ -1,0 +1,22 @@
+diff --git a/mcp/mcpserver.py b/mcp/mcpserver.py
+index 5d850d2..2e178c7 100644
+--- a/mcp/mcpserver.py
++++ b/mcp/mcpserver.py
+@@ -7,7 +7,7 @@ from typing import Any
+ 
+ import httpx
+ import pandas as pd
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from mcp.types import ToolAnnotations
+ from openalgo import api, ta
+ 
+@@ -159,7 +159,7 @@ def _default_derivatives_exchange(symbol: str) -> str:
+ 
+ 
+ # Create MCP server
+-mcp = FastMCP("openalgo")
++mcp = MCPServer("openalgo")
+ 
+ 
+ def _to_json(payload: Any) -> str:

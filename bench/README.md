@@ -26,6 +26,7 @@ Each check's right answers were written down before DepTime first ran on it ([be
 | The same two comparisons with two cheaper models from other vendors, through OpenRouter ([tracebacks](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/results-2026-11-15.md), [upgrades](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/upgrades/results-2026-11-15.md)) | 191 tracebacks; 2,265 uses, one run per model | Tracebacks: DeepSeek V4.1 Flash 59.2%, Qwen3.5 9B 18.8% (DepTime 86.9%). Upgrades, breaks found and working uses flagged: DeepSeek 80.9% and 2.7%, Qwen 30.9% and 15.4% (DepTime 96.7% and 0.1%) | run once |
 | The same small model, Qwen3.5 9B, with DepTime's five tools available ([results](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/with-tools/results-2026-11-15.md)) | 191 tracebacks; 2,265 uses, one run | Tracebacks 86.4% (alone 18.8%; DepTime by itself 94.8% now, 86.9% first run). Upgrades: 82.2% of breaks found and 4.5% of working uses flagged (alone 30.9% and 15.4%; DepTime 96.7% and 0.1%) | run once |
 | The same model's upgrade checks with the six tools, `check_upgrade` among them (DT-QA-23, [results](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/check-upgrade/results-2026-11-16.md)) | 2,265 uses, one run | 75.0% of breaks found and 3.5% of working uses flagged (five tools: 82.2% and 4.5%; DepTime 96.7% and 0.1%) | run once |
+| Claude Code (Sonnet 5.5) fixing a dependency update's confirmed breaks, alone / with `/deptime:fix-upgrade` / with the plugin installed and not named (DT-QA-05, [results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/results-2026-11-16.md)): sessions that leave every break fixed | 25 real updates (137 breaks), two runs alone and with the command, one with the plugin | 80% / 64% / 80%; no arm broke anything new; the command took a third of the turns and changed a tenth of the unasked lines. Bar missed: the command's instructions on `unknown` answers and a report too big to read lost it | run once |
 | Right package, name and breaking release for a traceback from a GitHub issue | 32 collected 2026-11-05 | 68.8% | 100% |
 | The same, on a holdout fixed in advance from [TimeMachine-bench](https://github.com/tohoku-nlp/timemachine-bench) | 29 | 72.4% | 96.6% |
 | Error kind and package read from the traceback: scripts, pytest, chained exceptions, `ExceptionGroup`, IPython, Python 3.10–3.14 | 736, holdout fixed in advance | 93.8% | 100% |
@@ -158,6 +159,16 @@ run, on 2026-11-16. It finds 75.0% of breaks and flags 3.5% of working uses (fiv
 bar of 90% and 1%. It called `check_upgrade` in 76 of 171 upgrades, but 65 of its 83 calls passed code the tool
 couldn't read (the question's notation, or no import), so the result says little about the tool on real code and
 much about a small model judging each use itself. See `model-alone/check-upgrade/results-2026-11-16.md`.
+
+## An agent fixing an update's breaks (DT-QA-05)
+
+`agent-fix/README.md` is the protocol, committed before any agent ran; `agent-fix/results-2026-11-16.md` the result.
+Claude Code on Sonnet 5.5 fixed 25 real broken updates (2026-11f's 12 to a newer version, DT-QA-22's 13 pull
+requests) alone, with `/deptime:fix-upgrade`, and with the plugin installed and not named; the probe judged the fixed
+code at the new version. Alone 80% of sessions, with the command 64%, installed and not named 80% (it called DepTime in
+all 25). The command lost on DepTime's `unknown` answers, which it told the agent to leave, on a pin
+`check-upgrade` can't read, and on reports longer than the shell shows, in a sandbox that denied saving them. The
+hand-off is reworked before 1.0 (DT-OSS-17 waits).
 
 ## Per-release holdout (DT-QA-07 to DT-QA-11)
 

@@ -1,0 +1,13 @@
+diff --git a/src/services/ai_service.py b/src/services/ai_service.py
+index 7d6c28d..8282381 100644
+--- a/src/services/ai_service.py
++++ b/src/services/ai_service.py
+@@ -1,7 +1,7 @@
+ import os
+ from dotenv import load_dotenv
+ from langchain_community.llms import Ollama
+-from langchain.prompts import PromptTemplate
++from langchain_core.prompts import PromptTemplate
+ 
+ load_dotenv()
+ 

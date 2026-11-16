@@ -1,0 +1,102 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 30,
+  "duration_ms": 232400,
+  "total_cost_usd": 0.5179958,
+  "usage": {
+   "input_tokens": 24,
+   "cache_creation_input_tokens": 49220,
+   "cache_read_input_tokens": 346389,
+   "output_tokens": 25796,
+   "output_tokens_details": {
+    "thinking_tokens": 16894
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 49220,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1042,
+     "cache_read_input_tokens": 53486,
+     "cache_creation_input_tokens": 1511,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1511
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794851400,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.15,
+    "resetsAt": 1794851400,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.18,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.325",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Glob": 2,
+  "Grep": 1,
+  "Read": 4,
+  "WebFetch": 6,
+  "Edit": 15,
+  "Write": 1
+ },
+ "deptime_calls": [],
+ "other_bash": 0,
+ "fetched": [
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py",
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py",
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py",
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py",
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py",
+  "https://raw.githubusercontent.com/scikit-learn/scikit-learn/1.9.1/sklearn/ensemble/_gb.py"
+ ],
+ "denied": 0,
+ "task": "pin-gaa-uam__c-gb-scikit-learn-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 233.0,
+ "service_error": false
+}

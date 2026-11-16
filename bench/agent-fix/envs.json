@@ -1,0 +1,2623 @@
+{
+"envs": [
+{
+"id": "anthropic==2.8.0@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"anthropic==2.8.0"
+],
+"uses": [
+{
+"key": "638e19e8ebe882e1",
+"kind": "name",
+"path": "anthropic"
+}
+]
+},
+{
+"id": "dspy==3.4.1@2026-11-11",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"dspy==3.4.1"
+],
+"uses": [
+{
+"key": "23eda1bc0ee818cf",
+"kind": "name",
+"path": "dspy.propose.grounded_proposer.GroundedProposer.propose_instruction_for_predictor"
+},
+{
+"key": "2b5c3d8a8bf36233",
+"kind": "call",
+"path": "dspy.ColBERTv2",
+"npos": 0,
+"kwargs": [
+"url"
+]
+},
+{
+"key": "4d96366047d6b973",
+"kind": "name",
+"path": "dspy.propose.grounded_proposer.TIPS.clear"
+},
+{
+"key": "56a579c20a50065f",
+"kind": "name",
+"path": "dspy.propose.grounded_proposer.TIPS"
+},
+{
+"key": "595c907c6d4c52a5",
+"kind": "name",
+"path": "dspy.ColBERTv2"
+},
+{
+"key": "70c2b0bd0a083df3",
+"kind": "call",
+"path": "dspy.propose.grounded_proposer.TIPS.clear",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "79fe04c46db5072f",
+"kind": "name",
+"path": "dspy.dsp.colbertv2"
+},
+{
+"key": "cb9f1745268bc7a9",
+"kind": "call",
+"path": "dspy.dsp.colbertv2.ColBERTv2",
+"npos": 0,
+"kwargs": [
+"url"
+]
+},
+{
+"key": "fedc4ae655202efe",
+"kind": "name",
+"path": "dspy.dsp.colbertv2.ColBERTv2"
+}
+]
+},
+{
+"id": "fastmcp==4.1.8@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"fastmcp==4.1.8"
+],
+"uses": [
+{
+"key": "3019c623567f3c33",
+"kind": "name",
+"path": "fastmcp.prompts"
+},
+{
+"key": "4c797dd58c188ef4",
+"kind": "call",
+"path": "fastmcp.FastMCP.run",
+"npos": 0,
+"kwargs": [
+"host",
+"port",
+"stateless_http",
+"transport"
+],
+"via": "instance"
+},
+{
+"key": "708efd8b44b69d1f",
+"kind": "call",
+"path": "fastmcp.FastMCP",
+"npos": 0,
+"kwargs": [
+"name",
+"on_duplicate"
+]
+},
+{
+"key": "81823f444c4d7eef",
+"kind": "call",
+"path": "fastmcp.prompts.Message",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "91323cb7f7763370",
+"kind": "name",
+"path": "fastmcp.prompts.Message"
+},
+{
+"key": "9ed7f73d858df263",
+"kind": "call",
+"path": "fastmcp.prompts.Message",
+"npos": 1,
+"kwargs": [
+"role"
+]
+}
+]
+},
+{
+"id": "gradio==6.16.0@2026-07-03",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-07-03",
+"requires": [
+"gradio==6.16.0"
+],
+"uses": [
+{
+"key": "055c74f090f0a0be",
+"kind": "call",
+"path": "gradio.Gallery",
+"npos": 0,
+"kwargs": [
+"allow_preview",
+"buttons",
+"columns",
+"elem_id",
+"label",
+"object_fit",
+"preview"
+]
+},
+{
+"key": "17bf539336402817",
+"kind": "call",
+"path": "gradio.themes.Default",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "2879393819bcac8e",
+"kind": "name",
+"path": "gradio.Blocks"
+},
+{
+"key": "2d1353c876245e9e",
+"kind": "call",
+"path": "gradio.HTML",
+"npos": 0,
+"kwargs": [
+"label",
+"padding"
+]
+},
+{
+"key": "84ca382b686a0e2b",
+"kind": "name",
+"path": "gradio.HTML"
+},
+{
+"key": "a48ecedd912eecb8",
+"kind": "call",
+"path": "gradio.HTML",
+"npos": 1,
+"kwargs": [
+"padding"
+]
+},
+{
+"key": "c102369f167c4027",
+"kind": "call",
+"path": "gradio.Dataframe",
+"npos": 0,
+"kwargs": [
+"column_count",
+"column_limits",
+"datatype",
+"headers",
+"interactive",
+"label",
+"row_count",
+"row_limits",
+"type",
+"wrap"
+]
+},
+{
+"key": "d13137fc3f4ef21e",
+"kind": "call",
+"path": "gradio.Gallery",
+"npos": 0,
+"kwargs": [
+"buttons",
+"columns",
+"height",
+"label",
+"object_fit"
+]
+},
+{
+"key": "d8e68efd2b67f18c",
+"kind": "call",
+"path": "gradio.Dataframe",
+"npos": 0,
+"kwargs": [
+"column_count",
+"column_limits",
+"datatype",
+"headers",
+"interactive",
+"label",
+"row_count",
+"type",
+"wrap"
+]
+},
+{
+"key": "f59a0972c676f102",
+"kind": "call",
+"path": "gradio.Blocks",
+"npos": 0,
+"kwargs": [
+"title"
+]
+}
+]
+},
+{
+"id": "gradio==6.31.0@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"gradio==6.31.0"
+],
+"uses": [
+{
+"key": "023f5b95982fc0ac",
+"kind": "name",
+"path": "gradio.Dataframe"
+},
+{
+"key": "0261c83f2c52298b",
+"kind": "name",
+"path": "gradio.Chatbot.postprocess"
+},
+{
+"key": "0336ee3ceadea88e",
+"kind": "call",
+"path": "gradio.update",
+"npos": 0,
+"kwargs": [
+"interactive",
+"visible"
+]
+},
+{
+"key": "09dd14509349d16f",
+"kind": "call",
+"path": "gradio.update",
+"npos": 0,
+"kwargs": [
+"interactive",
+"placeholder"
+]
+},
+{
+"key": "0c61e07adaf6602d",
+"kind": "name",
+"path": "gradio.Chatbot.preprocess"
+},
+{
+"key": "0cd1b51750e7a871",
+"kind": "call",
+"path": "gradio.Blocks.launch",
+"npos": 0,
+"kwargs": [
+"share"
+],
+"via": "instance"
+},
+{
+"key": "143457014c8be240",
+"kind": "call",
+"path": "gradio.Dataframe",
+"npos": 0,
+"kwargs": [
+"interactive",
+"visible"
+]
+},
+{
+"key": "16236944a2c4ebe7",
+"kind": "call",
+"path": "gradio.Button.click",
+"npos": 2,
+"kwargs": [
+"outputs"
+],
+"via": "instance"
+},
+{
+"key": "2074a203ed5e65a4",
+"kind": "call",
+"path": "gradio.Radio.change",
+"npos": 3,
+"kwargs": [
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "215fd2e9d1cf9dfa",
+"kind": "name",
+"path": "gradio.Audio"
+},
+{
+"key": "22c1fbfbaaf8ec04",
+"kind": "call",
+"path": "gradio.Tab",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "22c4dc37bbabfd2c",
+"kind": "call",
+"path": "gradio.update",
+"npos": 0,
+"kwargs": [
+"value"
+]
+},
+{
+"key": "2309d7dbebe6995d",
+"kind": "name",
+"path": "gradio.Dataset.click",
+"via": "instance"
+},
+{
+"key": "242305b25c35d8a8",
+"kind": "call",
+"path": "gradio.Sketchpad",
+"npos": 0,
+"kwargs": [
+"canvas_size",
+"elem_id",
+"interactive",
+"show_label",
+"value",
+"visible"
+]
+},
+{
+"key": "26b1bc3491ebcb23",
+"kind": "call",
+"path": "gradio.Chatbot.preprocess",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "2b18a2e32d9c727c",
+"kind": "call",
+"path": "gradio.File.upload",
+"npos": 3,
+"kwargs": [
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "2b8fbd3fb579cc71",
+"kind": "call",
+"path": "gradio.Audio",
+"npos": 0,
+"kwargs": [
+"autoplay",
+"elem_id",
+"show_label",
+"visible"
+]
+},
+{
+"key": "30bf4b0ec2ee5fb3",
+"kind": "call",
+"path": "gradio.UploadButton.upload",
+"npos": 1,
+"kwargs": [
+"inputs",
+"outputs",
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "348519c397ca98bb",
+"kind": "name",
+"path": "gradio.File.upload",
+"via": "instance"
+},
+{
+"key": "377a92e7f3a818c7",
+"kind": "name",
+"path": "gradio.UploadButton.upload",
+"via": "instance"
+},
+{
+"key": "43c28f0fabf7545c",
+"kind": "call",
+"path": "gradio.update",
+"npos": 0,
+"kwargs": [
+"value",
+"visible"
+]
+},
+{
+"key": "4ee2ef71b305639e",
+"kind": "call",
+"path": "gradio.Button.click",
+"npos": 1,
+"kwargs": [
+"inputs",
+"outputs",
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "59f0eeb9f960b9b0",
+"kind": "call",
+"path": "gradio.Image",
+"npos": 0,
+"kwargs": [
+"interactive"
+]
+},
+{
+"key": "5b42b4eaf09600b1",
+"kind": "call",
+"path": "gradio.File.upload",
+"npos": 2,
+"kwargs": [
+"outputs",
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "5f964a60b87ba105",
+"kind": "call",
+"path": "gradio.Blocks.queue",
+"npos": 0,
+"kwargs": [
+"default_concurrency_limit"
+],
+"via": "instance"
+},
+{
+"key": "674bb98a51027254",
+"kind": "call",
+"path": "gradio.Image",
+"npos": 0,
+"kwargs": [
+"value"
+]
+},
+{
+"key": "67664c390813b385",
+"kind": "call",
+"path": "gradio.Textbox",
+"npos": 0,
+"kwargs": [
+"interactive",
+"placeholder"
+]
+},
+{
+"key": "6b844ee808a7b292",
+"kind": "call",
+"path": "gradio.Image",
+"npos": 0,
+"kwargs": [
+"interactive",
+"value"
+]
+},
+{
+"key": "70b606205946e2f5",
+"kind": "call",
+"path": "gradio.Chatbot.postprocess",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "7adb32331ef74253",
+"kind": "name",
+"path": "gradio.Blocks.queue",
+"via": "instance"
+},
+{
+"key": "7c90187f26a2414a",
+"kind": "call",
+"path": "gradio.Button.click",
+"npos": 1,
+"kwargs": [
+"inputs",
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "839c0857847fd644",
+"kind": "name",
+"path": "gradio.Button.click",
+"via": "instance"
+},
+{
+"key": "840ceefa625ad938",
+"kind": "call",
+"path": "gradio.Button.click",
+"npos": 1,
+"kwargs": [
+"outputs",
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "84ca382b686a0e2b",
+"kind": "name",
+"path": "gradio.HTML"
+},
+{
+"key": "9e71a1659dbae5c9",
+"kind": "call",
+"path": "gradio.update",
+"npos": 0,
+"kwargs": [
+"interactive",
+"value"
+]
+},
+{
+"key": "9e9c090e8fd6d213",
+"kind": "call",
+"path": "gradio.Button",
+"npos": 0,
+"kwargs": [
+"interactive",
+"value"
+]
+},
+{
+"key": "a1a38d01b7f4cb7c",
+"kind": "call",
+"path": "gradio.Button.click",
+"npos": 3,
+"kwargs": [
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "a1cfb86c8019f1a3",
+"kind": "call",
+"path": "gradio.Textbox",
+"npos": 0,
+"kwargs": [
+"value"
+]
+},
+{
+"key": "a633205511840cc2",
+"kind": "name",
+"path": "gradio.List"
+},
+{
+"key": "a9785f85bb5388b8",
+"kind": "call",
+"path": "gradio.Gallery.select",
+"npos": 1,
+"kwargs": [
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "aa54f05afc503cad",
+"kind": "name",
+"path": "gradio.Tab"
+},
+{
+"key": "aac82f29e90f8b50",
+"kind": "call",
+"path": "gradio.Blocks.queue",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "ac8f948ad7cb9146",
+"kind": "call",
+"path": "gradio.HTML",
+"npos": 0,
+"kwargs": [
+"elem_id",
+"value",
+"visible"
+]
+},
+{
+"key": "c2f83cfd86b21833",
+"kind": "name",
+"path": "gradio.Gallery.select",
+"via": "instance"
+},
+{
+"key": "d9549ee08e6b6bf9",
+"kind": "call",
+"path": "gradio.UploadButton.upload",
+"npos": 3,
+"kwargs": [
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "de39e903b8d02e1c",
+"kind": "call",
+"path": "gradio.Button.click",
+"npos": 2,
+"kwargs": [
+"outputs",
+"show_progress"
+],
+"via": "instance"
+},
+{
+"key": "de6f70ab9631e733",
+"kind": "call",
+"path": "gradio.Sketchpad",
+"npos": 0,
+"kwargs": [
+"elem_id",
+"interactive",
+"show_label",
+"value",
+"visible"
+]
+},
+{
+"key": "de9cb56743cb17bb",
+"kind": "call",
+"path": "gradio.Dataframe",
+"npos": 0,
+"kwargs": [
+"column_count",
+"column_limits",
+"datatype",
+"headers",
+"row_count",
+"row_limits",
+"show_label"
+]
+},
+{
+"key": "e4e3ad08d9ae4b8e",
+"kind": "name",
+"path": "gradio.Sketchpad"
+},
+{
+"key": "e8f466b3e4beee52",
+"kind": "call",
+"path": "gradio.Dataframe",
+"npos": 0,
+"kwargs": [
+"column_count",
+"column_limits",
+"headers",
+"label",
+"show_label",
+"type",
+"value",
+"wrap"
+]
+},
+{
+"key": "edd585802e78d0a5",
+"kind": "call",
+"path": "gradio.List",
+"npos": 0,
+"kwargs": [
+"column_count",
+"column_limits",
+"headers",
+"label",
+"show_label",
+"value",
+"wrap"
+]
+},
+{
+"key": "f9249c0887cb36c8",
+"kind": "call",
+"path": "gradio.Dataset.click",
+"npos": 0,
+"kwargs": [
+"fn",
+"inputs",
+"outputs"
+],
+"via": "instance"
+},
+{
+"key": "fcc568f4a4d7d895",
+"kind": "call",
+"path": "gradio.Button",
+"npos": 0,
+"kwargs": [
+"interactive"
+]
+}
+]
+},
+{
+"id": "httpx==0.28.1@2025-01-05",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2025-01-05",
+"requires": [
+"httpx==0.28.1"
+],
+"uses": [
+{
+"key": "3717db509acda8c6",
+"kind": "call",
+"path": "httpx.ASGITransport",
+"npos": 0,
+"kwargs": [
+"app"
+]
+},
+{
+"key": "63d36c09dff230cf",
+"kind": "call",
+"path": "httpx.AsyncClient",
+"npos": 0,
+"kwargs": [
+"base_url",
+"transport"
+]
+},
+{
+"key": "956e50454e59acba",
+"kind": "call",
+"path": "httpx.AsyncClient",
+"npos": 0,
+"kwargs": [
+"base_url",
+"headers",
+"transport"
+]
+},
+{
+"key": "c85c513b56624952",
+"kind": "name",
+"path": "httpx"
+},
+{
+"key": "da3c4b427b6ed1ce",
+"kind": "name",
+"path": "httpx.ASGITransport"
+}
+]
+},
+{
+"id": "huggingface-hub==2.4.0@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"huggingface-hub==2.4.0"
+],
+"uses": [
+{
+"key": "0a746fd095fb662b",
+"kind": "name",
+"path": "huggingface_hub.create_repo"
+},
+{
+"key": "0d418fad86b36275",
+"kind": "name",
+"path": "huggingface_hub.errors"
+},
+{
+"key": "226c87afd488ef51",
+"kind": "call",
+"path": "huggingface_hub.snapshot_download",
+"npos": 1,
+"kwargs": [
+"local_dir"
+]
+},
+{
+"key": "2a3b5a44d5f5453f",
+"kind": "name",
+"path": "huggingface_hub.snapshot_download"
+},
+{
+"key": "2dbd7c6d64b57a45",
+"kind": "name",
+"path": "huggingface_hub.errors.HfHubHTTPError"
+},
+{
+"key": "3a2597eaf116e3d7",
+"kind": "name",
+"path": "huggingface_hub.whoami.path",
+"via": "instance"
+},
+{
+"key": "43310ccfb0cd2147",
+"kind": "call",
+"path": "huggingface_hub.whoami",
+"npos": 0,
+"kwargs": [
+"token"
+]
+},
+{
+"key": "4686f6c07fcb8860",
+"kind": "call",
+"path": "huggingface_hub.create_repo",
+"npos": 1,
+"kwargs": [
+"exist_ok",
+"private",
+"repo_type",
+"token"
+]
+},
+{
+"key": "4807d491f8a319f2",
+"kind": "call",
+"path": "huggingface_hub.create_repo",
+"npos": 1,
+"kwargs": [
+"token"
+]
+},
+{
+"key": "486d24becaa7e6c8",
+"kind": "call",
+"path": "huggingface_hub.HfApi.whoami",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "4a89da2b967320de",
+"kind": "name",
+"path": "huggingface_hub.HfApi"
+},
+{
+"key": "4b962ba17cf9376d",
+"kind": "call",
+"path": "huggingface_hub.create_repo",
+"npos": 1,
+"kwargs": [
+"exist_ok",
+"token"
+]
+},
+{
+"key": "502400ba6961daf8",
+"kind": "name",
+"path": "huggingface_hub.whoami"
+},
+{
+"key": "61f7a1ca3bce47f4",
+"kind": "call",
+"path": "huggingface_hub.snapshot_download",
+"npos": 1,
+"kwargs": [
+"local_dir",
+"token"
+]
+},
+{
+"key": "68c6d5a5922ad64e",
+"kind": "name",
+"path": "huggingface_hub.constants.ENDPOINT"
+},
+{
+"key": "68f4264ed15b81bb",
+"kind": "name",
+"path": "huggingface_hub.HfApi.list_repo_tree",
+"via": "instance"
+},
+{
+"key": "6a30eae60861884c",
+"kind": "call",
+"path": "huggingface_hub.logout",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "7249f988a34c631f",
+"kind": "call",
+"path": "huggingface_hub.get_token",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "737667337fb3888a",
+"kind": "name",
+"path": "huggingface_hub.get_token"
+},
+{
+"key": "7717a34b2f62af67",
+"kind": "name",
+"path": "huggingface_hub.whoami.size",
+"via": "instance"
+},
+{
+"key": "7c0f17ad1a83d742",
+"kind": "name",
+"path": "huggingface_hub.constants.HF_TOKEN_PATH"
+},
+{
+"key": "83c8f9a682952834",
+"kind": "name",
+"path": "huggingface_hub.utils.HfHubHTTPError"
+},
+{
+"key": "87319b76f7993cc0",
+"kind": "call",
+"path": "huggingface_hub.whoami",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "982482cd9b557198",
+"kind": "name",
+"path": "huggingface_hub.login"
+},
+{
+"key": "9b04116c2f96427c",
+"kind": "call",
+"path": "huggingface_hub.HfApi",
+"npos": 0,
+"kwargs": [
+"token"
+]
+},
+{
+"key": "9d25a6a95dfb6719",
+"kind": "name",
+"path": "huggingface_hub.HfApi.whoami",
+"via": "instance"
+},
+{
+"key": "a562237f068d93bd",
+"kind": "call",
+"path": "huggingface_hub.login",
+"npos": 0,
+"kwargs": [
+"add_to_git_credential",
+"token"
+]
+},
+{
+"key": "b2d13c6553def65b",
+"kind": "name",
+"path": "huggingface_hub"
+},
+{
+"key": "b82fba18210688ea",
+"kind": "call",
+"path": "huggingface_hub.login",
+"npos": 0,
+"kwargs": [
+"token"
+]
+},
+{
+"key": "c62c80be0004f9a0",
+"kind": "call",
+"path": "huggingface_hub.HfApi.list_repo_tree",
+"npos": 1,
+"kwargs": [
+"recursive"
+],
+"via": "instance"
+},
+{
+"key": "c7dea3a4492e3c2d",
+"kind": "name",
+"path": "huggingface_hub.utils"
+},
+{
+"key": "d96e9812366c8951",
+"kind": "name",
+"path": "huggingface_hub.logout"
+},
+{
+"key": "d97b430624fbf2a4",
+"kind": "name",
+"path": "huggingface_hub.whoami.get",
+"via": "instance"
+},
+{
+"key": "dde1bcf39f247a45",
+"kind": "name",
+"path": "huggingface_hub.HfApi.list_models",
+"via": "instance"
+},
+{
+"key": "e1ad4f804b1333f3",
+"kind": "name",
+"path": "huggingface_hub.model_info"
+},
+{
+"key": "e81cdd5e529a32e9",
+"kind": "call",
+"path": "huggingface_hub.whoami.get",
+"npos": 2,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "f7643eb1f2f1661c",
+"kind": "name",
+"path": "huggingface_hub.constants"
+},
+{
+"key": "feb8a7fe48c69ddd",
+"kind": "call",
+"path": "huggingface_hub.HfApi.list_models",
+"npos": 0,
+"kwargs": [
+"author"
+],
+"via": "instance"
+}
+]
+},
+{
+"id": "langchain-community==0.4.2@2026-06-21",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-06-21",
+"requires": [
+"langchain-community==0.4.2"
+],
+"uses": [
+{
+"key": "0f5383047777cec4",
+"kind": "call",
+"path": "langchain_qdrant.Qdrant.from_documents",
+"npos": 2,
+"kwargs": [
+"collection_name",
+"prefer_grpc",
+"url"
+]
+},
+{
+"key": "2cd67ec3cc39aaaf",
+"kind": "name",
+"path": "langchain_qdrant.QdrantVectorStore"
+},
+{
+"key": "31633cc8f1d32003",
+"kind": "call",
+"path": "langchain_qdrant.Qdrant.as_retriever",
+"npos": 0,
+"kwargs": [
+"search_kwargs"
+],
+"via": "instance"
+},
+{
+"key": "37c81144ea9beb9a",
+"kind": "call",
+"path": "langchain_qdrant.QdrantVectorStore.as_retriever",
+"npos": 0,
+"kwargs": [
+"search_kwargs"
+],
+"via": "instance"
+},
+{
+"key": "3937de5c792782af",
+"kind": "name",
+"path": "langchain_qdrant.QdrantVectorStore.as_retriever",
+"via": "instance"
+},
+{
+"key": "3b50287d240e93e2",
+"kind": "name",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type.invoke",
+"via": "instance"
+},
+{
+"key": "470156f6e1fb3779",
+"kind": "name",
+"path": "langchain_core.prompts"
+},
+{
+"key": "63f7b136f9d498c1",
+"kind": "name",
+"path": "langchain_qdrant.QdrantVectorStore.from_documents"
+},
+{
+"key": "6af8b06080e3870f",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_documents",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "71e9205781eb92ac",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size"
+]
+},
+{
+"key": "92794c6f0941119d",
+"kind": "name",
+"path": "langchain_text_splitters"
+},
+{
+"key": "93ad7a3a40b7602d",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate"
+},
+{
+"key": "a0e3cb6659f695e4",
+"kind": "call",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type",
+"npos": 0,
+"kwargs": [
+"chain_type",
+"chain_type_kwargs",
+"llm",
+"retriever",
+"return_source_documents",
+"verbose"
+]
+},
+{
+"key": "a8283c9643efb37b",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_documents",
+"via": "instance"
+},
+{
+"key": "aaeac15337672404",
+"kind": "call",
+"path": "langchain_qdrant.Qdrant",
+"npos": 0,
+"kwargs": [
+"client",
+"collection_name",
+"embeddings"
+]
+},
+{
+"key": "ac4856905e50025d",
+"kind": "name",
+"path": "langchain_qdrant.Qdrant.from_documents"
+},
+{
+"key": "b02dd73c92716045",
+"kind": "call",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type.invoke",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "b75f208f804a9ca7",
+"kind": "name",
+"path": "langchain_classic.chains"
+},
+{
+"key": "b8ef02984347d0cb",
+"kind": "name",
+"path": "langchain_qdrant.Qdrant"
+},
+{
+"key": "bf69089d707f3de9",
+"kind": "name",
+"path": "langchain_qdrant"
+},
+{
+"key": "c1d0ccab1404aad1",
+"kind": "name",
+"path": "langchain_classic.chains.RetrievalQA"
+},
+{
+"key": "c637e83bced4a390",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter"
+},
+{
+"key": "d061c0adb799b03c",
+"kind": "name",
+"path": "langchain_qdrant.Qdrant.as_retriever",
+"via": "instance"
+},
+{
+"key": "d524967f45459ac4",
+"kind": "name",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type"
+},
+{
+"key": "f21debc26dd1dec2",
+"kind": "call",
+"path": "langchain_qdrant.QdrantVectorStore",
+"npos": 0,
+"kwargs": [
+"client",
+"collection_name",
+"embedding"
+]
+},
+{
+"key": "f83259fb4047e89d",
+"kind": "call",
+"path": "langchain_qdrant.QdrantVectorStore.from_documents",
+"npos": 2,
+"kwargs": [
+"collection_name",
+"prefer_grpc",
+"url"
+]
+},
+{
+"key": "fe29fa30897bd507",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate",
+"npos": 0,
+"kwargs": [
+"input_variables",
+"template"
+]
+}
+]
+},
+{
+"id": "langchain==1.3.9@2026-07-12",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-07-12",
+"requires": [
+"langchain==1.3.9"
+],
+"uses": [
+{
+"key": "007d1d62fa7506ae",
+"kind": "name",
+"path": "langchain_ollama.OllamaLLM"
+},
+{
+"key": "468bbe4024a60019",
+"kind": "call",
+"path": "langchain_core.output_parsers.StrOutputParser",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "470156f6e1fb3779",
+"kind": "name",
+"path": "langchain_core.prompts"
+},
+{
+"key": "71e9205781eb92ac",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size"
+]
+},
+{
+"key": "83a9c8ab5b9100ba",
+"kind": "name",
+"path": "langchain_core.output_parsers"
+},
+{
+"key": "92794c6f0941119d",
+"kind": "name",
+"path": "langchain_text_splitters"
+},
+{
+"key": "93ad7a3a40b7602d",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate"
+},
+{
+"key": "9766ea2874a65b0c",
+"kind": "name",
+"path": "langchain_core.output_parsers.StrOutputParser"
+},
+{
+"key": "b198235753c2cb23",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_text",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "c38d3d42213ce89f",
+"kind": "call",
+"path": "langchain_ollama.OllamaLLM",
+"npos": 0,
+"kwargs": [
+"base_url",
+"model",
+"num_ctx",
+"temperature"
+]
+},
+{
+"key": "c637e83bced4a390",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter"
+},
+{
+"key": "d6875c95e2e50128",
+"kind": "name",
+"path": "langchain_ollama"
+},
+{
+"key": "fd4acd16cb284437",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_text",
+"via": "instance"
+},
+{
+"key": "fe29fa30897bd507",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate",
+"npos": 0,
+"kwargs": [
+"input_variables",
+"template"
+]
+}
+]
+},
+{
+"id": "langchain==1.4.10@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"langchain==1.4.10"
+],
+"uses": [
+{
+"key": "1d87eccae14a8084",
+"kind": "name",
+"path": "langchain_core.runnables.RunnablePassthrough"
+},
+{
+"key": "2394d32f62815f98",
+"kind": "name",
+"path": "langchain_core.runnables.Runnable"
+},
+{
+"key": "2863cb4a9c856078",
+"kind": "name",
+"path": "langchain_community.chat_models"
+},
+{
+"key": "3e0ee3eac22f264d",
+"kind": "call",
+"path": "pydantic.Field",
+"npos": 1,
+"kwargs": [
+"validation_alias"
+]
+},
+{
+"key": "3e5bff14487187d6",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"max_tokens",
+"model",
+"temperature"
+]
+},
+{
+"key": "441f3bb0055dd3c5",
+"kind": "name",
+"path": "langchain_core.runnables"
+},
+{
+"key": "464e8fb225028120",
+"kind": "call",
+"path": "pydantic.ConfigDict",
+"npos": 0,
+"kwargs": [
+"populate_by_name"
+]
+},
+{
+"key": "468bbe4024a60019",
+"kind": "call",
+"path": "langchain_core.output_parsers.StrOutputParser",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "470156f6e1fb3779",
+"kind": "name",
+"path": "langchain_core.prompts"
+},
+{
+"key": "4d1078b65283a0b9",
+"kind": "call",
+"path": "pydantic.ConfigDict",
+"npos": 0,
+"kwargs": [
+"arbitrary_types_allowed"
+]
+},
+{
+"key": "4de52f3bd0767635",
+"kind": "name",
+"path": "pydantic.ConfigDict"
+},
+{
+"key": "5284b4b4842dc330",
+"kind": "name",
+"path": "langchain_core.language_models.llms.LLM"
+},
+{
+"key": "545cd9bb39ef1519",
+"kind": "name",
+"path": "langchain_core.language_models.llms"
+},
+{
+"key": "5669daa0e1f5c90c",
+"kind": "name",
+"path": "langchain_community.llms"
+},
+{
+"key": "622522ebf2a22e3c",
+"kind": "name",
+"path": "typing_extensions"
+},
+{
+"key": "71694a59daf1c57e",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate.from_template"
+},
+{
+"key": "7def64354ebf3dca",
+"kind": "name",
+"path": "langchain_core.runnables.RunnablePassthrough.assign"
+},
+{
+"key": "83a9c8ab5b9100ba",
+"kind": "name",
+"path": "langchain_core.output_parsers"
+},
+{
+"key": "88e7618350457ab0",
+"kind": "name",
+"path": "langchain_openai.ChatOpenAI"
+},
+{
+"key": "9354242dd0600610",
+"kind": "name",
+"path": "typing_extensions.Annotated"
+},
+{
+"key": "93ad7a3a40b7602d",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate"
+},
+{
+"key": "93cd602a3cdbf69b",
+"kind": "name",
+"path": "langchain_core.callbacks.CallbackManagerForLLMRun"
+},
+{
+"key": "9766ea2874a65b0c",
+"kind": "name",
+"path": "langchain_core.output_parsers.StrOutputParser"
+},
+{
+"key": "97675ce3d234bd2d",
+"kind": "call",
+"path": "pydantic.Field",
+"npos": 1,
+"kwargs": [
+"alias"
+]
+},
+{
+"key": "99b9e3293e143542",
+"kind": "call",
+"path": "pydantic.TypeAdapter",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "9d7e7221b403d8bb",
+"kind": "name",
+"path": "langchain_openai"
+},
+{
+"key": "abf1dda14032fa96",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate.from_template",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "b354a9b14f1a4ccc",
+"kind": "name",
+"path": "pydantic.Field"
+},
+{
+"key": "bb0b41eeaa7d9d6a",
+"kind": "call",
+"path": "pydantic.TypeAdapter.validate_python",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "d0831f247717959a",
+"kind": "call",
+"path": "pydantic.ConfigDict",
+"npos": 0,
+"kwargs": [
+"arbitrary_types_allowed",
+"populate_by_name"
+]
+},
+{
+"key": "d2ff1900ea5f8e27",
+"kind": "call",
+"path": "langchain_community.chat_models.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"model",
+"openai_api_base",
+"openai_api_key",
+"temperature"
+]
+},
+{
+"key": "da38ed3d3011ccf0",
+"kind": "name",
+"path": "pydantic.AliasChoices"
+},
+{
+"key": "de6a48a7f483871b",
+"kind": "name",
+"path": "pydantic.TypeAdapter.validate_python",
+"via": "instance"
+},
+{
+"key": "de76c0efd8637f00",
+"kind": "call",
+"path": "pydantic.AliasChoices",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "e3d4526a260cb481",
+"kind": "call",
+"path": "langchain_core.runnables.RunnablePassthrough",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "f0d12a309137944d",
+"kind": "name",
+"path": "langchain_community.llms.OpenAI"
+},
+{
+"key": "f80d1671773a8215",
+"kind": "name",
+"path": "langchain_core.callbacks"
+},
+{
+"key": "f99754ba38dd618b",
+"kind": "name",
+"path": "pydantic.TypeAdapter"
+},
+{
+"key": "fd6a4699b40de3b3",
+"kind": "name",
+"path": "langchain_community.chat_models.ChatOpenAI"
+},
+{
+"key": "fd745339b52de193",
+"kind": "call",
+"path": "pydantic.Field",
+"npos": 0,
+"kwargs": [
+"union_mode"
+]
+}
+]
+},
+{
+"id": "marshmallow==4.4.0@2026-11-15",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-15",
+"requires": [
+"marshmallow==4.4.0"
+],
+"uses": [
+{
+"key": "0c45223ac3584a3d",
+"kind": "call",
+"path": "marshmallow.fields.Str",
+"npos": 0,
+"kwargs": [
+"load_default"
+]
+},
+{
+"key": "353a2ca04d2c3b0d",
+"kind": "name",
+"path": "marshmallow.fields.Bool"
+},
+{
+"key": "414dbfff69120d8f",
+"kind": "call",
+"path": "marshmallow.fields.Str",
+"npos": 0,
+"kwargs": [
+"dump_default",
+"required",
+"validate"
+]
+},
+{
+"key": "44c20210731b2ff0",
+"kind": "call",
+"path": "marshmallow.fields.Int",
+"npos": 0,
+"kwargs": [
+"allow_none",
+"load_default",
+"validate"
+]
+},
+{
+"key": "9b4136fcd0e11136",
+"kind": "call",
+"path": "marshmallow.fields.Float",
+"npos": 0,
+"kwargs": [
+"allow_none",
+"load_default"
+]
+},
+{
+"key": "a1b857522f00d62c",
+"kind": "call",
+"path": "marshmallow.validate.Range",
+"npos": 0,
+"kwargs": [
+"error",
+"min"
+]
+},
+{
+"key": "f16fb7900c02376f",
+"kind": "call",
+"path": "marshmallow.fields.Bool",
+"npos": 0,
+"kwargs": [
+"dump_default",
+"required"
+]
+}
+]
+},
+{
+"id": "mcp==2.3.0@2026-11-01",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-11-01",
+"requires": [
+"mcp==2.3.0"
+],
+"uses": [
+{
+"key": "0018f4e4b68f82bf",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.tool",
+"npos": 0,
+"kwargs": [
+"description"
+],
+"via": "instance"
+},
+{
+"key": "010f40619c13ef39",
+"kind": "name",
+"path": "httpx2.AsyncBaseTransport"
+},
+{
+"key": "066911c74cebf1ee",
+"kind": "call",
+"path": "httpx2.ASGITransport",
+"npos": 0,
+"kwargs": [
+"app"
+]
+},
+{
+"key": "0a09d1ae510a07b5",
+"kind": "name",
+"path": "mcp.client.streamable_http.streamable_http_client"
+},
+{
+"key": "114ac522b2924ddd",
+"kind": "name",
+"path": "httpx2.Timeout"
+},
+{
+"key": "1eafecc1e78133ab",
+"kind": "name",
+"path": "httpx2.TimeoutException"
+},
+{
+"key": "1fdf236ad27f9b22",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.tool",
+"npos": 0,
+"kwargs": [
+"annotations"
+],
+"via": "instance"
+},
+{
+"key": "252a1cc94cc81e93",
+"kind": "call",
+"path": "httpx2.Timeout",
+"npos": 1,
+"kwargs": [
+"read"
+]
+},
+{
+"key": "279f4d349bbe8935",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"npos": 0,
+"kwargs": [
+"transport"
+],
+"via": "instance"
+},
+{
+"key": "2dfd4bfe44b2e4c6",
+"kind": "name",
+"path": "httpx2.AsyncClient"
+},
+{
+"key": "3257517324c93e9a",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"headers",
+"timeout"
+]
+},
+{
+"key": "33cadeadef9ea091",
+"kind": "call",
+"path": "demo._payload",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "380c988603c9dafa",
+"kind": "call",
+"path": "mcp.types.PaginatedRequestParams",
+"npos": 0,
+"kwargs": [
+"cursor"
+]
+},
+{
+"key": "3c0f46e6dbfb15b2",
+"kind": "name",
+"path": "demo._payload"
+},
+{
+"key": "3f4716520902c110",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.resource",
+"npos": 1,
+"kwargs": [
+"mime_type"
+],
+"via": "instance"
+},
+{
+"key": "44721d9d35897024",
+"kind": "name",
+"path": "mcp.server.mcpserver.exceptions"
+},
+{
+"key": "458220c783df95f1",
+"kind": "name",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"via": "instance"
+},
+{
+"key": "48d039dd1f4a24ac",
+"kind": "call",
+"path": "httpx2.AsyncHTTPTransport",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "48d590f83d43e9fa",
+"kind": "call",
+"path": "demo.mcp_http_client",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "4bc03c5f8a8ec2b3",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"timeout"
+]
+},
+{
+"key": "54211beb7de28090",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"headers"
+]
+},
+{
+"key": "55334b4d9e84128a",
+"kind": "name",
+"path": "demo.mcp_http_client"
+},
+{
+"key": "58a261f8de9f1264",
+"kind": "name",
+"path": "httpx2.AsyncClient.get",
+"via": "instance"
+},
+{
+"key": "5b82dfd3bc2e8c7b",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"npos": 0,
+"kwargs": [
+"host",
+"message_path",
+"port",
+"sse_path",
+"transport"
+],
+"via": "instance"
+},
+{
+"key": "6089d61fb33608f2",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "61e710bb56e24911",
+"kind": "name",
+"path": "httpx2"
+},
+{
+"key": "6b946c3c5b3cfee1",
+"kind": "name",
+"path": "httpx2.ASGITransport"
+},
+{
+"key": "6f3eab2db3878043",
+"kind": "name",
+"path": "httpx2.AsyncHTTPTransport"
+},
+{
+"key": "706e82b6a00dd0cc",
+"kind": "name",
+"path": "mcp.server.mcpserver.exceptions.ToolError"
+},
+{
+"key": "7198ef2d728badd4",
+"kind": "call",
+"path": "mcp.client.streamable_http.streamable_http_client",
+"npos": 1,
+"kwargs": [
+"http_client"
+]
+},
+{
+"key": "7497f98cfcb5217f",
+"kind": "name",
+"path": "httpx2.AsyncClient.post",
+"via": "instance"
+},
+{
+"key": "80e62b92c7030a45",
+"kind": "name",
+"path": "httpx2.NetworkError"
+},
+{
+"key": "94b514d6bf392a04",
+"kind": "call",
+"path": "httpx2.Timeout",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "966e98de37a2ce1c",
+"kind": "call",
+"path": "httpx2.AsyncClient.get",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "9793ef7817a4bb12",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"base_url",
+"headers",
+"timeout",
+"transport"
+]
+},
+{
+"key": "99a9ca17d1653d89",
+"kind": "name",
+"path": "demo.actor_headers"
+},
+{
+"key": "9a123535c98c15c0",
+"kind": "name",
+"path": "mcp.server.mcpserver.MCPServer.tool",
+"via": "instance"
+},
+{
+"key": "9a13523e2448e14f",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.tool",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "9e282684f786ce3c",
+"kind": "name",
+"path": "demo"
+},
+{
+"key": "9e51a8904b82f318",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"headers",
+"timeout",
+"trust_env"
+]
+},
+{
+"key": "b5cf32465a82f152",
+"kind": "call",
+"path": "mcp.server.mcpserver.exceptions.ToolError",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "b97030575ee2c50c",
+"kind": "name",
+"path": "mcp.types.PaginatedRequestParams"
+},
+{
+"key": "bbb35448dda9542c",
+"kind": "name",
+"path": "mcp.server.mcpserver.MCPServer"
+},
+{
+"key": "c1e9b53fa7f15707",
+"kind": "name",
+"path": "mcp.server.mcpserver.MCPServer.resource",
+"via": "instance"
+},
+{
+"key": "c4a1bb2fc5e0f467",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"follow_redirects",
+"headers",
+"timeout",
+"transport"
+]
+},
+{
+"key": "c53c241a9fce3ace",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "c70410f1c0b188c7",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer",
+"npos": 1,
+"kwargs": [
+"debug",
+"log_level"
+]
+},
+{
+"key": "d046992613929e4e",
+"kind": "name",
+"path": "httpx2.AsyncByteStream"
+},
+{
+"key": "db009e149a664670",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer",
+"npos": 1,
+"kwargs": [
+"instructions"
+]
+},
+{
+"key": "ddc9e6b25e654a5a",
+"kind": "name",
+"path": "mcp.server.mcpserver"
+},
+{
+"key": "e7f105c6d5f09d05",
+"kind": "name",
+"path": "httpx2.RemoteProtocolError"
+},
+{
+"key": "f4298e8a955976e3",
+"kind": "call",
+"path": "mcp.types.ToolAnnotations",
+"npos": 0,
+"kwargs": [
+"destructive_hint",
+"idempotent_hint",
+"open_world_hint",
+"read_only_hint",
+"title"
+]
+},
+{
+"key": "f5cd58a0272f13df",
+"kind": "call",
+"path": "httpx2.AsyncClient.post",
+"npos": 1,
+"kwargs": [
+"headers",
+"json"
+],
+"via": "instance"
+},
+{
+"key": "fb7a72d1083de02a",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"timeout",
+"trust_env"
+]
+}
+]
+},
+{
+"id": "mistralai==3.7.0@2026-11-11",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-11",
+"requires": [
+"mistralai==3.7.0"
+],
+"uses": [
+{
+"key": "0ce51276336db959",
+"kind": "name",
+"path": "mistralai.client"
+},
+{
+"key": "49d78969b50e6df9",
+"kind": "name",
+"path": "mistralai.client.Mistral.ocr",
+"via": "instance"
+},
+{
+"key": "6993ef44800b8456",
+"kind": "call",
+"path": "mistralai.client.Mistral",
+"npos": 0,
+"kwargs": [
+"api_key"
+]
+},
+{
+"key": "8557a92904192613",
+"kind": "name",
+"path": "mistralai.client.Mistral"
+},
+{
+"key": "b2f9c01cc2be5e00",
+"kind": "name",
+"path": "mistralai.client.Mistral.chat",
+"via": "instance"
+}
+]
+},
+{
+"id": "scikit-learn==1.9.1@2026-10-10",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-10-10",
+"requires": [
+"scikit-learn==1.9.1"
+],
+"uses": [
+{
+"key": "0c6cdd62d3794b75",
+"kind": "name",
+"path": "sklearn.utils.validation"
+},
+{
+"key": "17586d8de3168658",
+"kind": "name",
+"path": "sklearn.utils.validation.check_array"
+},
+{
+"key": "1e14308e68a6d5fb",
+"kind": "call",
+"path": "sklearn.utils.validation.validate_data",
+"npos": 2,
+"kwargs": [
+"accept_sparse",
+"dtype",
+"order",
+"reset"
+]
+},
+{
+"key": "1fec01355ebc5186",
+"kind": "name",
+"path": "sklearn.utils.check_random_state"
+},
+{
+"key": "224f1a1b2cc39fc6",
+"kind": "name",
+"path": "scipy.sparse.csr_array"
+},
+{
+"key": "28a057f18566fc18",
+"kind": "name",
+"path": "sklearn.model_selection"
+},
+{
+"key": "3f2a225e91f65dc3",
+"kind": "name",
+"path": "sklearn.utils.validation.validate_data"
+},
+{
+"key": "4057f724d3b2c283",
+"kind": "call",
+"path": "scipy.sparse.csc_matrix",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "4918ea0417d0a966",
+"kind": "name",
+"path": "sklearn.utils.check_array"
+},
+{
+"key": "54fd8868893a1b66",
+"kind": "call",
+"path": "sklearn.utils.validation.validate_data",
+"npos": 3,
+"kwargs": [
+"accept_sparse",
+"dtype",
+"multi_output"
+]
+},
+{
+"key": "5951da835c303aa1",
+"kind": "call",
+"path": "sklearn.model_selection.train_test_split",
+"npos": 3,
+"kwargs": [
+"random_state",
+"stratify",
+"test_size"
+]
+},
+{
+"key": "5e5f22e135d818d8",
+"kind": "call",
+"path": "scipy.sparse.csr_matrix",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "5e779a02e8dc9ac1",
+"kind": "name",
+"path": "scipy.sparse.csc_array"
+},
+{
+"key": "67e1a11786a3552d",
+"kind": "name",
+"path": "numpy.unique.shape",
+"via": "instance"
+},
+{
+"key": "692573b2fce71094",
+"kind": "name",
+"path": "scipy.sparse"
+},
+{
+"key": "7654f32c6a06abd1",
+"kind": "call",
+"path": "scipy.sparse.issparse",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "80f678bfd1c7573a",
+"kind": "name",
+"path": "numpy.float32"
+},
+{
+"key": "8b58c3aaca867411",
+"kind": "call",
+"path": "sklearn.tree.DecisionTreeRegressor.fit",
+"npos": 2,
+"kwargs": [
+"check_input",
+"sample_weight"
+],
+"via": "instance"
+},
+{
+"key": "8e94b543237dd749",
+"kind": "name",
+"path": "numpy.unique"
+},
+{
+"key": "91dd597e6b3b6d53",
+"kind": "call",
+"path": "sklearn.utils.check_array",
+"npos": 1,
+"kwargs": [
+"accept_sparse",
+"dtype",
+"ensure_all_finite",
+"order"
+]
+},
+{
+"key": "9648b51a5a6e9ee5",
+"kind": "name",
+"path": "scipy.sparse.issparse"
+},
+{
+"key": "964d0ad8cc7c6bca",
+"kind": "name",
+"path": "sklearn.model_selection.train_test_split"
+},
+{
+"key": "9939f883e2983834",
+"kind": "name",
+"path": "scipy.sparse.csc_matrix"
+},
+{
+"key": "99f5d01cb40dd226",
+"kind": "name",
+"path": "sklearn.utils"
+},
+{
+"key": "9e3c63020903f3fe",
+"kind": "call",
+"path": "numpy.unique",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "b97619fbdbb24285",
+"kind": "call",
+"path": "sklearn.utils.column_or_1d",
+"npos": 1,
+"kwargs": [
+"warn"
+]
+},
+{
+"key": "be2d6b16da33b35b",
+"kind": "call",
+"path": "scipy.sparse.csr_array",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "bef7ff0c14c02416",
+"kind": "name",
+"path": "sklearn.ensemble._gb.BaseGradientBoosting.__init__"
+},
+{
+"key": "c844596d8f19e461",
+"kind": "call",
+"path": "sklearn.metrics.root_mean_squared_error",
+"npos": 0,
+"kwargs": [
+"multioutput",
+"y_pred",
+"y_true"
+]
+},
+{
+"key": "c96cd7937e62c1c9",
+"kind": "call",
+"path": "sklearn.ensemble._gb.BaseGradientBoosting.__init__",
+"npos": 1,
+"kwargs": [
+"alpha",
+"ccp_alpha",
+"criterion",
+"init",
+"learning_rate",
+"loss",
+"max_depth",
+"max_features",
+"max_leaf_nodes",
+"min_impurity_decrease",
+"min_samples_leaf",
+"min_samples_split",
+"min_weight_fraction_leaf",
+"n_estimators",
+"n_iter_no_change",
+"random_state",
+"subsample",
+"tol",
+"validation_fraction",
+"verbose",
+"warm_start"
+]
+},
+{
+"key": "d7a63033619a8476",
+"kind": "name",
+"path": "sklearn.metrics.root_mean_squared_error"
+},
+{
+"key": "dbb8198b7c5410ed",
+"kind": "name",
+"path": "numpy"
+},
+{
+"key": "dd6767d93480d125",
+"kind": "call",
+"path": "scipy.sparse.csc_array",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "e848a68db42fee92",
+"kind": "call",
+"path": "sklearn.utils.check_random_state",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "e9254363020ea02f",
+"kind": "name",
+"path": "sklearn.utils.column_or_1d"
+},
+{
+"key": "f32407e31e3d875c",
+"kind": "name",
+"path": "scipy.sparse.csr_matrix"
+}
+]
+},
+{
+"id": "sqlalchemy==2.1.8@2026-11-15",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-15",
+"requires": [
+"sqlalchemy==2.1.8"
+],
+"uses": [
+{
+"key": "22ce6b0f1995b6f6",
+"kind": "name",
+"path": "sqlalchemy.MetaData.drop_all",
+"via": "instance"
+},
+{
+"key": "3719e567e4e95890",
+"kind": "call",
+"path": "sqlalchemy.sql.text.bindparams",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "4e41f4711581e636",
+"kind": "call",
+"path": "sqlalchemy.MetaData.reflect",
+"npos": 0,
+"kwargs": [
+"bind"
+],
+"via": "instance"
+},
+{
+"key": "5d0caf7461973c3f",
+"kind": "name",
+"path": "sqlalchemy.MetaData.tables",
+"via": "instance"
+},
+{
+"key": "6861d9ecb42672bd",
+"kind": "call",
+"path": "sqlalchemy.create_engine",
+"npos": 1,
+"kwargs": [
+"max_overflow",
+"pool_pre_ping",
+"pool_size"
+]
+},
+{
+"key": "72ad56c1f88c9d5c",
+"kind": "call",
+"path": "sqlalchemy.MetaData.drop_all",
+"npos": 0,
+"kwargs": [
+"bind"
+],
+"via": "instance"
+},
+{
+"key": "731ebcde28cc251b",
+"kind": "call",
+"path": "sqlalchemy.MetaData.drop_all",
+"npos": 1,
+"kwargs": [
+"tables"
+],
+"via": "instance"
+},
+{
+"key": "8ff21492c47c9aec",
+"kind": "call",
+"path": "sqlalchemy.bindparam",
+"npos": 1,
+"kwargs": [
+"expanding",
+"value"
+]
+},
+{
+"key": "b00763456ed6b0ee",
+"kind": "call",
+"path": "sqlalchemy.MetaData.drop_all",
+"npos": 0,
+"kwargs": [
+"bind",
+"tables"
+],
+"via": "instance"
+},
+{
+"key": "c439f04d11230f7a",
+"kind": "call",
+"path": "sqlalchemy.MetaData.drop_all",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "fba2dbbc7b2508f2",
+"kind": "name",
+"path": "sqlalchemy.MetaData.reflect",
+"via": "instance"
+}
+]
+}
+]
+}
