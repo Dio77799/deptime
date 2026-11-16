@@ -98,9 +98,6 @@ In order. The first line of each phase is what it delivers.
 code?" from a project directory.
 **Phase 3, the GitHub Action (DT-GTM-06, done).** A check on Dependabot and Renovate pull requests. DT-QA-22 met
 every bar on real ones; its wrong answers and misses first:
-- [ ] **DT-DATA-82**: A fallback defined only when an import fails reads `raises` · `P1` `S`
-  - dspy 3.4.1's `GEPA` raises ImportError only where gepa can't install; elsewhere the class is imported. DT-QA-22's
-    one working use flagged, and one of its two false failures. A wrong answer, so worked on now.
 - [ ] **DT-DATA-51** (from Held): Names computed at import time read absent · `P1` `M`
   - Now a false break on a real update: sqlalchemy 2.1 binds `orm.collections.attribute_mapped_collection` with
     `global` in a function run at import (DT-QA-22). Detail in the archive.
@@ -130,6 +127,8 @@ every bar on real ones; its wrong answers and misses first:
 
 ## Done since 2026-11-13
 
+- [x] **DT-DATA-82** (2026-11-16): a class or function defined in an `except ImportError` handler isn't recorded as
+  raising: dspy 3.4.1's `GEPA` stand-in, which raises only where gepa can't install. Extraction, in the batch.
 - [x] **DT-CORE-72** (2026-11-16): a `@dataclass(init=False)` class keeps the constructor it inherits. griffe made
   one up taking only its dataclass bases' fields, so pydantic-ai 2's `RequestUsage(input_tokens=)` read rejected
   where `UsageBase.__init__` takes `**kwargs`. Extraction, in the next `SNAPSHOT_FORMAT` batch.

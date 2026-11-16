@@ -3591,6 +3591,31 @@ def test_a_function_whose_body_only_raises_is_recorded_as_raising(tmp_path):
     assert {symbols[f"stub.{n}"].raises for n in ("works", "abstract", "rethrow")} == {None}
 
 
+def test_a_fallback_defined_only_when_an_import_fails_isnt_recorded_as_raising(tmp_path):
+    """DT-DATA-82: dspy 3.4.1 imports the real `GEPA` and defines a raising stand-in only where gepa can't install;
+    griffe keeps the stand-in, so `GEPA(...)` read as a call that only raises, a false break."""
+    files = {
+        "opt/__init__.py": (
+            "class Teleprompter:\n    pass\n\n"
+            "try:\n    from .gepa.gepa import GEPA\nexcept ModuleNotFoundError as error:\n"
+            "    if error.name != 'gepa':\n        raise\n\n"
+            "    class GEPA(Teleprompter):\n"
+            "        def __init__(self, *args, **kwargs):\n"
+            "            raise ImportError('gepa is required to use dspy.GEPA.')\n\n"
+            "try:\n    import fast\nexcept (OSError, ImportError):\n"
+            "    def speedup(x):\n        raise RuntimeError('fast is not installed')\n\n"
+            "try:\n    import other\nexcept ValueError:\n"
+            "    def strict(x):\n        raise RuntimeError('a handler for something else')\n"
+        ),
+        "opt/gepa/__init__.py": "",
+        "opt/gepa/gepa.py": "class GEPA:\n    def __init__(self, metric, *, auto=None):\n        self.metric = metric\n",
+    }
+    snap = build_snapshot("opt", "1.0", ["opt"], _write(tmp_path, files))
+    assert snap.symbols["opt.GEPA.__init__"].raises is None
+    assert snap.symbols["opt.speedup"].raises is None
+    assert snap.symbols["opt.strict"].raises == "RuntimeError: a handler for something else"
+
+
 def test_a_namespace_import_root_is_recorded(tmp_path):
     root = _write(tmp_path, {"nsroot/graph/__init__.py": "def g():\n    pass\n"})
     assert build_snapshot("nsroot", "1.0", ["nsroot"], root).namespaces == ["nsroot"]

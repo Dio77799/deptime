@@ -4109,7 +4109,9 @@ def _raises(func: griffe.Function) -> str | None:
     0.14's `ServiceContext.from_defaults(**kwargs)` only raises "ServiceContext is deprecated. …", so calling it
     fails though the name is there. `Type: message`, or the type alone when the message isn't a literal. None for
     any other body, a bare re-raise, a method left to subclasses (`NotImplementedError`, pandas'
-    `AbstractMethodError`) and an abstract method."""
+    `AbstractMethodError`), an abstract method, and a function defined only when an import fails (`_ImportFallback`)."""
+    if IMPORT_FALLBACK in func.labels:
+        return None
     if any(str(d.value).rpartition(".")[2] in ("abstractmethod", "overload") for d in func.decorators):
         return None
     try:
@@ -4448,6 +4450,41 @@ class _RuntimeElse(griffe.Extension):
     ) -> None:
         if not alias.runtime and isinstance(node, ast.AST) and _in_type_checking_else(node):
             alias.runtime = True
+
+
+IMPORT_ERRORS = frozenset({"ImportError", "ModuleNotFoundError"})
+IMPORT_FALLBACK = "deptime:import-fallback"  # a griffe label, never recorded
+
+
+def _in_import_fallback(node: ast.AST) -> bool:
+    """Whether `node` sits in an `except ImportError:` (or `ModuleNotFoundError`) handler."""
+    parent = getattr(node, "parent", None)
+    while parent is not None:
+        if isinstance(parent, ast.ExceptHandler) and parent.type is not None:
+            caught = parent.type.elts if isinstance(parent.type, ast.Tuple) else [parent.type]
+            if any(ast.unparse(t).rpartition(".")[2] in IMPORT_ERRORS for t in caught):
+                return True
+        parent = getattr(parent, "parent", None)
+    return False
+
+
+class _ImportFallback(griffe.Extension):
+    """Marks a class or function defined only when an import fails (DT-DATA-82). Whether it runs depends on what is
+    installed, not on the release: dspy 3.4.1's `GEPA` imports the real optimizer and, where gepa can't install
+    (Python 3.15 and later), defines a stand-in whose `__init__` raises ImportError. griffe keeps the later binding,
+    so `GEPA(...)` read as a call that only raises, a false break. A marked function's `raises` isn't recorded."""
+
+    def on_class_instance(
+        self, *, node: ast.AST | griffe.ObjectNode, cls: griffe.Class, **kwargs: Any
+    ) -> None:
+        if isinstance(node, ast.AST) and _in_import_fallback(node):
+            cls.labels.add(IMPORT_FALLBACK)
+
+    def on_function_instance(
+        self, *, node: ast.AST | griffe.ObjectNode, func: griffe.Function, **kwargs: Any
+    ) -> None:
+        if isinstance(node, ast.AST) and _in_import_fallback(node):
+            func.labels.add(IMPORT_FALLBACK)
 
 
 class _Rebound(griffe.Extension):
@@ -4870,7 +4907,7 @@ def build_snapshot(
             # search_paths replaces sys.path; other distributions' names stay aliases.
             resolve_external=None,
             extensions=griffe.load_extensions(
-                _RuntimeElse(), _OverloadsOnly(), _Rebound(), _ImportStructure()
+                _RuntimeElse(), _OverloadsOnly(), _Rebound(), _ImportStructure(), _ImportFallback()
             ),
         )
         if isinstance(loaded, griffe.Module):
