@@ -1358,6 +1358,17 @@ class DepTime:
         notes = [result.note] if result.note else []
         if not given:
             notes.append("No code was passed, so no use was checked; pass `code` or `files`.")
+        elif (
+            result.files_read
+            and result.checked
+            and result.checked[0].uses == 0
+            and not result.checked[0].note
+        ):
+            imports = " or ".join(f"`{r}`" for r in self._spec(name).import_names)
+            notes.append(
+                f"The code that was read never imports {imports}, so no use of {name} was found or checked: uses"
+                " are found through imports (`import X`, `from X import Y`), so pass the code with its imports."
+            )
         if left_out:
             notes.append(
                 f"{left_out} file{'' if left_out == 1 else 's'} left out: one call reads up to"

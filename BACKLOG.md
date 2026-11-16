@@ -103,10 +103,7 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
     `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
 
-**Phase 4, the fix (the model's part, outside DepTime).**
-- [ ] **DT-CORE-75**: Say when the code passed to `check_upgrade` never imports the package · `P2` `S`
-  - DT-QA-23: 18 of the model's 83 calls passed code with no import of the package, which reads as no break with
-    `uses: 0` and no note, so an agent can't tell "nothing breaks" from "nothing was read".
+**Phase 4, the fix (the model's part, outside DepTime).** Nothing left: DT-GTM-07 and DT-QA-23 are done.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: OSS-16
@@ -116,6 +113,8 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 
 ## Done since 2026-11-13
 
+- [x] **DT-CORE-75** (2026-11-16): `check_upgrade`'s note says when the code never imports the package (DT-QA-23: 18
+  of 83 calls), where it read as no break with `uses: 0` and nothing else.
 - [x] **DT-QA-23** (2026-11-16): Qwen3.5 9B with the six tools on the upgrade checks: 75.0% of breaks found and 3.5%
   of working uses flagged (five tools: 82.2%, 4.5%), missing the bar (90%, 1%). 65 of its 83 `check_upgrade` calls
   passed code the tool couldn't read (`bench/model-alone/check-upgrade/results-2026-11-16.md`).

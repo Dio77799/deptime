@@ -423,6 +423,15 @@ def test_the_check_upgrade_tool_answers_one_package_in_one_call(dt):
     assert other.not_covered[0].package == "not-indexed-pkg" and not other.checked
 
 
+def test_the_check_upgrade_tool_says_when_the_code_never_imports_the_package(dt):
+    """DT-CORE-75: a snippet with no import reads no use; the answer says so rather than looking like no break."""
+    res = dt.check_upgrade("httpx", "0.27.2", "0.28.1", code="httpx.Client(proxies='p')\n")
+    assert res.breaks == 0 and res.checked[0].uses == 0
+    assert "never imports `httpx`" in res.note and "with its imports" in res.note
+    assert "never imports" not in (dt.check_upgrade("httpx", "0.27.2", "0.28.1", code=CODE).note or "")
+    assert "never imports" not in dt.check_upgrade("httpx", "0.27.2", "0.28.1", code="def (:\n").note
+
+
 def test_the_check_upgrade_tool_reads_up_to_its_limit(dt, monkeypatch):
     from deptime import query
 

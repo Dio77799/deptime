@@ -28,6 +28,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 - `check-upgrade` reads `uv.lock` and `poetry.lock` in any directory, as it does requirements files, so an update to
   one project of a monorepo (`backend/uv.lock`) is checked; a lockfile's own project isn't read as a dependency. The
   Action's documented trigger paths match them (DT-CORE-74)
+- `check_upgrade`'s `note` says when the code passed never imports the package, so no use was found: such code used
+  to read as no break with `uses: 0` and nothing else (DT-CORE-75)
 
 ## [0.2.0] - 2026-11-16
 
