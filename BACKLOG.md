@@ -244,7 +244,8 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     lands, and lets unattended updates into the environment that builds the signed index. The monthly upkeep merges
     them instead.
 - [x] **DT-GTM-02** (2026-11-17): the rename maps and a landing page are on GitHub Pages
-  (https://cschmertz.github.io/deptime/), rebuilt by `pages.yml` after every index build.
+  (https://cschmertz.github.io/deptime/), rebuilt by `pages.yml` after every index build. Designed the same day:
+  brand header, landing page with the upgrade demo, a filter on each map, link previews, no row cap.
 - [ ] **DT-GTM-05**: Try the Cursor rule and the AGENTS.md snippet in a fresh project · `P2` `S`
 - [ ] **DT-OSS-14**: Publish the holdout sets as a benchmark · `P2` `M`
 
