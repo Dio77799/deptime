@@ -38,7 +38,7 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 | Milestone | Exit criterion | Status |
 |---|---|---|
-| **M0 Spikes** | S1 go/no-go (false-absent ≤ 10%); S2–S7 answered | S1 to S4 passed (S1 at 1.2%); S5 done but for Cursor; S6 answered by DT-QA-05 (yes, 25 of 25); S7 passed (DT-SPIKE-07) |
+| **M0 Spikes** | S1 go/no-go (false-absent ≤ 10%); S2–S7 answered | S1 to S4 passed (S1 at 1.2%); S5 done; S6 answered by DT-QA-05 (yes, 25 of 25); S7 passed (DT-SPIKE-07) |
 | **M1 Local alpha** | Public repo; index published; `uvx deptime mcp` works from PyPI; benchmark ≥ 70% | Met: every holdout's first run is above 70% |
 | **M2 Distribution** | Registries, plugin, snippets, demo GIF, 5 rename-map pages | Registries, plugin, pages and the demo done; the hosting is below |
 | **M3 Optional hosted** | Public endpoint for web clients | Not planned |
@@ -109,11 +109,13 @@ fields (crewai `Task(expected_output=)`, one case), until it recurs.
 
 **Phase 5, 1.0: done.**
 - [x] **DT-OSS-17** (2026-11-17): released 1.0.0 with the 1.x promise. Done in the end: nothing renamed, three
-  fields described, Python 3.12 to 3.15 in CI, first launch on every OS (DT-SPIKE-07). Claude Desktop and VS Code
-  checked since (DT-SPIKE-05); the hand-off is frozen as it is at 0.2.3.
+  fields described, Python 3.12 to 3.15 in CI, first launch on every OS (DT-SPIKE-07). Claude Desktop, VS Code and
+  Cursor checked since (DT-SPIKE-05); the hand-off is frozen as it is at 0.2.3.
 
 ## Done since 2026-11-13
 
+- [x] **DT-SPIKE-05** (2026-11-17): Claude Desktop, VS Code and Cursor run `uvx deptime mcp` from the README's
+  setup and give the right answer (`bench/s5/README.md`).
 - [x] **DT-SPIKE-07** (2026-11-17): first launch from nothing to the right answer in 8 s on Linux, 10 s on
   Apple-silicon macOS and 20 s on Windows (`bench/s7/`). macOS with an x86_64 `uv` takes about 3 minutes, compiling
   `cryptography` for the MCP SDK; the README says to run `uvx deptime --help` once first.
@@ -240,9 +242,6 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     them instead.
 - [ ] **DT-GTM-02**: Host the generated rename-map pages (GitHub Pages) · `P2` `S`
 - [ ] **DT-GTM-05**: Try the Cursor rule and the AGENTS.md snippet in a fresh project · `P2` `S`
-- [ ] **DT-SPIKE-05**: Cursor · `P2` `S`
-  - Claude Desktop and VS Code done (2026-11-17, `bench/s5/README.md`): both run `uvx deptime mcp` from the
-    README's setup and give the right answer.
 - [ ] **DT-OSS-14**: Publish the holdout sets as a benchmark · `P2` `M`
 
 ## Held

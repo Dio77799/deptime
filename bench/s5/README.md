@@ -29,7 +29,7 @@ Each one does the handshake, lists the tools and calls `explain_error` on httpx 
 | Codex CLI 0.166.0 | `codex exec -s read-only -c mcp_servers.deptime.command="uvx" -c mcp_servers.deptime.args=[…]` | ✅ The right finding and pin. |
 | Claude Desktop 1.15962.1 (macOS, 2026-11-17, `deptime` 1.0.1) | `"mcpServers": {"deptime": {"command": "uvx", "args": ["deptime", "mcp"]}}` in `claude_desktop_config.json`, as the README says; a bare `uvx`, no full path | ✅ It called DepTime and gave the right finding, replacement and pin. Its log shows the server up a second after launch and the handshake answered 9 to 16 s later (an x86_64 `uv` under Rosetta, cache already warm). |
 | VS Code 1.131.0 with Copilot Free (macOS, 2026-11-17, `deptime` 1.0.1) | `{"servers": {"deptime": {"type": "stdio", "command": "uvx", "args": ["deptime", "mcp"]}}}` in the user `mcp.json`; Agent mode | ✅ It found the six tools 4 s after start, called `explain_error` and gave the right finding, replacement and pin. |
-| Cursor | | Not run yet. |
+| Cursor 3.30.14 (macOS, 2026-11-17, `deptime` 1.0.1) | `{"mcpServers": {"deptime": {"command": "uvx", "args": ["deptime", "mcp"]}}}` in `~/.cursor/mcp.json`; Agent mode | ✅ Connected with six tools 3 s after start; its log shows the `explain_error` call, and it gave the right finding, replacement and pin. |
 
 **Findings:**
 

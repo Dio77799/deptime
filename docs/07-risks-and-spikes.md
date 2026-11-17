@@ -74,7 +74,7 @@
   - Does a claude.ai custom connector work against a test deployment?
 - **Pass:** a documented compatibility matrix in the README.
 - **Progress (2026-11-05):** the matrix is in the README (`bench/s5/`).
-  - **Local:** Claude Code 2.1.318 and Codex CLI 0.166.0 run `uvx deptime@0.1.4 mcp` and get the right answer. With an empty home, the first call returns the "no index yet" note, and the index lands about 10 s later. A first install on macOS with an x86_64 `uv` compiles `cryptography` (62 s), past Claude Code's 30 s startup limit; the README says to run `uvx deptime --help` once first. Claude Desktop 1.15962.1 and VS Code 1.131.0 run `uvx deptime mcp` and get the right answer (2026-11-17, DT-SPIKE-05); Cursor isn't checked yet.
+  - **Local:** Claude Code 2.1.318 and Codex CLI 0.166.0 run `uvx deptime@0.1.4 mcp` and get the right answer. With an empty home, the first call returns the "no index yet" note, and the index lands about 10 s later. A first install on macOS with an x86_64 `uv` compiles `cryptography` (62 s), past Claude Code's 30 s startup limit; the README says to run `uvx deptime --help` once first. Claude Desktop 1.15962.1, VS Code 1.131.0 and Cursor 3.30.14 run `uvx deptime mcp` and get the right answer (2026-11-17, DT-SPIKE-05).
   - **Hosted:** MCP Python SDK clients 1.8–1.30 and TypeScript SDK clients 1.10–1.32, which open with the `initialize` handshake (protocols 2024-11-05 to 2025-11-25), all work against `deptime serve`. The same clients from 1.0 work over stdio. A claude.ai custom connector against a test deployment isn't checked yet.
 
 ### S6 — Do agents call it unprompted?
