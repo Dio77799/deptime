@@ -455,6 +455,20 @@ def _fold(breaks: list[UpgradeBreak]) -> list[tuple[UpgradeBreak, list[UpgradeBr
     ]
 
 
+def _member_fix(b: UpgradeBreak) -> tuple[str, str] | None:
+    """What replaces a name a missing module or class takes with it, when its own finding says (DT-CORE-76): the
+    fold lists it under its parent, which may have no replacement (mcp 2's `mcp.server.fastmcp` module is gone,
+    while its `FastMCP` class has a proven new home)."""
+    f = b.finding
+    if f is None:
+        return None
+    if f.fix is not None:
+        return f.fix.new, "proven"
+    if f.replacements:
+        return f.replacements[0].target, "try"
+    return None
+
+
 _PLAIN = re.compile(r"[^\w.,=() /-]")
 MAX_HANDOFF_LINES = 60
 
@@ -486,7 +500,13 @@ def _handoff(result: UpgradeCheckResult) -> list[str]:
                 step += f"; the index proves {_plain(f.fix.old)} -> {_plain(f.fix.new)}"
             elif f is not None and f.replacements:
                 step += f"; try {_plain(f.replacements[0].target)}"
-            where = ", ".join(f"{_plain(loc.file)}:{loc.line}" for loc in locs) or "(no line recorded)"
+            for u in under:
+                if (member := _member_fix(u)) is not None:
+                    new, how = member
+                    verb = "the index proves" if how == "proven" else "try"
+                    step += f"; {verb} {_plain(u.path)} -> {_plain(new)}"
+            seen = dict.fromkeys(f"{_plain(loc.file)}:{loc.line}" for loc in locs)  # a line once, in order
+            where = ", ".join(seen) or "(no line recorded)"
             items.append(f"- {where}: {step}")
     # DT-GTM-08: an `unknown` is a use DepTime can't rule out, not one it cleared (DT-QA-05 lost 4 sessions on it)
     unsure = [
@@ -566,7 +586,16 @@ def to_markdown(result: UpgradeCheckResult) -> str:
                 lines.append(_break_line(b, at))
                 if under:
                     shown = "; ".join(
-                        _code(u.path) + (f" at {_where(u.locations)}" if u.locations else "") for u in under
+                        _code(u.path)
+                        + (
+                            f" (use {_code(m[0])})"
+                            if (m := _member_fix(u)) and m[1] == "proven"
+                            else f" (try {_code(m[0])})"
+                            if m
+                            else ""
+                        )
+                        + (f" at {_where(u.locations)}" if u.locations else "")
+                        for u in under
                     )
                     lines.append(f"  - Missing with it: {shown}.")
             lines.append("")

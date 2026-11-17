@@ -102,6 +102,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-CORE-73** (2026-11-17): a name bound to a union of the package's classes (`A | B`, `Union[A, B]`) is
   recorded as a union, and `check_symbols` reads a member of it as missing: mcp 2.0's
   `types.ClientRequest.model_construct`, DT-QA-22's last missed break. `SNAPSHOT_FORMAT` 29.
+- [x] **DT-CORE-76** (2026-11-17): a name listed under its missing module or class keeps its own replacement in the
+  report and the agent block (mcp 2's `mcp.server.fastmcp` is gone; its `FastMCP` is proven to be `MCPServer`), and
+  the block names each line once. The instructions are unchanged: the hand-off gains a fact, not a rework.
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required

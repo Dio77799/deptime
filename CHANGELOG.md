@@ -61,6 +61,11 @@ are data: they can grow in any release.)
 
 ## [Unreleased]
 
+### Fixed
+- `check-upgrade`'s report and its agent block no longer hide what replaces a name that went away with its module
+  or class: updating mcp 1.x to 2.x now says `mcp.server.fastmcp.FastMCP` is `mcp.server.mcpserver.MCPServer`
+  instead of only that `mcp.server.fastmcp` is gone. The agent block names each line once (DT-CORE-76).
+
 ## [1.0.2] - 2026-11-17
 
 ### Fixed

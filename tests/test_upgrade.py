@@ -308,6 +308,80 @@ def test_the_hand_off_asks_the_agent_to_check_unknown_uses():
     assert "Where no replacement is given" in hand  # DT-GTM-09: rewrite it, don't leave it
 
 
+def test_a_name_folded_under_its_missing_module_keeps_its_replacement():
+    """DT-CORE-76: mcp 2 removed the `mcp.server.fastmcp` module (no replacement) and renamed its `FastMCP` class
+    to `mcp.server.mcpserver.MCPServer` (proven). Folding the class under its module must not hide the rename."""
+    from deptime.models import (
+        Finding,
+        Fix,
+        PackageUpgrade,
+        Replacement,
+        UpgradeBreak,
+        UpgradeCheckResult,
+        UseLocation,
+    )
+
+    def gone(path: str, line: int, **finding) -> UpgradeBreak:
+        f = Finding(
+            package="mcp",
+            symbol=path,
+            issue="symbol_removed",
+            confidence="high",
+            explanation="gone",
+            **finding,
+        )
+        return UpgradeBreak(
+            path=path,
+            kind="missing",
+            explanation="gone",
+            locations=[UseLocation(file="a.py", line=line)],
+            finding=f,
+        )
+
+    fix = Fix(
+        kind="path",
+        old="mcp.server.fastmcp.FastMCP",
+        new="mcp.server.mcpserver.MCPServer",
+        verified_at="2.3.0",
+        confidence=0.9,
+        source="curated",
+    )
+    breaks = [
+        gone("mcp.server.fastmcp", 1),
+        gone("mcp.server.fastmcp.FastMCP", 1, fix=fix),
+        gone(
+            "mcp.server.fastmcp.Context",
+            1,
+            replacements=[Replacement(target="mcp.Ctx", confidence=0.8, source="deprecation_message")],
+        ),
+        gone("mcp.server.fastmcp.FastMCP.tool", 5),
+    ]
+    res = UpgradeCheckResult(
+        project="p",
+        breaks=4,
+        checked=[
+            PackageUpgrade(
+                change=_change("1.26.0", "2.3.0", "mcp"),
+                resolved_version="2.3.0",
+                exact=True,
+                uses=4,
+                files=1,
+                breaks=breaks,
+            )
+        ],
+    )
+    md = to_markdown(res)
+    assert (
+        "  - Missing with it: `mcp.server.fastmcp.FastMCP` (use `mcp.server.mcpserver.MCPServer`) at `a.py:1`; "
+        "`mcp.server.fastmcp.Context` (try `mcp.Ctx`) at `a.py:1`; `mcp.server.fastmcp.FastMCP.tool` at `a.py:5`."
+    ) in md
+    hand = md.split("For a coding agent", 1)[1]
+    assert (
+        "- a.py:1, a.py:5: mcp.server.fastmcp: gone in mcp 2.3.0; the index proves mcp.server.fastmcp.FastMCP -> "
+        "mcp.server.mcpserver.MCPServer; try mcp.server.fastmcp.Context -> mcp.Ctx"
+    ) in hand  # each line once, however many folded names it holds
+
+
 def test_agent_block_lists_unknowns_without_breaks():
     """DT-GTM-09: with no confirmed break, the uses DepTime can't tell about still reach the agent."""
     from deptime.models import PackageUpgrade, UpgradeCheckResult, UpgradeNotice, UseLocation
