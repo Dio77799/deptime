@@ -70,6 +70,7 @@ The default home is `$XDG_CACHE_HOME/deptime`, else `~/.cache/deptime` (override
 - Rename-map site: `python -m deptime.site build` (`src/deptime/site.py`), published to GitHub Pages by `.github/workflows/pages.yml` after every index build; it copies the wordmarks, icon, upgrade demo and `docs/assets/social-preview.png` (a screenshot of the wordmark and the upgrade demo: retake it when the demo changes)
 - README numbers: four first-run figures and the two model-alone rows in "How well it works"; every other score goes in `bench/README.md`
 - GitHub Action: `action.yml` at the root (its `deptime==` pin follows `__version__`, `tests/test_docs.py`), dogfooded by `.github/workflows/upgrade-check.yml`; usage in `docs/github-action.md`
+- Public benchmark: `bench/dataset/` builds the holdout sets, the update pull requests and the tracebacks into one download with a standard-library scorer (its README is the dataset's); v1 is frozen (`tests/test_bench_dataset.py`), so a changed label or set means a v2 and a new `benchmark-v2` release
 - Curated migration hints: `src/deptime/curated.toml` (ships in the wheel; each must pass the checks in its header, ADR 0006)
 
 ## Verified external APIs

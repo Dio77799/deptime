@@ -247,7 +247,9 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
   (https://cschmertz.github.io/deptime/), rebuilt by `pages.yml` after every index build. Designed the same day:
   brand header, landing page with the upgrade demo, a filter on each map, link previews, no row cap.
 - [ ] **DT-GTM-05**: Try the Cursor rule and the AGENTS.md snippet in a fresh project · `P2` `S`
-- [ ] **DT-OSS-14**: Publish the holdout sets as a benchmark · `P2` `M`
+- [x] **DT-OSS-14** (2026-11-17): the holdout sets, the update pull requests and the tracebacks are published as one
+  benchmark with a standard-library scorer (`bench/dataset/`, release `benchmark-v1`); its scorer matches the
+  repository's own, answer for answer.
 
 ## Held
 

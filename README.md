@@ -168,7 +168,7 @@ Every number below is a **first try**: the test cases and their right answers we
 - **It helps smaller models most.** The best Claude models come close on their own; smaller and cheaper ones fall well behind.
 - **Suggesting replacements is its weakest skill.** It gets the right one about half the time, so it tells your agent how confident it is.
 
-Every test set and result is in the [benchmark](https://github.com/cschmertz/deptime/blob/main/bench/README.md#results-every-check-first-run-and-now), re-checked automatically on every change.
+Every test set and result is in the [benchmark](https://github.com/cschmertz/deptime/blob/main/bench/README.md#results-every-check-first-run-and-now), re-checked automatically on every change. The test sets are also published on their own, with a scorer, so any other tool or model can be measured the same way: the [API-change benchmark](https://github.com/cschmertz/deptime/blob/main/bench/dataset/README.md).
 
 ## What it doesn't do
 

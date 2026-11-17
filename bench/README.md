@@ -219,3 +219,11 @@ fixes designed from 2026-11e's misses, scored 76.9% on 26 new tracebacks (four o
 page pastes them), and 0.1% and 0.1% false positives on 2,113 working uses, with 100% and 96.7% recall on 152 breaks;
 see `holdout/2026-11f/results-2026-11-11.md`. All six sets' tracebacks are in `cases/` now; `bench.yml` checks each
 set's uses against its `baseline.json`.
+
+## Published as a benchmark (DT-OSS-14)
+
+`dataset/` builds the six holdout sets, 2026-11g, DT-QA-22's update pull requests, the real tracebacks in `cases/` and
+the false-blame set into one download for measuring other tools and models: 24,873 labelled uses (1,287 breaks) and
+423 tracebacks, with a scorer that needs only Python's standard library, DepTime's answers and the DT-QA-18/19 models'
+answers as reference. On DepTime's answers its scorer matches `holdout/score.py` use for use and `deptime.bench` case
+for case. See `dataset/README.md`, which is also the download's README; the download is the `benchmark-v1` release.
