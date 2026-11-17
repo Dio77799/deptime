@@ -61,6 +61,16 @@ are data: they can grow in any release.)
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-11-17
+
+### Fixed
+- `check_symbols` and `check-upgrade` read a member of a name bound to a union of classes as missing, with the
+  reason: mcp 2.0's `types.ClientRequest` is `PingRequest | ...`, so `ClientRequest.model_construct` fails
+  (DT-CORE-73). Earlier releases answer `unknown` on the same index.
+
+### Changed
+- The GitHub Action's description is shorter, as GitHub Marketplace requires.
+
 ## [1.0.1] - 2026-11-17
 
 ### Changed
@@ -551,7 +561,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/cschmertz/deptime/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/cschmertz/deptime/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/cschmertz/deptime/compare/v0.2.3...v1.0.0
 [0.2.3]: https://github.com/cschmertz/deptime/compare/v0.2.2...v0.2.3

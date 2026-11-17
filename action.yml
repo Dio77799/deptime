@@ -1,7 +1,5 @@
 name: DepTime upgrade check
-description: >-
-  On a dependency update, find the lines of your Python code the new versions break, from DepTime's index of each
-  release's API. Reads your code, never runs it; asks no model; needs no token.
+description: Find the lines of Python code a dependency update breaks, before you merge. Offline, no AI, no token needed.
 author: DepTime contributors
 branding:
   icon: package
@@ -28,7 +26,7 @@ inputs:
   deptime:
     description: >-
       What uvx installs DepTime from: a pinned release (the default, the release this action ships with) or a path.
-    default: "deptime==1.0.1"
+    default: "deptime==1.0.2"
 
 outputs:
   result:
