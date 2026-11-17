@@ -192,11 +192,11 @@ uvx deptime index status | pull
 For web apps that only accept a URL, run `deptime serve` on any container host (a `Dockerfile` and `fly.toml` are included). See [self-hosting](https://github.com/cschmertz/deptime/blob/main/docs/05-self-hosting.md).
 </details>
 
-## Credits and similar projects
+## Credits
 
-- [griffe](https://github.com/mkdocstrings/griffe) reads the libraries' code.
-- [since-cutoff](https://github.com/MohammadHijjawi97/since-cutoff) compares your dependencies with a model's training cutoff. DepTime ships a ready-made history and starts from the error.
-- [Context7](https://context7.com) and [Ref](https://ref.tools) serve version-specific docs. DepTime answers "when did this change, and what replaced it?"
+**Built on** [griffe](https://github.com/mkdocstrings/griffe), which reads the libraries' code.
+
+**How it differs from docs tools** like [Context7](https://context7.com) and [Ref](https://ref.tools): they show the docs for a version; DepTime tells you when something changed and what replaced it.
 
 ## Contributing
 
