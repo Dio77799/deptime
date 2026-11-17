@@ -4,7 +4,7 @@ DepTime's GitHub Action runs `deptime check-upgrade` on a pull request that upda
 Dependabot or Renovate. It finds the lines of your Python code that the new versions break, writes a report to the
 job summary with an annotation on each broken line, and fails the check only on a confirmed break.
 
-It's available from DepTime 0.2.0.
+It's available from DepTime 0.2.0, and listed on the [GitHub Marketplace](https://github.com/marketplace/actions/deptime-upgrade-check).
 
 ```yaml
 # .github/workflows/upgrade-check.yml

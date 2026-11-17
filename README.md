@@ -11,6 +11,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/deptime)](https://pypi.org/project/deptime/)
 [![Python](https://img.shields.io/pypi/pyversions/deptime)](https://pypi.org/project/deptime/)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-DepTime%20upgrade%20check-blue?logo=github)](https://github.com/marketplace/actions/deptime-upgrade-check)
 [![CI](https://github.com/cschmertz/deptime/actions/workflows/ci.yml/badge.svg)](https://github.com/cschmertz/deptime/actions/workflows/ci.yml)
 [![Index build](https://github.com/cschmertz/deptime/actions/workflows/build-index.yml/badge.svg)](https://github.com/cschmertz/deptime/actions/workflows/build-index.yml)
 [![License: MIT](https://img.shields.io/github/license/cschmertz/deptime)](https://github.com/cschmertz/deptime/blob/main/LICENSE)
