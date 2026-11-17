@@ -21,7 +21,7 @@ which of a project's code a dependency update breaks. Everything done before 202
 - **Released:** 1.0.1 (2026-11-17) is on PyPI, the MCP Registry and GitHub: the six tools, the upgrade check (a
   command, a GitHub Action, an MCP tool and a Claude Code plugin command), and the 1.x promise in CHANGELOG.md's
   versioning section: the contract only grows.
-- **Index:** 53 packages and 6,823 releases on 2026-11-17 (`SNAPSHOT_FORMAT` 28, schema 2); `index.sqlite.xz` is
+- **Index:** 53 packages and 6,823 releases on 2026-11-17 (`SNAPSHOT_FORMAT` 29, schema 2); `index.sqlite.xz` is
   51.4 MB and the `.gz` 79.2 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
   build of about 3 hours (format 27's: 2 h 48 min).
@@ -114,6 +114,8 @@ fields (crewai `Task(expected_output=)`, one case), until it recurs.
 
 ## Done since 2026-11-13
 
+- [x] **DT-QA-17** (2026-11-17): 30 real errors with another cause (a typo, a broken install, a file named like the
+  package, the project's own bug): `explain_error` blamed a release for none (`bench/false-blame/results-2026-11-17.md`).
 - [x] **DT-SPIKE-05** (2026-11-17): Claude Desktop, VS Code and Cursor run `uvx deptime mcp` from the README's
   setup and give the right answer (`bench/s5/README.md`).
 - [x] **DT-SPIKE-07** (2026-11-17): first launch from nothing to the right answer in 8 s on Linux, 10 s on
@@ -227,11 +229,6 @@ fields (crewai `Task(expected_output=)`, one case), until it recurs.
 
 One-off measurements and finishing touches. None is needed for upkeep, and none starts a series.
 
-- [ ] **DT-QA-17**: Tracebacks that aren't version breaks · `P2` `M`
-  - All 401 traceback cases are real breaks, so nothing measures how often `explain_error` blames a release for an
-    error with another cause (a typo, a broken install, the project's own bug). About 30 such errors on covered
-    packages, collected by the benchmark's rules and scored once. The upgrade checks already have this measure
-    (the working uses).
 - [ ] **DT-QA-15**: The same for accuracy: S1's runtime probe on each package's newest release · `P3` `M`
   - Split from DT-QA-14. The probe (`bench/s1/`) runs a fixed plan of releases, up to 150 minutes a package, so
     following new releases means reworking it, and a check that needs upkeep defeats its purpose. DT-QA-03's
