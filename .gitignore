@@ -30,3 +30,6 @@ data/snapshots/
 
 # Local notes (also keeps them out of the Hatch sdist)
 /notes/
+
+# Rename-map pages built by `python -m deptime.site build` (published by pages.yml)
+/site/

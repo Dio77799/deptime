@@ -6,15 +6,19 @@ the same data the MCP tools serve, never written by hand.
 Each page lists, between the newest release of the old series and the newest of the new one, the names and
 arguments that went away and what the index says replaces them (the library's own text, a curated guide, or the same
 object at another path), then the ones removed without a stated replacement. Library text is escaped and quoted as
-data. Writes index.html, one page per migration, llms.txt and, with --base-url, sitemap.xml.
+data. Writes one page per migration, index.html (a short landing page for DepTime that lists them), llms.txt and,
+with --base-url, sitemap.xml and each page's canonical URL. `.github/workflows/pages.yml` publishes them to GitHub
+Pages after every index build (DT-GTM-02).
 """
 
 from __future__ import annotations
 
 import argparse
+import builtins
 import html
 import sys
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
 
 from packaging.version import InvalidVersion, Version
@@ -62,6 +66,7 @@ MIGRATIONS = (
     ),
     Migration("pydantic-1-to-2", "pydantic v1 → v2", (Range("pydantic", "1.10.", "2."),)),
     Migration("openai-0-to-1", "openai 0.x → 1.x", (Range("openai", "0.28", "1."),)),
+    Migration("httpx-0.27-to-0.28", "httpx 0.27 → 0.28", (Range("httpx", "0.27.", "0.28."),)),
 )
 
 STYLE = """
@@ -72,7 +77,22 @@ h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; margin-top: 2rem; }
 p.meta, td.ev { color: var(--muted); font-size: 0.9rem; }
 table { border-collapse: collapse; width: 100%; } th, td { text-align: left; vertical-align: top; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--line); }
 code { background: var(--code); padding: 0 0.2rem; border-radius: 3px; overflow-wrap: anywhere; }
+pre { background: var(--code); padding: 0.75rem 1rem; border-radius: 6px; overflow-x: auto; }
+pre code { padding: 0; }
+.cta { border: 1px solid var(--line); border-radius: 6px; padding: 0.25rem 1rem; margin: 1rem 0; }
+a { color: inherit; }
 """
+
+REPO = "https://github.com/cschmertz/deptime"
+ACTION_DOCS = f"{REPO}/blob/main/docs/github-action.md"
+BENCHMARK = f"{REPO}/blob/main/bench/README.md"
+# Shown on every rename map: the reader came for one migration and is probably in the middle of it.
+CTA = (
+    '<div class="cta"><p><b>Updating your own code?</b> DepTime can point to each line a dependency update breaks. '
+    "Update your lockfile or requirements, then run <code>uvx deptime check-upgrade</code>, or add the "
+    f'<a href="{ACTION_DOCS}">GitHub Action</a> to check every update pull request. It runs on your machine, '
+    f'with no AI model in the loop. <a href="{REPO}">DepTime on GitHub</a>.</p></div>'
+)
 
 
 def _newest(dt: DepTime, package: str, prefix: str | None) -> str | None:
@@ -100,6 +120,16 @@ def _replacements(dt: DepTime, package: str, event: HistoryEvent) -> list[Replac
         elif param is not None and r.target.startswith(f"{event.path}({param}) -> "):
             found.append(r.model_copy(update={"target": r.target.split(" -> ", 1)[1]}))
     return found
+
+
+def _artefact(path: str) -> bool:
+    """A path no one writes: a module seen through itself (`pydantic.v1.v1.BaseModel`, a re-export loop) or a
+    builtin warning a module happens to import (`pydantic.config.DeprecationWarning`). A rename map lists neither.
+    Only warnings: methods named `list` or `__init__`, and a library's own `ConnectionError`, are real API."""
+    parts = path.split(".")
+    builtin = getattr(builtins, parts[-1], None)
+    warning = isinstance(builtin, type) and issubclass(builtin, Warning)
+    return warning or any(a == b for a, b in pairwise(parts))
 
 
 def _code(text: str) -> str:
@@ -130,7 +160,7 @@ def _rows(dt: DepTime, rng: Range) -> tuple[str, list[str], list[str]]:
     )
     replaced, gone = [], []
     for e in (dt._event(rng.package, r) for r in rows):
-        if e.kind not in CHANGES:
+        if e.kind not in CHANGES or _artefact(e.path):
             continue
         param = e.detail.get("param") if e.kind in {"param_removed", "param_deprecated"} else None
         name = f"{e.path}({param})" if param else e.path
@@ -155,14 +185,47 @@ def _curated_rows(package: str) -> list[str]:
     ]
 
 
-def _page(title: str, body: str, built: str | None) -> str:
+def _page(
+    title: str, body: str, built: str | None, description: str = "", canonical: str | None = None
+) -> str:
+    head = f'<meta name="description" content="{html.escape(description)}">' if description else ""
+    if canonical:
+        head += f'<link rel="canonical" href="{html.escape(canonical)}">'
     return (
         f'<!doctype html><html lang="en"><head><meta charset="utf-8">'
         f'<meta name="viewport" content="width=device-width, initial-scale=1">'
-        f"<title>{html.escape(title)}</title><style>{STYLE}</style></head><body>{body}"
+        f"<title>{html.escape(title)}</title>{head}<style>{STYLE}</style></head><body>{body}"
         f'<p class="meta">Generated by DepTime from the index built {html.escape(built or "?")}. '
-        f'Ask an agent the same through DepTime\'s MCP tools: <a href="https://github.com/cschmertz/deptime">'
+        f'Ask an agent the same through DepTime\'s MCP tools: <a href="{REPO}">'
         f"github.com/cschmertz/deptime</a>.</p></body></html>\n"
+    )
+
+
+def _landing(links: list[tuple[Migration, int, int]], packages: int) -> str:
+    items = "".join(
+        f'<li><a href="{m.slug}.html">{html.escape(m.title)}</a> ({n} replaced, {g} removed)</li>'
+        for m, n, g in links
+    )
+    return (
+        "<h1>DepTime</h1>"
+        "<p><b>Know what a Python dependency update breaks before you merge it.</b> DepTime reads each release of "
+        f"{packages} fast-moving Python libraries without running them, compares it with the release before, and points to "
+        "each line of your code an update breaks, with what to use instead. No AI model in the loop: it runs "
+        "offline, costs nothing, and gives the same answer every time.</p>"
+        "<h2>Check an update</h2>"
+        "<p>After updating your lockfile or requirements (you need "
+        '<a href="https://docs.astral.sh/uv/">uv</a>):</p>'
+        "<pre><code>uvx deptime check-upgrade</code></pre>"
+        f'<p>Or add the <a href="{ACTION_DOCS}">GitHub Action</a> to check every Dependabot, Renovate or hand-made '
+        "update pull request.</p>"
+        "<h2>Give your coding agent the same answers</h2>"
+        "<p>DepTime is also an MCP server for Claude Code, Cursor, VS Code, Codex and other agents:</p>"
+        "<pre><code>claude mcp add deptime -- uvx deptime mcp</code></pre>"
+        "<h2>Rename maps</h2>"
+        "<p>Every name and argument these migrations renamed, moved or removed, and what replaces it, generated "
+        f"from the same data:</p><ul>{items}</ul>"
+        f'<p><a href="{REPO}">Source, docs and setup on GitHub</a> · '
+        f'<a href="{BENCHMARK}">How it was measured</a> · Open source (MIT)</p>'
     )
 
 
@@ -172,6 +235,7 @@ def build(
     assert dt.store is not None
     out.mkdir(parents=True, exist_ok=True)
     built = dt.store.built_at()
+    base = base_url.rstrip("/") if base_url else None
     written, links = [], []
     for m in migrations:
         sections, spans = [], []
@@ -196,27 +260,49 @@ def build(
                 f"<h2>Removed, with no replacement stated ({len(gone)})</h2>"
                 f"<table><tr><th>Old</th><th>Gone in</th></tr>{''.join(gone)}</table>"
             )
-        intro = f'<h1>{html.escape(m.title)}</h1><p class="meta">{html.escape("; ".join(spans))}</p>'
+        intro = (
+            f"<h1>{html.escape(m.title)}: what was renamed or removed</h1>"
+            f'<p class="meta">{html.escape("; ".join(spans))}</p>'
+            "<p>Every name and argument that went away in this migration, read from each release's own code, "
+            "with what the library itself, its migration guide, or a move to another path says to use instead. "
+            "Nothing here is written by hand.</p>"
+            f"{CTA}"
+        )
+        description = (
+            f"{m.title}: {len(replaced)} names and arguments renamed or replaced, {len(gone)} removed, and what "
+            "to use instead, read from each release's own code."
+        )
+        page = _page(
+            f"{m.title} migration: renamed and removed names",
+            intro + "".join(sections),
+            built,
+            description,
+            f"{base}/{m.slug}.html" if base else None,
+        )
         path = out / f"{m.slug}.html"
-        path.write_text(_page(m.title, intro + "".join(sections), built), encoding="utf-8")
+        path.write_text(page, encoding="utf-8")
         written.append(path)
         links.append((m, len(replaced), len(gone)))
-    items = "".join(
-        f'<li><a href="{m.slug}.html">{html.escape(m.title)}</a> ({n} replaced, {g} removed)</li>'
-        for m, n, g in links
-    )
     (out / "index.html").write_text(
-        _page("Python API rename maps", f"<h1>Python API rename maps</h1><ul>{items}</ul>", built),
+        _page(
+            "DepTime: know what a Python dependency update breaks",
+            _landing(links, len(dt.coverage.packages)),
+            built,
+            "Know what a Python dependency update breaks before you merge it: offline, free, no AI in the loop. "
+            f"Plus rename maps: {', '.join(m.title for m, _, _ in links)}.",
+            f"{base}/" if base else None,
+        ),
         encoding="utf-8",
     )
     (out / "llms.txt").write_text(
-        "# Python API rename maps (DepTime)\n\n"
+        "# DepTime: Python API rename maps\n\n"
+        "> Know what a Python dependency update breaks before you merge it. Each map lists the names and "
+        "arguments a migration renamed or removed, and what replaces them, read from the releases' own code.\n\n"
         + "".join(f"- [{m.title}]({m.slug}.html): {n} names replaced, {g} removed\n" for m, n, g in links),
         encoding="utf-8",
     )
     written += [out / "index.html", out / "llms.txt"]
-    if base_url:
-        base = base_url.rstrip("/")
+    if base:
         urls = "".join(
             f"<url><loc>{html.escape(f'{base}/{p.name}')}</loc></url>" for p in written if p.suffix == ".html"
         )
