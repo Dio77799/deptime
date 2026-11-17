@@ -34,3 +34,7 @@ Each one does the handshake, lists the tools and calls `explain_error` on httpx 
 - **A slow first install can outlast a client's startup limit.** `uvx` installs DepTime the first time a client starts it. On macOS with an x86_64 `uv` (an Intel Mac, or an Intel Homebrew `uv` on Apple silicon, as on the test machine), `cryptography`, which the MCP SDK requires through `pyjwt[crypto]`, has had no wheel since 49.0, so it is compiled from source: 62 s on the test machine, past Claude Code's 30 s MCP connection timeout. The second launch is fast. The README says to run `uvx deptime --help` once first.
 - **An interrupted first download recovers.** A one-shot session that exits during the download leaves `index.sqlite.download*` behind; the next start replaces them and installs the index.
 - **stderr is chatty.** The MCP SDK sets up INFO logging, so httpx logs each download request with its full signed URL (short-lived, for a public asset). Harmless, and it stays off stdout (`tests/test_stdio.py`), but it is noise in a client's MCP log.
+
+**Re-check, 2026-11-17, `deptime` 1.0.0 from PyPI:** Claude Code 2.1.326 (`claude -p` with `--mcp-config` and
+`--strict-mcp-config`, DepTime the only server) called `explain_error` and answered "removed in httpx 0.28.0",
+pin `httpx<=0.27.2`. ✅

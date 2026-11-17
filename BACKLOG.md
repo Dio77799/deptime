@@ -242,7 +242,7 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
 - [ ] **DT-GTM-02**: Host the generated rename-map pages (GitHub Pages) · `P2` `S`
 - [ ] **DT-GTM-05**: Try the Cursor rule and the AGENTS.md snippet in a fresh project · `P2` `S`
 - [ ] **DT-SPIKE-05**: Cursor, VS Code and Claude Desktop · `P2` `S`
-  - Until then the README lists the GUI clients as not checked.
+  - A client goes in the README's table once it has a result.
 - [ ] **DT-OSS-14**: Publish the holdout sets as a benchmark · `P2` `M`
 
 ## Held
