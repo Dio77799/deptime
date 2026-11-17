@@ -110,8 +110,8 @@ fields (crewai `Task(expected_output=)`, one case), until it recurs.
 
 **Phase 5, 1.0: done.**
 - [x] **DT-OSS-17** (2026-11-17): released 1.0.0 with the 1.x promise. Done in the end: nothing renamed, three
-  fields described, Python 3.12 to 3.15 in CI, first launch on every OS (DT-SPIKE-07). The GUI clients stay listed as
-  not checked (DT-SPIKE-05); the hand-off is frozen as it is at 0.2.3.
+  fields described, Python 3.12 to 3.15 in CI, first launch on every OS (DT-SPIKE-07). The GUI clients wait for a
+  result (DT-SPIKE-05); the hand-off is frozen as it is at 0.2.3.
 
 ## Done since 2026-11-13
 
