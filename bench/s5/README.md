@@ -27,7 +27,9 @@ Each one does the handshake, lists the tools and calls `explain_error` on httpx 
 |---|---|---|
 | Claude Code 2.1.318 | `claude -p … --mcp-config <file> --strict-mcp-config`, DepTime the only server | ✅ The right finding and pin. With an empty `DEPTIME_HOME`, the first call returns "DepTime has no index yet. The first run downloads it in the background; retry in a minute…", and the index lands about 10 s after start. |
 | Codex CLI 0.166.0 | `codex exec -s read-only -c mcp_servers.deptime.command="uvx" -c mcp_servers.deptime.args=[…]` | ✅ The right finding and pin. |
-| Cursor, VS Code, Claude Desktop | | Not run yet. |
+| Claude Desktop 1.15962.1 (macOS, 2026-11-17, `deptime` 1.0.1) | `"mcpServers": {"deptime": {"command": "uvx", "args": ["deptime", "mcp"]}}` in `claude_desktop_config.json`, as the README says; a bare `uvx`, no full path | ✅ It called DepTime and gave the right finding, replacement and pin. Its log shows the server up a second after launch and the handshake answered 9 to 16 s later (an x86_64 `uv` under Rosetta, cache already warm). |
+| VS Code 1.131.0 with Copilot Free (macOS, 2026-11-17, `deptime` 1.0.1) | `{"servers": {"deptime": {"type": "stdio", "command": "uvx", "args": ["deptime", "mcp"]}}}` in the user `mcp.json`; Agent mode | ✅ It found the six tools 4 s after start, called `explain_error` and gave the right finding, replacement and pin. |
+| Cursor | | Not run yet. |
 
 **Findings:**
 

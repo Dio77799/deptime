@@ -170,7 +170,7 @@ Twice a day, GitHub reads each new release of every covered library (without run
 
 ## Works with
 
-Claude Code, Codex and any app that speaks MCP, on Linux, macOS and Windows, with Python 3.12 to 3.15. From a fresh install to the first answer takes about 10 seconds on Linux and Mac and 20 on Windows ([client tests](https://github.com/cschmertz/deptime/tree/main/bench/s5), [first-start tests](https://github.com/cschmertz/deptime/tree/main/bench/s7)).
+Claude Code, Claude Desktop, VS Code, Codex and any app that speaks MCP, on Linux, macOS and Windows, with Python 3.12 to 3.15. From a fresh install to the first answer takes about 10 seconds on Linux and Mac and 20 on Windows ([client tests](https://github.com/cschmertz/deptime/tree/main/bench/s5), [first-start tests](https://github.com/cschmertz/deptime/tree/main/bench/s7)).
 
 <details>
 <summary>Command line</summary>
