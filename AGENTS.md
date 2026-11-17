@@ -66,7 +66,8 @@ The default home is `$XDG_CACHE_HOME/deptime`, else `~/.cache/deptime` (override
 - Tool behaviour: `query.py`. Tests use the synthetic 3-release httpx index in `tests/conftest.py`.
 - Download, refresh, packing: `index/distribution.py` (`tests/test_distribution.py`, all via `httpx.MockTransport`)
 - Covered packages: `src/deptime/coverage.toml` (ships in the wheel; set correct `import_names`)
-- README demo: `uv run python tools/demo_svg.py` redraws `docs/assets/demo-*.svg` from the real answer; never edit them by hand
+- README demos: `uv run python tools/demo_svg.py` redraws `docs/assets/demo-*.svg` (an error) and `upgrade-*.svg` (an update) from real answers; never edit them by hand
+- Rename-map site: `python -m deptime.site build` (`src/deptime/site.py`), published to GitHub Pages by `.github/workflows/pages.yml` after every index build
 - README numbers: four first-run figures and the two model-alone rows in "How well it works"; every other score goes in `bench/README.md`
 - GitHub Action: `action.yml` at the root (its `deptime==` pin follows `__version__`, `tests/test_docs.py`), dogfooded by `.github/workflows/upgrade-check.yml`; usage in `docs/github-action.md`
 - Curated migration hints: `src/deptime/curated.toml` (ships in the wheel; each must pass the checks in its header, ADR 0006)

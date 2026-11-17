@@ -105,6 +105,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-CORE-76** (2026-11-17): a name listed under its missing module or class keeps its own replacement in the
   report and the agent block (mcp 2's `mcp.server.fastmcp` is gone; its `FastMCP` is proven to be `MCPServer`), and
   the block names each line once. The instructions are unchanged: the hand-off gains a fact, not a rework.
+- [x] **DT-GTM-10** (2026-11-17): the README leads with the upgrade check: its tagline, a second demo drawn by
+  `tools/demo_svg.py` from a real `check-upgrade` run (`docs/assets/upgrade-*.svg`), and "Get started" with
+  `uvx deptime check-upgrade` before the MCP setup. The error demo moves to its own section.
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required

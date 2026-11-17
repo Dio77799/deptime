@@ -5,7 +5,7 @@
   </picture>
 </h1>
 
-<p align="center"><b>An API time machine for Python libraries, built for coding agents.</b></p>
+<p align="center"><b>Know what a Python dependency update breaks before you merge it.</b></p>
 
 <div align="center">
 
@@ -19,14 +19,14 @@
 
 </div>
 
-Python libraries rename and remove things from one release to the next. Code that used to work, or code an AI assistant wrote from memory, then breaks with errors like "cannot import name" or "unexpected keyword argument".
+Python libraries rename and remove things from one release to the next, so a routine dependency update, from Dependabot, Renovate or you, can break code that used to work.
 
-DepTime tells your coding agent **what changed, in which release, and what to use instead**. It can also check a dependency update before you merge it and point to **each line of your code the new version breaks**.
+DepTime points to **each line of your code an update breaks**, says **in which release it changed**, and names **what to use instead**. No AI model in the loop: it runs on your machine, costs nothing, and gives the same answer every time. Your coding agent can use it too.
 
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/cschmertz/deptime/main/docs/assets/demo-dark.svg">
-  <img alt="A terminal. The error is: TypeError: Client.__init__() got an unexpected keyword argument 'proxies'. The command deptime explain --installed httpx==0.28.1 answers that httpx.Client.__init__(proxies) was removed: the last release with it is 0.27.2, the first without it 0.28.0, and it was deprecated in 0.26.0. Use proxy or mounts instead, or pin httpx<=0.27.2." src="https://raw.githubusercontent.com/cschmertz/deptime/main/docs/assets/demo-light.svg" width="760">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/cschmertz/deptime/main/docs/assets/upgrade-dark.svg">
+  <img alt="A terminal. git diff shows requirements.txt updating httpx from 0.27.2 to 0.28.1 and mcp from 1.26.0 to 2.3.0. deptime check-upgrade finds 4 breaks: httpx.Client no longer accepts proxies at app/server.py line 5, try proxy; mcp.server.fastmcp is gone in 2.0.0 at line 2, and with it FastMCP, which is now mcp.server.mcpserver.MCPServer, at lines 2 and 4, and FastMCP.tool at line 8. The command exits with 1." src="https://raw.githubusercontent.com/cschmertz/deptime/main/docs/assets/upgrade-light.svg" width="760">
 </picture>
 </p>
 
@@ -38,7 +38,17 @@ DepTime tells your coding agent **what changed, in which release, and what to us
 
 ## Get started
 
-You need [uv](https://docs.astral.sh/uv/). Then add DepTime to Claude Code:
+You need [uv](https://docs.astral.sh/uv/).
+
+**Check an update.** After updating your lockfile or requirements, run this in your project:
+
+```bash
+uvx deptime check-upgrade
+```
+
+It compares your pinned versions with the last commit and exits with 1 when the update breaks something. To check every update pull request, add the [GitHub Action](#check-a-dependency-update-before-you-merge-it).
+
+**Give your coding agent the same answers.** Add DepTime to Claude Code:
 
 ```bash
 claude mcp add deptime -- uvx deptime mcp
@@ -63,9 +73,39 @@ If your `uv` is the Intel version (an Intel Mac, or Intel Homebrew on an Apple-s
 
 ## What you can do with it
 
+### Check a dependency update before you merge it
+
+On a pull request (from Dependabot, Renovate or a person), the GitHub Action marks each line the update breaks and fails the check only when something really breaks ([setup guide](https://github.com/cschmertz/deptime/blob/main/docs/github-action.md)):
+
+```yaml
+# .github/workflows/upgrade-check.yml
+on:
+  pull_request:
+    paths: ["**/uv.lock", "**/poetry.lock", "pyproject.toml", "**/requirements*.txt", "**/requirements/**"]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7 # pin to a commit in your own workflows
+      - uses: cschmertz/deptime@v1.0.2
+```
+
+You can run the same check from a terminal with `uvx deptime check-upgrade`, or in Claude Code with `/deptime:fix-upgrade`, which also has Claude fix what broke.
+
+Tried on 264 real update pull requests, it caught all 13 that broke their project and raised a false alarm on 2 ([results](https://github.com/cschmertz/deptime/blob/main/bench/upgrade-check/prs/results-2026-11-16.md)). With `/deptime:fix-upgrade`, Claude fixed 86.7% of 60 broken updates it hadn't seen before, against 76.7% on its own, in about half the steps ([results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/qa27/results-2026-11-17.md)).
+
 ### Understand an error
 
-When an import or call into a library fails, your agent passes the error to DepTime and gets back, in plain words:
+When an import or call into a library fails, your agent (or you, from a terminal) passes the error to DepTime and gets back what changed, in which release, and what to use instead:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/cschmertz/deptime/main/docs/assets/demo-dark.svg">
+  <img alt="A terminal. The error is: TypeError: Client.__init__() got an unexpected keyword argument 'proxies'. The command deptime explain --installed httpx==0.28.1 answers that httpx.Client.__init__(proxies) was removed: the last release with it is 0.27.2, the first without it 0.28.0, and it was deprecated in 0.26.0. Use proxy or mounts instead, or pin httpx<=0.27.2." src="https://raw.githubusercontent.com/cschmertz/deptime/main/docs/assets/demo-light.svg" width="760">
+</picture>
+
+In plain words:
 
 > httpx.Client.__init__ accepted `proxies` up to httpx 0.27.2; it is gone from 0.28.0 onward. Deprecated in 0.26.0 ("The 'proxies' argument is now deprecated. Use 'proxy' or 'mounts' instead."). Use `proxy` or `mounts` instead, or pin httpx<=0.27.2.
 
@@ -92,32 +132,11 @@ When an import or call into a library fails, your agent passes the error to DepT
 That's the real answer from the published data, trimmed. The full answer also quotes the warning DepTime found in httpx's own code.
 </details>
 
-### Check a dependency update before you merge it
-
-On a pull request (from Dependabot, Renovate or a person), the GitHub Action marks each line the update breaks and fails the check only when something really breaks ([setup guide](https://github.com/cschmertz/deptime/blob/main/docs/github-action.md)):
-
-```yaml
-# .github/workflows/upgrade-check.yml
-on:
-  pull_request:
-    paths: ["**/uv.lock", "**/poetry.lock", "pyproject.toml", "**/requirements*.txt", "**/requirements/**"]
-permissions:
-  contents: read
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7 # pin to a commit in your own workflows
-      - uses: cschmertz/deptime@v1.0.2
-```
-
-You can run the same check from a terminal with `uvx deptime check-upgrade`, or in Claude Code with `/deptime:fix-upgrade`, which also has Claude fix what broke.
-
-Tried on 264 real update pull requests, it caught all 13 that broke their project and raised a false alarm on 2 ([results](https://github.com/cschmertz/deptime/blob/main/bench/upgrade-check/prs/results-2026-11-16.md)). With `/deptime:fix-upgrade`, Claude fixed 86.7% of 60 broken updates it hadn't seen before, against 76.7% on its own, in about half the steps ([results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/qa27/results-2026-11-17.md)).
-
 ### Check code before it runs
 
 Your agent can ask whether a function or argument it remembers still exists in the version you have installed, or what changed between two versions (or since a date, such as its training cutoff).
+
+**Migrating by hand?** The [rename maps](https://cschmertz.github.io/deptime/) show what the MCP SDK 2, LangChain 1, pydantic 2, openai 1 and httpx 0.28 migrations renamed or removed, and what replaces each name, from the same data.
 
 ## The tools
 
