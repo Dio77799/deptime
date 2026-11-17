@@ -244,7 +244,11 @@ class FrameOut(BaseModel):
 
 
 class ErrorSignalOut(BaseModel):
-    kind: str
+    kind: str = Field(
+        description="What the error says: import_name | module_missing | module_attribute | object_attribute |"
+        " class_attribute | unexpected_kwarg | missing_argument | too_many_positional, or circular_import | unknown"
+        " (recognized and declined). New kinds may be added."
+    )
     exception_type: str
     message: str
     module: str | None = None
@@ -368,7 +372,9 @@ class ExplainResult(BaseModel):
 class CoverageEntry(BaseModel):
     package: str
     import_names: list[str]
-    tier: str
+    tier: str = Field(
+        description="A: the AI and agent stack, the highest churn; B: other widely used libraries."
+    )
     versions_indexed: int
     first_version: str | None
     latest_version: str | None
@@ -382,7 +388,7 @@ class CoverageEntry(BaseModel):
 
 class CoverageResult(BaseModel):
     index_built_at: str | None
-    policy: str
+    policy: str = Field(description="Which releases of each package are indexed, in a sentence.")
     packages: list[CoverageEntry]
     configured_but_not_indexed: list[str] = Field(default_factory=list)
 

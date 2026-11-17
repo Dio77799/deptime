@@ -46,7 +46,7 @@ DepTime is **free and open source (MIT)** and **runs locally** (`uvx deptime mcp
 
 ## Tool contract (v1)
 
-All tools are read-only and idempotent, and return structured output (pydantic models in `src/deptime/models.py`). **Field names are a public contract: add fields, don't rename them.**
+All tools are read-only and idempotent, and return structured output (pydantic models in `src/deptime/models.py`). **Field names are a public contract: add fields, don't rename them.** What 1.x promises about the contract is in the versioning section of [CHANGELOG.md](../CHANGELOG.md#versioning).
 
 ### `explain_error(traceback, installed_versions?, pip_freeze?) → ExplainResult` (main tool)
 

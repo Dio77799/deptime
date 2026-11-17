@@ -72,7 +72,7 @@ On first launch DepTime downloads its prebuilt index (one file from this repo's 
 
 Claude Code users can also install the plugin in [`integrations/claude-code`](https://github.com/cschmertz/deptime/tree/main/integrations/claude-code) with `/plugin marketplace add cschmertz/deptime`, then `/plugin install deptime@deptime`. It adds a skill, the `/deptime:fix-upgrade` command, and a local hook that suggests DepTime when a Python version-change error appears in a command's output.
 
-**First launch timing out?** `uvx` installs DepTime the first time a client starts it. On macOS with an x86_64 `uv` (an Intel Mac, or Intel Homebrew on Apple silicon), one dependency, `cryptography`, has no prebuilt wheel and is compiled, which can take longer than a client waits for a server to start. Run `uvx deptime --help` once beforehand.
+**First launch timing out?** `uvx` installs DepTime the first time a client starts it. On macOS with an x86_64 `uv` (an Intel Mac, or Intel Homebrew on Apple silicon), one dependency, `cryptography`, has no prebuilt wheel and is compiled: about 3 minutes on GitHub's Intel macOS runner, longer than a client waits for a server to start. Run `uvx deptime --help` once beforehand.
 
 ### Client compatibility
 
@@ -84,6 +84,8 @@ Checked 2026-11-05 with `deptime` 0.1.4 ([details](https://github.com/cschmertz/
 | Codex CLI 0.166.0 | ✅ |
 | MCP Python SDK clients 1.0–1.30 and TypeScript SDK clients 1.0–1.32 (protocols 2024-11-05 to 2025-11-25), over stdio and against `deptime serve` | ✅ |
 | Cursor, VS Code, Claude Desktop | not checked yet; they take the same `uvx deptime mcp` command |
+
+First launch, from nothing to the right answer (2026-11-17, 0.2.3, [details](https://github.com/cschmertz/deptime/tree/main/bench/s7)): 8 s on Linux, 10 s on Apple-silicon macOS, 20 s on Windows. Runs on Python 3.12 to 3.15.
 
 ## What an answer looks like
 

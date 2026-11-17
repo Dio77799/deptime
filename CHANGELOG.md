@@ -6,21 +6,58 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Bac
 
 ## Versioning
 
-- **Releases** follow [Semantic Versioning](https://semver.org/). What it versions is the contract agents and scripts
-  depend on: the MCP tool names and parameters, the fields of every result (`src/deptime/models.py`, also served by
-  the HTTP API), and the `deptime` CLI.
-- **Contract changes are additive.** A tool, parameter, field, `issue` or event `kind` is never renamed or removed in
-  a 0.x patch release; new ones are added. Clients should ignore fields and values they don't know. Before 1.0 a
-  minor release may change the contract, and this file says how.
-- **Answers can change in any release.** Better extraction or a newer index changes findings, versions and
-  replacements; the benchmarks in `bench/` measure each change.
-- **The index has its own schema version** (`schema_version` in the index's `meta` table, shown by
-  `deptime index status`): `1`, and `2` once a package is stored with its classes' own members (DT-DATA-16). A
-  release reads the schema versions it knows and refuses a newer one, keeping the index it has and saying to upgrade:
-  0.1.6 and later read `2`. A nullable column added to the index (`releases.requires`, `releases.project_urls`)
-  doesn't change the schema version; older releases ignore it.
+Releases follow [Semantic Versioning](https://semver.org/). From 1.0.0 on, this is the promise.
+
+**What it versions:** the contract agents, scripts and CI depend on.
+- The six MCP tools (`explain_error`, `check_symbols`, `diff_versions`, `symbol_history`, `check_upgrade`,
+  `coverage`): their names, their parameters and what each means. The HTTP API serves the same tools at `/v1/<tool>`
+  and `/mcp`.
+- Every field of every result (`src/deptime/models.py`) and the values listed for it (a finding's `issue`, an
+  event's `kind`, a check's `status`, ...). The CLI prints the same JSON without the empty (`null`) fields.
+- The `deptime` commands `mcp`, `explain`, `history`, `check`, `diff`, `check-upgrade`, `coverage`, `index pull`,
+  `index status` and `serve`, with their options, and `check-upgrade`'s exit codes: 0 no break, 1 a confirmed
+  break, 2 the check couldn't run (a bad option or directory, a revision or pin it couldn't read).
+- The GitHub Action's inputs and outputs (`action.yml`), and the Claude Code plugin's `/deptime:fix-upgrade`
+  command.
+- The suppressions file (`deptime.toml`, or `[tool.deptime]` in `pyproject.toml`), and the settings a user sets:
+  `DEPTIME_HOME`, `DEPTIME_OFFLINE`, `DEPTIME_INDEX_PATH`, `DEPTIME_INDEX_URL`, `DEPTIME_INDEX_MAX_AGE_HOURS`,
+  `DEPTIME_VERIFY_INDEX`, `DEPTIME_COVERAGE_FILE` and `DEPTIME_PROJECT_DIR`.
+
+**What can change in any release:**
+- **Answers.** Better extraction or a newer index changes findings, versions and replacements; the benchmarks in
+  `bench/` measure each change.
+- **Words.** Tool descriptions and the server's instructions (re-benchmarked when edited), and the text of `note`,
+  `explanation`, `hint` and the other sentences in a result.
+- **The Markdown report** of `check-upgrade` and its agent block, and what `/deptime:fix-upgrade` tells the agent
+  (re-measured when reworked, as DT-QA-05, DT-QA-26 and DT-QA-27 did). Scripts read `--format json`.
+- **Tools for maintainers and hosts:** `deptime ingest`, `deptime index pack`, and `serve`'s hosted-mode settings
+  (usage limits, API keys, proxy headers; [docs/05](docs/05-self-hosting.md)). A change is noted here.
+
+**How it changes:**
+- **Only by adding, within 1.x:** a tool, an optional parameter, a field, a listed value or a command option.
+  Clients should ignore fields they don't know, and not fail on a value they don't know.
+- **Retiring something** takes a major release. It is first marked deprecated, in its description and under
+  `Deprecated` here, in a minor release, and keeps working for the rest of 1.x.
+
+**Python:** DepTime runs on Python 3.12 and newer, each tested in CI (3.12 to 3.15). A Python is dropped only after its end
+of life, in a minor release, noted here. (The Pythons DepTime answers about, the standard library's changes since 3.9,
+are data: they can grow in any release.)
+
+**The index:**
+- It has its own schema version (`schema_version` in the index's `meta` table, shown by `deptime index status`):
+  `1`, and `2` once a package is stored with its classes' own members (DT-DATA-16). Every 1.x release reads `2`.
+  A release refuses a newer schema, keeps the index it has and says to upgrade. A nullable column added to the index
+  (`releases.requires`, `releases.project_urls`) doesn't change the schema version; older releases ignore it.
+- **During 1.x the published index stays readable by every 1.x release.** A change none of them could read waits
+  for 2.0, or is published beside the current index, not in its place.
+- It is rebuilt from PyPI twice a day and signed (`deptime index pull --verify`). That's a schedule, not an uptime
+  promise: if builds stop, the index you have keeps answering, and `coverage` says when it was built.
+- Packages are added in any release. A covered package is dropped only with a note here; it then reads
+  `not_covered`.
 - `SNAPSHOT_FORMAT` (in `ingest/snapshot.py`) versions the build cache only; changing it rebuilds every snapshot on
   the next build and doesn't affect clients.
+
+**Before 1.0:** a 0.x minor release could change the contract, and this file said how; a patch release only added.
 
 ## [Unreleased]
 

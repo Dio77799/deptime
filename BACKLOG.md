@@ -38,7 +38,7 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 | Milestone | Exit criterion | Status |
 |---|---|---|
-| **M0 Spikes** | S1 go/no-go (false-absent ≤ 10%); S2–S7 answered | S1 to S4 passed (S1 at 1.2%); S5 done but for the GUI clients; S6 answered by DT-QA-05 (yes, 25 of 25); S7 open, below |
+| **M0 Spikes** | S1 go/no-go (false-absent ≤ 10%); S2–S7 answered | S1 to S4 passed (S1 at 1.2%); S5 done but for the GUI clients; S6 answered by DT-QA-05 (yes, 25 of 25); S7 passed (DT-SPIKE-07) |
 | **M1 Local alpha** | Public repo; index published; `uvx deptime mcp` works from PyPI; benchmark ≥ 70% | Met: every holdout's first run is above 70% |
 | **M2 Distribution** | Registries, plugin, snippets, demo GIF, 5 rename-map pages | Registries, plugin, pages and the demo done; the hosting is below |
 | **M3 Optional hosted** | Public endpoint for web clients | Not planned |
@@ -110,14 +110,17 @@ fields (crewai `Task(expected_output=)`, one case), until it recurs.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: none (QA-27 met its bar, 2026-11-17)
-  - A review of every tool parameter, result field and CLI option (last chance to rename without a major version);
-    the GUI clients checked or listed as not covered (DT-SPIKE-05, DT-SPIKE-07); the 1.0 promise in CHANGELOG.md's
-    versioning section (what's frozen, how something is retired, supported Pythons, what the index promises).
+  - Done 2026-11-17: the contract review (nothing renamed; three fields described), the 1.0 promise in CHANGELOG.md's
+    versioning section, Python 3.12 to 3.15 in CI, first launch on every OS (DT-SPIKE-07). The GUI clients stay
+    listed as not checked (DT-SPIKE-05). Left: release 1.0.0.
   - The hand-off (`/deptime:fix-upgrade` and the report's agent block) is frozen as it is at 0.2.3: DT-QA-27 met
     its bar.
 
 ## Done since 2026-11-13
 
+- [x] **DT-SPIKE-07** (2026-11-17): first launch from nothing to the right answer in 8 s on Linux, 10 s on
+  Apple-silicon macOS and 20 s on Windows (`bench/s7/`). macOS with an x86_64 `uv` takes about 3 minutes, compiling
+  `cryptography` for the MCP SDK; the README says to run `uvx deptime --help` once first.
 - [x] **DT-QA-27** (2026-11-17): bar met on 60 broken updates neither DepTime nor the command had seen (new holdout
   2026-11g): `/deptime:fix-upgrade` 86.7% of sessions fixed, alone 76.7%; new breaks 1 against 3; breaks fixed 96.0%
   against 89.3%; half the turns. B fixed 253 of the 267 breaks DepTime listed with no replacement.
@@ -241,7 +244,7 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
     them instead.
 - [ ] **DT-GTM-02**: Host the generated rename-map pages (GitHub Pages) · `P2` `S`
 - [ ] **DT-GTM-05**: Try the Cursor rule and the AGENTS.md snippet in a fresh project · `P2` `S`
-- [ ] **DT-SPIKE-05**, **DT-SPIKE-07**: Cursor, VS Code and Claude Desktop, and a first run on Windows · `P2` `S`
+- [ ] **DT-SPIKE-05**: Cursor, VS Code and Claude Desktop · `P2` `S`
   - Until then the README lists the GUI clients as not checked.
 - [ ] **DT-OSS-14**: Publish the holdout sets as a benchmark · `P2` `M`
 
