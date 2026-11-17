@@ -1,0 +1,37 @@
+name: s7
+
+# Spike S7 (DT-SPIKE-07): time a first launch of `uvx deptime mcp` from nothing (empty uv cache, no index) on Linux,
+# Windows and macOS, against a release on PyPI. Protocol and results: bench/s7/README.md.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "deptime release on PyPI"
+        required: true
+
+permissions: {}
+
+jobs:
+  first-run:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest, macos-15-intel]
+        run: [1, 2]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: false
+      - run: uv sync --locked
+      - name: First launch
+        env:
+          VERSION: ${{ inputs.version }}
+        shell: bash
+        run: uv run python bench/s7/first_run.py "$VERSION"
