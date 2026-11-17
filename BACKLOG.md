@@ -16,11 +16,11 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 ---
 
-## Current state: public alpha, v0.2.3
+## Current state: stable, v1.0.0
 
-- **Released:** 0.2.3 (2026-11-16) is on PyPI, the MCP Registry and GitHub: the upgrade check, as a command
-  (`check-upgrade`), a GitHub Action, an MCP tool (`check_upgrade`) and a Claude Code plugin command. 0.2.3 reworks
-  the plugin's fix command again from DT-QA-26 (DT-GTM-09).
+- **Released:** 1.0.0 (2026-11-17) is on PyPI, the MCP Registry and GitHub: the six tools, the upgrade check (a
+  command, a GitHub Action, an MCP tool and a Claude Code plugin command), and the 1.x promise in CHANGELOG.md's
+  versioning section: the contract only grows.
 - **Index:** 53 packages and 6,823 releases on 2026-11-17 (`SNAPSHOT_FORMAT` 28, schema 2); `index.sqlite.xz` is
   51.4 MB and the `.gz` 79.2 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
@@ -108,13 +108,10 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
 fields (crewai `Task(expected_output=)`, one case), until it recurs.
 
-**Phase 5, toward 1.0.**
-- [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: none (QA-27 met its bar, 2026-11-17)
-  - Done 2026-11-17: the contract review (nothing renamed; three fields described), the 1.0 promise in CHANGELOG.md's
-    versioning section, Python 3.12 to 3.15 in CI, first launch on every OS (DT-SPIKE-07). The GUI clients stay
-    listed as not checked (DT-SPIKE-05). Left: release 1.0.0.
-  - The hand-off (`/deptime:fix-upgrade` and the report's agent block) is frozen as it is at 0.2.3: DT-QA-27 met
-    its bar.
+**Phase 5, 1.0: done.**
+- [x] **DT-OSS-17** (2026-11-17): released 1.0.0 with the 1.x promise. Done in the end: nothing renamed, three
+  fields described, Python 3.12 to 3.15 in CI, first launch on every OS (DT-SPIKE-07). The GUI clients stay listed as
+  not checked (DT-SPIKE-05); the hand-off is frozen as it is at 0.2.3.
 
 ## Done since 2026-11-13
 

@@ -2,7 +2,7 @@
   "mcpServers": {
     "deptime": {
       "command": "uvx",
-      "args": ["deptime==0.2.3", "mcp"]
+      "args": ["deptime==1.0.0", "mcp"]
     }
   }
 }

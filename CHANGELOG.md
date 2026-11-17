@@ -61,6 +61,21 @@ are data: they can grow in any release.)
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-17
+
+The first stable release (DT-OSS-17). The tools, results and commands are the same as 0.2.3; what's new is the
+promise in [Versioning](#versioning) above: within 1.x, nothing in the contract is renamed or removed.
+
+### Added
+- Python 3.14 and 3.15 are supported and tested in CI, beside 3.12 and 3.13.
+- Descriptions for three result fields that had none: a traceback signal's `kind`, a covered package's `tier`, and
+  the coverage `policy`.
+
+### Checked
+- First launch, from nothing to the right answer, on each operating system (DT-SPIKE-07, `bench/s7/`): 8 s on
+  Linux, 10 s on Apple-silicon macOS, 20 s on Windows. macOS with an x86_64 `uv` takes about 3 minutes, compiling
+  `cryptography`; run `uvx deptime --help` once first.
+
 ## [0.2.3] - 2026-11-16
 
 The Claude Code plugin's fix command, reworked again from DT-QA-26, and streamlit's top-level calls checked again;
@@ -531,7 +546,8 @@ A documentation release: the code is 0.1.13's, and every answer is the same.
 - The prebuilt index of 52 packages, downloaded on first run and refreshed daily; `deptime index pull|status|pack`;
   offline mode (`DEPTIME_OFFLINE=1`).
 
-[Unreleased]: https://github.com/cschmertz/deptime/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/cschmertz/deptime/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/cschmertz/deptime/compare/v0.2.3...v1.0.0
 [0.2.3]: https://github.com/cschmertz/deptime/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/cschmertz/deptime/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/cschmertz/deptime/compare/v0.2.0...v0.2.1

@@ -31,7 +31,7 @@ Python libraries rename and remove things between releases. Code that worked las
 - **Local and free.** Open source (MIT). Your code and errors never leave your machine.
 - **Says when it doesn't know.** For a package it doesn't cover, or a name it can't follow, the answer is "not covered" or `unknown`, never a guess.
 
-> **Status:** alpha. 0.2.0 adds the upgrade check below. The index rebuilds itself twice a day, and fixes follow [reported wrong answers](https://github.com/cschmertz/deptime/issues/new/choose). Known gaps are listed in [BACKLOG.md](https://github.com/cschmertz/deptime/blob/main/BACKLOG.md).
+> **Status:** 1.0. Tool names, parameters, result fields and CLI options only grow from here: [what 1.x promises](https://github.com/cschmertz/deptime/blob/main/CHANGELOG.md#versioning). The index rebuilds itself twice a day, and fixes follow [reported wrong answers](https://github.com/cschmertz/deptime/issues/new/choose). Known gaps are listed in [BACKLOG.md](https://github.com/cschmertz/deptime/blob/main/BACKLOG.md).
 
 ## Check a dependency update
 
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7 # pin to a commit in your own workflows
-      - uses: cschmertz/deptime@v0.2.3
+      - uses: cschmertz/deptime@v1.0.0
 ```
 
 From a terminal, `uvx deptime check-upgrade` compares the pinned versions at `HEAD` with your working tree, or `--package httpx --to 0.28.1` checks one update. An agent can call the `check_upgrade` tool with the code instead, and the Claude Code plugin's `/deptime:fix-upgrade` runs the check and has Claude fix the lines it reports as broken and check the ones it can't tell about. A break is a use the index shows failing at the new version and not at the old one; the report ends with a block a coding agent can act on.
