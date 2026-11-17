@@ -1,0 +1,49 @@
+diff --git a/code/frontend/pages/chat/__init__.py b/code/frontend/pages/chat/__init__.py
+index 823637d..37e16fe 100644
+--- a/code/frontend/pages/chat/__init__.py
++++ b/code/frontend/pages/chat/__init__.py
+@@ -51,10 +51,9 @@ with gr.Blocks(theme=THEME, css=_CSS, head=_HEAD) as page:
+         chatbot = gr.Chatbot(
+             elem_id="chat",
+             container=False,
+-            bubble_full_width=False,
+             sanitize_html=True,
+             avatar_images=_AVATAR_IMAGES,
+-            show_copy_button=False,
++            buttons=[],
+         )
+ 
+     with gr.Row(elem_id="input-row"):
+@@ -74,26 +73,26 @@ with gr.Blocks(theme=THEME, css=_CSS, head=_HEAD) as page:
+         outputs=[msg, chatbot],
+     )
+     async def stream_chain(
+-        sid: str, message: str, chat: list[list[str]], kb: bool, reranker: bool
+-    ) -> AsyncGenerator[tuple[str, list[list[str]]], None]:
++        sid: str, message: str, chat: list[dict[str, str]], kb: bool, reranker: bool
++    ) -> AsyncGenerator[tuple[str, list[dict[str, str]]], None]:
+         """Call the chain and stream the result back to Gradio."""
+-        chat += [[message, ""]]
++        chat += [{"role": "user", "content": message}, {"role": "assistant", "content": ""}]
+         chain = _CHAIN.with_config(configurable={"session_id": sid})
+ 
+         try:
+             async for chunk in chain.astream({"question": message, "use_kb": kb, "use_reranker": reranker}):
+-                chat[-1][1] += chunk.content  # type: ignore  # langchain quirkiness
++                chat[-1]["content"] += chunk.content  # type: ignore  # langchain quirkiness
+                 yield "", chat
+         except (HTTPStatusError, ConnectError) as exc:
+             if isinstance(exc, ConnectError) or 400 <= exc.response.status_code < 500:
+-                chat[-1][1] = (
++                chat[-1]["content"] = (
+                     "❌ **Uh oh...**\n"
+                     "I can't seem to reach to the chain server. "
+                     "Please make sure the chain server is running and the frontend is properly configured. "
+                     "For more details, check the logs for the frontend and chain server."
+                 )
+             else:
+-                chat[-1][1] = (
++                chat[-1]["content"] = (
+                     "❌ **Uh oh...**\n"
+                     "There was an error inside the chain server. "
+                     "Please check the chain server logs for more information on this error."

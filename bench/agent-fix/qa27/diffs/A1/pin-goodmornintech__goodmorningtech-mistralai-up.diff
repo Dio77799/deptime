@@ -1,0 +1,25 @@
+diff --git a/gmt/views/commands.py b/gmt/views/commands.py
+index c36496e..804faeb 100644
+--- a/gmt/views/commands.py
++++ b/gmt/views/commands.py
+@@ -18,7 +18,7 @@ import requests
+ from flask import Blueprint, render_template, current_app
+ from flask_mail import Message
+ from markdown import markdown
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ 
+ from .. import mail, mongo, crontab
+ from ..extras import get_trending_repos, get_daily_coding_challenge, get_surprise
+diff --git a/requirements.txt b/requirements.txt
+index 7a6d539..5808d19 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -20,4 +20,4 @@ Flask-Admin==1.6.1
+ flask-crontab==0.1.2
+ gunicorn==23.0.0
+ flask-turnstile==0.1.1
+-mistralai==1.5.1
+\ No newline at end of file
++mistralai==3.7.0
+\ No newline at end of file

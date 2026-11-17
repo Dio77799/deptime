@@ -1,0 +1,66 @@
+diff --git a/Advanced AI/pdf_qa_requirements.txt b/Advanced AI/pdf_qa_requirements.txt
+index fa2e755..99ec884 100644
+--- a/Advanced AI/pdf_qa_requirements.txt	
++++ b/Advanced AI/pdf_qa_requirements.txt	
+@@ -1,5 +1,5 @@
+ requests==2.32.3
+-qdrant-client==1.13.0
++qdrant-client==1.20.0
+ PyPDF2==3.0.1
+ numpy==2.2.2
+ fastapi==0.115.6
+diff --git a/Advanced AI/pdf_qa_server.py b/Advanced AI/pdf_qa_server.py
+index daa6ad9..8fc161d 100644
+--- a/Advanced AI/pdf_qa_server.py	
++++ b/Advanced AI/pdf_qa_server.py	
+@@ -288,9 +288,9 @@ async def ask_question(request: QuestionRequest):
+     question_embedding = get_embedding(request.question)
+ 
+     logger.info("🔎 Searching for relevant chunks...")
+-    results = qdrant_client.search(
+-        collection_name=request.pdf_id, query_vector=question_embedding, limit=2
+-    )
++    results = qdrant_client.query_points(
++        collection_name=request.pdf_id, query=question_embedding, limit=2
++    ).points
+     logger.info(f"📑 Found {len(results)} relevant chunks")
+ 
+     context = "\n\n".join([result.payload["text"] for result in results])
+diff --git a/Complete AI/pdf_qa_requirements.txt b/Complete AI/pdf_qa_requirements.txt
+index fa2e755..99ec884 100644
+--- a/Complete AI/pdf_qa_requirements.txt	
++++ b/Complete AI/pdf_qa_requirements.txt	
+@@ -1,5 +1,5 @@
+ requests==2.32.3
+-qdrant-client==1.13.0
++qdrant-client==1.20.0
+ PyPDF2==3.0.1
+ numpy==2.2.2
+ fastapi==0.115.6
+diff --git a/Complete AI/pdf_qa_server.py b/Complete AI/pdf_qa_server.py
+index 7883dec..bf262bb 100644
+--- a/Complete AI/pdf_qa_server.py	
++++ b/Complete AI/pdf_qa_server.py	
+@@ -289,9 +289,9 @@ async def ask_question(request: QuestionRequest):
+     question_embedding = get_embedding(request.question)
+ 
+     logger.info("🔎 Searching for relevant chunks...")
+-    results = qdrant_client.search(
+-        collection_name=request.pdf_id, query_vector=question_embedding, limit=2
+-    )
++    results = qdrant_client.query_points(
++        collection_name=request.pdf_id, query=question_embedding, limit=2
++    ).points
+     logger.info(f"📑 Found {len(results)} relevant chunks")
+ 
+     context = "\n\n".join([result.payload["text"] for result in results])
+diff --git a/Medium AI/client_requirements.txt b/Medium AI/client_requirements.txt
+index 28b9c5e..f74bb56 100644
+--- a/Medium AI/client_requirements.txt	
++++ b/Medium AI/client_requirements.txt	
+@@ -1,2 +1,2 @@
+ requests==2.32.3
+-qdrant-client==1.13.0
+\ No newline at end of file
++qdrant-client==1.20.0
+\ No newline at end of file

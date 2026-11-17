@@ -1,0 +1,197 @@
+diff --git a/utils/agents/corrective_rag.py b/utils/agents/corrective_rag.py
+index 76a20e6..420dc8d 100644
+--- a/utils/agents/corrective_rag.py
++++ b/utils/agents/corrective_rag.py
+@@ -1,8 +1,7 @@
+ from typing import Any, Dict, List, TypedDict
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
++from langgraph.checkpoint.memory import MemorySaver
+ from langgraph.graph.state import CompiledStateGraph
+-from langgraph.graph.graph import CompiledGraph
+ from langchain_core.runnables.config import RunnableConfig
+ from utils.rag.rag_components import RAGComponents  # type: ignore
+ from utils.code_gen.codegen_components import CodeGenComponents  # type: ignore
+@@ -51,7 +50,7 @@ class CorrectiveRAG(RAGComponents, CodeGenComponents):
+ 
+         return workflow
+ 
+-    def build_rag_graph(self, workflow: StateGraph) -> CompiledGraph:
++    def build_rag_graph(self, workflow: StateGraph) -> CompiledStateGraph:
+         """
+         Builds a graph for the RAG workflow.
+ 
+@@ -84,7 +83,7 @@ class CorrectiveRAG(RAGComponents, CodeGenComponents):
+         workflow.add_edge('failure_msg', 'return_final_answer')
+         workflow.add_edge('return_final_answer', END)
+ 
+-        app: CompiledGraph = workflow.compile(checkpointer=checkpointer)
++        app: CompiledStateGraph = workflow.compile(checkpointer=checkpointer)
+ 
+         return app
+ 
+diff --git a/utils/agents/static_RAG_with_coding.py b/utils/agents/static_RAG_with_coding.py
+index 63bff8f..7a7cd3e 100644
+--- a/utils/agents/static_RAG_with_coding.py
++++ b/utils/agents/static_RAG_with_coding.py
+@@ -4,9 +4,8 @@ from langchain_community.vectorstores import Chroma
+ from utils.rag.rag_components import RAGComponents  # type: ignore
+ from utils.code_gen.codegen_components import CodeGenComponents  # type: ignore
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
++from langgraph.checkpoint.memory import MemorySaver
+ from langgraph.graph.state import CompiledStateGraph
+-from langgraph.graph.graph import CompiledGraph
+ 
+ 
+ class CodeRAGGraphState(TypedDict):
+@@ -113,7 +112,7 @@ class CodeRAG(RAGComponents, CodeGenComponents):
+ 
+         return workflow
+ 
+-    def build_rag_graph(self, workflow: StateGraph) -> CompiledGraph:
++    def build_rag_graph(self, workflow: StateGraph) -> CompiledStateGraph:
+         """
+         Builds a graph for the RAG workflow.
+ 
+@@ -191,7 +190,7 @@ class CodeRAG(RAGComponents, CodeGenComponents):
+         workflow.add_edge('aggregate_answers', 'return_final_answer')
+         workflow.add_edge('return_final_answer', END)
+ 
+-        app: CompiledGraph = workflow.compile(checkpointer=checkpointer)
++        app: CompiledStateGraph = workflow.compile(checkpointer=checkpointer)
+ 
+         return app
+ 
+diff --git a/utils/agents/teams/corrective_rag_team.py b/utils/agents/teams/corrective_rag_team.py
+index 19adbf5..57b3892 100644
+--- a/utils/agents/teams/corrective_rag_team.py
++++ b/utils/agents/teams/corrective_rag_team.py
+@@ -3,9 +3,8 @@ import sys
+ from typing import Any, Dict, List, TypedDict, Annotated
+ import operator
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
++from langgraph.checkpoint.memory import MemorySaver
+ from langgraph.graph.state import CompiledStateGraph
+-from langgraph.graph.graph import CompiledGraph
+ 
+ current_dir = os.getcwd()
+ kit_dir = os.path.abspath(os.path.join(current_dir, '..'))
+@@ -40,7 +39,7 @@ class SuperState(TypedDict):
+ 
+ 
+ class CRAGSupervisor(SupervisorComponents):
+-    def create_supervisor(self) -> CompiledGraph:
++    def create_supervisor(self) -> CompiledStateGraph:
+         """
+         Creates a compiled supervisor graph/app for the corrective RAG team.
+ 
+@@ -54,7 +53,7 @@ class CRAGSupervisor(SupervisorComponents):
+         sup_graph.add_node('super_router', self.supervisor_router)
+         sup_graph.add_edge('super_router', END)
+         sup_graph.set_entry_point('super_router')
+-        sup_graph_compiled: CompiledGraph = sup_graph.compile(checkpointer=checkpointer)
++        sup_graph_compiled: CompiledStateGraph = sup_graph.compile(checkpointer=checkpointer)
+ 
+         return sup_graph_compiled
+ 
+@@ -96,10 +95,10 @@ class TeamCRAG(BaseComponents):
+ 
+     def __init__(
+         self,
+-        supervisor_app: CompiledGraph,
+-        rag_app: CompiledGraph,
+-        search_app: CompiledGraph,
+-        return_app: CompiledGraph,
++        supervisor_app: CompiledStateGraph,
++        rag_app: CompiledStateGraph,
++        search_app: CompiledStateGraph,
++        return_app: CompiledStateGraph,
+     ) -> None:
+         """
+         Initializes the Corrective RAG Team.
+@@ -130,7 +129,7 @@ class TeamCRAG(BaseComponents):
+         self.team_app.add_node('search', self.search_app)
+         self.team_app.add_node('return_message', self.return_app)
+ 
+-    def build_team_graph(self) -> CompiledGraph:
++    def build_team_graph(self) -> CompiledStateGraph:
+         """
+         Builds a graph for the TeamCRAG workflow.
+ 
+@@ -153,7 +152,7 @@ class TeamCRAG(BaseComponents):
+         self.team_app.add_edge('search', 'return_message')
+         self.team_app.add_edge('return_message', END)
+         self.team_app.set_entry_point('supervisor')
+-        team_app: CompiledGraph = self.team_app.compile(checkpointer=checkpointer)
++        team_app: CompiledStateGraph = self.team_app.compile(checkpointer=checkpointer)
+ 
+         return team_app
+ 
+diff --git a/utils/agents/teams/return_message_team.py b/utils/agents/teams/return_message_team.py
+index 5fbcfa1..8a000f8 100644
+--- a/utils/agents/teams/return_message_team.py
++++ b/utils/agents/teams/return_message_team.py
+@@ -2,8 +2,8 @@ import os
+ import sys
+ from typing import TypedDict
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
+-from langgraph.graph.graph import CompiledGraph
++from langgraph.checkpoint.memory import MemorySaver
++from langgraph.graph.state import CompiledStateGraph
+ 
+ 
+ current_dir = os.getcwd()
+@@ -32,7 +32,7 @@ class ReturnTeamState(TypedDict):
+ 
+ 
+ class ReturnTeam(ReturnComponents):
+-    def create_return_team(self) -> CompiledGraph:
++    def create_return_team(self) -> CompiledStateGraph:
+         """
+         Creates the nodes for the ReturnTeam graph state.
+ 
+@@ -46,7 +46,7 @@ class ReturnTeam(ReturnComponents):
+         return_graph.add_node('return_message', self.return_message_to_user)
+         return_graph.add_edge('return_message', END)
+         return_graph.set_entry_point('return_message')
+-        return_graph_compiled: CompiledGraph = return_graph.compile(checkpointer=checkpointer)
++        return_graph_compiled: CompiledStateGraph = return_graph.compile(checkpointer=checkpointer)
+ 
+         return return_graph_compiled
+ 
+diff --git a/utils/agents/teams/tavily_search_team.py b/utils/agents/teams/tavily_search_team.py
+index 4d6a338..a260241 100644
+--- a/utils/agents/teams/tavily_search_team.py
++++ b/utils/agents/teams/tavily_search_team.py
+@@ -2,8 +2,8 @@ import os
+ import sys
+ from typing import List, TypedDict
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
+-from langgraph.graph.graph import CompiledGraph
++from langgraph.checkpoint.memory import MemorySaver
++from langgraph.graph.state import CompiledStateGraph
+ 
+ 
+ current_dir = os.getcwd()
+@@ -62,7 +62,7 @@ class TavilySearchTeam(RAGComponents, CodeGenComponents, SearchComponents):
+ 
+         return workflow
+ 
+-    def build_search_graph(self, workflow: StateGraph) -> CompiledGraph:
++    def build_search_graph(self, workflow: StateGraph) -> CompiledStateGraph:
+         """
+         Builds a graph for the RAG workflow.
+ 
+@@ -94,7 +94,7 @@ class TavilySearchTeam(RAGComponents, CodeGenComponents, SearchComponents):
+         workflow.add_edge('failure_msg', 'return_final_answer')
+         workflow.add_edge('return_final_answer', END)
+ 
+-        app: CompiledGraph = workflow.compile(checkpointer=checkpointer)
++        app: CompiledStateGraph = workflow.compile(checkpointer=checkpointer)
+ 
+         return app
+ 

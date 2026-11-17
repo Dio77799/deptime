@@ -1,0 +1,143 @@
+diff --git a/requirements.txt b/requirements.txt
+index fbf3ced..244b497 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,6 +1,6 @@
+ elasticsearch==8.19.3
+ PyJWT==2.12.0
+-fastmcp==3.2.0
++fastmcp==4.2.0
+ Flask==3.1.3
+ Flask-Cors==6.0.0
+ opentelemetry-distro==0.57b0
+@@ -10,6 +10,6 @@ opentelemetry-instrumentation-elasticsearch==0.57b0
+ opentelemetry-instrumentation-flask==0.57b0
+ opentelemetry-instrumentation-wsgi==0.57b0
+ pillow==12.1.1
+-pydantic==2.11.7
++pydantic==2.12.0
+ python-dotenv==1.1.1
+ requests==2.33.0
+\ No newline at end of file
+diff --git a/src/server/api/agent.py b/src/server/api/agent.py
+index c1fa411..403a556 100644
+--- a/src/server/api/agent.py
++++ b/src/server/api/agent.py
+@@ -15,7 +15,7 @@ from datetime import datetime, timezone
+ from typing import Any, Dict, Generator, List, Optional, Tuple, TYPE_CHECKING
+ 
+ # Third-party packages
+-import httpx
++import httpx2 as httpx
+ import requests
+ from fastmcp.client import Client
+ from fastmcp.client.transports import StreamableHttpTransport
+diff --git a/src/server/fastmcp_proxy.py b/src/server/fastmcp_proxy.py
+index 97720f9..e800281 100644
+--- a/src/server/fastmcp_proxy.py
++++ b/src/server/fastmcp_proxy.py
+@@ -39,11 +39,11 @@ import os
+ import sys
+ 
+ # Third-party packages
+-import httpx
++import httpx2 as httpx
+ from dotenv import load_dotenv
+-from fastmcp import FastMCP
+ from fastmcp.client.transports import StreamableHttpTransport
+-from fastmcp.server.proxy import ProxyClient
++from fastmcp.server import create_proxy
++from fastmcp.server.providers.proxy import ProxyClient
+ 
+ # App packages
+ from .tls import get_tls_config, log_tls_status
+@@ -133,7 +133,7 @@ if _tls["enabled"]:
+ else:
+     _transport = StreamableHttpTransport(_upstream, headers=_headers)
+ 
+-mcp = FastMCP.as_proxy(ProxyClient(_transport), name="Relevance Studio")
++mcp = create_proxy(ProxyClient(_transport), name="Relevance Studio")
+ 
+ 
+ ####  Main  ####################################################################
+diff --git a/src/server/mcp_auth_middleware.py b/src/server/mcp_auth_middleware.py
+index 89349b5..4be918d 100644
+--- a/src/server/mcp_auth_middleware.py
++++ b/src/server/mcp_auth_middleware.py
+@@ -14,8 +14,7 @@ from typing import Any
+ 
+ # Third-party packages
+ import mcp.types
+-from mcp import McpError
+-from mcp.types import ErrorData
++from fastmcp.exceptions import McpError
+ from typing_extensions import override
+ 
+ # App packages
+@@ -72,21 +71,17 @@ class MCPAuthMiddleware(Middleware):
+         request = get_http_request()
+         if request is None:
+             raise McpError(
+-                ErrorData(
+-                    code=-32001,
+-                    message="Unauthorized: No HTTP request context. "
+-                    "Send Authorization header (Basic or ApiKey).",
+-                )
++                code=-32001,
++                message="Unauthorized: No HTTP request context. "
++                "Send Authorization header (Basic or ApiKey).",
+             )
+         auth_header = request.headers.get("Authorization")
+         credentials = mcp_auth.parse_authorization_header(auth_header)
+         if not credentials:
+             raise McpError(
+-                ErrorData(
+-                    code=-32001,
+-                    message="Unauthorized: Missing or invalid Authorization header. "
+-                    "Use Basic (username:password) or ApiKey/Bearer.",
+-                )
++                code=-32001,
++                message="Unauthorized: Missing or invalid Authorization header. "
++                "Use Basic (username:password) or ApiKey/Bearer.",
+             )
+ 
+         try:
+@@ -96,10 +91,10 @@ class MCPAuthMiddleware(Middleware):
+ 
+             if isinstance(e, AuthenticationException):
+                 raise McpError(
+-                    ErrorData(code=-32001, message=f"Unauthorized: {e!s}")
++                    code=-32001, message=f"Unauthorized: {e!s}"
+                 ) from e
+             raise McpError(
+-                ErrorData(code=-32001, message=f"Unauthorized: {e!s}")
++                code=-32001, message=f"Unauthorized: {e!s}"
+             ) from e
+ 
+         ctx.set_state("mcp_user", user)
+diff --git a/tests/unit/test_fastmcp_proxy.py b/tests/unit/test_fastmcp_proxy.py
+index d0aa8bd..2436fbf 100644
+--- a/tests/unit/test_fastmcp_proxy.py
++++ b/tests/unit/test_fastmcp_proxy.py
+@@ -17,7 +17,7 @@ import importlib
+ import sys
+ from unittest.mock import MagicMock, patch
+ 
+-import httpx
++import httpx2 as httpx
+ import pytest
+ 
+ from server.fastmcp_proxy import (
+diff --git a/tests/unit/test_mcp_auth_middleware.py b/tests/unit/test_mcp_auth_middleware.py
+index e71e8f6..b1ffa2b 100644
+--- a/tests/unit/test_mcp_auth_middleware.py
++++ b/tests/unit/test_mcp_auth_middleware.py
+@@ -5,7 +5,7 @@ from types import SimpleNamespace
+ from unittest.mock import MagicMock
+ 
+ import pytest
+-from mcp import McpError
++from fastmcp.exceptions import McpError
+ 
+ from server.mcp_auth_middleware import MCPAuthMiddleware
+ 

@@ -1,0 +1,68 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index e1ed3e5..7f46e20 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -25,7 +25,7 @@ dependencies = [
+     "streamlit==1.31.1",
+     "llama-index==0.10.11", 
+     "llama-index-agent-openai==0.1.5",
+-    "llama-index-core==0.10.12",
++    "llama-index-core==0.14.26",
+     "llama-index-embeddings-openai==0.1.5",
+     "llama-index-graph-stores-nebula==0.1.2",
+     "llama-index-graph-stores-neo4j==0.1.1",
+diff --git a/requirements.txt b/requirements.txt
+index 79e3f66..53b4674 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -4,7 +4,7 @@ pyvis==0.3.2
+ streamlit==1.31.1
+ llama-index==0.10.11
+ llama-index-agent-openai==0.1.5
+-llama-index-core==0.10.12
++llama-index-core==0.14.26
+ llama-index-embeddings-openai==0.1.5
+ llama-index-graph-stores-nebula==0.1.2
+ llama-index-graph-stores-neo4j==0.1.1
+diff --git a/src/memary/agent/base_agent.py b/src/memary/agent/base_agent.py
+index a63a12f..8850fb7 100644
+--- a/src/memary/agent/base_agent.py
++++ b/src/memary/agent/base_agent.py
+@@ -1,3 +1,4 @@
++import asyncio
+ import logging
+ import os
+ import sys
+@@ -12,7 +13,7 @@ from ansistrip import ansi_strip
+ from dotenv import load_dotenv
+ from llama_index.core import (KnowledgeGraphIndex, Settings,
+                               SimpleDirectoryReader, StorageContext)
+-from llama_index.core.agent import ReActAgent
++from llama_index.core.agent.workflow import ReActAgent
+ from llama_index.core.llms import ChatMessage
+ from llama_index.core.query_engine import RetrieverQueryEngine
+ from llama_index.core.retrievers import KnowledgeGraphRAGRetriever
+@@ -214,8 +215,12 @@ class Agent(object):
+ 
+     def query(self, query: str) -> str:
+         # get the response from react agent
+-        response = self.routing_agent.chat(query)
+-        self.routing_agent.reset()
++        # The workflow-based ReActAgent is async; each run() without a passed-in
++        # memory/context starts from a fresh state, so no reset() is needed.
++        async def _run_agent():
++            return await self.routing_agent.run(user_msg=query)
++
++        response = asyncio.run(_run_agent())
+         # write response to file for KG writeback
+         with open("data/external_response.txt", "w") as f:
+             print(response, file=f)
+@@ -426,7 +431,7 @@ class Agent(object):
+         tool_fns = []
+         for func in self.tools.values():
+             tool_fns.append(FunctionTool.from_defaults(fn=func))
+-        self.routing_agent = ReActAgent.from_tools(tool_fns, llm=self.llm, verbose=True)
++        self.routing_agent = ReActAgent(tools=tool_fns, llm=self.llm, verbose=True)
+ 
+     def _init_default_tools(self, default_tools: List[str]):
+         """Initializes ReAct Agent from the default list of tools memary provides.

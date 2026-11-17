@@ -1,0 +1,104 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 45,
+  "duration_ms": 84078,
+  "total_cost_usd": 0.4059995999999999,
+  "usage": {
+   "input_tokens": 34,
+   "cache_creation_input_tokens": 56986,
+   "cache_read_input_tokens": 649476,
+   "output_tokens": 11304,
+   "output_tokens_details": {
+    "thinking_tokens": 1298
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 56986,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 971,
+     "cache_read_input_tokens": 62637,
+     "cache_creation_input_tokens": 346,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 346
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794906000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.1,
+    "resetsAt": 1794906000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.34,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 7,
+  "Read": 7,
+  "Grep": 1,
+  "mcp__plugin_deptime_deptime__diff_versions": 1,
+  "mcp__plugin_deptime_deptime__check_symbols": 2,
+  "Edit": 25,
+  "mcp__plugin_deptime_deptime__symbol_history": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.3 check-upgrade . --package pydantic-ai-slim --to 2.68.0 --from 0.0.20 --format markdown --output .deptime-report.md",
+  "diff_versions",
+  "check_symbols",
+  "check_symbols",
+  "symbol_history",
+  "uvx deptime==0.2.3 check-upgrade . --package pydantic-ai-slim --to 2.68.0 --from 0.0.20 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 5,
+ "fetched": [],
+ "denied": 1,
+ "task": "pin-codematrix__agentic-ai-design-patterns-pydantic-ai-slim-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 86.9,
+ "service_error": false
+}

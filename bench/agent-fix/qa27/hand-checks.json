@@ -1,0 +1,2153 @@
+{
+ "note": "Uses settled from each package's released source (newest release before the environment's date cutoff, or the version the probe's environment installs), read as text in a scratch directory; nothing imported. Settled from the blinded hand-todo.json only, before any session was scored: names and call shapes resolved with a static reader of the unpacked wheels, then every use it couldn't settle, every call it judged only through a **kwargs passthrough, and every break it reported were read by hand (fields across the class's bases, aliases with populate_by_name, extra='ignore'). torch.fx from the pytorch repository at the v2.15.0 tag. The ten break checks were then read from hand-todo.json and each session's diff, printed by check id without the arm or run.",
+ "uses": [
+  {
+   "env": "crewai==1.15.41@2026-11-16",
+   "key": "74c03f29c7c6fc86",
+   "path": "ddgs",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ddgs 9.16.1: __init__.py exports DDGS through a lazy proxy class (:15-30) that loads ddgs.py:22 class DDGS; __init__(self, proxy=None, timeout=5, ...) :46; text(self, query, **kwargs) :226 -> _search_sync(..., max_results=10, ...) :144"
+  },
+  {
+   "env": "crewai==1.15.41@2026-11-16",
+   "key": "0b9ecf0a5af1c643",
+   "path": "ddgs.DDGS",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ddgs 9.16.1: __init__.py exports DDGS through a lazy proxy class (:15-30) that loads ddgs.py:22 class DDGS; __init__(self, proxy=None, timeout=5, ...) :46; text(self, query, **kwargs) :226 -> _search_sync(..., max_results=10, ...) :144"
+  },
+  {
+   "env": "crewai==1.15.41@2026-11-16",
+   "key": "456d31a6688e3ec3",
+   "path": "ddgs.DDGS",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "ddgs 9.16.1: __init__.py exports DDGS through a lazy proxy class (:15-30) that loads ddgs.py:22 class DDGS; __init__(self, proxy=None, timeout=5, ...) :46; text(self, query, **kwargs) :226 -> _search_sync(..., max_results=10, ...) :144"
+  },
+  {
+   "env": "crewai==1.15.41@2026-11-16",
+   "key": "6e06b2ee0fe8d573",
+   "path": "ddgs.DDGS.text",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ddgs 9.16.1: __init__.py exports DDGS through a lazy proxy class (:15-30) that loads ddgs.py:22 class DDGS; __init__(self, proxy=None, timeout=5, ...) :46; text(self, query, **kwargs) :226 -> _search_sync(..., max_results=10, ...) :144"
+  },
+  {
+   "env": "crewai==1.15.41@2026-11-16",
+   "key": "98488c71497cc170",
+   "path": "ddgs.DDGS.text",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "ddgs 9.16.1: __init__.py exports DDGS through a lazy proxy class (:15-30) that loads ddgs.py:22 class DDGS; __init__(self, proxy=None, timeout=5, ...) :46; text(self, query, **kwargs) :226 -> _search_sync(..., max_results=10, ...) :144"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "1b5d8ffd48712add",
+   "path": "langchain_anthropic",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-anthropic-1.4.6/langchain_anthropic/__init__.py"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "bc963bc604121166",
+   "path": "langchain_anthropic.ChatAnthropic",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-anthropic 1.4.6 (newest before the env's cutoff, 2026-06-12) chat_models.py: fields model (alias model_name) :914, temperature :927, populate_by_name :910; callbacks is langchain_core 1.4.8 BaseLanguageModel's (:188); Serializable.__init__(*args, **kwargs) (:116) hands them to pydantic"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "f483c18e9394e589",
+   "path": "langchain_anthropic.ChatAnthropic",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ChatAnthropic langchain-anthropic-1.4.6/langchain_anthropic/chat_models.py:877 __init__.py:4 from langchain_anthropic.chat_models import ChatAnthropic"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "9d7e7221b403d8bb",
+   "path": "langchain_openai",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-openai-1.3.2/langchain_openai/__init__.py"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "8259cd0a21ef2a7c",
+   "path": "langchain_openai.AzureChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.3.2 (newest before the env's cutoff, 2026-06-13) chat_models/base.py: model_name (alias model) :601, temperature :604, openai_api_key :610, openai_api_base (alias base_url) :664, request_timeout :686, n :739, max_tokens :745; populate_by_name=True :1073; azure.py: deployment_name (alias azure_deployment) :473, openai_api_version :481, openai_api_type :531"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "eead8bd26ec271b8",
+   "path": "langchain_openai.AzureChatOpenAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.3.2 (newest before the env's cutoff, 2026-06-13) chat_models/base.py: model_name (alias model) :601, temperature :604, openai_api_key :610, openai_api_base (alias base_url) :664, request_timeout :686, n :739, max_tokens :745; populate_by_name=True :1073; azure.py: deployment_name (alias azure_deployment) :473, openai_api_version :481, openai_api_type :531"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "5ee84d085cd7a7dd",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.3.2 (newest before the env's cutoff, 2026-06-13) chat_models/base.py: model_name (alias model) :601, temperature :604, openai_api_key :610, openai_api_base (alias base_url) :664, request_timeout :686, n :739, max_tokens :745; populate_by_name=True :1073; azure.py: deployment_name (alias azure_deployment) :473, openai_api_version :481, openai_api_type :531"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "88e7618350457ab0",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.3.2 (newest before the env's cutoff, 2026-06-13) chat_models/base.py: model_name (alias model) :601, temperature :604, openai_api_key :610, openai_api_base (alias base_url) :664, request_timeout :686, n :739, max_tokens :745; populate_by_name=True :1073; azure.py: deployment_name (alias azure_deployment) :473, openai_api_version :481, openai_api_type :531"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "df0f9e872b554569",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.3.2 (newest before the env's cutoff, 2026-06-13) chat_models/base.py: model_name (alias model) :601, temperature :604, openai_api_key :610, openai_api_base (alias base_url) :664, request_timeout :686, n :739, max_tokens :745; populate_by_name=True :1073; azure.py: deployment_name (alias azure_deployment) :473, openai_api_version :481, openai_api_type :531"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "a0ca75c0b72f1532",
+   "path": "langchain_openai.ChatOpenAI.generate",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "ChatOpenAI langchain-openai-1.3.2/langchain_openai/chat_models/base.py:2559 __init__.py:4 from langchain_openai.chat_models import ChatOpenAI / __init__.py:4 from langchain_openai.chat_models.base import ChatOpenAI .generate langchain-core-1.4.8/langchain_core/language_models/chat_models.py:1564 | def(self, messages: list[list[BaseMessage]], stop: list[str] | None=None, callbacks: Callbacks=None, *, tags: list[str] | None=None, metadata: builtins.dict[str, Any] | None=None, run_name: str | None=None, run_id: uuid.UUID | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "dcbd43a20b5cd2aa",
+   "path": "langchain_openai.ChatOpenAI.generate",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ChatOpenAI langchain-openai-1.3.2/langchain_openai/chat_models/base.py:2559 __init__.py:4 from langchain_openai.chat_models import ChatOpenAI / __init__.py:4 from langchain_openai.chat_models.base import ChatOpenAI .generate langchain-core-1.4.8/langchain_core/language_models/chat_models.py:1564"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "a2b67c7803e8b079",
+   "path": "langchain_openai.OpenAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "OpenAI langchain-openai-1.3.2/langchain_openai/llms/base.py:787 __init__.py:7 from langchain_openai.llms import OpenAI / __init__.py:4 from langchain_openai.llms.base import OpenAI"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "3f7115308e42b431",
+   "path": "langchain_pinecone",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-pinecone-0.2.13/langchain_pinecone/__init__.py"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "52c0d28868dc4e89",
+   "path": "langchain_pinecone.PineconeVectorStore",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "PineconeVectorStore langchain-pinecone-0.2.13/langchain_pinecone/vectorstores.py:50 __init__.py:3 from langchain_pinecone.vectorstores import PineconeVectorStore | __init__ vectorstores.py:192 (self, index: Optional[Any]=None, embedding: Optional[Embeddings]=None, text_key: Optional[str]='text', namespace: Optional[str]=None, distance_strategy: Optional[DistanceStrategy]=DistanceStrategy.COSINE, *, pinecone_api_key: Optional[str]=None, index_name: Optional[str]=None, host: Optional[str]=No) []"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "5d1e7a524df43e10",
+   "path": "langchain_pinecone.PineconeVectorStore",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "PineconeVectorStore langchain-pinecone-0.2.13/langchain_pinecone/vectorstores.py:50 __init__.py:3 from langchain_pinecone.vectorstores import PineconeVectorStore | __init__ vectorstores.py:192 (self, index: Optional[Any]=None, embedding: Optional[Embeddings]=None, text_key: Optional[str]='text', namespace: Optional[str]=None, distance_strategy: Optional[DistanceStrategy]=DistanceStrategy.COSINE, *, pinecone_api_key: Optional[str]=None, index_name: Optional[str]=None, host: Optional[str]=No) []"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "f68f5d6b03310451",
+   "path": "langchain_pinecone.PineconeVectorStore",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "PineconeVectorStore langchain-pinecone-0.2.13/langchain_pinecone/vectorstores.py:50 __init__.py:3 from langchain_pinecone.vectorstores import PineconeVectorStore"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "3d43b5baa444b65e",
+   "path": "langchain_pinecone.PineconeVectorStore.from_existing_index",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "PineconeVectorStore langchain-pinecone-0.2.13/langchain_pinecone/vectorstores.py:50 __init__.py:3 from langchain_pinecone.vectorstores import PineconeVectorStore .from_existing_index langchain-pinecone-0.2.13/langchain_pinecone/vectorstores.py:1030 | def(cls, index_name: str, embedding: Embeddings, text_key: str='text', namespace: Optional[str]=None, pool_threads: int=4) []"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "8ce08916c1687623",
+   "path": "langchain_pinecone.PineconeVectorStore.from_existing_index",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "PineconeVectorStore langchain-pinecone-0.2.13/langchain_pinecone/vectorstores.py:50 __init__.py:3 from langchain_pinecone.vectorstores import PineconeVectorStore .from_existing_index langchain-pinecone-0.2.13/langchain_pinecone/vectorstores.py:1030"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "bf69089d707f3de9",
+   "path": "langchain_qdrant",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-qdrant-1.1.0/langchain_qdrant/__init__.py"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "b8ef02984347d0cb",
+   "path": "langchain_qdrant.Qdrant",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0: __init__.py imports Qdrant from vectorstores; vectorstores.py:60 Qdrant(VectorStore); from_documents(documents, embedding, **kwargs) is langchain_core 1.4.8 VectorStore's, passing collection_name and path to Qdrant.from_texts (path :1209, collection_name :1210)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "418d5534ce288ebf",
+   "path": "langchain_qdrant.Qdrant.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0: __init__.py imports Qdrant from vectorstores; vectorstores.py:60 Qdrant(VectorStore); from_documents(documents, embedding, **kwargs) is langchain_core 1.4.8 VectorStore's, passing collection_name and path to Qdrant.from_texts (path :1209, collection_name :1210)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "71e8971220340c80",
+   "path": "langchain_qdrant.Qdrant.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0: __init__.py imports Qdrant from vectorstores; vectorstores.py:60 Qdrant(VectorStore); from_documents(documents, embedding, **kwargs) is langchain_core 1.4.8 VectorStore's, passing collection_name and path to Qdrant.from_texts (path :1209, collection_name :1210)"
+  },
+  {
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "key": "ac4856905e50025d",
+   "path": "langchain_qdrant.Qdrant.from_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-qdrant 1.1.0: __init__.py imports Qdrant from vectorstores; vectorstores.py:60 Qdrant(VectorStore); from_documents(documents, embedding, **kwargs) is langchain_core 1.4.8 VectorStore's, passing collection_name and path to Qdrant.from_texts (path :1209, collection_name :1210)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "1b5d8ffd48712add",
+   "path": "langchain_anthropic",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-anthropic-1.7.10/langchain_anthropic/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "bc963bc604121166",
+   "path": "langchain_anthropic.ChatAnthropic",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; fields callbacks (BaseLanguageModel:204), model (alias model_name, ChatAnthropic:1391), temperature (:1404); populate_by_name (:1387)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "f483c18e9394e589",
+   "path": "langchain_anthropic.ChatAnthropic",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ChatAnthropic langchain-anthropic-1.7.10/langchain_anthropic/chat_models.py:1323 __init__.py:4 from langchain_anthropic.chat_models import ChatAnthropic"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c9d0f72e85e6b03c",
+   "path": "langchain_chroma",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-chroma-1.1.0/langchain_chroma/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "69ad200e47648304",
+   "path": "langchain_chroma.Chroma",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "Chroma langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:155 __init__.py:3 from langchain_chroma.vectorstores import Chroma | __init__ vectorstores.py:302 (self, collection_name: str=_LANGCHAIN_DEFAULT_COLLECTION_NAME, embedding_function: Embeddings | None=None, persist_directory: str | None=None, host: str | None=None, port: int | None=None, headers: dict[str, str] | None=None, chroma_cloud_api_key: str | None=None, tenant: str | None=None, database: ) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "892b5a59933a9107",
+   "path": "langchain_chroma.Chroma",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Chroma langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:155 __init__.py:3 from langchain_chroma.vectorstores import Chroma"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "af29c823ca5e464f",
+   "path": "langchain_chroma.Chroma.add_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "Chroma langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:155 __init__.py:3 from langchain_chroma.vectorstores import Chroma .add_documents langchain-core-1.8.1/langchain_core/vectorstores/base.py:235 | def(self, documents: list[Document], **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d796ec11be165284",
+   "path": "langchain_chroma.Chroma.add_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Chroma langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:155 __init__.py:3 from langchain_chroma.vectorstores import Chroma .add_documents langchain-core-1.8.1/langchain_core/vectorstores/base.py:235"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3173ae65c0c6b3ba",
+   "path": "langchain_chroma.Chroma.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "Chroma langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:155 __init__.py:3 from langchain_chroma.vectorstores import Chroma .from_documents langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:1375 | def(cls: type[Chroma], documents: list[Document], embedding: Embeddings | None=None, ids: list[str] | None=None, collection_name: str=_LANGCHAIN_DEFAULT_COLLECTION_NAME, persist_directory: str | None=None, host: str | None=None, port: int | None=None, headers: dict[str, str] | None=None, chroma_cloud_api_key: str | None=None, tenant: str | None=None, database: str | None=None, client_settings: chromadb.config.Settings | None=None, client: chromadb.ClientAPI | None=None, collection_metad"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "389aac3c39aea1d3",
+   "path": "langchain_chroma.Chroma.from_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Chroma langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:155 __init__.py:3 from langchain_chroma.vectorstores import Chroma .from_documents langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:1375"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ae2140a4004c3e63",
+   "path": "langchain_chroma.Chroma.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "Chroma langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:155 __init__.py:3 from langchain_chroma.vectorstores import Chroma .from_documents langchain-chroma-1.1.0/langchain_chroma/vectorstores.py:1375 | def(cls: type[Chroma], documents: list[Document], embedding: Embeddings | None=None, ids: list[str] | None=None, collection_name: str=_LANGCHAIN_DEFAULT_COLLECTION_NAME, persist_directory: str | None=None, host: str | None=None, port: int | None=None, headers: dict[str, str] | None=None, chroma_cloud_api_key: str | None=None, tenant: str | None=None, database: str | None=None, client_settings: chromadb.config.Settings | None=None, client: chromadb.ClientAPI | None=None, collection_metad"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "0aac253b0c0b63e7",
+   "path": "langchain_chroma.Chroma.from_documents.as_retriever",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0: Chroma.from_documents (vectorstores.py:1375) is a classmethod returning a Chroma; similarity_search(query, k, ...) at :730; as_retriever(self, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:906)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6391d2c811a94ed9",
+   "path": "langchain_chroma.Chroma.from_documents.as_retriever",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0: Chroma.from_documents (vectorstores.py:1375) is a classmethod returning a Chroma; similarity_search(query, k, ...) at :730; as_retriever(self, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:906)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "e2841b09f344669f",
+   "path": "langchain_chroma.Chroma.from_documents.as_retriever",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0: Chroma.from_documents (vectorstores.py:1375) is a classmethod returning a Chroma; similarity_search(query, k, ...) at :730; as_retriever(self, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:906)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6d0876b39cef7f65",
+   "path": "langchain_chroma.Chroma.from_documents.similarity_search",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0: Chroma.from_documents (vectorstores.py:1375) is a classmethod returning a Chroma; similarity_search(query, k, ...) at :730; as_retriever(self, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:906)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d88bdb0237ef81ba",
+   "path": "langchain_chroma.Chroma.from_documents.similarity_search",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-chroma 1.1.0: Chroma.from_documents (vectorstores.py:1375) is a classmethod returning a Chroma; similarity_search(query, k, ...) at :730; as_retriever(self, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:906)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "53c3ef70fc8e68ee",
+   "path": "langchain_classic.agents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/agents/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3a71bbba53633301",
+   "path": "langchain_classic.agents.AgentExecutor",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 agents/agent.py fields agent :1015, tools :1018, max_iterations :1023, handle_parsing_errors :1042; Chain fields memory (chains/base.py:75), verbose (:88)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "5951d8d4e98ced72",
+   "path": "langchain_classic.agents.AgentExecutor",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 agents/agent.py fields agent :1015, tools :1018, max_iterations :1023, handle_parsing_errors :1042; Chain fields memory (chains/base.py:75), verbose (:88)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "a4a5e1af187f2988",
+   "path": "langchain_classic.agents.AgentExecutor",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AgentExecutor langchain-classic-1.0.8/langchain_classic/agents/agent.py:1012 __init__.py:18 from langchain_classic.agents.agent import AgentExecutor"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "de485974d12227d4",
+   "path": "langchain_classic.agents.AgentExecutor",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 agents/agent.py fields agent :1015, tools :1018, max_iterations :1023, handle_parsing_errors :1042; Chain fields memory (chains/base.py:75), verbose (:88)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "679e04f7eaa889a9",
+   "path": "langchain_classic.agents.AgentExecutor.configurable_fields",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AgentExecutor langchain-classic-1.0.8/langchain_classic/agents/agent.py:1012 __init__.py:18 from langchain_classic.agents.agent import AgentExecutor .configurable_fields langchain-core-1.8.1/langchain_core/runnables/base.py:2874"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6f8fac3508c984f4",
+   "path": "langchain_classic.agents.AgentExecutor.configurable_fields",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "AgentExecutor langchain-classic-1.0.8/langchain_classic/agents/agent.py:1012 __init__.py:18 from langchain_classic.agents.agent import AgentExecutor .configurable_fields langchain-core-1.8.1/langchain_core/runnables/base.py:2874 | def(self, **kwargs: AnyConfigurableField) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "18402c92b04657fe",
+   "path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AgentExecutor langchain-classic-1.0.8/langchain_classic/agents/agent.py:1012 __init__.py:18 from langchain_classic.agents.agent import AgentExecutor .from_agent_and_tools langchain-classic-1.0.8/langchain_classic/agents/agent.py:1059"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "68fb039bcc284ad1",
+   "path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "AgentExecutor langchain-classic-1.0.8/langchain_classic/agents/agent.py:1012 __init__.py:18 from langchain_classic.agents.agent import AgentExecutor .from_agent_and_tools langchain-classic-1.0.8/langchain_classic/agents/agent.py:1059 | def(cls, agent: BaseSingleActionAgent | BaseMultiActionAgent | Runnable, tools: Sequence[BaseTool], callbacks: Callbacks=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "0a4e75ef42aa580d",
+   "path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools.invoke",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): AgentExecutor.from_agent_and_tools (agents/agent.py:1059) returns AgentExecutor (:1065), a Chain: Chain.invoke (chains/base.py:131), Chain.run(*args, **kwargs) (:580)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "f7d6529883f3845c",
+   "path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools.invoke",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): AgentExecutor.from_agent_and_tools (agents/agent.py:1059) returns AgentExecutor (:1065), a Chain: Chain.invoke (chains/base.py:131), Chain.run(*args, **kwargs) (:580)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "352223bd1db9392f",
+   "path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools.run",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): AgentExecutor.from_agent_and_tools (agents/agent.py:1059) returns AgentExecutor (:1065), a Chain: Chain.invoke (chains/base.py:131), Chain.run(*args, **kwargs) (:580)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "a62991b685fc93d9",
+   "path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools.run",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): AgentExecutor.from_agent_and_tools (agents/agent.py:1059) returns AgentExecutor (:1065), a Chain: Chain.invoke (chains/base.py:131), Chain.run(*args, **kwargs) (:580)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "5dc4d773daba14a3",
+   "path": "langchain_classic.agents.AgentExecutor.invoke",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "AgentExecutor langchain-classic-1.0.8/langchain_classic/agents/agent.py:1012 __init__.py:18 from langchain_classic.agents.agent import AgentExecutor .invoke langchain-classic-1.0.8/langchain_classic/chains/base.py:131 | def(self, input: dict[str, Any], config: RunnableConfig | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d3521526805d0731",
+   "path": "langchain_classic.agents.AgentExecutor.invoke",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "AgentExecutor langchain-classic-1.0.8/langchain_classic/agents/agent.py:1012 __init__.py:18 from langchain_classic.agents.agent import AgentExecutor .invoke langchain-classic-1.0.8/langchain_classic/chains/base.py:131 | def(self, input: dict[str, Any], config: RunnableConfig | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ef4f9c7d5543e918",
+   "path": "langchain_classic.agents.AgentExecutor.invoke",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AgentExecutor langchain-classic-1.0.8/langchain_classic/agents/agent.py:1012 __init__.py:18 from langchain_classic.agents.agent import AgentExecutor .invoke langchain-classic-1.0.8/langchain_classic/chains/base.py:131"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "4b2a12ed88a90ab6",
+   "path": "langchain_classic.agents.AgentOutputParser",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AgentOutputParser langchain-classic-1.0.8/langchain_classic/agents/agent.py:361 __init__.py:18 from langchain_classic.agents.agent import AgentOutputParser"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "84ad2fc2c7373400",
+   "path": "langchain_classic.agents.AgentType",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AgentType langchain-classic-1.0.8/langchain_classic/agents/agent_types.py:15 __init__.py:31 from langchain_classic.agents.agent_types import AgentType"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "bed181dbd8c9a1cd",
+   "path": "langchain_classic.agents.AgentType.OPENAI_FUNCTIONS",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AgentType langchain-classic-1.0.8/langchain_classic/agents/agent_types.py:15 __init__.py:31 from langchain_classic.agents.agent_types import AgentType .OPENAI_FUNCTIONS langchain-classic-1.0.8/langchain_classic/agents/agent_types.py:51"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "1344ef2400cf882b",
+   "path": "langchain_classic.agents.AgentType.ZERO_SHOT_REACT_DESCRIPTION",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AgentType langchain-classic-1.0.8/langchain_classic/agents/agent_types.py:15 __init__.py:31 from langchain_classic.agents.agent_types import AgentType .ZERO_SHOT_REACT_DESCRIPTION langchain-classic-1.0.8/langchain_classic/agents/agent_types.py:18"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "2302ca0a7fd3cc73",
+   "path": "langchain_classic.agents.LLMSingleActionAgent",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): agents/agent.py:615 LLMSingleActionAgent(BaseSingleActionAgent) fields llm_chain, output_parser, stop; BaseSingleActionAgent(BaseModel) (:55) sets no model_config, so pydantic's default extra=\"ignore\" drops allowed_tools without an error"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "26c46a94b76d9752",
+   "path": "langchain_classic.agents.LLMSingleActionAgent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): agents/agent.py:615 LLMSingleActionAgent(BaseSingleActionAgent) fields llm_chain, output_parser, stop; BaseSingleActionAgent(BaseModel) (:55) sets no model_config, so pydantic's default extra=\"ignore\" drops allowed_tools without an error"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "0c21ae315cf7bc3c",
+   "path": "langchain_classic.agents.create_openai_functions_agent",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "create_openai_functions_agent langchain-classic-1.0.8/langchain_classic/agents/openai_functions_agent/base.py:287 __init__.py:38 from langchain_classic.agents.openai_functions_agent.base import create_openai_functions_agent"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "2e07337bc028dab5",
+   "path": "langchain_classic.agents.create_openai_functions_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "create_openai_functions_agent langchain-classic-1.0.8/langchain_classic/agents/openai_functions_agent/base.py:287 __init__.py:38 from langchain_classic.agents.openai_functions_agent.base import create_openai_functions_agent | def(llm: BaseLanguageModel, tools: Sequence[BaseTool], prompt: ChatPromptTemplate) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "1513c877b118cb7d",
+   "path": "langchain_classic.agents.create_structured_chat_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "create_structured_chat_agent langchain-classic-1.0.8/langchain_classic/agents/structured_chat/base.py:166 __init__.py:52 from langchain_classic.agents.structured_chat.base import create_structured_chat_agent | def(llm: BaseLanguageModel, tools: Sequence[BaseTool], prompt: ChatPromptTemplate, tools_renderer: ToolsRenderer=render_text_description_and_args, *, stop_sequence: bool | list[str]=True) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "26a2cf00658aab8f",
+   "path": "langchain_classic.agents.create_structured_chat_agent",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "create_structured_chat_agent langchain-classic-1.0.8/langchain_classic/agents/structured_chat/base.py:166 __init__.py:52 from langchain_classic.agents.structured_chat.base import create_structured_chat_agent"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "1b070d308f7fcd2e",
+   "path": "langchain_classic.agents.create_tool_calling_agent",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "create_tool_calling_agent langchain-classic-1.0.8/langchain_classic/agents/tool_calling_agent/base.py:18 __init__.py:56 from langchain_classic.agents.tool_calling_agent.base import create_tool_calling_agent"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "e95815bc56fd4db1",
+   "path": "langchain_classic.agents.create_tool_calling_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "create_tool_calling_agent langchain-classic-1.0.8/langchain_classic/agents/tool_calling_agent/base.py:18 __init__.py:56 from langchain_classic.agents.tool_calling_agent.base import create_tool_calling_agent | def(llm: BaseLanguageModel, tools: Sequence[BaseTool], prompt: ChatPromptTemplate, *, message_formatter: MessageFormatter=format_to_tool_messages) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "026cc5512202efab",
+   "path": "langchain_classic.agents.initialize_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "initialize_agent langchain-classic-1.0.8/langchain_classic/agents/initialize.py:24 __init__.py:34 from langchain_classic.agents.initialize import initialize_agent | def(tools: Sequence[BaseTool], llm: BaseLanguageModel, agent: AgentType | None=None, callback_manager: BaseCallbackManager | None=None, agent_path: str | None=None, agent_kwargs: dict | None=None, *, tags: Sequence[str] | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "0c42c6514595a1c2",
+   "path": "langchain_classic.agents.initialize_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "initialize_agent langchain-classic-1.0.8/langchain_classic/agents/initialize.py:24 __init__.py:34 from langchain_classic.agents.initialize import initialize_agent | def(tools: Sequence[BaseTool], llm: BaseLanguageModel, agent: AgentType | None=None, callback_manager: BaseCallbackManager | None=None, agent_path: str | None=None, agent_kwargs: dict | None=None, *, tags: Sequence[str] | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "950db5a133783c76",
+   "path": "langchain_classic.agents.initialize_agent",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "initialize_agent langchain-classic-1.0.8/langchain_classic/agents/initialize.py:24 __init__.py:34 from langchain_classic.agents.initialize import initialize_agent"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d037a609d2729b2f",
+   "path": "langchain_classic.agents.initialize_agent",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "initialize_agent langchain-classic-1.0.8/langchain_classic/agents/initialize.py:24 __init__.py:34 from langchain_classic.agents.initialize import initialize_agent | def(tools: Sequence[BaseTool], llm: BaseLanguageModel, agent: AgentType | None=None, callback_manager: BaseCallbackManager | None=None, agent_path: str | None=None, agent_kwargs: dict | None=None, *, tags: Sequence[str] | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "05d5c56da0e87fd6",
+   "path": "langchain_classic.agents.initialize_agent.run",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): initialize_agent (agents/initialize.py:24) returns AgentExecutor (:34), a Chain with run(*args, **kwargs) (chains/base.py:580)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "1ac0fe30d52d5b57",
+   "path": "langchain_classic.agents.initialize_agent.run",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): initialize_agent (agents/initialize.py:24) returns AgentExecutor (:34), a Chain with run(*args, **kwargs) (chains/base.py:580)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ad3267359a1a5f2e",
+   "path": "langchain_classic.agents.load_tools",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): agents/__init__.py:91 lazy table sends load_tools to langchain_community.agent_toolkits.load_tools; langchain-community 0.4.2 load_tools.py:637 load_tools(tool_names, llm=None, callbacks=None, allow_dangerous_tools=False, **kwargs)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d506a4c40ffe3ded",
+   "path": "langchain_classic.agents.load_tools",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): agents/__init__.py:91 lazy table sends load_tools to langchain_community.agent_toolkits.load_tools; langchain-community 0.4.2 load_tools.py:637 load_tools(tool_names, llm=None, callbacks=None, allow_dangerous_tools=False, **kwargs)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6942a7396836393e",
+   "path": "langchain_classic.callbacks.streaming_aiter",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/callbacks/streaming_aiter.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "076543219cc00cd4",
+   "path": "langchain_classic.callbacks.streaming_aiter.AsyncIteratorCallbackHandler",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "AsyncIteratorCallbackHandler langchain-classic-1.0.8/langchain_classic/callbacks/streaming_aiter.py:14  | __init__ streaming_aiter.py:26 (self) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "92e4157c0dc289ea",
+   "path": "langchain_classic.callbacks.streaming_aiter.AsyncIteratorCallbackHandler",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AsyncIteratorCallbackHandler langchain-classic-1.0.8/langchain_classic/callbacks/streaming_aiter.py:14 "
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6352d4d94cbca7f7",
+   "path": "langchain_classic.callbacks.streaming_aiter.AsyncIteratorCallbackHandler.done",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "AsyncIteratorCallbackHandler langchain-classic-1.0.8/langchain_classic/callbacks/streaming_aiter.py:14  .done langchain-classic-1.0.8/langchain_classic/callbacks/streaming_aiter.py:19"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "b75f208f804a9ca7",
+   "path": "langchain_classic.chains",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/chains/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3157b6a61c0a5fc0",
+   "path": "langchain_classic.chains.ConversationChain",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 fields llm (chains/llm.py:83), memory, prompt (conversation/base.py:110, :112), verbose (chains/base.py:88); extra='forbid' (:118) and every keyword is a field"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ad091e6542658cd7",
+   "path": "langchain_classic.chains.ConversationChain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ConversationChain langchain-classic-1.0.8/langchain_classic/chains/conversation/base.py:23 __init__.py:28 lazy -> langchain_classic.chains.conversation.base"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "19251371d44a281d",
+   "path": "langchain_classic.chains.ConversationChain.predict",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ConversationChain langchain-classic-1.0.8/langchain_classic/chains/conversation/base.py:23 __init__.py:28 lazy -> langchain_classic.chains.conversation.base .predict langchain-classic-1.0.8/langchain_classic/chains/llm.py:300"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "b258633ac0192f77",
+   "path": "langchain_classic.chains.ConversationChain.predict",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "ConversationChain langchain-classic-1.0.8/langchain_classic/chains/conversation/base.py:23 __init__.py:28 lazy -> langchain_classic.chains.conversation.base .predict langchain-classic-1.0.8/langchain_classic/chains/llm.py:300 | def(self, callbacks: Callbacks=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3c47bf38c6c7e639",
+   "path": "langchain_classic.chains.LLMChain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "LLMChain langchain-classic-1.0.8/langchain_classic/chains/llm.py:45 __init__.py:50 lazy -> langchain_classic.chains.llm"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ff644585457d5f2b",
+   "path": "langchain_classic.chains.LLMChain",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 chains/llm.py fields prompt :81, llm :83, extra='forbid' (:95)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d031d391196fa7d5",
+   "path": "langchain_classic.chains.LLMChain.acall",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "LLMChain langchain-classic-1.0.8/langchain_classic/chains/llm.py:45 __init__.py:50 lazy -> langchain_classic.chains.llm .acall langchain-classic-1.0.8/langchain_classic/chains/base.py:421"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "e4ad698b563cc657",
+   "path": "langchain_classic.chains.LLMChain.acall",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "LLMChain langchain-classic-1.0.8/langchain_classic/chains/llm.py:45 __init__.py:50 lazy -> langchain_classic.chains.llm .acall langchain-classic-1.0.8/langchain_classic/chains/base.py:421 | def(self, inputs: dict[str, Any] | Any, return_only_outputs: bool=False, callbacks: Callbacks=None, *, tags: list[str] | None=None, metadata: dict[str, Any] | None=None, run_name: str | None=None, include_run_info: bool=False) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "740d3769e5990ab1",
+   "path": "langchain_classic.chains.LLMChain.run",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "LLMChain langchain-classic-1.0.8/langchain_classic/chains/llm.py:45 __init__.py:50 lazy -> langchain_classic.chains.llm .run langchain-classic-1.0.8/langchain_classic/chains/base.py:580 | def(self, *args: Any, callbacks: Callbacks=None, tags: list[str] | None=None, metadata: dict[str, Any] | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "80e89dca1fa3af05",
+   "path": "langchain_classic.chains.LLMChain.run",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "LLMChain langchain-classic-1.0.8/langchain_classic/chains/llm.py:45 __init__.py:50 lazy -> langchain_classic.chains.llm .run langchain-classic-1.0.8/langchain_classic/chains/base.py:580 | def(self, *args: Any, callbacks: Callbacks=None, tags: list[str] | None=None, metadata: dict[str, Any] | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "a18188f18b69c4d5",
+   "path": "langchain_classic.chains.LLMChain.run",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "LLMChain langchain-classic-1.0.8/langchain_classic/chains/llm.py:45 __init__.py:50 lazy -> langchain_classic.chains.llm .run langchain-classic-1.0.8/langchain_classic/chains/base.py:580"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c1d0ccab1404aad1",
+   "path": "langchain_classic.chains.RetrievalQA",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "RetrievalQA langchain-classic-1.0.8/langchain_classic/chains/retrieval_qa/base.py:218 __init__.py:74 lazy -> langchain_classic.chains.retrieval_qa.base"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "72abf9ff7e1c0253",
+   "path": "langchain_classic.chains.RetrievalQA.from_chain_type",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "RetrievalQA langchain-classic-1.0.8/langchain_classic/chains/retrieval_qa/base.py:218 __init__.py:74 lazy -> langchain_classic.chains.retrieval_qa.base .from_chain_type langchain-classic-1.0.8/langchain_classic/chains/retrieval_qa/base.py:104 | def(cls, llm: BaseLanguageModel, chain_type: str='stuff', chain_type_kwargs: dict | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d524967f45459ac4",
+   "path": "langchain_classic.chains.RetrievalQA.from_chain_type",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "RetrievalQA langchain-classic-1.0.8/langchain_classic/chains/retrieval_qa/base.py:218 __init__.py:74 lazy -> langchain_classic.chains.retrieval_qa.base .from_chain_type langchain-classic-1.0.8/langchain_classic/chains/retrieval_qa/base.py:104"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ef3ee4541e995215",
+   "path": "langchain_classic.chains.RetrievalQA.from_chain_type",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "RetrievalQA langchain-classic-1.0.8/langchain_classic/chains/retrieval_qa/base.py:218 __init__.py:74 lazy -> langchain_classic.chains.retrieval_qa.base .from_chain_type langchain-classic-1.0.8/langchain_classic/chains/retrieval_qa/base.py:104 | def(cls, llm: BaseLanguageModel, chain_type: str='stuff', chain_type_kwargs: dict | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "61ea90becfb8b96d",
+   "path": "langchain_classic.chains.RetrievalQA.from_chain_type.run",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): RetrievalQA.from_chain_type (chains/retrieval_qa/base.py:104) returns a BaseRetrievalQA (:110), a Chain with run(*args, **kwargs) (chains/base.py:580)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "7d31272d16e00378",
+   "path": "langchain_classic.chains.RetrievalQA.from_chain_type.run",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): RetrievalQA.from_chain_type (chains/retrieval_qa/base.py:104) returns a BaseRetrievalQA (:110), a Chain with run(*args, **kwargs) (chains/base.py:580)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "335edda3f2249683",
+   "path": "langchain_classic.chains.combine_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/chains/combine_documents/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "704539e42c224581",
+   "path": "langchain_classic.chains.combine_documents.create_stuff_documents_chain",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "create_stuff_documents_chain langchain-classic-1.0.8/langchain_classic/chains/combine_documents/stuff.py:25 __init__.py:8 from langchain_classic.chains.combine_documents.stuff import create_stuff_documents_chain | def(llm: LanguageModelLike, prompt: BasePromptTemplate, *, output_parser: BaseOutputParser | None=None, document_prompt: BasePromptTemplate | None=None, document_separator: str=DEFAULT_DOCUMENT_SEPARATOR, document_variable_name: str=DOCUMENTS_KEY) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "cec662668de3d80a",
+   "path": "langchain_classic.chains.combine_documents.create_stuff_documents_chain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "create_stuff_documents_chain langchain-classic-1.0.8/langchain_classic/chains/combine_documents/stuff.py:25 __init__.py:8 from langchain_classic.chains.combine_documents.stuff import create_stuff_documents_chain"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3807045ffcc26f47",
+   "path": "langchain_classic.chains.create_history_aware_retriever",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): chains/__init__.py:46 lazy table -> chains/history_aware_retriever.py:10 def create_history_aware_retriever(llm, retriever, prompt)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "fbd2018b60bfb600",
+   "path": "langchain_classic.chains.create_history_aware_retriever",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): chains/__init__.py:46 lazy table -> chains/history_aware_retriever.py:10 def create_history_aware_retriever(llm, retriever, prompt)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "1402d6860f677d95",
+   "path": "langchain_classic.chains.create_retrieval_chain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "create_retrieval_chain langchain-classic-1.0.8/langchain_classic/chains/retrieval.py:12 __init__.py:73 lazy -> langchain_classic.chains.retrieval"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "53aac189547701a0",
+   "path": "langchain_classic.chains.create_retrieval_chain",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "create_retrieval_chain langchain-classic-1.0.8/langchain_classic/chains/retrieval.py:12 __init__.py:73 lazy -> langchain_classic.chains.retrieval | def(retriever: BaseRetriever | Runnable[dict, RetrieverOutput], combine_docs_chain: Runnable[dict[str, Any], str]) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "2a9dba9ec5d9f427",
+   "path": "langchain_classic.chains.create_retrieval_chain.invoke",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): create_retrieval_chain (chains/retrieval.py:12) returns a Runnable, whose invoke(input) is langchain_core's"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3eb081bc96a92cd9",
+   "path": "langchain_classic.chains.create_retrieval_chain.invoke",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-classic 1.0.8 (newest before the env's cutoff, 2026-06-10): create_retrieval_chain (chains/retrieval.py:12) returns a Runnable, whose invoke(input) is langchain_core's"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c3916060f8664ad0",
+   "path": "langchain_classic.chains.question_answering",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/chains/question_answering/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "823979ff8f8c549c",
+   "path": "langchain_classic.chains.question_answering.load_qa_chain",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "load_qa_chain langchain-classic-1.0.8/langchain_classic/chains/question_answering/chain.py:241 __init__.py:1 from langchain_classic.chains.question_answering.chain import load_qa_chain"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "4f7257604cdf6eaa",
+   "path": "langchain_classic.memory",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/memory/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "25d82365ac8f5344",
+   "path": "langchain_classic.memory.ConversationBufferMemory",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 memory/buffer.py fields human_prefix :34, ai_prefix :35, memory_key :36; BaseChatMemory chat_memory :39, output_key :42, return_messages :44; llm and max_token_limit are no field, and Serializable's extra='ignore' (langchain_core load/serializable.py:216) drops them without an error"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "48dc4d638f16c9f1",
+   "path": "langchain_classic.memory.ConversationBufferMemory",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 memory/buffer.py fields human_prefix :34, ai_prefix :35, memory_key :36; BaseChatMemory chat_memory :39, output_key :42, return_messages :44; llm and max_token_limit are no field, and Serializable's extra='ignore' (langchain_core load/serializable.py:216) drops them without an error"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6e4c6f180aa122a5",
+   "path": "langchain_classic.memory.ConversationBufferMemory",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 memory/buffer.py fields human_prefix :34, ai_prefix :35, memory_key :36; BaseChatMemory chat_memory :39, output_key :42, return_messages :44; llm and max_token_limit are no field, and Serializable's extra='ignore' (langchain_core load/serializable.py:216) drops them without an error"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c47d76c9a665726f",
+   "path": "langchain_classic.memory.ConversationBufferMemory",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ConversationBufferMemory langchain-classic-1.0.8/langchain_classic/memory/buffer.py:24 __init__.py:6 from langchain_classic.memory.buffer import ConversationBufferMemory"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "38a4b539f845b549",
+   "path": "langchain_classic.memory.ConversationBufferWindowMemory",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ConversationBufferWindowMemory langchain-classic-1.0.8/langchain_classic/memory/buffer_window.py:21 __init__.py:10 from langchain_classic.memory.buffer_window import ConversationBufferWindowMemory"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "77989f94631321d8",
+   "path": "langchain_classic.memory.ConversationBufferWindowMemory",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-classic 1.0.8 memory/buffer_window.py field k :31"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "be60172d77cdfa0a",
+   "path": "langchain_classic.retrievers",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/retrievers/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "7a5ee4756525b68e",
+   "path": "langchain_classic.retrievers.ContextualCompressionRetriever",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ContextualCompressionRetriever langchain-classic-1.0.8/langchain_classic/retrievers/contextual_compression.py:13 __init__.py:11 from langchain_classic.retrievers.contextual_compression import ContextualCompressionRetriever"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "5888e17e203bac97",
+   "path": "langchain_classic.retrievers.document_compressors.chain_extract",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/retrievers/document_compressors/chain_extract.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ef8b96f0ced93208",
+   "path": "langchain_classic.retrievers.document_compressors.chain_extract.LLMChainExtractor",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "LLMChainExtractor langchain-classic-1.0.8/langchain_classic/retrievers/document_compressors/chain_extract.py:51 "
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "147e472c4ee68740",
+   "path": "langchain_classic.retrievers.multi_query",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-classic-1.0.8/langchain_classic/retrievers/multi_query.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "87907cd867b90f3a",
+   "path": "langchain_classic.retrievers.multi_query.MultiQueryRetriever",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "MultiQueryRetriever langchain-classic-1.0.8/langchain_classic/retrievers/multi_query.py:49 "
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "e0bd127b268f589d",
+   "path": "langchain_community.document_loaders",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-community-0.4.2/langchain_community/document_loaders/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "0c8926120795ea88",
+   "path": "langchain_community.document_loaders.CSVLoader",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "CSVLoader langchain-community-0.4.2/langchain_community/document_loaders/csv_loader.py:16 __init__.py:133 from langchain_community.document_loaders.csv_loader import CSVLoader"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "2a3e01d4354531ba",
+   "path": "langchain_community.document_loaders.DirectoryLoader",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "DirectoryLoader langchain-community-0.4.2/langchain_community/document_loaders/directory.py:29 __init__.py:153 from langchain_community.document_loaders.directory import DirectoryLoader | __init__ directory.py:32 (self, path: str, glob: Union[List[str], Tuple[str], str]='**/[!.]*', silent_errors: bool=False, load_hidden: bool=False, loader_cls: FILE_LOADER_TYPE=UnstructuredFileLoader, loader_kwargs: Union[dict, None]=None, recursive: bool=False, show_progress: bool=False, use_multithreading: bool=False, max_c) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "eb81cbc395c2cf0a",
+   "path": "langchain_community.document_loaders.DirectoryLoader",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "DirectoryLoader langchain-community-0.4.2/langchain_community/document_loaders/directory.py:29 __init__.py:153 from langchain_community.document_loaders.directory import DirectoryLoader"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ba2f7657985cb490",
+   "path": "langchain_community.document_loaders.DirectoryLoader.load",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "DirectoryLoader langchain-community-0.4.2/langchain_community/document_loaders/directory.py:29 __init__.py:153 from langchain_community.document_loaders.directory import DirectoryLoader .load langchain-community-0.4.2/langchain_community/document_loaders/directory.py:115"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c0338098e17a2aa7",
+   "path": "langchain_community.document_loaders.DirectoryLoader.load",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "DirectoryLoader langchain-community-0.4.2/langchain_community/document_loaders/directory.py:29 __init__.py:153 from langchain_community.document_loaders.directory import DirectoryLoader .load langchain-community-0.4.2/langchain_community/document_loaders/directory.py:115 | def(self) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "b236dc204732407c",
+   "path": "langchain_community.document_loaders.PyPDFLoader",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "PyPDFLoader langchain-community-0.4.2/langchain_community/document_loaders/pdf.py:186 __init__.py:349 from langchain_community.document_loaders.pdf import PyPDFLoader"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "1a843ed279df8be9",
+   "path": "langchain_community.document_loaders.PythonLoader",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "PythonLoader langchain-community-0.4.2/langchain_community/document_loaders/python.py:8 __init__.py:383 from langchain_community.document_loaders.python import PythonLoader"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "25a05ecc7110b786",
+   "path": "langchain_community.document_loaders.TextLoader",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "TextLoader langchain-community-0.4.2/langchain_community/document_loaders/text.py:13 __init__.py:466 from langchain_community.document_loaders.text import TextLoader"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "661d8ae034933b96",
+   "path": "langchain_community.document_loaders.UnstructuredFileLoader",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "UnstructuredFileLoader langchain-community-0.4.2/langchain_community/document_loaders/unstructured.py:174 __init__.py:487 from langchain_community.document_loaders.unstructured import UnstructuredFileLoader"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "bcbf9041783d8f56",
+   "path": "langchain_community.document_loaders.WebBaseLoader",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "WebBaseLoader langchain-community-0.4.2/langchain_community/document_loaders/web_base.py:42 __init__.py:508 from langchain_community.document_loaders.web_base import WebBaseLoader"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c2a5a664164a14e8",
+   "path": "langchain_community.document_loaders.WebBaseLoader",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "WebBaseLoader langchain-community-0.4.2/langchain_community/document_loaders/web_base.py:42 __init__.py:508 from langchain_community.document_loaders.web_base import WebBaseLoader | __init__ web_base.py:142 (self, web_path: Union[str, Sequence[str]]='', header_template: Optional[dict]=None, verify_ssl: bool=True, proxies: Optional[dict]=None, continue_on_failure: bool=False, autoset_encoding: bool=True, encoding: Optional[str]=None, web_paths: Sequence[str]=(), requests_per_second: int=2, default_parser) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "53110b609af16582",
+   "path": "langchain_community.document_loaders.WebBaseLoader.load",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "WebBaseLoader langchain-community-0.4.2/langchain_community/document_loaders/web_base.py:42 __init__.py:508 from langchain_community.document_loaders.web_base import WebBaseLoader .load langchain-core-1.8.1/langchain_core/document_loaders/base.py:37"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "833d5459e03b5fa0",
+   "path": "langchain_community.document_loaders.WebBaseLoader.load",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "WebBaseLoader langchain-community-0.4.2/langchain_community/document_loaders/web_base.py:42 __init__.py:508 from langchain_community.document_loaders.web_base import WebBaseLoader .load langchain-core-1.8.1/langchain_core/document_loaders/base.py:37 | def(self) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6d9136dd9a98ae2c",
+   "path": "langchain_community.embeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-community-0.4.2/langchain_community/embeddings/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "44b3e490e3512f34",
+   "path": "langchain_community.embeddings.Model2vecEmbeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Model2vecEmbeddings langchain-community-0.4.2/langchain_community/embeddings/model2vec.py:8 __init__.py:151 from langchain_community.embeddings.model2vec import Model2vecEmbeddings"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "30d3bd1dfca79432",
+   "path": "langchain_community.embeddings.huggingface",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-community-0.4.2/langchain_community/embeddings/huggingface.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "07b850598b82f8eb",
+   "path": "langchain_community.embeddings.huggingface.HuggingFaceEmbeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "HuggingFaceEmbeddings langchain-community-0.4.2/langchain_community/embeddings/huggingface.py:27 "
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "56f22fea64dbfa5a",
+   "path": "langchain_community.embeddings.huggingface.HuggingFaceEmbeddings",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 embeddings/huggingface.py __init__(**kwargs) :67 -> super().__init__; fields model_name :48, model_kwargs :53"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "5669daa0e1f5c90c",
+   "path": "langchain_community.llms",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-community-0.4.2/langchain_community/llms/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "55886df46a0a5908",
+   "path": "langchain_community.llms.HuggingFacePipeline",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2: llms/__init__.py:738 __getattr__ -> :250 huggingface_pipeline.HuggingFacePipeline, field pipeline: Any = None (huggingface_pipeline.py:63)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "446577bb6251ec1f",
+   "path": "langchain_community.utilities",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-community-0.4.2/langchain_community/utilities/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6bf789c8d93b028a",
+   "path": "langchain_community.utilities.BingSearchAPIWrapper",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "BingSearchAPIWrapper langchain-community-0.4.2/langchain_community/utilities/bing_search.py:28 __init__.py:32 from langchain_community.utilities.bing_search import BingSearchAPIWrapper | pydantic-like, fields hit ['bing_search_url', 'bing_subscription_key'] missing [] npos 0; external ['pydantic.BaseModel']"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "e26ed8b1463ba2ce",
+   "path": "langchain_community.utilities.BingSearchAPIWrapper",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "BingSearchAPIWrapper langchain-community-0.4.2/langchain_community/utilities/bing_search.py:28 __init__.py:32 from langchain_community.utilities.bing_search import BingSearchAPIWrapper"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "36631eac8b7229fa",
+   "path": "langchain_community.utilities.BingSearchAPIWrapper.results",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "BingSearchAPIWrapper langchain-community-0.4.2/langchain_community/utilities/bing_search.py:28 __init__.py:32 from langchain_community.utilities.bing_search import BingSearchAPIWrapper .results langchain-community-0.4.2/langchain_community/utilities/bing_search.py:92"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "7749b4c5d0329838",
+   "path": "langchain_community.utilities.BingSearchAPIWrapper.results",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "BingSearchAPIWrapper langchain-community-0.4.2/langchain_community/utilities/bing_search.py:28 __init__.py:32 from langchain_community.utilities.bing_search import BingSearchAPIWrapper .results langchain-community-0.4.2/langchain_community/utilities/bing_search.py:92 | def(self, query: str, num_results: int) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "5b754934f65caf82",
+   "path": "langchain_community.utilities.DuckDuckGoSearchAPIWrapper",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "DuckDuckGoSearchAPIWrapper langchain-community-0.4.2/langchain_community/utilities/duckduckgo_search.py:12 __init__.py:42 from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper | pydantic-like, fields hit [] missing [] npos 0; external ['pydantic.BaseModel']"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "638e3b4ad7782dca",
+   "path": "langchain_community.utilities.DuckDuckGoSearchAPIWrapper",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "DuckDuckGoSearchAPIWrapper langchain-community-0.4.2/langchain_community/utilities/duckduckgo_search.py:12 __init__.py:42 from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "45aeba3e1a4ebea6",
+   "path": "langchain_community.utilities.DuckDuckGoSearchAPIWrapper.results",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "DuckDuckGoSearchAPIWrapper langchain-community-0.4.2/langchain_community/utilities/duckduckgo_search.py:12 __init__.py:42 from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper .results langchain-community-0.4.2/langchain_community/utilities/duckduckgo_search.py:126 | def(self, query: str, max_results: int, source: Optional[str]=None) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "e21863cf8e87d9dc",
+   "path": "langchain_community.utilities.DuckDuckGoSearchAPIWrapper.results",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "DuckDuckGoSearchAPIWrapper langchain-community-0.4.2/langchain_community/utilities/duckduckgo_search.py:12 __init__.py:42 from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper .results langchain-community-0.4.2/langchain_community/utilities/duckduckgo_search.py:126"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "9db3c08190064209",
+   "path": "langchain_community.utilities.SerpAPIWrapper",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "SerpAPIWrapper langchain-community-0.4.2/langchain_community/utilities/serpapi.py:29 __init__.py:134 from langchain_community.utilities.serpapi import SerpAPIWrapper"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "f2f56eb5aa18683f",
+   "path": "langchain_community.utilities.SerpAPIWrapper",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "SerpAPIWrapper langchain-community-0.4.2/langchain_community/utilities/serpapi.py:29 __init__.py:134 from langchain_community.utilities.serpapi import SerpAPIWrapper | pydantic-like, fields hit ['params', 'serpapi_api_key'] missing [] npos 0; external ['pydantic.BaseModel']"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "49e46060b5c4ae46",
+   "path": "langchain_community.utilities.SerpAPIWrapper.run",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "SerpAPIWrapper langchain-community-0.4.2/langchain_community/utilities/serpapi.py:29 __init__.py:134 from langchain_community.utilities.serpapi import SerpAPIWrapper .run langchain-community-0.4.2/langchain_community/utilities/serpapi.py:86"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "df7034c7d470ba91",
+   "path": "langchain_community.vectorstores",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-community-0.4.2/langchain_community/vectorstores/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "55636b944c9f9dba",
+   "path": "langchain_community.vectorstores.FAISS",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "1508ffa729586d21",
+   "path": "langchain_community.vectorstores.FAISS.from_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "28dd88f12235d199",
+   "path": "langchain_community.vectorstores.FAISS.from_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "100c325f62a21b8e",
+   "path": "langchain_community.vectorstores.FAISS.from_documents.delete",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d13dbfb87256a9d0",
+   "path": "langchain_community.vectorstores.FAISS.from_documents.delete",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "9afe51137eb40b54",
+   "path": "langchain_community.vectorstores.FAISS.from_documents.docstore",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "4a5809830257c853",
+   "path": "langchain_community.vectorstores.FAISS.from_documents.save_local",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c7d82387570b6f24",
+   "path": "langchain_community.vectorstores.FAISS.from_documents.save_local",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "4247c9b71b72a392",
+   "path": "langchain_community.vectorstores.FAISS.load_local",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c40156bf9f3c0bb4",
+   "path": "langchain_community.vectorstores.FAISS.load_local",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-community 0.4.2 vectorstores/faiss.py:75 FAISS(VectorStore): from_documents(documents, embedding, **kwargs) is langchain_core 1.8.1 VectorStore's (vectorstores/base.py:788) and returns the class; normalize_L2 reaches from_texts through **kwargs; save_local(folder_path, index_name) :1147; load_local(folder_path, embeddings, index_name, *, allow_dangerous_deserialization, io_flags, **kwargs) :1167; delete(ids, **kwargs) :918; self.docstore :224 (the checker read the filesystem's case-insensitive FAISS.py match; faiss.py is the module)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "7ccfc83859faade6",
+   "path": "langchain_community.vectorstores.utils",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-community-0.4.2/langchain_community/vectorstores/utils.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "58ddbfd1076c594f",
+   "path": "langchain_community.vectorstores.utils.filter_complex_metadata",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "filter_complex_metadata langchain-community-0.4.2/langchain_community/vectorstores/utils.py:57 "
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "87a6e2939c787786",
+   "path": "langchain_community.vectorstores.utils.filter_complex_metadata",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "filter_complex_metadata langchain-community-0.4.2/langchain_community/vectorstores/utils.py:57  | def(documents: List[Document], *, allowed_types: Tuple[Type, ...]=(str, bool, int, float)) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "cbc84110bbfab131",
+   "path": "langchain_core.prompts.ChatPromptTemplate",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "ChatPromptTemplate langchain-core-1.8.1/langchain_core/prompts/chat.py:795 __init__.py:17 from langchain_core.prompts.chat import ChatPromptTemplate | __init__ chat.py:908 (self, messages: Sequence[MessageLikeRepresentation], *, template_format: PromptTemplateFormat='f-string', **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "682728ca2ce4dde8",
+   "path": "langchain_google_vertexai",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-google-vertexai-3.3.0/langchain_google_vertexai/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3caaf59e16a0824b",
+   "path": "langchain_google_vertexai.VertexAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "VertexAI langchain-google-vertexai-3.3.0/langchain_google_vertexai/llms.py:34 __init__.py:60 from langchain_google_vertexai.llms import VertexAI"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "b986eecedf511f9b",
+   "path": "langchain_google_vertexai.VertexAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-google-vertexai 3.3.0 llms.py:76 __init__(*, model_name, **kwargs); max_output_tokens field (alias max_tokens) _VertexAICommon:233; populate_by_name (:102)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "46bbb4f9fc031654",
+   "path": "langchain_huggingface",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-huggingface-1.2.3/langchain_huggingface/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "86ddfa0eedeb87f3",
+   "path": "langchain_huggingface.HuggingFaceEmbeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "HuggingFaceEmbeddings langchain-huggingface-1.2.3/langchain_huggingface/embeddings/huggingface.py:10 __init__.py:7 from langchain_huggingface.embeddings import HuggingFaceEmbeddings / __init__.py:1 from langchain_huggingface.embeddings.huggingface import HuggingFaceEmbeddings"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "9fad3e5dbe155e53",
+   "path": "langchain_huggingface.HuggingFaceEmbeddings",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-huggingface 1.2.3 embeddings/huggingface.py __init__(**kwargs) :56; fields model_name (alias model) :30, model_kwargs :37; populate_by_name (:83)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d0c940f7d18f712a",
+   "path": "langchain_huggingface.HuggingFaceEmbeddings",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-huggingface 1.2.3 embeddings/huggingface.py __init__(**kwargs) :56; fields model_name (alias model) :30, model_kwargs :37; populate_by_name (:83)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "25410099ee8546ed",
+   "path": "langchain_huggingface.HuggingFacePipeline",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-huggingface 1.2.3 llms/huggingface_pipeline.py fields pipeline :76, model_kwargs :83, pipeline_kwargs :86; callbacks BaseLanguageModel's (langchain_core :204); extra='forbid' (:92) and every keyword is a field"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "2b8db9727c95921f",
+   "path": "langchain_huggingface.HuggingFacePipeline",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-huggingface 1.2.3 llms/huggingface_pipeline.py fields pipeline :76, model_kwargs :83, pipeline_kwargs :86; callbacks BaseLanguageModel's (langchain_core :204); extra='forbid' (:92) and every keyword is a field"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "5aa6869f26a206f5",
+   "path": "langchain_huggingface.HuggingFacePipeline",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-huggingface 1.2.3 llms/huggingface_pipeline.py fields pipeline :76, model_kwargs :83, pipeline_kwargs :86; callbacks BaseLanguageModel's (langchain_core :204); extra='forbid' (:92) and every keyword is a field"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "5fefbe3c031b685a",
+   "path": "langchain_huggingface.HuggingFacePipeline",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "HuggingFacePipeline langchain-huggingface-1.2.3/langchain_huggingface/llms/huggingface_pipeline.py:39 __init__.py:11 from langchain_huggingface.llms import HuggingFacePipeline / __init__.py:4 from langchain_huggingface.llms.huggingface_pipeline import HuggingFacePipeline"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "192426e724106dda",
+   "path": "langchain_huggingface.HuggingFacePipeline.invoke",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "HuggingFacePipeline langchain-huggingface-1.2.3/langchain_huggingface/llms/huggingface_pipeline.py:39 __init__.py:11 from langchain_huggingface.llms import HuggingFacePipeline / __init__.py:4 from langchain_huggingface.llms.huggingface_pipeline import HuggingFacePipeline .invoke langchain-core-1.8.1/langchain_core/language_models/llms.py:374 | def(self, input: LanguageModelInput, config: RunnableConfig | None=None, *, stop: list[str] | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c865cd9a07b249a4",
+   "path": "langchain_huggingface.HuggingFacePipeline.invoke",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "HuggingFacePipeline langchain-huggingface-1.2.3/langchain_huggingface/llms/huggingface_pipeline.py:39 __init__.py:11 from langchain_huggingface.llms import HuggingFacePipeline / __init__.py:4 from langchain_huggingface.llms.huggingface_pipeline import HuggingFacePipeline .invoke langchain-core-1.8.1/langchain_core/language_models/llms.py:374"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "9d7e7221b403d8bb",
+   "path": "langchain_openai",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-openai-1.8.0/langchain_openai/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "eead8bd26ec271b8",
+   "path": "langchain_openai.AzureChatOpenAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.3.2 (newest before the env's cutoff, 2026-06-13) chat_models/base.py: model_name (alias model) :601, temperature :604, openai_api_key :610, openai_api_base (alias base_url) :664, request_timeout :686, n :739, max_tokens :745; populate_by_name=True :1073; azure.py: deployment_name (alias azure_deployment) :473, openai_api_version :481, openai_api_type :531"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "15100c2eedb62594",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 chat_models/base.py fields model_name (alias model) :805, temperature :808, openai_api_key (alias api_key) :814, openai_api_base (alias base_url) :866, streaming :938, max_tokens (alias max_completion_tokens, ChatOpenAI:3798); populate_by_name (:1306); verbose BaseLanguageModel's; any other keyword (callBack) goes to model_kwargs with a warning through build_extra (:1328 -> langchain_core utils/utils.py:238-245), not an error, as in the langchain version the task started from"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "2435a4beefd03a34",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 chat_models/base.py fields model_name (alias model) :805, temperature :808, openai_api_key (alias api_key) :814, openai_api_base (alias base_url) :866, streaming :938, max_tokens (alias max_completion_tokens, ChatOpenAI:3798); populate_by_name (:1306); verbose BaseLanguageModel's; any other keyword (callBack) goes to model_kwargs with a warning through build_extra (:1328 -> langchain_core utils/utils.py:238-245), not an error, as in the langchain version the task started from"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "2839017059fcb7e1",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 chat_models/base.py fields model_name (alias model) :805, temperature :808, openai_api_key (alias api_key) :814, openai_api_base (alias base_url) :866, streaming :938, max_tokens (alias max_completion_tokens, ChatOpenAI:3798); populate_by_name (:1306); verbose BaseLanguageModel's; any other keyword (callBack) goes to model_kwargs with a warning through build_extra (:1328 -> langchain_core utils/utils.py:238-245), not an error, as in the langchain version the task started from"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "367250af6678bebb",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 chat_models/base.py fields model_name (alias model) :805, temperature :808, openai_api_key (alias api_key) :814, openai_api_base (alias base_url) :866, streaming :938, max_tokens (alias max_completion_tokens, ChatOpenAI:3798); populate_by_name (:1306); verbose BaseLanguageModel's; any other keyword (callBack) goes to model_kwargs with a warning through build_extra (:1328 -> langchain_core utils/utils.py:238-245), not an error, as in the langchain version the task started from"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "649bf10efb21ffbb",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 chat_models/base.py fields model_name (alias model) :805, temperature :808, openai_api_key (alias api_key) :814, openai_api_base (alias base_url) :866, streaming :938, max_tokens (alias max_completion_tokens, ChatOpenAI:3798); populate_by_name (:1306); verbose BaseLanguageModel's; any other keyword (callBack) goes to model_kwargs with a warning through build_extra (:1328 -> langchain_core utils/utils.py:238-245), not an error, as in the langchain version the task started from"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "88e7618350457ab0",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.3.2 (newest before the env's cutoff, 2026-06-13) chat_models/base.py: model_name (alias model) :601, temperature :604, openai_api_key :610, openai_api_base (alias base_url) :664, request_timeout :686, n :739, max_tokens :745; populate_by_name=True :1073; azure.py: deployment_name (alias azure_deployment) :473, openai_api_version :481, openai_api_type :531"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "98a5bbaa13ea02bc",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 chat_models/base.py fields model_name (alias model) :805, temperature :808, openai_api_key (alias api_key) :814, openai_api_base (alias base_url) :866, streaming :938, max_tokens (alias max_completion_tokens, ChatOpenAI:3798); populate_by_name (:1306); verbose BaseLanguageModel's; any other keyword (callBack) goes to model_kwargs with a warning through build_extra (:1328 -> langchain_core utils/utils.py:238-245), not an error, as in the langchain version the task started from"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "a5c559321f0a633a",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 chat_models/base.py fields model_name (alias model) :805, temperature :808, openai_api_key (alias api_key) :814, openai_api_base (alias base_url) :866, streaming :938, max_tokens (alias max_completion_tokens, ChatOpenAI:3798); populate_by_name (:1306); verbose BaseLanguageModel's; any other keyword (callBack) goes to model_kwargs with a warning through build_extra (:1328 -> langchain_core utils/utils.py:238-245), not an error, as in the langchain version the task started from"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "fefb44668f3bebd3",
+   "path": "langchain_openai.ChatOpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 chat_models/base.py fields model_name (alias model) :805, temperature :808, openai_api_key (alias api_key) :814, openai_api_base (alias base_url) :866, streaming :938, max_tokens (alias max_completion_tokens, ChatOpenAI:3798); populate_by_name (:1306); verbose BaseLanguageModel's; any other keyword (callBack) goes to model_kwargs with a warning through build_extra (:1328 -> langchain_core utils/utils.py:238-245), not an error, as in the langchain version the task started from"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "63d309101f996da7",
+   "path": "langchain_openai.ChatOpenAI.invoke",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "ChatOpenAI langchain-openai-1.8.0/langchain_openai/chat_models/base.py:2928 __init__.py:4 from langchain_openai.chat_models import ChatOpenAI / __init__.py:4 from langchain_openai.chat_models.base import ChatOpenAI .invoke langchain-core-1.8.1/langchain_core/language_models/chat_models.py:516"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "aecfc886758f7c0b",
+   "path": "langchain_openai.ChatOpenAI.invoke",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "ChatOpenAI langchain-openai-1.8.0/langchain_openai/chat_models/base.py:2928 __init__.py:4 from langchain_openai.chat_models import ChatOpenAI / __init__.py:4 from langchain_openai.chat_models.base import ChatOpenAI .invoke langchain-core-1.8.1/langchain_core/language_models/chat_models.py:516 | def(self, input: LanguageModelInput, config: RunnableConfig | None=None, *, stop: list[str] | None=None, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "306e41fa93a64b5e",
+   "path": "langchain_openai.OpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-openai 1.8.0 llms/base.py fields model_name (alias model) :175, temperature :178, openai_api_key (alias api_key) :204, openai_api_base (alias base_url) :209; populate_by_name (:304)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6ddf6c46923937ba",
+   "path": "langchain_openai.OpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-openai 1.8.0 llms/base.py fields model_name (alias model) :175, temperature :178, openai_api_key (alias api_key) :204, openai_api_base (alias base_url) :209; populate_by_name (:304)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "9619601ed3192741",
+   "path": "langchain_openai.OpenAI",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain_core 1.8.1 load/serializable.py:135 __init__(*args, **kwargs) hands keywords to pydantic; langchain-openai 1.8.0 llms/base.py fields model_name (alias model) :175, temperature :178, openai_api_key (alias api_key) :204, openai_api_base (alias base_url) :209; populate_by_name (:304)"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "a2b67c7803e8b079",
+   "path": "langchain_openai.OpenAI",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "OpenAI langchain-openai-1.8.0/langchain_openai/llms/base.py:786 __init__.py:8 from langchain_openai.llms import OpenAI / __init__.py:4 from langchain_openai.llms.base import OpenAI"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "4013ead6d788cb83",
+   "path": "langchain_openai.OpenAIEmbeddings",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 embeddings/base.py:234 openai_api_key = Field(alias=\"api_key\"); model_config extra=\"forbid\", populate_by_name=True (:344), so api_key= is the alias"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "62764b3b033bfbe9",
+   "path": "langchain_openai.OpenAIEmbeddings",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 embeddings/base.py:234 openai_api_key = Field(alias=\"api_key\"); model_config extra=\"forbid\", populate_by_name=True (:344), so api_key= is the alias"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "6c9325f9b50f2d70",
+   "path": "langchain_openai.OpenAIEmbeddings",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 embeddings/base.py:234 openai_api_key = Field(alias=\"api_key\"); model_config extra=\"forbid\", populate_by_name=True (:344), so api_key= is the alias"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "dbef003a8762db50",
+   "path": "langchain_openai.OpenAIEmbeddings",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "langchain-openai 1.8.0 embeddings/base.py:234 openai_api_key = Field(alias=\"api_key\"); model_config extra=\"forbid\", populate_by_name=True (:344), so api_key= is the alias"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "92794c6f0941119d",
+   "path": "langchain_text_splitters",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "module langchain-text-splitters-1.1.3/langchain_text_splitters/__init__.py"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "327999daea517e89",
+   "path": "langchain_text_splitters.CharacterTextSplitter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:16 __init__(separator, is_separator_regex, **kwargs) -> TextSplitter.__init__(chunk_size, chunk_overlap, length_function, keep_separator, add_start_index, strip_whitespace) base.py:62"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "44818bdef1d1f5ae",
+   "path": "langchain_text_splitters.CharacterTextSplitter",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "CharacterTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:13 __init__.py:21 from langchain_text_splitters.character import CharacterTextSplitter"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "68cd799082bd9fa4",
+   "path": "langchain_text_splitters.CharacterTextSplitter.split_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "CharacterTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:13 __init__.py:21 from langchain_text_splitters.character import CharacterTextSplitter .split_documents langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:146 | def(self, documents: Iterable[Document]) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "a654b22a9d2f787c",
+   "path": "langchain_text_splitters.CharacterTextSplitter.split_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "CharacterTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:13 __init__.py:21 from langchain_text_splitters.character import CharacterTextSplitter .split_documents langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:146"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "8b67fbf3b41e517e",
+   "path": "langchain_text_splitters.Language",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "595ced98ca32b211",
+   "path": "langchain_text_splitters.Language.CPP",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .CPP langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:451"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "e992438c9e4343df",
+   "path": "langchain_text_splitters.Language.GO",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .GO langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:452"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "37d42c6bd218f781",
+   "path": "langchain_text_splitters.Language.HTML",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .HTML langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:468"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d1ab983bb543464a",
+   "path": "langchain_text_splitters.Language.JAVA",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .JAVA langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:453"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3b4649dfa511669e",
+   "path": "langchain_text_splitters.Language.JS",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .JS langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:455"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "2c5444a4b64ba6b4",
+   "path": "langchain_text_splitters.Language.LATEX",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .LATEX langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:467"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3c9b36ac94aef77e",
+   "path": "langchain_text_splitters.Language.MARKDOWN",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .MARKDOWN langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:466"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "db35f94652a61505",
+   "path": "langchain_text_splitters.Language.PHP",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .PHP langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:457"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3ed5b8193728ba25",
+   "path": "langchain_text_splitters.Language.PROTO",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .PROTO langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:458"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "915c73b5162868bb",
+   "path": "langchain_text_splitters.Language.PYTHON",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .PYTHON langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:459"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "7e7979bab42a59d2",
+   "path": "langchain_text_splitters.Language.RST",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .RST langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:461"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "aaebee00bb47b106",
+   "path": "langchain_text_splitters.Language.RUBY",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .RUBY langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:462"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "cf1af4dadb171fd0",
+   "path": "langchain_text_splitters.Language.RUST",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .RUST langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:463"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "9cc175263011e0ea",
+   "path": "langchain_text_splitters.Language.SCALA",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .SCALA langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:464"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c62930a399056517",
+   "path": "langchain_text_splitters.Language.SOL",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .SOL langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:469"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "154954b10dcc738c",
+   "path": "langchain_text_splitters.Language.SWIFT",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "Language langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:448 __init__.py:14 from langchain_text_splitters.base import Language .SWIFT langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:465"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "022bc41cf6899124",
+   "path": "langchain_text_splitters.Language.cpp",
+   "kind": "name",
+   "verdict": "breaks",
+   "evidence": "langchain-text-splitters 1.1.3 base.py:448 class Language(str, Enum) defines CPP = \"cpp\" and no lowercase member or __getattr__, so Language.cpp raises AttributeError"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "b1f8a1c3c8a080e2",
+   "path": "langchain_text_splitters.LatexTextSplitter",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "LatexTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/latex.py:11 __init__.py:33 from langchain_text_splitters.latex import LatexTextSplitter"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ed994388618ed0cb",
+   "path": "langchain_text_splitters.LatexTextSplitter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 latex.py:14 __init__(**kwargs) -> RecursiveCharacterTextSplitter -> TextSplitter.__init__ base.py:62"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "3521bbe389b9a4ca",
+   "path": "langchain_text_splitters.LatexTextSplitter.split_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "LatexTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/latex.py:11 __init__.py:33 from langchain_text_splitters.latex import LatexTextSplitter .split_documents langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:146 | def(self, documents: Iterable[Document]) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ada69fcd550f6715",
+   "path": "langchain_text_splitters.LatexTextSplitter.split_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "LatexTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/latex.py:11 __init__.py:33 from langchain_text_splitters.latex import LatexTextSplitter .split_documents langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:146"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "71e9205781eb92ac",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:98 __init__(separators, keep_separator, is_separator_regex, **kwargs) -> TextSplitter.__init__(chunk_size, chunk_overlap, length_function, ...) base.py:62"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "9ac6b1fe92f9b4e7",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:98 __init__(separators, keep_separator, is_separator_regex, **kwargs) -> TextSplitter.__init__(chunk_size, chunk_overlap, length_function, ...) base.py:62"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "c637e83bced4a390",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "RecursiveCharacterTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:91 __init__.py:21 from langchain_text_splitters.character import RecursiveCharacterTextSplitter"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "fbf81ecc13e30826",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 character.py:98 __init__(separators, keep_separator, is_separator_regex, **kwargs) -> TextSplitter.__init__(chunk_size, chunk_overlap, length_function, ...) base.py:62"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "b735771179e85d0e",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter.from_language",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "RecursiveCharacterTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:91 __init__.py:21 from langchain_text_splitters.character import RecursiveCharacterTextSplitter .from_language langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:165 | def(cls, language: Language, **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "ec0c24cb4b57d573",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter.from_language",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "RecursiveCharacterTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:91 __init__.py:21 from langchain_text_splitters.character import RecursiveCharacterTextSplitter .from_language langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:165"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "b198235753c2cb23",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_text",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "RecursiveCharacterTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:91 __init__.py:21 from langchain_text_splitters.character import RecursiveCharacterTextSplitter .split_text langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:153 | def(self, text: str) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "fd4acd16cb284437",
+   "path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_text",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "RecursiveCharacterTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:91 __init__.py:21 from langchain_text_splitters.character import RecursiveCharacterTextSplitter .split_text langchain-text-splitters-1.1.3/langchain_text_splitters/character.py:153"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "9377b2f1e0ad025c",
+   "path": "langchain_text_splitters.SpacyTextSplitter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "langchain-text-splitters 1.1.3 spacy.py:28 __init__(separator, pipeline, max_length, *, strip_whitespace, **kwargs) -> TextSplitter.__init__(chunk_size, chunk_overlap, ...) base.py:62"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "d53138d5794672d2",
+   "path": "langchain_text_splitters.SpacyTextSplitter",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "SpacyTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/spacy.py:19 __init__.py:49 from langchain_text_splitters.spacy import SpacyTextSplitter"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "b7ba391dde9de543",
+   "path": "langchain_text_splitters.TokenTextSplitter",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "TokenTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:325 __init__.py:14 from langchain_text_splitters.base import TokenTextSplitter"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "dfc2a809db288ef7",
+   "path": "langchain_text_splitters.TokenTextSplitter",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "TokenTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:325 __init__.py:14 from langchain_text_splitters.base import TokenTextSplitter | __init__ base.py:328 (self, encoding_name: str='gpt2', model_name: str | None=None, allowed_special: Literal['all'] | AbstractSet[str] | None=None, disallowed_special: Literal['all'] | Collection[str]='all', **kwargs: Any) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "db31d05311b377dd",
+   "path": "langchain_text_splitters.TokenTextSplitter.split_documents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "TokenTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:325 __init__.py:14 from langchain_text_splitters.base import TokenTextSplitter .split_documents langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:146 | def(self, documents: Iterable[Document]) []"
+  },
+  {
+   "env": "langchain==1.5.0@2026-11-16",
+   "key": "f30afb928f31adb0",
+   "path": "langchain_text_splitters.TokenTextSplitter.split_documents",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "TokenTextSplitter langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:325 __init__.py:14 from langchain_text_splitters.base import TokenTextSplitter .split_documents langchain-text-splitters-1.1.3/langchain_text_splitters/base.py:146"
+  },
+  {
+   "env": "mcp==2.3.0@2026-11-01",
+   "key": "22deed46d4f9d01c",
+   "path": "mcp.types.CallToolResult",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "mcp 2.3.0 mcp/types/__init__.py:23 re-exports mcp_types; mcp-types 2.3.0 _types.py:45 MCPModel model_config alias_generator=to_camel, populate_by_name=True, so the snake_case field names (is_error, mime_type, input_schema, meta) bind"
+  },
+  {
+   "env": "mcp==2.3.0@2026-11-01",
+   "key": "d1844a9e1074f5b4",
+   "path": "mcp.types.PaginatedRequestParams",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "mcp 2.3.0 mcp/types/__init__.py:23 re-exports mcp_types; mcp-types 2.3.0 _types.py:45 MCPModel model_config alias_generator=to_camel, populate_by_name=True, so the snake_case field names (is_error, mime_type, input_schema, meta) bind"
+  },
+  {
+   "env": "mcp==2.3.0@2026-11-01",
+   "key": "8b154ebdef98e48d",
+   "path": "mcp.types.Resource",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "mcp 2.3.0 mcp/types/__init__.py:23 re-exports mcp_types; mcp-types 2.3.0 _types.py:45 MCPModel model_config alias_generator=to_camel, populate_by_name=True, so the snake_case field names (is_error, mime_type, input_schema, meta) bind"
+  },
+  {
+   "env": "mcp==2.3.0@2026-11-01",
+   "key": "0871d5ee99b9b24d",
+   "path": "mcp.types.TextResourceContents",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "mcp 2.3.0 mcp/types/__init__.py:23 re-exports mcp_types; mcp-types 2.3.0 _types.py:45 MCPModel model_config alias_generator=to_camel, populate_by_name=True, so the snake_case field names (is_error, mime_type, input_schema, meta) bind"
+  },
+  {
+   "env": "mcp==2.3.0@2026-11-01",
+   "key": "9d4950e030b7cc50",
+   "path": "mcp.types.Tool",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "mcp 2.3.0 mcp/types/__init__.py:23 re-exports mcp_types; mcp-types 2.3.0 _types.py:45 MCPModel model_config alias_generator=to_camel, populate_by_name=True, so the snake_case field names (is_error, mime_type, input_schema, meta) bind"
+  },
+  {
+   "env": "transformers==5.23.0@2026-11-16",
+   "key": "3cc1f9bd3a08d57a",
+   "path": "torch.fx",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "torch v2.15.0 (newest release before the cutoff, GitHub release 2026-10-28) has torch/fx/__init__.py"
+  },
+  {
+   "env": "transformers==5.23.0@2026-11-16",
+   "key": "272b665fe2827ecb",
+   "path": "transformers.PreTrainedConfig",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "transformers 5.23.0 configuration_utils.py:296-299 PreTrainedConfig is @strict(accept_kwargs=True) @dataclass; the wrapped __init__ (:140-174) passes unknown keywords to __post_init__, which pops name_or_path (:486) and setattr()s every other key (:499-503); PretrainedConfig = PreTrainedConfig (:1723); no `name` property"
+  },
+  {
+   "env": "transformers==5.23.0@2026-11-16",
+   "key": "5748e9d50e1e1beb",
+   "path": "transformers.PreTrainedConfig",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "transformers 5.23.0 configuration_utils.py:296-299 PreTrainedConfig is @strict(accept_kwargs=True) @dataclass; the wrapped __init__ (:140-174) passes unknown keywords to __post_init__, which pops name_or_path (:486) and setattr()s every other key (:499-503); PretrainedConfig = PreTrainedConfig (:1723); no `name` property"
+  },
+  {
+   "env": "transformers==5.23.0@2026-11-16",
+   "key": "a9a90c988f678465",
+   "path": "transformers.PretrainedConfig",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "transformers 5.23.0 configuration_utils.py:296-299 PreTrainedConfig is @strict(accept_kwargs=True) @dataclass; the wrapped __init__ (:140-174) passes unknown keywords to __post_init__, which pops name_or_path (:486) and setattr()s every other key (:499-503); PretrainedConfig = PreTrainedConfig (:1723); no `name` property"
+  },
+  {
+   "env": "transformers==5.23.0@2026-11-16",
+   "key": "7c2f1af5a6d6d4ca",
+   "path": "transformers.configuration_utils.PretrainedConfig",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "transformers 5.23.0 configuration_utils.py:296-299 PreTrainedConfig is @strict(accept_kwargs=True) @dataclass; the wrapped __init__ (:140-174) passes unknown keywords to __post_init__, which pops name_or_path (:486) and setattr()s every other key (:499-503); PretrainedConfig = PreTrainedConfig (:1723); no `name` property"
+  },
+  {
+   "env": "transformers==5.23.0@2026-11-16",
+   "key": "52aa8527c0159a6c",
+   "path": "trl.SFTConfig",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "trl 1.18.0 trainer/sft_config.py:22 @dataclass SFTConfig, max_length :202; every other keyword is a transformers 5.23.0 TrainingArguments field (training_args.py, one `<name>:` line each, train_sampling_strategy and eval_strategy included)"
+  },
+  {
+   "env": "transformers==5.23.0@2026-11-16",
+   "key": "8c9ff02da869d686",
+   "path": "trl.SFTConfig",
+   "kind": "name",
+   "verdict": "works",
+   "evidence": "trl 1.18.0 trainer/sft_config.py:22 @dataclass SFTConfig, max_length :202; every other keyword is a transformers 5.23.0 TrainingArguments field (training_args.py, one `<name>:` line each, train_sampling_strategy and eval_strategy included)"
+  },
+  {
+   "env": "transformers==5.23.0@2026-11-16",
+   "key": "f401bda35d39183a",
+   "path": "trl.SFTTrainer",
+   "kind": "call",
+   "verdict": "works",
+   "evidence": "SFTTrainer trl-1.18.0/trl/trainer/sft_trainer.py:517 __init__.py:100 from trl.trainer import SFTTrainer / __init__.py:78 from trl.trainer.sft_trainer import SFTTrainer | __init__ sft_trainer.py:628 (self, model: 'str | PreTrainedModel | PeftModel', args: SFTConfig | TrainingArguments | None=None, data_collator: DataCollator | None=None, train_dataset: Dataset | IterableDataset | None=None, eval_dataset: Dataset | IterableDataset | DatasetDict | IterableDatasetDict | dict[str, Dataset | Iterable) []"
+  }
+ ],
+ "checks": [
+  {
+   "id": "9ae1cf9330eb",
+   "verdict": "fixed",
+   "evidence": "openai 3.51.0 _client.py:142 OpenAI, audio property :398 -> resources/audio/audio.py:53 transcriptions -> transcriptions.py:55 Transcriptions.create(*, file: FileTypes, model) (:78-82); the session builds the client as OpenAI(api_key=...) and reads transcript.text"
+  },
+  {
+   "id": "59fbd2dfc95f",
+   "verdict": "fixed",
+   "evidence": "openai 3.51.0 _client.py:142 OpenAI, audio property :398 -> resources/audio/audio.py:53 transcriptions -> transcriptions.py:55 Transcriptions.create(*, file: FileTypes, model) (:78-82); the session builds the client as OpenAI(api_key=...) and reads transcript.text"
+  },
+  {
+   "id": "63f4c516eab9",
+   "verdict": "fixed",
+   "evidence": "openai 3.51.0 _client.py:142 OpenAI, audio property :398 -> resources/audio/audio.py:53 transcriptions -> transcriptions.py:55 Transcriptions.create(*, file: FileTypes, model) (:78-82); the session builds the client as OpenAI(api_key=...) and reads transcript.text"
+  },
+  {
+   "id": "d5717e483f83",
+   "verdict": "fixed",
+   "evidence": "openai 3.51.0 _client.py:142 OpenAI, audio property :398 -> resources/audio/audio.py:53 transcriptions -> transcriptions.py:55 Transcriptions.create(*, file: FileTypes, model) (:78-82); the session builds the client as OpenAI(api_key=...) and reads transcript.text"
+  },
+  {
+   "id": "0fd41e240465",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0 client/streamable_http.py:713 streamable_http_client(url, *, http_client: httpx2.AsyncClient | None, ...) (headers now go on the client, docstring :724-725); the session wraps it in an asynccontextmanager that opens httpx2.AsyncClient(headers=..., timeout=...) (mcp requires httpx2>=2.10.0, METADATA) and passes http_client=, the same context-manager shape MCPClient's factory had"
+  },
+  {
+   "id": "d59daf1b1421",
+   "verdict": "fixed",
+   "evidence": "mcp 2.3.0 server/lowlevel/server.py:129 Server.__init__ takes on_list_tools and on_call_tool (:148, :153: Callable[[ServerRequestContext, CallToolRequestParams], Awaitable[CallToolResult | ...]]); server/__init__.py exports Server and ServerRequestContext; the session passes handle_call_tool(ctx, params) -> CallToolResult(is_error=) as on_call_tool in place of the removed @server.call_tool() decorator"
+  },
+  {
+   "id": "ca7852180b7d",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0 client/sdk.py:48/:70 Mistral.chat (lazy Chat sub-SDK); chat.py:548 stream(model, messages, ...) -> eventstreaming.EventStream[models.CompletionEvent] (:612); models/completionevent.py:13 CompletionEvent.data: CompletionChunk, which the session reads as event.data; UserMessage(content=) with role defaulting to 'user' (models/usermessage.py:27-33)"
+  },
+  {
+   "id": "fa9454b9ff4b",
+   "verdict": "fixed",
+   "evidence": "mistralai 3.7.0 client/sdk.py:48/:70 Mistral.chat (lazy Chat sub-SDK); chat.py:548 stream(model, messages, ...) -> eventstreaming.EventStream[models.CompletionEvent] (:612); the line reads client.chat.stream"
+  },
+  {
+   "id": "83d7f80bb50a",
+   "verdict": "fixed",
+   "evidence": "pydantic-ai-slim 2.68.0 pydantic_ai/messages.py defines every name the rewritten import block uses (NativeToolCallPart in place of the removed BuiltinToolCallPart; UserPromptPart, ToolReturnPart, ToolCallPart, TextPart, ThinkingPart, the deltas and events, the URL and content types, FunctionToolResultEvent), each a top-level class or type alias"
+  },
+  {
+   "id": "321fb55e91f1",
+   "verdict": "fixed",
+   "evidence": "langchain-core 1.8.1 prompts/chat.py:54 MessagesPlaceholder, __init__(self, variable_name, *, optional=False, **kwargs) (:146-147): the unchanged MessagesPlaceholder(<name>) call binds; only its import moved to langchain_core.prompts"
+  }
+ ]
+}

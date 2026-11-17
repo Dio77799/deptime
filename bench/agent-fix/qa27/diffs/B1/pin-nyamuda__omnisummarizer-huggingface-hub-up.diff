@@ -1,0 +1,35 @@
+diff --git a/server_code/ServerModule1.py b/server_code/ServerModule1.py
+index d8492b2..e895939 100644
+--- a/server_code/ServerModule1.py
++++ b/server_code/ServerModule1.py
+@@ -1,15 +1,13 @@
+ import anvil.secrets
+ import anvil.server
+ from huggingface_hub import InferenceClient
+-from huggingface_hub.inference_api import InferenceApi
+ import re
+ API_TOKEN=anvil.secrets.get_secret('HUGGINGFACE_API_TOKEN')
+ client = InferenceClient("nyamuda/summasphere",
+                          token=API_TOKEN)
+ 
+-# Initialize the Inference API
+-inference = InferenceApi(
+-    repo_id="nyamuda/extractive-summarization ", token=API_TOKEN, task="summarization")
++# InferenceApi was removed in huggingface-hub 1.0; use an InferenceClient instead
++inference = InferenceClient("nyamuda/extractive-summarization", token=API_TOKEN)
+ 
+ # This is a server module. It runs on the Anvil server,
+ # rather than in the user's browser.
+@@ -44,9 +42,9 @@ def summarize_with_length(prompt,text, max_length,min_length):
+   parameters = {
+         "min_length": min_length     
+     }
+-  response = inference(f"{prompt}: {text}", params=parameters)
+-  # Get the summarized text
+-  summaryText = response[0]["summary_text"]
++  response = inference.summarization(f"{prompt}: {text}", generate_parameters=parameters)
++  # Get the summarized text (summarization() returns a single SummarizationOutput)
++  summaryText = response.summary_text
+   return summaryText
+   
+ 

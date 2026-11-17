@@ -1,0 +1,268 @@
+diff --git a/Requirements.txt b/Requirements.txt
+index 3b013cf..6faec66 100644
+--- a/Requirements.txt
++++ b/Requirements.txt
+@@ -1,8 +1,9 @@
+ python==3.10
+ torch==2.1.0
+-transformers==4.34.1
++transformers==5.23.0
+ datasets==2.14.6
+-accelerate==0.33.0
+-trl==0.9.6
+-peft==0.12.0
++accelerate>=1.11.0
++trl>=0.20.0
++peft>=0.17.0
++bitsandbytes
+ openai==1.38.0
+diff --git a/src/CoT_bootstrap.py b/src/CoT_bootstrap.py
+index a2c3708..8a74632 100644
+--- a/src/CoT_bootstrap.py
++++ b/src/CoT_bootstrap.py
+@@ -63,11 +63,7 @@ def setup_model(model_name):
+     tokenizer.pad_token_id = 0
+     tokenizer.padding_side = 'right'
+     
+-    model = AutoModelForCausalLM.from_pretrained(
+-        model_name,
+-        load_in_8bit=True,
+-        device_map="auto"
+-    )
++    model = load_causal_lm_8bit(model_name)
+     model.eval()
+     return tokenizer, model
+ 
+diff --git a/src/Example_accelerate_inference.py b/src/Example_accelerate_inference.py
+index a490c01..4055e2b 100644
+--- a/src/Example_accelerate_inference.py
++++ b/src/Example_accelerate_inference.py
+@@ -89,7 +89,7 @@ def main():
+     model = AutoModelForCausalLM.from_pretrained(
+         model_path,    
+         device_map={"": accelerator.process_index},
+-        torch_dtype=torch.bfloat16,
++        dtype=torch.bfloat16,
+     )
+     tokenizer = AutoTokenizer.from_pretrained(model_path)   
+     tokenizer.pad_token = tokenizer.eos_token
+diff --git a/src/Inference_in_context_learning.py b/src/Inference_in_context_learning.py
+index 44b086f..b165c40 100644
+--- a/src/Inference_in_context_learning.py
++++ b/src/Inference_in_context_learning.py
+@@ -53,9 +53,7 @@ def initialize_model_and_tokenizer(model_name):
+         tokenizer = AutoTokenizer.from_pretrained(model_name_cmp)
+         tokenizer.pad_token_id = 0
+         tokenizer.padding_side = 'left'
+-        model = AutoModelForCausalLM.from_pretrained(
+-            model_name_cmp, load_in_8bit=True, device_map="auto"
+-        )
++        model = load_causal_lm_8bit(model_name_cmp)
+         model.eval()
+     return model, tokenizer
+ 
+diff --git a/src/Inference_in_context_learning_ppl.py b/src/Inference_in_context_learning_ppl.py
+index 1886950..42274ff 100644
+--- a/src/Inference_in_context_learning_ppl.py
++++ b/src/Inference_in_context_learning_ppl.py
+@@ -92,7 +92,7 @@ def initialize_model(config):
+     tokenizer = AutoTokenizer.from_pretrained(model_name_cmp)
+     tokenizer.pad_token_id = 0
+     tokenizer.padding_side = 'right'
+-    model = AutoModelForCausalLM.from_pretrained(model_name_cmp, load_in_8bit=True, device_map="auto")
++    model = load_causal_lm_8bit(model_name_cmp)
+     model.eval()
+     return model, tokenizer
+ 
+diff --git a/src/Models.py b/src/Models.py
+index 8673e7c..b4d6f54 100644
+--- a/src/Models.py
++++ b/src/Models.py
+@@ -11,7 +11,7 @@ from peft import (
+         prepare_model_for_kbit_training, 
+         LoraConfig
+     )
+-from trl import SFTTrainer
++from trl import SFTTrainer, SFTConfig
+ 
+ import torch
+ import openai
+@@ -23,6 +23,54 @@ import time
+ openai.api_key = None  # add your own api_key here (you can look at the openai website to get one)
+ 
+ 
++def load_causal_lm_8bit(model_path):
++    '''
++    Load a causal LM quantized to 8 bit.
++    transformers>=5 removed the `load_in_8bit` kwarg of `from_pretrained`; a BitsAndBytesConfig is required.
++    '''
++    return transformers.AutoModelForCausalLM.from_pretrained(
++        model_path,
++        quantization_config=transformers.BitsAndBytesConfig(load_in_8bit=True),
++        device_map="auto"
++    )
++
++
++class DataCollatorForCompletionOnlyLM:
++    '''
++    Pads a batch and masks (label -100) everything up to and including the first occurrence of
++    `response_template`, so the loss is only computed on the response.
++    (trl removed its own DataCollatorForCompletionOnlyLM in the versions that support transformers 5.)
++    '''
++    def __init__(self, response_template, tokenizer, ignore_index=-100):
++        self.tokenizer = tokenizer
++        self.ignore_index = ignore_index
++        self.response_token_ids = tokenizer.encode(response_template, add_special_tokens=False)
++
++    def __call__(self, examples):
++        features = [{"input_ids": list(e["input_ids"])} for e in examples]
++        batch = self.tokenizer.pad(features, padding=True, return_tensors="pt")
++        labels = batch["input_ids"].clone()
++        template = self.response_token_ids
++
++        for i in range(labels.shape[0]):
++            ids = batch["input_ids"][i].tolist()
++            start = None
++            for idx in range(len(ids) - len(template) + 1):
++                if ids[idx:idx + len(template)] == template:
++                    start = idx + len(template)
++                    break
++
++            if start is None:
++                print("Warning: response template not found in a sample; ignoring it for the loss.")
++                labels[i, :] = self.ignore_index
++            else:
++                labels[i, :start] = self.ignore_index
++
++        labels[batch["attention_mask"] == 0] = self.ignore_index
++        batch["labels"] = labels
++        return batch
++
++
+ 
+ 
+ 
+@@ -298,39 +346,40 @@ def SFT_with_LoRA(model, tokenizer, output_dir, formatting_func, data_train, dat
+     logging_steps = 10
+     learning_rate = 5e-4
+     max_grad_norm = 0.3
+-    warmup_ratio = 0.03
+-    evaluation_strategy = "epoch"
++    warmup_steps = 0.03   # transformers>=5: a float < 1 is a warmup ratio (replaces `warmup_ratio`)
++    eval_strategy = "epoch"
+     lr_scheduler_type = "cosine"
+ 
+-    training_args = transformers.TrainingArguments(
++    # SFTConfig extends transformers.TrainingArguments
++    training_args = SFTConfig(
+                 output_dir=output_dir,
+                 per_device_train_batch_size=per_device_train_batch_size,
+                 gradient_accumulation_steps=gradient_accumulation_steps,
+                 optim=optim,
+-                evaluation_strategy=evaluation_strategy,
++                eval_strategy=eval_strategy,
+                 save_steps=save_steps,
+                 learning_rate=learning_rate,
+                 logging_steps=logging_steps,
+                 max_grad_norm=max_grad_norm,
+                 max_steps=max_steps,
+-                warmup_ratio=warmup_ratio,
+-                group_by_length=True,
++                warmup_steps=warmup_steps,
++                train_sampling_strategy="group_by_length",   # replaces `group_by_length=True`
+                 lr_scheduler_type=lr_scheduler_type,
+                 ddp_find_unused_parameters=False,
+                 eval_accumulation_steps=eval_accumulation_steps,
+                 per_device_eval_batch_size=per_device_eval_batch_size,
+-                resume_from_checkpoint=resume_from_checkpoint
++                resume_from_checkpoint=resume_from_checkpoint,
++                max_length=max_seq_length,
+             )
+ 
+     # SFT with lora
++    # `model` is already a PeftModel (get_peft_model above), so `peft_config` is not passed again.
+     trainer = SFTTrainer(
+         model=model,
+         train_dataset=data_train,
+         eval_dataset=data_val,
+-        peft_config=lora_config,
+         formatting_func=formatting_func,
+-        max_seq_length=max_seq_length,
+-        tokenizer=tokenizer,
++        processing_class=tokenizer,
+         args=training_args,
+         data_collator=collator
+     )
+diff --git a/src/SFT_TG_Reasoning.py b/src/SFT_TG_Reasoning.py
+index e87fcc3..66f5fcd 100644
+--- a/src/SFT_TG_Reasoning.py
++++ b/src/SFT_TG_Reasoning.py
+@@ -11,7 +11,6 @@ from tqdm import tqdm
+ from Models import *
+ from prompt_generation import *
+ import argparse
+-from trl import DataCollatorForCompletionOnlyLM
+ import wandb
+ 
+ 
+@@ -237,7 +236,7 @@ def load_model_and_tokenizer():
+     Load the model and tokenizer.
+     '''
+     tokenizer = AutoTokenizer.from_pretrained(model_path)
+-    model = AutoModelForCausalLM.from_pretrained(model_path, load_in_8bit=True, device_map="auto")
++    model = load_causal_lm_8bit(model_path)
+     tokenizer.add_special_tokens({"pad_token": "<PAD>"})
+     model.resize_token_embeddings(len(tokenizer))
+     return model, tokenizer
+@@ -260,7 +259,7 @@ def train_model(model, tokenizer, data_train, data_val, args, output_dir, max_st
+         None
+     """
+     def formatting_func(sample):
+-        return [p for p in sample['prompt']]
++        return sample['prompt']
+     
+     response_template = "### Output"
+     collator = DataCollatorForCompletionOnlyLM(response_template, tokenizer=tokenizer)
+diff --git a/src/SFT_TG_Reasoning_ppl.py b/src/SFT_TG_Reasoning_ppl.py
+index 8039ec7..0cb6dec 100644
+--- a/src/SFT_TG_Reasoning_ppl.py
++++ b/src/SFT_TG_Reasoning_ppl.py
+@@ -101,7 +101,7 @@ def load_model_and_tokenizer(model_name, peft_model_id):
+         tokenizer (AutoTokenizer): Loaded tokenizer.
+     """
+     tokenizer = AutoTokenizer.from_pretrained(model_name)
+-    model = AutoModelForCausalLM.from_pretrained(model_name, load_in_8bit=True, device_map="auto")
++    model = load_causal_lm_8bit(model_name)
+     tokenizer.add_special_tokens({"pad_token": "<PAD>"})
+     model.resize_token_embeddings(len(tokenizer))
+     tokenizer.pad_token_id = 0
+diff --git a/src/SFT_text_to_TG_Trans.py b/src/SFT_text_to_TG_Trans.py
+index f8bb6f8..eed1ed1 100644
+--- a/src/SFT_text_to_TG_Trans.py
++++ b/src/SFT_text_to_TG_Trans.py
+@@ -3,7 +3,6 @@ import os
+ import torch
+ from transformers import AutoModelForCausalLM, AutoTokenizer
+ from peft import PeftModel
+-from trl import DataCollatorForCompletionOnlyLM
+ from datasets import load_dataset
+ from tqdm import tqdm
+ from utlis import *
+@@ -112,7 +111,7 @@ def load_model_and_tokenizer():
+     Load the model and tokenizer.
+     '''
+     tokenizer = AutoTokenizer.from_pretrained(model_path)
+-    model = AutoModelForCausalLM.from_pretrained(model_path, load_in_8bit=True, device_map="auto")
++    model = load_causal_lm_8bit(model_path)
+     tokenizer.add_special_tokens({"pad_token": "<PAD>"})
+     model.resize_token_embeddings(len(tokenizer))
+     return model, tokenizer
+@@ -132,7 +131,7 @@ def train_model(model, tokenizer, data_train, data_val, dataset_name, transferre
+         resume_from_checkpoint (str): Path to checkpoint for resuming training.
+     """
+     def formatting_func(sample):
+-        return [p for p in sample['prompt']]
++        return sample['prompt']
+ 
+     output_dir = f"../model_weights/{dataset_name}_story_TG_trans"
+     if transferred_dataset_name:

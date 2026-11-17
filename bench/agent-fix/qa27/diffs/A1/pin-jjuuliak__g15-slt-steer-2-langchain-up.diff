@@ -1,0 +1,28 @@
+diff --git a/base-requirements.txt b/base-requirements.txt
+index fd55ba9..e322532 100644
+--- a/base-requirements.txt
++++ b/base-requirements.txt
+@@ -2,9 +2,10 @@
+ torch==2.6.0+cpu
+ faiss-cpu==1.10.0
+ 
+-langchain==0.3.22
+-langchain-huggingface==0.1.2
+-langchain_community==0.3.18
++langchain==1.5.0
++langchain-text-splitters==1.1.3
++langchain-huggingface==1.2.3
++langchain_community==0.4.2
+ 
+ transformers==4.51.3
+ sentence-transformers==4.0.1
+diff --git a/doc_embedding/embed_documents.py b/doc_embedding/embed_documents.py
+index 5c82392..f5570cb 100644
+--- a/doc_embedding/embed_documents.py
++++ b/doc_embedding/embed_documents.py
+@@ -1,4 +1,4 @@
+-from langchain.text_splitter import RecursiveCharacterTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter
+ from langchain_community.docstore.in_memory import InMemoryDocstore
+ from langchain_community.vectorstores import FAISS
+ import faiss

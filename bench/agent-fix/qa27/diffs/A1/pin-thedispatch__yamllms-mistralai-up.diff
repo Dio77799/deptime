@@ -1,0 +1,67 @@
+diff --git a/missions/plugins/mistral.py b/missions/plugins/mistral.py
+index 9fbd934..550131c 100644
+--- a/missions/plugins/mistral.py
++++ b/missions/plugins/mistral.py
+@@ -1,6 +1,5 @@
+ import os
+-from mistralai.client import MistralClient
+-from mistralai.models.chat_completion import ChatMessage
++from mistralai.client import Mistral
+ from ..util import *
+ from missions import plugins
+ 
+@@ -21,18 +20,31 @@ def chat_mistral(task, prompt):
+ 
+     api_key = os.environ["MISTRAL_API_KEY"]
+     model = MISTRAL_MODEL
+-    client = MistralClient(api_key=api_key)
+ 
+     counter = 0
+     task.response = ""
+-    for chunk in client.chat_stream(
+-        model=model,
+-        messages=[ChatMessage(role="user", content=final_prompt)],
+-    ):
+-        counter += 1
+-        if chunk.choices[0].delta.content is not None:
+-            task.response += chunk.choices[0].delta.content
+-        if counter % 40 == 0:
+-            task.save()
++    with Mistral(api_key=api_key) as client:
++        with client.chat.stream(
++            model=model,
++            messages=[{"role": "user", "content": final_prompt}],
++        ) as event_stream:
++            for event in event_stream:
++                counter += 1
++                choices = event.data.choices
++                if choices:
++                    task.response += _delta_text(choices[0].delta.content)
++                if counter % 40 == 0:
++                    task.save()
+     task.extras["response_length"] = len(task.response)
+     return task.response
++
++
++def _delta_text(content):
++    """Return the text of a streamed delta (a str, a list of chunks, or unset/None)."""
++    if isinstance(content, str):
++        return content
++    if isinstance(content, list):
++        return "".join(
++            part.text for part in content if isinstance(getattr(part, "text", None), str)
++        )
++    return ""
+diff --git a/requirements.txt b/requirements.txt
+index ed6047d..47ce42d 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -20,7 +20,7 @@ gunicorn==22.0.0
+ gql==3.4.1
+ Markdown==3.4.3
+ markdownify==0.12.1
+-mistralai==0.0.9
++mistralai==3.7.0
+ mypy==1.13.0
+ notion-client==2.2.1
+ slack_sdk==3.26.2

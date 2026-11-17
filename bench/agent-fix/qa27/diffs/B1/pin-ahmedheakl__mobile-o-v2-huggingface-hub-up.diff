@@ -1,0 +1,18 @@
+diff --git a/eval/lmms-eval/lmms_eval/models/internvl.py b/eval/lmms-eval/lmms_eval/models/internvl.py
+index 5132ee6..3c1ce5e 100644
+--- a/eval/lmms-eval/lmms_eval/models/internvl.py
++++ b/eval/lmms-eval/lmms_eval/models/internvl.py
+@@ -157,11 +157,11 @@ class InternVLChat(lmms):
+         self.dynamic = dynamic  # dynamic image_size
+         self.max_num = max_num
+         if accelerator.is_main_process:
+-            cache_dir = snapshot_download(repo_id=pretrained, cache_dir="cache_dir", local_dir="cache_dir", local_dir_use_symlinks=False)
++            cache_dir = snapshot_download(repo_id=pretrained, cache_dir="cache_dir", local_dir="cache_dir")
+         accelerator.wait_for_everyone()
+         # So what I did is that I let main process to download the repo, and then
+         # other process can just simply read from this repo
+-        cache_dir = snapshot_download(repo_id=pretrained, cache_dir="cache_dir", local_dir="cache_dir", local_dir_use_symlinks=False)
++        cache_dir = snapshot_download(repo_id=pretrained, cache_dir="cache_dir", local_dir="cache_dir")
+         config = InternVLChatConfig.from_pretrained(cache_dir)
+         tokenizer = AutoTokenizer.from_pretrained(cache_dir, trust_remote_code=True, use_fast=False)
+         model = InternVLChatModel.from_pretrained(cache_dir, low_cpu_mem_usage=True, config=config, torch_dtype=torch.bfloat16, load_in_8bit=load_in_8bit).eval()

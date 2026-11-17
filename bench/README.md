@@ -28,6 +28,7 @@ Each check's right answers were written down before DepTime first ran on it ([be
 | The same model's upgrade checks with the six tools, `check_upgrade` among them (DT-QA-23, [results](https://github.com/cschmertz/deptime/blob/main/bench/model-alone/check-upgrade/results-2026-11-16.md)) | 2,265 uses, one run | 75.0% of breaks found and 3.5% of working uses flagged (five tools: 82.2% and 4.5%; DepTime 96.7% and 0.1%) | run once |
 | Claude Code (Sonnet 5.5) fixing a dependency update's confirmed breaks, alone / with `/deptime:fix-upgrade` / with the plugin installed and not named (DT-QA-05, [results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/results-2026-11-16.md)): sessions that leave every break fixed | 25 real updates (137 breaks), two runs alone and with the command, one with the plugin | 80% / 64% / 80%; no arm broke anything new; the command took a third of the turns and changed a tenth of the unasked lines. Bar missed: the command's instructions on `unknown` answers and a report too big to read lost it | run once |
 | The same, on 66 new broken updates with the reworked command (DT-QA-26, [results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/qa26/results-2026-11-16.md)): alone / with `/deptime:fix-upgrade` | 66 real updates (379 breaks), one run each | 69.7% / 72.7%; breaks fixed 78.4% / 81.5%; sessions with a new break 4 / 2; the command in about half the turns. Bar missed on its 80% line: the command's "leave the line if the fix isn't clear" lost 3 of the 4 tasks only the agent alone fixed | run once |
+| The same, on 60 broken updates neither had seen, after fixing what lost QA-26 (DT-QA-27, [results](https://github.com/cschmertz/deptime/blob/main/bench/agent-fix/qa27/results-2026-11-17.md)): alone / with `/deptime:fix-upgrade` | 60 real updates (373 breaks), one run each | 76.7% / 86.7%; breaks fixed 89.3% / 96.0%; sessions with a new break 3 / 1; the command in about half the turns. Bar met | run once |
 | Right package, name and breaking release for a traceback from a GitHub issue | 32 collected 2026-11-05 | 68.8% | 100% |
 | The same, on a holdout fixed in advance from [TimeMachine-bench](https://github.com/tohoku-nlp/timemachine-bench) | 29 | 72.4% | 96.6% |
 | Error kind and package read from the traceback: scripts, pytest, chained exceptions, `ExceptionGroup`, IPython, Python 3.10–3.14 | 736, holdout fixed in advance | 93.8% | 100% |
@@ -181,6 +182,18 @@ agent alone fixed, 3 were breaks the command's agent found and then left, as its
 and 1 a required argument DepTime didn't see (a streamlit binding, DT-DATA-83). Per the protocol, a miss leaves the
 command out of 1.0's promise; the maintainer chose instead to fix both causes and measure again on new updates
 (DT-QA-27) before 1.0.
+
+## The hand-off on updates nobody had seen (DT-QA-27)
+
+`agent-fix/qa27/README.md` is the protocol, committed before any agent ran; `agent-fix/qa27/results-2026-11-17.md`
+the result. After DT-GTM-09 (rewrite a break with no stated replacement instead of leaving it) and DT-DATA-83 (the
+streamlit binding), 0.2.3 was measured on a holdout collected after its release, `holdout/2026-11g/`: 60 broken updates
+of 58 projects, so neither DepTime nor the command had been shaped on any of them. Alone, the agent left the code
+working in 76.7% of sessions; with the command, 86.7%, with one session whose fix broke something new against three,
+96.0% of the 373 confirmed breaks fixed against 89.3%, and about half the turns. All three lines of the bar are met.
+Paired by task, the command won 8 and lost 2 (McNemar's exact p = 0.109). Its two losses: a pydantic model's required
+field DepTime doesn't check (crewai, held until it recurs), and a bug the project already had, which the command
+leaves by design. DT-OSS-17 freezes the hand-off as it is.
 
 ## Per-release holdout (DT-QA-07 to DT-QA-11)
 

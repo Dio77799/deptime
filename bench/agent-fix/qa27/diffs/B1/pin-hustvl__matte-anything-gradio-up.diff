@@ -1,0 +1,62 @@
+diff --git a/matte_anything.py b/matte_anything.py
+index ae45aab..b1eef91 100644
+--- a/matte_anything.py
++++ b/matte_anything.py
+@@ -306,7 +306,7 @@ if __name__ == "__main__":
+             # <center>Matte Anything🐒 !
+             """
+         )
+-        with gr.Row().style(equal_height=True):
++        with gr.Row(equal_height=True):
+             with gr.Column():
+                 # input image
+                 original_image = gr.State(value="numpy")   # store original image without points, default None
+@@ -322,15 +322,15 @@ if __name__ == "__main__":
+                             undo_all_button = gr.Button('Remove All  Points')
+                 # Foreground Text Input
+                 with gr.Tab(label='Foreground Text Input') as Tab2:
+-                    with gr.Box():
++                    with gr.Group():
+                         gr.Markdown("Foreground Text Input")
+-                        fg_caption = gr.inputs.Textbox(lines=1, default="", label="foreground input text")                   
++                        fg_caption = gr.Textbox(lines=1, value="", label="foreground input text")
+                 
+                 # Save Config
+                 with gr.Tab(label='Save Config') as Tab3:
+-                    with gr.Box():
++                    with gr.Group():
+                         gr.Markdown("save name")
+-                        save_dir = gr.inputs.Textbox(lines=1, default="", label="Give a name of your demo. It will be saved in ```your_demos/your_name.pny```")
++                        save_dir = gr.Textbox(lines=1, value="", label="Give a name of your demo. It will be saved in ```your_demos/your_name.pny```")
+                 
+                 
+                 # run button
+@@ -339,21 +339,21 @@ if __name__ == "__main__":
+                 # Trimap Settings
+                 with gr.Tab(label='Trimap Settings'):
+                     gr.Markdown("Trimap Settings")
+-                    erode_kernel_size = gr.inputs.Slider(minimum=1, maximum=30, step=1, default=10, label="erode_kernel_size")
+-                    dilate_kernel_size = gr.inputs.Slider(minimum=1, maximum=30, step=1, default=10, label="dilate_kernel_size")
++                    erode_kernel_size = gr.Slider(minimum=1, maximum=30, step=1, value=10, label="erode_kernel_size")
++                    dilate_kernel_size = gr.Slider(minimum=1, maximum=30, step=1, value=10, label="dilate_kernel_size")
+                 
+                 # Input Text Settings
+                 with gr.Tab(label='Input Text Settings'):
+                     gr.Markdown("Input Text Settings")
+-                    fg_box_threshold = gr.inputs.Slider(minimum=0.0, maximum=1.0, step=0.001, default=0.25, label="foreground_box_threshold")
+-                    fg_text_threshold = gr.inputs.Slider(minimum=0.0, maximum=1.0, step=0.001, default=0.25, label="foreground_text_threshold")
++                    fg_box_threshold = gr.Slider(minimum=0.0, maximum=1.0, step=0.001, value=0.25, label="foreground_box_threshold")
++                    fg_text_threshold = gr.Slider(minimum=0.0, maximum=1.0, step=0.001, value=0.25, label="foreground_text_threshold")
+ 
+                 # Transparency Settings
+                 with gr.Tab(label='Transparency Settings'):
+                     gr.Markdown("Transparency Settings")
+-                    tr_caption = gr.inputs.Textbox(lines=1, default="glass.lens.crystal.diamond.bubble.bulb.web.grid", label="transparency input text")
+-                    tr_box_threshold = gr.inputs.Slider(minimum=0.0, maximum=1.0, step=0.005, default=0.5, label="transparency_box_threshold")
+-                    tr_text_threshold = gr.inputs.Slider(minimum=0.0, maximum=1.0, step=0.005, default=0.25, label="transparency_text_threshold")
++                    tr_caption = gr.Textbox(lines=1, value="glass.lens.crystal.diamond.bubble.bulb.web.grid", label="transparency input text")
++                    tr_box_threshold = gr.Slider(minimum=0.0, maximum=1.0, step=0.005, value=0.5, label="transparency_box_threshold")
++                    tr_text_threshold = gr.Slider(minimum=0.0, maximum=1.0, step=0.005, value=0.25, label="transparency_text_threshold")
+ 
+             
+             with gr.Column():

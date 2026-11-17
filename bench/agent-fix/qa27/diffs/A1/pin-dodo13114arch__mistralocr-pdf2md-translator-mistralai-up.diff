@@ -1,0 +1,25 @@
+diff --git a/mistralocr_app.py b/mistralocr_app.py
+index 1510859..df771f7 100644
+--- a/mistralocr_app.py
++++ b/mistralocr_app.py
+@@ -36,8 +36,8 @@ load_dotenv(override=True)
+ import gradio as gr
+ 
+ # Mistral AI
+-from mistralai import Mistral
+-from mistralai.models import OCRResponse, ImageURLChunk, DocumentURLChunk, TextChunk
++from mistralai.client import Mistral
++from mistralai.client.models import OCRResponse, ImageURLChunk, DocumentURLChunk, TextChunk
+ 
+ # Google Gemini
+ from google import genai
+diff --git a/requirements.txt b/requirements.txt
+index 6e38d2e..8822e38 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,4 +1,4 @@
+-mistralai==1.9.3
++mistralai==3.7.0
+ google-genai==1.29.0
+ openai==1.99.9
+ gradio==6.30.0

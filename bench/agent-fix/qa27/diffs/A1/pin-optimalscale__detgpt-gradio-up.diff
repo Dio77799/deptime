@@ -1,0 +1,104 @@
+diff --git a/GroundingDINO/demo/gradio_app.py b/GroundingDINO/demo/gradio_app.py
+index c1f5463..10e551a 100644
+--- a/GroundingDINO/demo/gradio_app.py
++++ b/GroundingDINO/demo/gradio_app.py
+@@ -98,9 +98,9 @@ if __name__ == "__main__":
+ 
+         with gr.Row():
+             with gr.Column():
+-                input_image = gr.Image(source='upload', type="pil")
++                input_image = gr.Image(sources=['upload'], type="pil")
+                 grounding_caption = gr.Textbox(label="Detection Prompt")
+-                run_button = gr.Button(label="Run")
++                run_button = gr.Button(value="Run")
+                 with gr.Accordion("Advanced options", open=False):
+                     box_threshold = gr.Slider(
+                         label="Box Threshold", minimum=0.0, maximum=1.0, value=0.25, step=0.001
+@@ -110,10 +110,11 @@ if __name__ == "__main__":
+                     )
+ 
+             with gr.Column():
+-                gallery = gr.outputs.Image(
++                gallery = gr.Image(
+                     type="pil",
++                    interactive=False,
+                     # label="grounding results"
+-                ).style(full_width=True, full_height=True)
++                )
+                 # gallery = gr.Gallery(label="Generated images", show_label=False).style(
+                 #         grid=[1], height="auto", container=True, full_width=True, full_height=True)
+ 
+diff --git a/demo_detgpt.py b/demo_detgpt.py
+index 83b0b59..5100d91 100644
+--- a/demo_detgpt.py
++++ b/demo_detgpt.py
+@@ -214,7 +214,7 @@ def gradio_reset(chat_state, img_list, llm_message_original):
+         img_list = []
+     if llm_message_original is not None:
+         llm_message_original = []
+-    return None, gr.update(value=None, interactive=True), gr.update(placeholder='Please upload your image first',
++    return [], gr.update(value=None, interactive=True), gr.update(placeholder='Please upload your image first',
+                                                                     interactive=False), gr.update(
+         value="1. Upload Image", interactive=True), chat_state, img_list, llm_message_original, gr.update(
+         value='Detected objects will be shown here.', interactive=False)
+@@ -242,7 +242,7 @@ def gradio_ask(user_message, chatbot, chat_state):
+     user_prompt = "\nAnswer me with several sentences. End the answer by listing out target objects to my question strictly as follows: <Therefore the answer is: [object_names]>."
+     print(user_message)
+     chat.ask(user_message + user_prompt, chat_state)
+-    chatbot = chatbot + [[user_message, None]]
++    chatbot = (chatbot or []) + [{"role": "user", "content": user_message}]
+     return '', chatbot, chat_state
+ 
+ 
+@@ -260,7 +260,7 @@ def gradio_answer(chatbot, chat_state, img_list, num_beams, temperature, length_
+     pattern2 = r"(?:Therefore, the target objects are|Therefore the target objects are).*"
+     llm_message = re.sub(pattern1, "", llm_message_old)
+     llm_message = re.sub(pattern2, "", llm_message)
+-    chatbot[-1][1] = llm_message
++    chatbot = chatbot + [{"role": "assistant", "content": llm_message}]
+     llm_message_original.append(llm_message_old)
+     return chatbot, chat_state, img_list, llm_message_original
+ 
+@@ -317,7 +317,7 @@ with gr.Blocks() as demo:
+                     interactive=True,
+                     label="Length penalty",
+                 )
+-                do_sample = gr.Radio([True, False], value=False, label="do_sample", interactive=True)
++                do_sample = gr.Checkbox(value=False, label="do_sample", interactive=True)
+ 
+             upload_button = gr.Button(value="1. Upload Image", interactive=True, variant="primary")
+             text_input = gr.Textbox(label='User', placeholder='Input Text Here (Please upload your image first)',
+@@ -348,10 +348,11 @@ with gr.Blocks() as demo:
+                 [f"{cur_dir}/examples/bird.jpeg", "find what’s interesting about the image."],
+             ], inputs=[image, text_input])
+         with gr.Column():
+-            gallery = gr.outputs.Image(
++            gallery = gr.Image(
+                 type="pil",
++                interactive=False,
+                 # label="grounding results"
+-            ).style(full_width=True, full_height=True)
++            )
+             with gr.Accordion("Advanced options", open=False):
+                 box_threshold = gr.Slider(
+                     label="Box Threshold", minimum=0.0, maximum=1.0, value=0.25, step=0.001
+@@ -391,4 +392,4 @@ with gr.Blocks() as demo:
+                 [chatbot, image, text_input, upload_button, chat_state, img_list, llm_message_original,
+                  detected_objects], queue=False)
+ 
+-demo.launch(share=True, enable_queue=True)
++demo.queue().launch(share=True)
+diff --git a/requirements.txt b/requirements.txt
+index 61e78e5..79dbd78 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -46,8 +46,7 @@ pycocoevalcap
+ sentence-transformers
+ umap-learn
+ notebook
+-gradio==3.24.1
+-gradio-client==0.0.8
++gradio==6.32.0
+ wandb
+ addict
+ yapf

@@ -1,0 +1,99 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 30,
+  "duration_ms": 94001,
+  "total_cost_usd": 0.2410023,
+  "usage": {
+   "input_tokens": 24,
+   "cache_creation_input_tokens": 30358,
+   "cache_read_input_tokens": 238765,
+   "output_tokens": 8493,
+   "output_tokens_details": {
+    "thinking_tokens": 1514
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 30358,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 904,
+     "cache_read_input_tokens": 32807,
+     "cache_creation_input_tokens": 3328,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 3328
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.23,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.32,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 3,
+  "Read": 7,
+  "Bash": 1,
+  "WebFetch": 4,
+  "Edit": 14
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://www.gradio.app/main/guides/gradio-6-migration-guide",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.32.0/gradio/routes.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.32.0/gradio/routes.py",
+  "https://raw.githubusercontent.com/gradio-app/gradio/gradio%406.32.0/gradio/components/chatbot.py"
+ ],
+ "denied": 0,
+ "task": "pin-nvidia__nim-anywhere-gradio-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 94.5,
+ "service_error": false
+}

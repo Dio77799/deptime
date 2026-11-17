@@ -1,0 +1,46 @@
+diff --git a/backend/inference/mistral_inference.py b/backend/inference/mistral_inference.py
+index 9a529eb..1f14dce 100644
+--- a/backend/inference/mistral_inference.py
++++ b/backend/inference/mistral_inference.py
+@@ -1,4 +1,4 @@
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import os
+ import base64
+ import requests
+diff --git a/backend/inference/rag_process.py b/backend/inference/rag_process.py
+index 5f2cb88..89ace1f 100644
+--- a/backend/inference/rag_process.py
++++ b/backend/inference/rag_process.py
+@@ -1,4 +1,4 @@
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import requests
+ import numpy as np
+ import faiss
+diff --git a/backend/inference/views.py b/backend/inference/views.py
+index be934c2..0e339c6 100644
+--- a/backend/inference/views.py
++++ b/backend/inference/views.py
+@@ -1,7 +1,7 @@
+ from django.http import JsonResponse
+ from rest_framework.response import Response
+ from rest_framework.views import APIView
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import os
+ import requests
+ from openai import OpenAI
+diff --git a/backend/taxtech/views.py b/backend/taxtech/views.py
+index f61fea4..b78fe77 100644
+--- a/backend/taxtech/views.py
++++ b/backend/taxtech/views.py
+@@ -15,7 +15,7 @@ from .serializers import TaxTechAppSerializer, CompanySerializer, TaxDataSeriali
+ from django.http import JsonResponse
+ from rest_framework.response import Response
+ from rest_framework.views import APIView
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import os
+ import requests
+ from openai import OpenAI

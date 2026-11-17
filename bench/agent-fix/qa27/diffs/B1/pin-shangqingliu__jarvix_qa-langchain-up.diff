@@ -1,0 +1,31 @@
+diff --git a/backend/chatbot.py b/backend/chatbot.py
+index d21c97a..6f64e1e 100644
+--- a/backend/chatbot.py
++++ b/backend/chatbot.py
+@@ -1,9 +1,9 @@
+ from flask import current_app
+ 
+-from langchain import  PromptTemplate
+-from langchain.agents import Tool
+-from langchain.chat_models import ChatOpenAI
+-from langchain.chains.conversation.memory import ConversationBufferMemory
++from langchain_core.prompts import PromptTemplate
++from langchain_core.tools import Tool
++from langchain_openai import ChatOpenAI
++from langchain_classic.memory import ConversationBufferMemory
+ 
+ from llama_index import  (LLMPredictor,ServiceContext, ResponseSynthesizer, StorageContext
+                           , load_index_from_storage)
+diff --git a/backend/utils.py b/backend/utils.py
+index 059888e..703eca3 100644
+--- a/backend/utils.py
++++ b/backend/utils.py
+@@ -13,7 +13,7 @@ from llama_index.vector_stores.faiss import FaissVectorStore
+ from llama_index.vector_stores import PineconeVectorStore
+ from pathlib import Path
+ 
+-from langchain.chat_models import ChatOpenAI
++from langchain_openai import ChatOpenAI
+ from llama_index.indices.composability import ComposableGraph
+ from globals import upload_hashes, faiss_vectors
+ 

@@ -1,0 +1,52 @@
+diff --git a/src/plotting.py b/src/plotting.py
+index 00279e8..ddf0b29 100644
+--- a/src/plotting.py
++++ b/src/plotting.py
+@@ -123,7 +123,7 @@ def plot_average_scores_from_dataset(concatenated_dataset, output_path):
+         # Plot 2: Box plot of score distributions
+         score_data = [pd.to_numeric(scores_df[agent], errors='coerce').dropna().values 
+                      for agent in agents if agent in scores_df.columns]
+-        box_plot = axes[0,1].boxplot(score_data, labels=agents, patch_artist=True)
++        box_plot = axes[0,1].boxplot(score_data, tick_labels=agents, patch_artist=True)
+         axes[0,1].set_title('Score Distribution by Agent')
+         axes[0,1].set_ylabel('Score')
+         axes[0,1].tick_params(axis='x', rotation=45)
+diff --git a/src/test_room_dqlvsAll.py b/src/test_room_dqlvsAll.py
+index e52d1ba..38ebf36 100644
+--- a/src/test_room_dqlvsAll.py
++++ b/src/test_room_dqlvsAll.py
+@@ -196,7 +196,7 @@ def plot_average_scores_from_dataset(concatenated_dataset, output_path):
+         plt.subplot(2, 2, 2)
+         score_data = [pd.to_numeric(scores_df[agent], errors='coerce').dropna().values 
+                      for agent in agents if agent in scores_df.columns]
+-        plt.boxplot(score_data, labels=agents)
++        plt.boxplot(score_data, tick_labels=agents)
+         plt.title('Score Distribution by Agent')
+         plt.ylabel('Score')
+         plt.xticks(rotation=45)
+diff --git a/src/test_room_dqlvsOthers.py b/src/test_room_dqlvsOthers.py
+index cf5595f..be70f1a 100644
+--- a/src/test_room_dqlvsOthers.py
++++ b/src/test_room_dqlvsOthers.py
+@@ -196,7 +196,7 @@ def plot_average_scores_from_dataset(concatenated_dataset, output_path):
+         plt.subplot(2, 2, 2)
+         score_data = [pd.to_numeric(scores_df[agent], errors='coerce').dropna().values 
+                      for agent in agents if agent in scores_df.columns]
+-        plt.boxplot(score_data, labels=agents)
++        plt.boxplot(score_data, tick_labels=agents)
+         plt.title('Score Distribution by Agent')
+         plt.ylabel('Score')
+         plt.xticks(rotation=45)
+diff --git a/src/visualization_score_concatenate.py b/src/visualization_score_concatenate.py
+index 0834d76..a3f4936 100644
+--- a/src/visualization_score_concatenate.py
++++ b/src/visualization_score_concatenate.py
+@@ -123,7 +123,7 @@ def plot_average_scores_from_dataset(concatenated_dataset, output_path):
+         # Plot 2: Box plot of score distributions
+         score_data = [pd.to_numeric(scores_df[agent], errors='coerce').dropna().values 
+                      for agent in agents if agent in scores_df.columns]
+-        box_plot = axes[0,1].boxplot(score_data, labels=agents, patch_artist=True)
++        box_plot = axes[0,1].boxplot(score_data, tick_labels=agents, patch_artist=True)
+         axes[0,1].set_title('Score Distribution by Agent')
+         axes[0,1].set_ylabel('Score')
+         axes[0,1].tick_params(axis='x', rotation=45)

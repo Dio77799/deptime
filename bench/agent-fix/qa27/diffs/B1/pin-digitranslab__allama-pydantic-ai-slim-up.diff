@@ -1,0 +1,274 @@
+diff --git a/allama/agent/adapter/vercel.py b/allama/agent/adapter/vercel.py
+index 7da1621..8be4e78 100644
+--- a/allama/agent/adapter/vercel.py
++++ b/allama/agent/adapter/vercel.py
+@@ -35,13 +35,13 @@ from pydantic_ai.messages import (
+     AgentStreamEvent,
+     AudioUrl,
+     BinaryContent,
+-    BuiltinToolCallPart,
+     DocumentUrl,
+     FunctionToolResultEvent,
+     ImageUrl,
+     ModelRequest,
+     ModelResponse,
+     MultiModalContent,
++    NativeToolCallPart,
+     PartDeltaEvent,
+     PartStartEvent,
+     RetryPromptPart,
+@@ -134,7 +134,7 @@ def _extract_structured_error(output: Any) -> str | None:
+     return None
+ 
+ 
+-AnyToolCallPart = ToolCallPart | BuiltinToolCallPart
++AnyToolCallPart = ToolCallPart | NativeToolCallPart
+ 
+ # ==============================================================================
+ # 1. Models for UI Parts with Fixed 'type' Literals
+@@ -1134,8 +1134,9 @@ class VercelStreamContext:
+         # Handle Tool Call and Result Events
+         elif isinstance(event, FunctionToolResultEvent):
+             tool_call_id: str | None = None
+-            if isinstance(event.result, ToolReturnPart | RetryPromptPart):
+-                tool_call_id = event.result.tool_call_id
++            result_part = event.part
++            if isinstance(result_part, ToolReturnPart | RetryPromptPart):
++                tool_call_id = result_part.tool_call_id
+ 
+             # Close any open part for this tool, or all open parts if none match
+             if tool_call_id is not None and tool_call_id in self.tool_index:
+@@ -1152,7 +1153,7 @@ class VercelStreamContext:
+             ):
+                 # Use cached approval data if available, otherwise best-effort fallback
+                 tool_name = self.approval_tool_name.get(
+-                    tool_call_id, getattr(event.result, "tool_name", "tool")
++                    tool_call_id, getattr(result_part, "tool_name", "tool")
+                 )
+                 input_payload: Any = self.approval_input.get(tool_call_id, {})
+                 yield ToolInputAvailableEventPayload(
+@@ -1162,39 +1163,51 @@ class VercelStreamContext:
+                 )
+                 self.tool_input_emitted[tool_call_id] = True
+ 
+-            if isinstance(event.result, ToolReturnPart):
+-                tool_call_id = event.result.tool_call_id
++            if isinstance(result_part, ToolReturnPart):
++                tool_call_id = result_part.tool_call_id
+                 self.tool_finished[tool_call_id] = True
+                 self.tool_input_emitted.pop(tool_call_id, None)
+ 
+-                # Check for structured error format from MCP proxy
+-                # (workaround for Claude Agent SDK not propagating is_error)
+-                output_str = event.result.model_response_str()
+-                structured_error = _extract_structured_error(output_str)
+-
+-                if structured_error:
++                if result_part.outcome == "retried":
++                    # Validation or runtime error from a tool call (pydantic-ai 2.x
++                    # reports these as a ToolReturnPart with outcome='retried').
++                    # Do NOT emit a top-level error frame which aborts the stream.
++                    # Instead, surface the failure as the tool's output so the UI
++                    # can render a completed tool block and the model can continue.
+                     yield ToolOutputAvailableEventPayload(
+                         toolCallId=tool_call_id,
+-                        output={"errorText": structured_error},
++                        output={
++                            "errorText": result_part.model_response_str(
++                                wrap_if_error=False
++                            ),
++                        },
+                     )
+                 else:
+-                    yield ToolOutputAvailableEventPayload(
+-                        toolCallId=tool_call_id,
+-                        output=output_str,
+-                    )
+-            elif isinstance(event.result, RetryPromptPart):
+-                # Validation or runtime error from a tool call.
+-                # Do NOT emit a top-level error frame which aborts the stream.
+-                # Instead, surface the failure as the tool's output so the UI
+-                # can render a completed tool block and the model can continue.
+-                if event.result.tool_call_id:
+-                    tool_call_id = event.result.tool_call_id
++                    # Check for structured error format from MCP proxy
++                    # (workaround for Claude Agent SDK not propagating is_error)
++                    output_str = result_part.model_response_str()
++                    structured_error = _extract_structured_error(output_str)
++
++                    if structured_error:
++                        yield ToolOutputAvailableEventPayload(
++                            toolCallId=tool_call_id,
++                            output={"errorText": structured_error},
++                        )
++                    else:
++                        yield ToolOutputAvailableEventPayload(
++                            toolCallId=tool_call_id,
++                            output=output_str,
++                        )
++            elif isinstance(result_part, RetryPromptPart):
++                # Legacy (deprecated) retry part; same handling as above.
++                if result_part.tool_call_id:
++                    tool_call_id = result_part.tool_call_id
+                     self.tool_finished[tool_call_id] = True
+                     self.tool_input_emitted.pop(tool_call_id, None)
+                     yield ToolOutputAvailableEventPayload(
+                         toolCallId=tool_call_id,
+                         output={
+-                            "errorText": event.result.model_response(),
++                            "errorText": result_part.model_response(),
+                         },
+                     )
+                 else:
+@@ -1202,7 +1215,7 @@ class VercelStreamContext:
+                     text_id = f"msg_{uuid.uuid4().hex}"
+                     yield TextStartEventPayload(id=text_id)
+                     yield TextDeltaEventPayload(
+-                        id=text_id, delta=event.result.model_response()
++                        id=text_id, delta=result_part.model_response()
+                     )
+                     yield TextEndEventPayload(id=text_id)
+ 
+@@ -1329,7 +1342,7 @@ def _extract_approval_payload_from_message(
+                 first == APPROVAL_REQUEST_HEADER and parts
+             ):
+                 for part in parts:
+-                    if isinstance(part, ToolCallPart | BuiltinToolCallPart):
++                    if isinstance(part, ToolCallPart | NativeToolCallPart):
+                         approvals.append(
+                             ToolCallPart(
+                                 tool_name=part.tool_name,
+@@ -1570,7 +1583,7 @@ def convert_chat_messages_to_ui(
+                     )
+ 
+                 # --- Tool call parts (pydantic-ai) ---
+-                case "ToolCallPart" | "BuiltinToolCallPart":
++                case "ToolCallPart" | "NativeToolCallPart" | "BuiltinToolCallPart":
+                     if approval_payload:
+                         continue
+                     tool_name = normalize_mcp_tool_name(part.tool_name)
+diff --git a/allama/agent/factory.py b/allama/agent/factory.py
+index 2d6e49f..0215c4f 100644
+--- a/allama/agent/factory.py
++++ b/allama/agent/factory.py
+@@ -5,7 +5,8 @@ from typing import Any
+ 
+ from pydantic_ai import Agent, ModelSettings
+ from pydantic_ai.agent import AbstractAgent
+-from pydantic_ai.mcp import MCPServerStreamableHTTP
++from pydantic_ai.capabilities import Instrumentation
++from pydantic_ai.mcp import MCPToolset
+ from pydantic_ai.tools import DeferredToolRequests
+ from pydantic_ai.tools import Tool as PATool
+ 
+@@ -57,8 +58,8 @@ async def build_agent(config: AgentConfig) -> Agent[Any, Any]:
+     toolsets = None
+     if config.mcp_servers:
+         toolsets = [
+-            MCPServerStreamableHTTP(
+-                url=server["url"],
++            MCPToolset(
++                server["url"],
+                 headers=server.get("headers", {}),
+             )
+             for server in config.mcp_servers
+@@ -78,7 +79,7 @@ async def build_agent(config: AgentConfig) -> Agent[Any, Any]:
+         output_type=output_type_for_agent,
+         model_settings=_model_settings,
+         retries=config.retries,
+-        instrument=True,
++        capabilities=[Instrumentation()],
+         tools=agent_tools,
+         toolsets=toolsets,
+         deps_type=config.deps_type or type(None),
+diff --git a/allama/agent/providers.py b/allama/agent/providers.py
+index 95e3ceb..04c97e5 100644
+--- a/allama/agent/providers.py
++++ b/allama/agent/providers.py
+@@ -12,6 +12,7 @@ from pydantic_ai.models.openai import OpenAIChatModel, OpenAIResponsesModel
+ from pydantic_ai.providers.anthropic import AnthropicProvider
+ from pydantic_ai.providers.bedrock import BedrockProvider
+ from pydantic_ai.providers.google import GoogleProvider
++from pydantic_ai.providers.google_cloud import GoogleCloudProvider
+ from pydantic_ai.providers.ollama import OllamaProvider
+ from pydantic_ai.providers.openai import OpenAIProvider
+ 
+@@ -92,7 +93,7 @@ def get_model(
+             )
+             model = GoogleModel(
+                 model_name=model_name,
+-                provider=GoogleProvider(credentials=credentials),
++                provider=GoogleCloudProvider(credentials=credentials),
+             )
+         case "bedrock":
+             bearer_token = secrets.get_or_default("AWS_BEARER_TOKEN_BEDROCK")
+diff --git a/allama/agent/runtime/pydantic_ai/adapter.py b/allama/agent/runtime/pydantic_ai/adapter.py
+index e40b5e1..845b8f0 100644
+--- a/allama/agent/runtime/pydantic_ai/adapter.py
++++ b/allama/agent/runtime/pydantic_ai/adapter.py
+@@ -157,7 +157,7 @@ class PydanticAIAdapter(BaseHarnessAdapter):
+         self, event: FunctionToolResultEvent
+     ) -> UnifiedStreamEvent:
+         """Convert FunctionToolResultEvent to UnifiedStreamEvent."""
+-        result = event.result
++        result = event.part
+         is_error = isinstance(result, RetryPromptPart)
+ 
+         if isinstance(result, ToolReturnPart):
+@@ -166,7 +166,9 @@ class PydanticAIAdapter(BaseHarnessAdapter):
+                 tool_call_id=result.tool_call_id,
+                 tool_name=result.tool_name,
+                 tool_output=result.content,
+-                is_error=False,
++                # Tool retries (validation errors, ModelRetry) arrive as a
++                # ToolReturnPart with outcome='retried' since pydantic-ai 2.x.
++                is_error=result.outcome in ("failed", "retried"),
+             )
+         elif isinstance(result, RetryPromptPart):
+             return UnifiedStreamEvent(
+diff --git a/tests/unit/test_pydantic_ai_adapter.py b/tests/unit/test_pydantic_ai_adapter.py
+index 682dc36..6b131af 100644
+--- a/tests/unit/test_pydantic_ai_adapter.py
++++ b/tests/unit/test_pydantic_ai_adapter.py
+@@ -9,7 +9,6 @@ from pydantic_ai.messages import (
+     FunctionToolResultEvent,
+     PartDeltaEvent,
+     PartStartEvent,
+-    RetryPromptPart,
+     TextPart,
+     TextPartDelta,
+     ThinkingPart,
+@@ -218,7 +217,7 @@ def test_function_tool_call_event_conversion():
+ def test_tool_return_part_success():
+     """Test ToolReturnPart conversion (success case)."""
+     native = FunctionToolResultEvent(
+-        result=ToolReturnPart(
++        part=ToolReturnPart(
+             tool_name="search",
+             tool_call_id="call_123",
+             content={"results": ["item1", "item2"]},
+@@ -237,7 +236,7 @@ def test_tool_return_part_success():
+ def test_tool_return_part_with_string_content():
+     """Test ToolReturnPart with string content."""
+     native = FunctionToolResultEvent(
+-        result=ToolReturnPart(
++        part=ToolReturnPart(
+             tool_name="search",
+             tool_call_id="call_123",
+             content="plain text result",
+@@ -251,12 +250,13 @@ def test_tool_return_part_with_string_content():
+ 
+ 
+ def test_retry_prompt_part_error():
+-    """Test RetryPromptPart conversion (error case)."""
++    """Test retried ToolReturnPart conversion (error case)."""
+     native = FunctionToolResultEvent(
+-        result=RetryPromptPart(
++        part=ToolReturnPart(
+             tool_name="search",
+             tool_call_id="call_123",
+             content="Validation error: query too short",
++            outcome="retried",
+         )
+     )
+     unified = PydanticAIAdapter().to_unified_event(native)

@@ -1,0 +1,44 @@
+diff --git a/pricing-service/tests/conftest.py b/pricing-service/tests/conftest.py
+index 69ec2aa..d9e4198 100644
+--- a/pricing-service/tests/conftest.py
++++ b/pricing-service/tests/conftest.py
+@@ -3,7 +3,7 @@ import asyncio
+ from typing import AsyncGenerator
+ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+ from sqlalchemy.orm import sessionmaker
+-from httpx import AsyncClient
++from httpx import ASGITransport, AsyncClient
+ import os
+ 
+ from app.core.database import Base, get_db
+@@ -62,7 +62,7 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
+     
+     app.dependency_overrides[get_db] = override_get_db
+     
+-    async with AsyncClient(app=app, base_url="http://test") as ac:
++    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+         yield ac
+     
+     app.dependency_overrides.clear()
+diff --git a/review-service/tests/conftest.py b/review-service/tests/conftest.py
+index cb73350..5d56e94 100644
+--- a/review-service/tests/conftest.py
++++ b/review-service/tests/conftest.py
+@@ -2,7 +2,7 @@ import pytest
+ import asyncio
+ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+ from sqlalchemy.orm import sessionmaker
+-from httpx import AsyncClient
++from httpx import ASGITransport, AsyncClient
+ import sys
+ import os
+ 
+@@ -48,7 +48,7 @@ async def db_session(setup_database):
+ @pytest.fixture
+ async def client():
+     """Create a test client."""
+-    async with AsyncClient(app=app, base_url="http://test") as ac:
++    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+         yield ac
+ 
+ 

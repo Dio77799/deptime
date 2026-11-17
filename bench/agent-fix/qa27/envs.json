@@ -1,0 +1,6300 @@
+{
+"envs": [
+{
+"id": "anthropic==2.8.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"anthropic==2.8.0"
+],
+"uses": [
+{
+"key": "4266c4584438261d",
+"kind": "name",
+"path": "anthropic.BadRequestError"
+},
+{
+"key": "638e19e8ebe882e1",
+"kind": "name",
+"path": "anthropic"
+},
+{
+"key": "7dbb89815a52b8db",
+"kind": "name",
+"path": "anthropic.types.Message"
+},
+{
+"key": "efb0c361d0e8e4bd",
+"kind": "name",
+"path": "anthropic.types"
+}
+]
+},
+{
+"id": "crewai==1.15.41@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"crewai==1.15.41"
+],
+"uses": [
+{
+"key": "0b9ecf0a5af1c643",
+"kind": "name",
+"path": "ddgs.DDGS"
+},
+{
+"key": "1ea6968a49775ee4",
+"kind": "call",
+"path": "crewai.tools.tool",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "2faf053a1d061d33",
+"kind": "call",
+"path": "crewai.LLM",
+"npos": 0,
+"kwargs": [
+"model",
+"temperature"
+]
+},
+{
+"key": "3774ab38d7068aeb",
+"kind": "call",
+"path": "crewai.LLM",
+"npos": 0,
+"kwargs": [
+"base_url",
+"model"
+]
+},
+{
+"key": "456d31a6688e3ec3",
+"kind": "call",
+"path": "ddgs.DDGS",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "588e17f1e45ed4d6",
+"kind": "name",
+"path": "crewai.tools.tool"
+},
+{
+"key": "600343f92e3edf94",
+"kind": "name",
+"path": "crewai.tools"
+},
+{
+"key": "6e06b2ee0fe8d573",
+"kind": "name",
+"path": "ddgs.DDGS.text",
+"via": "instance"
+},
+{
+"key": "74c03f29c7c6fc86",
+"kind": "name",
+"path": "ddgs"
+},
+{
+"key": "98488c71497cc170",
+"kind": "call",
+"path": "ddgs.DDGS.text",
+"npos": 1,
+"kwargs": [
+"max_results"
+],
+"via": "instance"
+},
+{
+"key": "a99b557f7b22caba",
+"kind": "name",
+"path": "crewai"
+},
+{
+"key": "dc037afc0818f99e",
+"kind": "call",
+"path": "crewai.Task",
+"npos": 0,
+"kwargs": [
+"agent",
+"description",
+"expected_output"
+]
+},
+{
+"key": "f180bb6ce2206eae",
+"kind": "name",
+"path": "crewai.LLM"
+}
+]
+},
+{
+"id": "fastmcp==4.2.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"fastmcp==4.2.0"
+],
+"uses": [
+{
+"key": "05ac6e0f08774731",
+"kind": "name",
+"path": "fastmcp.server.providers.proxy.ProxyClient"
+},
+{
+"key": "0cb504bc9fd513f6",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"auth",
+"follow_redirects",
+"headers",
+"timeout",
+"verify"
+]
+},
+{
+"key": "114ac522b2924ddd",
+"kind": "name",
+"path": "httpx2.Timeout"
+},
+{
+"key": "18813501797c0e63",
+"kind": "call",
+"path": "fastmcp.exceptions.McpError",
+"npos": 0,
+"kwargs": [
+"code",
+"message"
+]
+},
+{
+"key": "252a1cc94cc81e93",
+"kind": "call",
+"path": "httpx2.Timeout",
+"npos": 1,
+"kwargs": [
+"read"
+]
+},
+{
+"key": "2cab8fcb0fe78376",
+"kind": "call",
+"path": "fastmcp.server.create_proxy.run",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "2dfd4bfe44b2e4c6",
+"kind": "name",
+"path": "httpx2.AsyncClient"
+},
+{
+"key": "2e9dfa5e2f149ea3",
+"kind": "name",
+"path": "fastmcp.exceptions"
+},
+{
+"key": "3019c623567f3c33",
+"kind": "name",
+"path": "fastmcp.prompts"
+},
+{
+"key": "50932261546e0517",
+"kind": "name",
+"path": "fastmcp.server.providers.proxy"
+},
+{
+"key": "5146bad5828b81e9",
+"kind": "call",
+"path": "fastmcp.FastMCP.list_resource_templates",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "540116ac1b99269a",
+"kind": "name",
+"path": "httpx2.Auth"
+},
+{
+"key": "61e710bb56e24911",
+"kind": "name",
+"path": "httpx2"
+},
+{
+"key": "806055fce2d65631",
+"kind": "call",
+"path": "httpx2.BasicAuth",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "8ba303dc6ad90982",
+"kind": "name",
+"path": "httpx2.BasicAuth"
+},
+{
+"key": "91323cb7f7763370",
+"kind": "name",
+"path": "fastmcp.prompts.Message"
+},
+{
+"key": "9ed7f73d858df263",
+"kind": "call",
+"path": "fastmcp.prompts.Message",
+"npos": 1,
+"kwargs": [
+"role"
+]
+},
+{
+"key": "a2431c74d61422c4",
+"kind": "name",
+"path": "fastmcp.server.create_proxy.run",
+"via": "instance"
+},
+{
+"key": "a7451b462ead198a",
+"kind": "name",
+"path": "fastmcp.server.create_proxy"
+},
+{
+"key": "bba37d926b7e7b81",
+"kind": "name",
+"path": "fastmcp.server"
+},
+{
+"key": "c1d0b5b6516bc00d",
+"kind": "call",
+"path": "fastmcp.FastMCP.list_tools",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "c7d5b96606281b59",
+"kind": "call",
+"path": "fastmcp.server.create_proxy",
+"npos": 1,
+"kwargs": [
+"name"
+]
+},
+{
+"key": "ce5712d149f2d710",
+"kind": "name",
+"path": "fastmcp.FastMCP.list_resource_templates",
+"via": "instance"
+},
+{
+"key": "d1e4dec3fc7651e1",
+"kind": "call",
+"path": "fastmcp.server.providers.proxy.ProxyClient",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "d42484c999094ff4",
+"kind": "name",
+"path": "fastmcp.exceptions.McpError"
+},
+{
+"key": "d7137839fe35e201",
+"kind": "name",
+"path": "fastmcp.FastMCP.list_tools",
+"via": "instance"
+},
+{
+"key": "ebed0f96e499a4fc",
+"kind": "call",
+"path": "fastmcp.FastMCP.list_resources",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "f1468457044431ef",
+"kind": "name",
+"path": "fastmcp.FastMCP.list_resources",
+"via": "instance"
+}
+]
+},
+{
+"id": "gradio==6.32.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"gradio==6.32.0"
+],
+"uses": [
+{
+"key": "031d045b32f28c3c",
+"kind": "call",
+"path": "gradio.Textbox",
+"npos": 0,
+"kwargs": [
+"label",
+"lines",
+"value"
+]
+},
+{
+"key": "04f88ffa1984ae91",
+"kind": "call",
+"path": "gradio.Image",
+"npos": 0,
+"kwargs": [
+"type"
+]
+},
+{
+"key": "09dd14509349d16f",
+"kind": "call",
+"path": "gradio.update",
+"npos": 0,
+"kwargs": [
+"interactive",
+"placeholder"
+]
+},
+{
+"key": "0e2f7ed3022c342d",
+"kind": "call",
+"path": "gradio.Chatbot",
+"npos": 0,
+"kwargs": [
+"allow_tags",
+"avatar_images",
+"buttons",
+"container",
+"elem_id",
+"sanitize_html"
+]
+},
+{
+"key": "22c1077ce56584b8",
+"kind": "name",
+"path": "gradio.update"
+},
+{
+"key": "2ecf9be5e28baa54",
+"kind": "call",
+"path": "gradio.Chatbot",
+"npos": 0,
+"kwargs": [
+"label"
+]
+},
+{
+"key": "387b7f282c8aa376",
+"kind": "call",
+"path": "gradio.Row",
+"npos": 0,
+"kwargs": [
+"equal_height"
+]
+},
+{
+"key": "60b21d869d76640c",
+"kind": "call",
+"path": "gradio.Image",
+"npos": 0,
+"kwargs": [
+"sources",
+"type"
+]
+},
+{
+"key": "67beb02eb00c59c1",
+"kind": "call",
+"path": "gradio.Video",
+"npos": 0,
+"kwargs": [
+"autoplay",
+"buttons",
+"format",
+"label"
+]
+},
+{
+"key": "711b6875a4b2825e",
+"kind": "call",
+"path": "gradio.Blocks",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "722ef089af2435e0",
+"kind": "name",
+"path": "gradio.Video"
+},
+{
+"key": "760c6788a0a0c571",
+"kind": "call",
+"path": "gradio.Chatbot",
+"npos": 0,
+"kwargs": [
+"avatar_images",
+"buttons",
+"container",
+"elem_id",
+"sanitize_html"
+]
+},
+{
+"key": "7adb32331ef74253",
+"kind": "name",
+"path": "gradio.Blocks.queue",
+"via": "instance"
+},
+{
+"key": "80fd94cb6cb326d1",
+"kind": "name",
+"path": "gradio.Group"
+},
+{
+"key": "81a8b85346af57cf",
+"kind": "name",
+"path": "gradio.Slider"
+},
+{
+"key": "84ca382b686a0e2b",
+"kind": "name",
+"path": "gradio.HTML"
+},
+{
+"key": "924dba91f84e5551",
+"kind": "call",
+"path": "gradio.Button",
+"npos": 0,
+"kwargs": [
+"value"
+]
+},
+{
+"key": "9e2769de4e89bc0d",
+"kind": "name",
+"path": "gradio.Textbox"
+},
+{
+"key": "9e71a1659dbae5c9",
+"kind": "call",
+"path": "gradio.update",
+"npos": 0,
+"kwargs": [
+"interactive",
+"value"
+]
+},
+{
+"key": "a2afa337676d02ec",
+"kind": "call",
+"path": "gradio.Image",
+"npos": 0,
+"kwargs": [
+"interactive",
+"type"
+]
+},
+{
+"key": "a48ecedd912eecb8",
+"kind": "call",
+"path": "gradio.HTML",
+"npos": 1,
+"kwargs": [
+"padding"
+]
+},
+{
+"key": "b4a3c548a0b3e4f4",
+"kind": "name",
+"path": "gradio.mount_gradio_app"
+},
+{
+"key": "d6422937e79742eb",
+"kind": "call",
+"path": "gradio.Slider",
+"npos": 0,
+"kwargs": [
+"label",
+"maximum",
+"minimum",
+"step",
+"value"
+]
+},
+{
+"key": "dcf4876cb7f52efc",
+"kind": "call",
+"path": "gradio.Checkbox",
+"npos": 0,
+"kwargs": [
+"interactive",
+"label",
+"value"
+]
+},
+{
+"key": "e08931cc5129a64c",
+"kind": "name",
+"path": "gradio.Chatbot"
+},
+{
+"key": "e42d9252f3d9f75c",
+"kind": "call",
+"path": "gradio.Group",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "e7a4a7cce3ab501a",
+"kind": "name",
+"path": "gradio.Checkbox"
+}
+]
+},
+{
+"id": "httpx==0.28.1@2025-01-05",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2025-01-05",
+"requires": [
+"httpx==0.28.1"
+],
+"uses": [
+{
+"key": "3717db509acda8c6",
+"kind": "call",
+"path": "httpx.ASGITransport",
+"npos": 0,
+"kwargs": [
+"app"
+]
+},
+{
+"key": "63d36c09dff230cf",
+"kind": "call",
+"path": "httpx.AsyncClient",
+"npos": 0,
+"kwargs": [
+"base_url",
+"transport"
+]
+},
+{
+"key": "da3c4b427b6ed1ce",
+"kind": "name",
+"path": "httpx.ASGITransport"
+}
+]
+},
+{
+"id": "huggingface-hub==2.4.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"huggingface-hub==2.4.0"
+],
+"uses": [
+{
+"key": "2ee02f4142018c69",
+"kind": "call",
+"path": "huggingface_hub.InferenceClient.summarization",
+"npos": 1,
+"kwargs": [
+"generate_parameters"
+],
+"via": "instance"
+},
+{
+"key": "8ea1ae353efe839b",
+"kind": "call",
+"path": "huggingface_hub.hf_hub_download",
+"npos": 0,
+"kwargs": [
+"cache_dir",
+"filename",
+"force_download",
+"local_files_only",
+"repo_id",
+"revision",
+"token"
+]
+},
+{
+"key": "c4ca6da09c188dcd",
+"kind": "call",
+"path": "huggingface_hub.snapshot_download",
+"npos": 0,
+"kwargs": [
+"cache_dir",
+"local_dir",
+"repo_id"
+]
+}
+]
+},
+{
+"id": "langchain-community==0.4.2@2026-06-21",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-06-21",
+"requires": [
+"langchain-community==0.4.2"
+],
+"uses": [
+{
+"key": "00ef35dee6e5694f",
+"kind": "name",
+"path": "langchain_community.vectorstores.Qdrant"
+},
+{
+"key": "0594d773c49436ee",
+"kind": "name",
+"path": "langchain_core.messages.HumanMessage"
+},
+{
+"key": "0762e6bf0341036d",
+"kind": "name",
+"path": "langchain_core.messages"
+},
+{
+"key": "0775f435b9919f7c",
+"kind": "name",
+"path": "pydantic"
+},
+{
+"key": "1b5d8ffd48712add",
+"kind": "name",
+"path": "langchain_anthropic"
+},
+{
+"key": "2214f6ce6903e252",
+"kind": "name",
+"path": "langchain_core.prompts.load_prompt.template",
+"via": "instance"
+},
+{
+"key": "251b2f8a746369fb",
+"kind": "call",
+"path": "langchain_text_splitters.CharacterTextSplitter.from_huggingface_tokenizer",
+"npos": 1,
+"kwargs": [
+"chunk_overlap",
+"chunk_size"
+]
+},
+{
+"key": "2a3e01d4354531ba",
+"kind": "call",
+"path": "langchain_community.document_loaders.DirectoryLoader",
+"npos": 1,
+"kwargs": [
+"glob"
+]
+},
+{
+"key": "2ee23f7ba347b27b",
+"kind": "call",
+"path": "pydantic.Field",
+"npos": 0,
+"kwargs": [
+"description"
+]
+},
+{
+"key": "32e1ff7207bd658f",
+"kind": "name",
+"path": "langchain_core.callbacks.base.BaseCallbackHandler"
+},
+{
+"key": "33534110dfc3e0a6",
+"kind": "name",
+"path": "langchain_core.language_models.llms.BaseLLM"
+},
+{
+"key": "351e423f369f6364",
+"kind": "name",
+"path": "langgraph.checkpoint.memory"
+},
+{
+"key": "374db03392e2c7a6",
+"kind": "name",
+"path": "langchain_core.example_selectors"
+},
+{
+"key": "3c47bf38c6c7e639",
+"kind": "name",
+"path": "langchain_classic.chains.LLMChain"
+},
+{
+"key": "3d43b5baa444b65e",
+"kind": "call",
+"path": "langchain_pinecone.PineconeVectorStore.from_existing_index",
+"npos": 0,
+"kwargs": [
+"embedding",
+"index_name"
+]
+},
+{
+"key": "3f7115308e42b431",
+"kind": "name",
+"path": "langchain_pinecone"
+},
+{
+"key": "406537bc9b122cf8",
+"kind": "name",
+"path": "langchain_core.prompts.string.DEFAULT_FORMATTER_MAPPING"
+},
+{
+"key": "4185673d9873f5a5",
+"kind": "call",
+"path": "langchain_core.messages.HumanMessage",
+"npos": 0,
+"kwargs": [
+"content"
+]
+},
+{
+"key": "4189452f38d3f524",
+"kind": "call",
+"path": "langchain_community.vectorstores.Chroma.from_documents",
+"npos": 0,
+"kwargs": [
+"documents",
+"embedding",
+"persist_directory"
+]
+},
+{
+"key": "418d5534ce288ebf",
+"kind": "call",
+"path": "langchain_qdrant.Qdrant.from_documents",
+"npos": 0,
+"kwargs": [
+"collection_name",
+"documents",
+"embedding"
+]
+},
+{
+"key": "440059a73ccf2532",
+"kind": "name",
+"path": "langchain_classic.memory.ConversationSummaryBufferMemory"
+},
+{
+"key": "44818bdef1d1f5ae",
+"kind": "name",
+"path": "langchain_text_splitters.CharacterTextSplitter"
+},
+{
+"key": "470156f6e1fb3779",
+"kind": "name",
+"path": "langchain_core.prompts"
+},
+{
+"key": "4d1078b65283a0b9",
+"kind": "call",
+"path": "pydantic.ConfigDict",
+"npos": 0,
+"kwargs": [
+"arbitrary_types_allowed"
+]
+},
+{
+"key": "4de52f3bd0767635",
+"kind": "name",
+"path": "pydantic.ConfigDict"
+},
+{
+"key": "4f7257604cdf6eaa",
+"kind": "name",
+"path": "langchain_classic.memory"
+},
+{
+"key": "4fea2a266dd9deee",
+"kind": "name",
+"path": "langchain_classic.chains.combine_documents.base"
+},
+{
+"key": "52c0d28868dc4e89",
+"kind": "call",
+"path": "langchain_pinecone.PineconeVectorStore",
+"npos": 0,
+"kwargs": [
+"embedding",
+"index",
+"text_key"
+]
+},
+{
+"key": "545cd9bb39ef1519",
+"kind": "name",
+"path": "langchain_core.language_models.llms"
+},
+{
+"key": "55636b944c9f9dba",
+"kind": "name",
+"path": "langchain_community.vectorstores.FAISS"
+},
+{
+"key": "5ccbb083128a7035",
+"kind": "call",
+"path": "langchain_core.example_selectors.SemanticSimilarityExampleSelector",
+"npos": 0,
+"kwargs": [
+"vectorstore"
+]
+},
+{
+"key": "5d1e7a524df43e10",
+"kind": "call",
+"path": "langchain_pinecone.PineconeVectorStore",
+"npos": 0,
+"kwargs": [
+"embedding",
+"index"
+]
+},
+{
+"key": "5ee84d085cd7a7dd",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"max_tokens",
+"model_name",
+"n",
+"openai_api_base",
+"openai_api_key",
+"request_timeout",
+"temperature"
+]
+},
+{
+"key": "60f7254a6fcd2ab4",
+"kind": "call",
+"path": "langchain_core.messages.AIMessage",
+"npos": 0,
+"kwargs": [
+"content"
+]
+},
+{
+"key": "61daeec806e7f19c",
+"kind": "name",
+"path": "langchain_core.example_selectors.BaseExampleSelector"
+},
+{
+"key": "6af8b06080e3870f",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_documents",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "6ba1f22cadeeeeeb",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate.from_template.save",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "6ed0d1520afe921b",
+"kind": "call",
+"path": "langgraph.checkpoint.memory.MemorySaver",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "71694a59daf1c57e",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate.from_template"
+},
+{
+"key": "71e8971220340c80",
+"kind": "call",
+"path": "langchain_qdrant.Qdrant.from_documents",
+"npos": 0,
+"kwargs": [
+"collection_name",
+"documents",
+"embedding",
+"path"
+]
+},
+{
+"key": "8065c8780bec6189",
+"kind": "call",
+"path": "langchain_community.vectorstores.Qdrant.from_documents",
+"npos": 0,
+"kwargs": [
+"collection_name",
+"documents",
+"embedding",
+"prefer_grpc",
+"url"
+]
+},
+{
+"key": "80cffff0cab5f192",
+"kind": "name",
+"path": "pydantic.BaseModel"
+},
+{
+"key": "8234625c78e985ee",
+"kind": "name",
+"path": "langgraph.checkpoint.memory.MemorySaver"
+},
+{
+"key": "823979ff8f8c549c",
+"kind": "name",
+"path": "langchain_classic.chains.question_answering.load_qa_chain"
+},
+{
+"key": "8259cd0a21ef2a7c",
+"kind": "call",
+"path": "langchain_openai.AzureChatOpenAI",
+"npos": 0,
+"kwargs": [
+"deployment_name",
+"openai_api_base",
+"openai_api_key",
+"openai_api_type",
+"openai_api_version",
+"temperature"
+]
+},
+{
+"key": "88e7618350457ab0",
+"kind": "name",
+"path": "langchain_openai.ChatOpenAI"
+},
+{
+"key": "8ce08916c1687623",
+"kind": "name",
+"path": "langchain_pinecone.PineconeVectorStore.from_existing_index"
+},
+{
+"key": "8d7260743ac2acfb",
+"kind": "name",
+"path": "langchain_text_splitters.CharacterTextSplitter.from_huggingface_tokenizer.split_documents",
+"via": "instance"
+},
+{
+"key": "92794c6f0941119d",
+"kind": "name",
+"path": "langchain_text_splitters"
+},
+{
+"key": "93ad7a3a40b7602d",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate"
+},
+{
+"key": "945033aec5008774",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate.from_template.save",
+"via": "instance"
+},
+{
+"key": "97cc966ecad7b45f",
+"kind": "call",
+"path": "langchain_core.documents.Document",
+"npos": 0,
+"kwargs": [
+"metadata",
+"page_content"
+]
+},
+{
+"key": "9d7e7221b403d8bb",
+"kind": "name",
+"path": "langchain_openai"
+},
+{
+"key": "a0ca75c0b72f1532",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI.generate",
+"npos": 1,
+"kwargs": [
+"stop"
+],
+"via": "instance"
+},
+{
+"key": "a2b67c7803e8b079",
+"kind": "name",
+"path": "langchain_openai.OpenAI"
+},
+{
+"key": "a6ca62f1c9e86587",
+"kind": "name",
+"path": "langchain_classic.chains.combine_documents.base.BaseCombineDocumentsChain"
+},
+{
+"key": "a7489c2f6425907a",
+"kind": "name",
+"path": "langchain_core.messages.AIMessage"
+},
+{
+"key": "a8283c9643efb37b",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_documents",
+"via": "instance"
+},
+{
+"key": "ab6455f866347af8",
+"kind": "name",
+"path": "langchain_core.language_models.fake.FakeListLLM"
+},
+{
+"key": "abf1dda14032fa96",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate.from_template",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "ac4856905e50025d",
+"kind": "name",
+"path": "langchain_qdrant.Qdrant.from_documents"
+},
+{
+"key": "ad091e6542658cd7",
+"kind": "name",
+"path": "langchain_classic.chains.ConversationChain"
+},
+{
+"key": "b0d78dfe1d84bbdb",
+"kind": "call",
+"path": "langchain_text_splitters.CharacterTextSplitter.from_huggingface_tokenizer.split_documents",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "b1f8a1c3c8a080e2",
+"kind": "name",
+"path": "langchain_text_splitters.LatexTextSplitter"
+},
+{
+"key": "b338be1a89827a39",
+"kind": "name",
+"path": "langchain_text_splitters.CharacterTextSplitter.from_huggingface_tokenizer"
+},
+{
+"key": "b354a9b14f1a4ccc",
+"kind": "name",
+"path": "pydantic.Field"
+},
+{
+"key": "b75f208f804a9ca7",
+"kind": "name",
+"path": "langchain_classic.chains"
+},
+{
+"key": "b7ba391dde9de543",
+"kind": "name",
+"path": "langchain_text_splitters.TokenTextSplitter"
+},
+{
+"key": "b8ef02984347d0cb",
+"kind": "name",
+"path": "langchain_qdrant.Qdrant"
+},
+{
+"key": "b93bc75361e6f4d9",
+"kind": "call",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type",
+"npos": 0,
+"kwargs": [
+"chain_type",
+"chain_type_kwargs",
+"llm",
+"retriever",
+"return_source_documents"
+]
+},
+{
+"key": "bb502ad564a076ff",
+"kind": "name",
+"path": "langchain_core.language_models.fake"
+},
+{
+"key": "bc963bc604121166",
+"kind": "call",
+"path": "langchain_anthropic.ChatAnthropic",
+"npos": 0,
+"kwargs": [
+"callbacks",
+"model",
+"temperature"
+]
+},
+{
+"key": "bdb3465a17496fc7",
+"kind": "name",
+"path": "langchain_core.example_selectors.SemanticSimilarityExampleSelector"
+},
+{
+"key": "bf69089d707f3de9",
+"kind": "name",
+"path": "langchain_qdrant"
+},
+{
+"key": "c1d0ccab1404aad1",
+"kind": "name",
+"path": "langchain_classic.chains.RetrievalQA"
+},
+{
+"key": "c3916060f8664ad0",
+"kind": "name",
+"path": "langchain_classic.chains.question_answering"
+},
+{
+"key": "c3d9f1ba6f1a8a9d",
+"kind": "name",
+"path": "langgraph.graph.state.CompiledStateGraph"
+},
+{
+"key": "c5af5494810471f6",
+"kind": "name",
+"path": "langchain_core.prompts.string"
+},
+{
+"key": "c637e83bced4a390",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter"
+},
+{
+"key": "c7b25215f46f7111",
+"kind": "call",
+"path": "langchain_classic.chains.LLMChain",
+"npos": 0,
+"kwargs": [
+"llm",
+"prompt",
+"verbose"
+]
+},
+{
+"key": "ce1050d680ae91a6",
+"kind": "name",
+"path": "langchain_core.callbacks.base"
+},
+{
+"key": "cfbcfcc1c6694611",
+"kind": "name",
+"path": "langchain_core.vectorstores"
+},
+{
+"key": "d135dafb98af541c",
+"kind": "name",
+"path": "langgraph.graph.state"
+},
+{
+"key": "d524967f45459ac4",
+"kind": "name",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type"
+},
+{
+"key": "d5ecb0ede47cf4b5",
+"kind": "name",
+"path": "langchain_core.messages.SystemMessage"
+},
+{
+"key": "d8b9be18acd1626a",
+"kind": "name",
+"path": "langchain_core.documents"
+},
+{
+"key": "d9efc21583978b79",
+"kind": "name",
+"path": "langchain_core.prompts.FewShotPromptTemplate"
+},
+{
+"key": "db33b85e2631aa46",
+"kind": "name",
+"path": "langchain_core.documents.Document"
+},
+{
+"key": "dc516e08b8131e1f",
+"kind": "call",
+"path": "pydantic.ConfigDict",
+"npos": 0,
+"kwargs": [
+"extra"
+]
+},
+{
+"key": "dcbd43a20b5cd2aa",
+"kind": "name",
+"path": "langchain_openai.ChatOpenAI.generate",
+"via": "instance"
+},
+{
+"key": "ddf60fe5fbae0503",
+"kind": "call",
+"path": "langchain_classic.memory.ConversationSummaryBufferMemory",
+"npos": 0,
+"kwargs": [
+"llm",
+"max_token_limit"
+]
+},
+{
+"key": "df0f9e872b554569",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"openai_api_key",
+"temperature"
+]
+},
+{
+"key": "dfc2a809db288ef7",
+"kind": "call",
+"path": "langchain_text_splitters.TokenTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size"
+]
+},
+{
+"key": "e0bd127b268f589d",
+"kind": "name",
+"path": "langchain_community.document_loaders"
+},
+{
+"key": "e0c42644f830f828",
+"kind": "call",
+"path": "langchain_core.language_models.fake.FakeListLLM",
+"npos": 0,
+"kwargs": [
+"callbacks",
+"responses"
+]
+},
+{
+"key": "e2abcef7f0cf1538",
+"kind": "name",
+"path": "langchain_core.prompts.load_prompt"
+},
+{
+"key": "e643b85b663b3da4",
+"kind": "name",
+"path": "langchain_core.vectorstores.VectorStore"
+},
+{
+"key": "e9fb156e05aa486a",
+"kind": "call",
+"path": "langchain_core.messages.SystemMessage",
+"npos": 0,
+"kwargs": [
+"content"
+]
+},
+{
+"key": "eb01962dc7913001",
+"kind": "call",
+"path": "langchain_classic.chains.question_answering.load_qa_chain",
+"npos": 1,
+"kwargs": [
+"chain_type"
+]
+},
+{
+"key": "eb81cbc395c2cf0a",
+"kind": "name",
+"path": "langchain_community.document_loaders.DirectoryLoader"
+},
+{
+"key": "ed5d694618f2a0bd",
+"kind": "name",
+"path": "langchain_core.embeddings.Embeddings"
+},
+{
+"key": "ed994388618ed0cb",
+"kind": "call",
+"path": "langchain_text_splitters.LatexTextSplitter",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "ee87ba8e9a4d654f",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.create_documents",
+"via": "instance"
+},
+{
+"key": "eeaaa4c5d734f329",
+"kind": "name",
+"path": "langchain_core.embeddings"
+},
+{
+"key": "eead8bd26ec271b8",
+"kind": "name",
+"path": "langchain_openai.AzureChatOpenAI"
+},
+{
+"key": "f483c18e9394e589",
+"kind": "name",
+"path": "langchain_anthropic.ChatAnthropic"
+},
+{
+"key": "f68f5d6b03310451",
+"kind": "name",
+"path": "langchain_pinecone.PineconeVectorStore"
+},
+{
+"key": "fbf81ecc13e30826",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size",
+"length_function"
+]
+},
+{
+"key": "fe29fa30897bd507",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate",
+"npos": 0,
+"kwargs": [
+"input_variables",
+"template"
+]
+},
+{
+"key": "ff5254f1c42d3143",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.create_documents",
+"npos": 2,
+"kwargs": [],
+"via": "instance"
+}
+]
+},
+{
+"id": "langchain==1.5.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"langchain==1.5.0"
+],
+"uses": [
+{
+"key": "000fa605f69cf8be",
+"kind": "name",
+"path": "llama_index.langchain_helpers.agents.LlamaToolkit"
+},
+{
+"key": "022bc41cf6899124",
+"kind": "name",
+"path": "langchain_text_splitters.Language.cpp"
+},
+{
+"key": "026cc5512202efab",
+"kind": "call",
+"path": "langchain_classic.agents.initialize_agent",
+"npos": 0,
+"kwargs": [
+"agent",
+"handle_parsing_errors",
+"llm",
+"tools",
+"verbose"
+]
+},
+{
+"key": "0594d773c49436ee",
+"kind": "name",
+"path": "langchain_core.messages.HumanMessage"
+},
+{
+"key": "05a2ffe47d338797",
+"kind": "name",
+"path": "langchain_core.runnables.RunnablePassthrough.assign.assign",
+"via": "instance"
+},
+{
+"key": "05d5c56da0e87fd6",
+"kind": "name",
+"path": "langchain_classic.agents.initialize_agent.run",
+"via": "instance"
+},
+{
+"key": "0762e6bf0341036d",
+"kind": "name",
+"path": "langchain_core.messages"
+},
+{
+"key": "076543219cc00cd4",
+"kind": "call",
+"path": "langchain_classic.callbacks.streaming_aiter.AsyncIteratorCallbackHandler",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "0775f435b9919f7c",
+"kind": "name",
+"path": "pydantic"
+},
+{
+"key": "07b850598b82f8eb",
+"kind": "name",
+"path": "langchain_community.embeddings.huggingface.HuggingFaceEmbeddings"
+},
+{
+"key": "0a4e75ef42aa580d",
+"kind": "name",
+"path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools.invoke",
+"via": "instance"
+},
+{
+"key": "0a75c100a9662551",
+"kind": "call",
+"path": "langchain_core.output_parsers.PydanticOutputParser",
+"npos": 0,
+"kwargs": [
+"pydantic_object"
+]
+},
+{
+"key": "0aac253b0c0b63e7",
+"kind": "call",
+"path": "langchain_chroma.Chroma.from_documents.as_retriever",
+"npos": 0,
+"kwargs": [
+"search_kwargs"
+],
+"via": "instance"
+},
+{
+"key": "0b4605745c0bfc31",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate.format",
+"via": "instance"
+},
+{
+"key": "0c21ae315cf7bc3c",
+"kind": "name",
+"path": "langchain_classic.agents.create_openai_functions_agent"
+},
+{
+"key": "0c42c6514595a1c2",
+"kind": "call",
+"path": "langchain_classic.agents.initialize_agent",
+"npos": 2,
+"kwargs": [
+"agent",
+"handle_parsing_errors",
+"verbose"
+]
+},
+{
+"key": "0c53ae8d1b3c3187",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"api_key",
+"base_url",
+"model",
+"streaming",
+"verbose"
+]
+},
+{
+"key": "0c8926120795ea88",
+"kind": "name",
+"path": "langchain_community.document_loaders.CSVLoader"
+},
+{
+"key": "100c325f62a21b8e",
+"kind": "call",
+"path": "langchain_community.vectorstores.FAISS.from_documents.delete",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "1344ef2400cf882b",
+"kind": "name",
+"path": "langchain_classic.agents.AgentType.ZERO_SHOT_REACT_DESCRIPTION"
+},
+{
+"key": "1402d6860f677d95",
+"kind": "name",
+"path": "langchain_classic.chains.create_retrieval_chain"
+},
+{
+"key": "147e472c4ee68740",
+"kind": "name",
+"path": "langchain_classic.retrievers.multi_query"
+},
+{
+"key": "1508ffa729586d21",
+"kind": "call",
+"path": "langchain_community.vectorstores.FAISS.from_documents",
+"npos": 2,
+"kwargs": [
+"normalize_L2"
+]
+},
+{
+"key": "15100c2eedb62594",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"api_key",
+"model"
+]
+},
+{
+"key": "1513c877b118cb7d",
+"kind": "call",
+"path": "langchain_classic.agents.create_structured_chat_agent",
+"npos": 0,
+"kwargs": [
+"llm",
+"prompt",
+"tools"
+]
+},
+{
+"key": "154954b10dcc738c",
+"kind": "name",
+"path": "langchain_text_splitters.Language.SWIFT"
+},
+{
+"key": "18402c92b04657fe",
+"kind": "name",
+"path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools"
+},
+{
+"key": "192426e724106dda",
+"kind": "call",
+"path": "langchain_huggingface.HuggingFacePipeline.invoke",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "19251371d44a281d",
+"kind": "name",
+"path": "langchain_classic.chains.ConversationChain.predict",
+"via": "instance"
+},
+{
+"key": "196549c410d8c047",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"api_key",
+"base_url",
+"callbacks",
+"model",
+"streaming",
+"verbose"
+]
+},
+{
+"key": "1a843ed279df8be9",
+"kind": "name",
+"path": "langchain_community.document_loaders.PythonLoader"
+},
+{
+"key": "1ac0fe30d52d5b57",
+"kind": "call",
+"path": "langchain_classic.agents.initialize_agent.run",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "1b070d308f7fcd2e",
+"kind": "name",
+"path": "langchain_classic.agents.create_tool_calling_agent"
+},
+{
+"key": "1b5d8ffd48712add",
+"kind": "name",
+"path": "langchain_anthropic"
+},
+{
+"key": "1d870add7bb58ff3",
+"kind": "name",
+"path": "langchain_classic.agents.Tool"
+},
+{
+"key": "1d87eccae14a8084",
+"kind": "name",
+"path": "langchain_core.runnables.RunnablePassthrough"
+},
+{
+"key": "1fc27575ee9d7603",
+"kind": "call",
+"path": "langchain_core.runnables.RunnablePassthrough.assign",
+"npos": 0,
+"kwargs": [
+"context"
+]
+},
+{
+"key": "2044989e2139c6df",
+"kind": "call",
+"path": "langchain.agents.create_agent.invoke",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "22ae02942c6e8971",
+"kind": "name",
+"path": "langchain_core.tools.tool.description"
+},
+{
+"key": "2302ca0a7fd3cc73",
+"kind": "name",
+"path": "langchain_classic.agents.LLMSingleActionAgent"
+},
+{
+"key": "2435a4beefd03a34",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"model",
+"temperature"
+]
+},
+{
+"key": "25410099ee8546ed",
+"kind": "call",
+"path": "langchain_huggingface.HuggingFacePipeline",
+"npos": 0,
+"kwargs": [
+"pipeline",
+"pipeline_kwargs"
+]
+},
+{
+"key": "25a05ecc7110b786",
+"kind": "name",
+"path": "langchain_community.document_loaders.TextLoader"
+},
+{
+"key": "25d82365ac8f5344",
+"kind": "call",
+"path": "langchain_classic.memory.ConversationBufferMemory",
+"npos": 0,
+"kwargs": [
+"memory_key"
+]
+},
+{
+"key": "26a2cf00658aab8f",
+"kind": "name",
+"path": "langchain_classic.agents.create_structured_chat_agent"
+},
+{
+"key": "26c46a94b76d9752",
+"kind": "call",
+"path": "langchain_classic.agents.LLMSingleActionAgent",
+"npos": 0,
+"kwargs": [
+"allowed_tools",
+"llm_chain",
+"output_parser",
+"stop"
+]
+},
+{
+"key": "2839017059fcb7e1",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"callBack",
+"model_name",
+"openai_api_base",
+"openai_api_key",
+"streaming",
+"verbose"
+]
+},
+{
+"key": "28dd88f12235d199",
+"kind": "name",
+"path": "langchain_community.vectorstores.FAISS.from_documents"
+},
+{
+"key": "29aa188da52c6893",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate.format",
+"npos": 0,
+"kwargs": [
+"word"
+],
+"via": "instance"
+},
+{
+"key": "2a3e01d4354531ba",
+"kind": "call",
+"path": "langchain_community.document_loaders.DirectoryLoader",
+"npos": 1,
+"kwargs": [
+"glob"
+]
+},
+{
+"key": "2a9dba9ec5d9f427",
+"kind": "call",
+"path": "langchain_classic.chains.create_retrieval_chain.invoke",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "2b8db9727c95921f",
+"kind": "call",
+"path": "langchain_huggingface.HuggingFacePipeline",
+"npos": 0,
+"kwargs": [
+"callbacks",
+"model_kwargs",
+"pipeline"
+]
+},
+{
+"key": "2c5444a4b64ba6b4",
+"kind": "name",
+"path": "langchain_text_splitters.Language.LATEX"
+},
+{
+"key": "2e07337bc028dab5",
+"kind": "call",
+"path": "langchain_classic.agents.create_openai_functions_agent",
+"npos": 0,
+"kwargs": [
+"llm",
+"prompt",
+"tools"
+]
+},
+{
+"key": "2efff56e5f22e253",
+"kind": "name",
+"path": "langchain_core.documents.Document.metadata",
+"via": "instance"
+},
+{
+"key": "306e41fa93a64b5e",
+"kind": "call",
+"path": "langchain_openai.OpenAI",
+"npos": 0,
+"kwargs": [
+"api_key",
+"base_url",
+"model_name"
+]
+},
+{
+"key": "30d3bd1dfca79432",
+"kind": "name",
+"path": "langchain_community.embeddings.huggingface"
+},
+{
+"key": "3157b6a61c0a5fc0",
+"kind": "call",
+"path": "langchain_classic.chains.ConversationChain",
+"npos": 0,
+"kwargs": [
+"llm",
+"memory",
+"prompt",
+"verbose"
+]
+},
+{
+"key": "3173ae65c0c6b3ba",
+"kind": "call",
+"path": "langchain_chroma.Chroma.from_documents",
+"npos": 2,
+"kwargs": [
+"collection_name"
+]
+},
+{
+"key": "31d7d8e3ec054973",
+"kind": "call",
+"path": "langchain_core.runnables.RunnableBranch",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "327999daea517e89",
+"kind": "call",
+"path": "langchain_text_splitters.CharacterTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size"
+]
+},
+{
+"key": "32e1ff7207bd658f",
+"kind": "name",
+"path": "langchain_core.callbacks.base.BaseCallbackHandler"
+},
+{
+"key": "335edda3f2249683",
+"kind": "name",
+"path": "langchain_classic.chains.combine_documents"
+},
+{
+"key": "34308fed98b9a1e1",
+"kind": "name",
+"path": "langchain.agents.create_agent.invoke",
+"via": "instance"
+},
+{
+"key": "3521bbe389b9a4ca",
+"kind": "call",
+"path": "langchain_text_splitters.LatexTextSplitter.split_documents",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "352223bd1db9392f",
+"kind": "name",
+"path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools.run",
+"via": "instance"
+},
+{
+"key": "36631eac8b7229fa",
+"kind": "name",
+"path": "langchain_community.utilities.BingSearchAPIWrapper.results",
+"via": "instance"
+},
+{
+"key": "367250af6678bebb",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"max_tokens",
+"model_name",
+"temperature"
+]
+},
+{
+"key": "374db03392e2c7a6",
+"kind": "name",
+"path": "langchain_core.example_selectors"
+},
+{
+"key": "37d42c6bd218f781",
+"kind": "name",
+"path": "langchain_text_splitters.Language.HTML"
+},
+{
+"key": "3807045ffcc26f47",
+"kind": "name",
+"path": "langchain_classic.chains.create_history_aware_retriever"
+},
+{
+"key": "389aac3c39aea1d3",
+"kind": "name",
+"path": "langchain_chroma.Chroma.from_documents"
+},
+{
+"key": "38a4b539f845b549",
+"kind": "name",
+"path": "langchain_classic.memory.ConversationBufferWindowMemory"
+},
+{
+"key": "3a71bbba53633301",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor",
+"npos": 0,
+"kwargs": [
+"agent",
+"handle_parsing_errors",
+"max_iterations",
+"tools",
+"verbose"
+]
+},
+{
+"key": "3a7acc6296b8107e",
+"kind": "name",
+"path": "langchain_core.document_loaders"
+},
+{
+"key": "3b4649dfa511669e",
+"kind": "name",
+"path": "langchain_text_splitters.Language.JS"
+},
+{
+"key": "3c47bf38c6c7e639",
+"kind": "name",
+"path": "langchain_classic.chains.LLMChain"
+},
+{
+"key": "3c9b36ac94aef77e",
+"kind": "name",
+"path": "langchain_text_splitters.Language.MARKDOWN"
+},
+{
+"key": "3caaf59e16a0824b",
+"kind": "name",
+"path": "langchain_google_vertexai.VertexAI"
+},
+{
+"key": "3d8e009d9fca4e7d",
+"kind": "name",
+"path": "langchain_core.agents.AgentAction"
+},
+{
+"key": "3eb081bc96a92cd9",
+"kind": "name",
+"path": "langchain_classic.chains.create_retrieval_chain.invoke",
+"via": "instance"
+},
+{
+"key": "3ed5b8193728ba25",
+"kind": "name",
+"path": "langchain_text_splitters.Language.PROTO"
+},
+{
+"key": "3f0fe8ed16d79810",
+"kind": "call",
+"path": "langchain.agents.create_agent",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "4013ead6d788cb83",
+"kind": "call",
+"path": "langchain_openai.OpenAIEmbeddings",
+"npos": 0,
+"kwargs": [
+"api_key"
+]
+},
+{
+"key": "41cbf682a2357ca7",
+"kind": "name",
+"path": "langchain.tools.tool"
+},
+{
+"key": "4247c9b71b72a392",
+"kind": "name",
+"path": "langchain_community.vectorstores.FAISS.load_local"
+},
+{
+"key": "441f3bb0055dd3c5",
+"kind": "name",
+"path": "langchain_core.runnables"
+},
+{
+"key": "446577bb6251ec1f",
+"kind": "name",
+"path": "langchain_community.utilities"
+},
+{
+"key": "44818bdef1d1f5ae",
+"kind": "name",
+"path": "langchain_text_splitters.CharacterTextSplitter"
+},
+{
+"key": "44b3e490e3512f34",
+"kind": "name",
+"path": "langchain_community.embeddings.Model2vecEmbeddings"
+},
+{
+"key": "45aeba3e1a4ebea6",
+"kind": "call",
+"path": "langchain_community.utilities.DuckDuckGoSearchAPIWrapper.results",
+"npos": 2,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "467d1dc3ef030948",
+"kind": "name",
+"path": "langchain_core.tools"
+},
+{
+"key": "468bbe4024a60019",
+"kind": "call",
+"path": "langchain_core.output_parsers.StrOutputParser",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "46bbb4f9fc031654",
+"kind": "name",
+"path": "langchain_huggingface"
+},
+{
+"key": "470156f6e1fb3779",
+"kind": "name",
+"path": "langchain_core.prompts"
+},
+{
+"key": "48dc4d638f16c9f1",
+"kind": "call",
+"path": "langchain_classic.memory.ConversationBufferMemory",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "49b48aec2750f01a",
+"kind": "name",
+"path": "langchain_core.prompts.ChatPromptTemplate.invoke",
+"via": "instance"
+},
+{
+"key": "49e46060b5c4ae46",
+"kind": "name",
+"path": "langchain_community.utilities.SerpAPIWrapper.run",
+"via": "instance"
+},
+{
+"key": "4a5809830257c853",
+"kind": "call",
+"path": "langchain_community.vectorstores.FAISS.from_documents.save_local",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "4b2a12ed88a90ab6",
+"kind": "name",
+"path": "langchain_classic.agents.AgentOutputParser"
+},
+{
+"key": "4d1078b65283a0b9",
+"kind": "call",
+"path": "pydantic.ConfigDict",
+"npos": 0,
+"kwargs": [
+"arbitrary_types_allowed"
+]
+},
+{
+"key": "4de52f3bd0767635",
+"kind": "name",
+"path": "pydantic.ConfigDict"
+},
+{
+"key": "4f7257604cdf6eaa",
+"kind": "name",
+"path": "langchain_classic.memory"
+},
+{
+"key": "51462c4aba3d60dd",
+"kind": "call",
+"path": "langchain_core.tracers.stdout.ConsoleCallbackHandler",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "53110b609af16582",
+"kind": "name",
+"path": "langchain_community.document_loaders.WebBaseLoader.load",
+"via": "instance"
+},
+{
+"key": "53aac189547701a0",
+"kind": "call",
+"path": "langchain_classic.chains.create_retrieval_chain",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "53c3ef70fc8e68ee",
+"kind": "name",
+"path": "langchain_classic.agents"
+},
+{
+"key": "55636b944c9f9dba",
+"kind": "name",
+"path": "langchain_community.vectorstores.FAISS"
+},
+{
+"key": "55886df46a0a5908",
+"kind": "call",
+"path": "langchain_community.llms.HuggingFacePipeline",
+"npos": 0,
+"kwargs": [
+"pipeline"
+]
+},
+{
+"key": "5669daa0e1f5c90c",
+"kind": "name",
+"path": "langchain_community.llms"
+},
+{
+"key": "56f22fea64dbfa5a",
+"kind": "call",
+"path": "langchain_community.embeddings.huggingface.HuggingFaceEmbeddings",
+"npos": 0,
+"kwargs": [
+"model_kwargs",
+"model_name"
+]
+},
+{
+"key": "5888e17e203bac97",
+"kind": "name",
+"path": "langchain_classic.retrievers.document_compressors.chain_extract"
+},
+{
+"key": "58ddbfd1076c594f",
+"kind": "name",
+"path": "langchain_community.vectorstores.utils.filter_complex_metadata"
+},
+{
+"key": "58f4dcc7ed3d141e",
+"kind": "name",
+"path": "llama_index.langchain_helpers.agents"
+},
+{
+"key": "5951d8d4e98ced72",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor",
+"npos": 0,
+"kwargs": [
+"agent",
+"tools",
+"verbose"
+]
+},
+{
+"key": "595ced98ca32b211",
+"kind": "name",
+"path": "langchain_text_splitters.Language.CPP"
+},
+{
+"key": "5aa6869f26a206f5",
+"kind": "call",
+"path": "langchain_huggingface.HuggingFacePipeline",
+"npos": 0,
+"kwargs": [
+"pipeline"
+]
+},
+{
+"key": "5b754934f65caf82",
+"kind": "call",
+"path": "langchain_community.utilities.DuckDuckGoSearchAPIWrapper",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "5dc4d773daba14a3",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor.invoke",
+"npos": 1,
+"kwargs": [
+"config"
+],
+"via": "instance"
+},
+{
+"key": "5fefbe3c031b685a",
+"kind": "name",
+"path": "langchain_huggingface.HuggingFacePipeline"
+},
+{
+"key": "606f028386ad063d",
+"kind": "call",
+"path": "langchain_core.prompts.ChatPromptTemplate.from_messages",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "61daeec806e7f19c",
+"kind": "name",
+"path": "langchain_core.example_selectors.BaseExampleSelector"
+},
+{
+"key": "61ea90becfb8b96d",
+"kind": "name",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type.run",
+"via": "instance"
+},
+{
+"key": "62764b3b033bfbe9",
+"kind": "call",
+"path": "langchain_openai.OpenAIEmbeddings",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "6352d4d94cbca7f7",
+"kind": "name",
+"path": "langchain_classic.callbacks.streaming_aiter.AsyncIteratorCallbackHandler.done",
+"via": "instance"
+},
+{
+"key": "638e3b4ad7782dca",
+"kind": "name",
+"path": "langchain_community.utilities.DuckDuckGoSearchAPIWrapper"
+},
+{
+"key": "6391d2c811a94ed9",
+"kind": "call",
+"path": "langchain_chroma.Chroma.from_documents.as_retriever",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "63d309101f996da7",
+"kind": "name",
+"path": "langchain_openai.ChatOpenAI.invoke",
+"via": "instance"
+},
+{
+"key": "649bf10efb21ffbb",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"max_tokens",
+"temperature"
+]
+},
+{
+"key": "659f93f148592ce7",
+"kind": "name",
+"path": "langchain_core.prompts.ChatPromptTemplate"
+},
+{
+"key": "661d8ae034933b96",
+"kind": "name",
+"path": "langchain_community.document_loaders.UnstructuredFileLoader"
+},
+{
+"key": "66f56a890add7c5c",
+"kind": "name",
+"path": "langchain_core.callbacks.AsyncCallbackHandler"
+},
+{
+"key": "679e04f7eaa889a9",
+"kind": "name",
+"path": "langchain_classic.agents.AgentExecutor.configurable_fields",
+"via": "instance"
+},
+{
+"key": "682728ca2ce4dde8",
+"kind": "name",
+"path": "langchain_google_vertexai"
+},
+{
+"key": "68cd799082bd9fa4",
+"kind": "call",
+"path": "langchain_text_splitters.CharacterTextSplitter.split_documents",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "68fb039bcc284ad1",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools",
+"npos": 0,
+"kwargs": [
+"agent",
+"memory",
+"tools",
+"verbose"
+]
+},
+{
+"key": "6942a7396836393e",
+"kind": "name",
+"path": "langchain_classic.callbacks.streaming_aiter"
+},
+{
+"key": "69ad200e47648304",
+"kind": "call",
+"path": "langchain_chroma.Chroma",
+"npos": 0,
+"kwargs": [
+"embedding_function"
+]
+},
+{
+"key": "6b14149d8e557cbf",
+"kind": "name",
+"path": "langchain_core.prompts.MessagesPlaceholder"
+},
+{
+"key": "6bf789c8d93b028a",
+"kind": "call",
+"path": "langchain_community.utilities.BingSearchAPIWrapper",
+"npos": 0,
+"kwargs": [
+"bing_search_url",
+"bing_subscription_key"
+]
+},
+{
+"key": "6c9325f9b50f2d70",
+"kind": "call",
+"path": "langchain_openai.OpenAIEmbeddings",
+"npos": 0,
+"kwargs": [
+"openai_api_key"
+]
+},
+{
+"key": "6d0876b39cef7f65",
+"kind": "call",
+"path": "langchain_chroma.Chroma.from_documents.similarity_search",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "6d0a767ce14f225d",
+"kind": "name",
+"path": "pydantic.model_validator"
+},
+{
+"key": "6d6ce19bed34b0e0",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate.from_template.format",
+"npos": 0,
+"kwargs": [
+"county",
+"name",
+"sex"
+],
+"via": "instance"
+},
+{
+"key": "6d9136dd9a98ae2c",
+"kind": "name",
+"path": "langchain_community.embeddings"
+},
+{
+"key": "6ddf6c46923937ba",
+"kind": "call",
+"path": "langchain_openai.OpenAI",
+"npos": 0,
+"kwargs": [
+"temperature"
+]
+},
+{
+"key": "6e4c6f180aa122a5",
+"kind": "call",
+"path": "langchain_classic.memory.ConversationBufferMemory",
+"npos": 0,
+"kwargs": [
+"ai_prefix",
+"chat_memory",
+"human_prefix",
+"llm",
+"max_token_limit",
+"memory_key",
+"output_key",
+"return_messages"
+]
+},
+{
+"key": "6f8fac3508c984f4",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor.configurable_fields",
+"npos": 0,
+"kwargs": [
+"memory"
+],
+"via": "instance"
+},
+{
+"key": "6ffe861747db7edd",
+"kind": "name",
+"path": "langchain_core.prompts.ChatPromptTemplate.from_messages"
+},
+{
+"key": "704539e42c224581",
+"kind": "call",
+"path": "langchain_classic.chains.combine_documents.create_stuff_documents_chain",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "71e9205781eb92ac",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size"
+]
+},
+{
+"key": "72abf9ff7e1c0253",
+"kind": "call",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type",
+"npos": 0,
+"kwargs": [
+"chain_type",
+"llm",
+"retriever",
+"verbose"
+]
+},
+{
+"key": "740d3769e5990ab1",
+"kind": "call",
+"path": "langchain_classic.chains.LLMChain.run",
+"npos": 0,
+"kwargs": [
+"text"
+],
+"via": "instance"
+},
+{
+"key": "7749b4c5d0329838",
+"kind": "call",
+"path": "langchain_community.utilities.BingSearchAPIWrapper.results",
+"npos": 2,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "77989f94631321d8",
+"kind": "call",
+"path": "langchain_classic.memory.ConversationBufferWindowMemory",
+"npos": 0,
+"kwargs": [
+"k"
+]
+},
+{
+"key": "7a173c80970c0bb0",
+"kind": "name",
+"path": "langchain_core.tracers.stdout"
+},
+{
+"key": "7a5ee4756525b68e",
+"kind": "name",
+"path": "langchain_classic.retrievers.ContextualCompressionRetriever"
+},
+{
+"key": "7ccfc83859faade6",
+"kind": "name",
+"path": "langchain_community.vectorstores.utils"
+},
+{
+"key": "7d31272d16e00378",
+"kind": "call",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type.run",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "7def64354ebf3dca",
+"kind": "name",
+"path": "langchain_core.runnables.RunnablePassthrough.assign"
+},
+{
+"key": "7e7979bab42a59d2",
+"kind": "name",
+"path": "langchain_text_splitters.Language.RST"
+},
+{
+"key": "80cffff0cab5f192",
+"kind": "name",
+"path": "pydantic.BaseModel"
+},
+{
+"key": "80e89dca1fa3af05",
+"kind": "call",
+"path": "langchain_classic.chains.LLMChain.run",
+"npos": 0,
+"kwargs": [
+"question"
+],
+"via": "instance"
+},
+{
+"key": "823979ff8f8c549c",
+"kind": "name",
+"path": "langchain_classic.chains.question_answering.load_qa_chain"
+},
+{
+"key": "833d5459e03b5fa0",
+"kind": "call",
+"path": "langchain_community.document_loaders.WebBaseLoader.load",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "83a9c8ab5b9100ba",
+"kind": "name",
+"path": "langchain_core.output_parsers"
+},
+{
+"key": "84ad2fc2c7373400",
+"kind": "name",
+"path": "langchain_classic.agents.AgentType"
+},
+{
+"key": "855c9eb3e40528c2",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate.from_template.format",
+"via": "instance"
+},
+{
+"key": "86c27ea846163424",
+"kind": "name",
+"path": "langchain_core.output_parsers.PydanticOutputParser"
+},
+{
+"key": "86ddfa0eedeb87f3",
+"kind": "name",
+"path": "langchain_huggingface.HuggingFaceEmbeddings"
+},
+{
+"key": "87907cd867b90f3a",
+"kind": "name",
+"path": "langchain_classic.retrievers.multi_query.MultiQueryRetriever"
+},
+{
+"key": "87a6e2939c787786",
+"kind": "call",
+"path": "langchain_community.vectorstores.utils.filter_complex_metadata",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "87b0a0bcf88be623",
+"kind": "call",
+"path": "langchain_core.agents.AgentFinish",
+"npos": 0,
+"kwargs": [
+"log",
+"return_values"
+]
+},
+{
+"key": "88e7618350457ab0",
+"kind": "name",
+"path": "langchain_openai.ChatOpenAI"
+},
+{
+"key": "892b5a59933a9107",
+"kind": "name",
+"path": "langchain_chroma.Chroma"
+},
+{
+"key": "8b67fbf3b41e517e",
+"kind": "name",
+"path": "langchain_text_splitters.Language"
+},
+{
+"key": "8e95f1bacef128a8",
+"kind": "call",
+"path": "langchain_core.agents.AgentAction",
+"npos": 0,
+"kwargs": [
+"log",
+"tool",
+"tool_input"
+]
+},
+{
+"key": "91260893baf3e1b0",
+"kind": "name",
+"path": "langchain_core.documents.Document.page_content",
+"via": "instance"
+},
+{
+"key": "915c73b5162868bb",
+"kind": "name",
+"path": "langchain_text_splitters.Language.PYTHON"
+},
+{
+"key": "926479508d9c23ab",
+"kind": "call",
+"path": "langchain_core.prompts.ChatPromptTemplate.from_messages.format_messages",
+"npos": 0,
+"kwargs": [
+"name",
+"user_input"
+],
+"via": "instance"
+},
+{
+"key": "92794c6f0941119d",
+"kind": "name",
+"path": "langchain_text_splitters"
+},
+{
+"key": "92e4157c0dc289ea",
+"kind": "name",
+"path": "langchain_classic.callbacks.streaming_aiter.AsyncIteratorCallbackHandler"
+},
+{
+"key": "9377b2f1e0ad025c",
+"kind": "call",
+"path": "langchain_text_splitters.SpacyTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size",
+"pipeline"
+]
+},
+{
+"key": "93ad7a3a40b7602d",
+"kind": "name",
+"path": "langchain_core.prompts.PromptTemplate"
+},
+{
+"key": "950db5a133783c76",
+"kind": "name",
+"path": "langchain_classic.agents.initialize_agent"
+},
+{
+"key": "9619601ed3192741",
+"kind": "call",
+"path": "langchain_openai.OpenAI",
+"npos": 0,
+"kwargs": [
+"openai_api_key"
+]
+},
+{
+"key": "96c79fed43c6cc19",
+"kind": "call",
+"path": "langchain_classic.agents.Tool",
+"npos": 0,
+"kwargs": [
+"description",
+"func",
+"name"
+]
+},
+{
+"key": "96da4ec0005bb432",
+"kind": "call",
+"path": "langchain_core.globals.set_verbose",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "9766ea2874a65b0c",
+"kind": "name",
+"path": "langchain_core.output_parsers.StrOutputParser"
+},
+{
+"key": "97cc966ecad7b45f",
+"kind": "call",
+"path": "langchain_core.documents.Document",
+"npos": 0,
+"kwargs": [
+"metadata",
+"page_content"
+]
+},
+{
+"key": "98a5bbaa13ea02bc",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"temperature"
+]
+},
+{
+"key": "98e9a19041a7df07",
+"kind": "name",
+"path": "langchain_core.agents.AgentFinish"
+},
+{
+"key": "98ff8460e200dd42",
+"kind": "call",
+"path": "langchain_core.tools.tool",
+"npos": 0,
+"kwargs": [
+"parse_docstring"
+]
+},
+{
+"key": "9ac6b1fe92f9b4e7",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size",
+"is_separator_regex",
+"length_function",
+"separators"
+]
+},
+{
+"key": "9afe51137eb40b54",
+"kind": "name",
+"path": "langchain_community.vectorstores.FAISS.from_documents.docstore",
+"via": "instance"
+},
+{
+"key": "9cc175263011e0ea",
+"kind": "name",
+"path": "langchain_text_splitters.Language.SCALA"
+},
+{
+"key": "9d7e7221b403d8bb",
+"kind": "name",
+"path": "langchain_openai"
+},
+{
+"key": "9db3c08190064209",
+"kind": "name",
+"path": "langchain_community.utilities.SerpAPIWrapper"
+},
+{
+"key": "9dbc8ce9a03f0d65",
+"kind": "name",
+"path": "langchain_core.tools.tool"
+},
+{
+"key": "9fad3e5dbe155e53",
+"kind": "call",
+"path": "langchain_huggingface.HuggingFaceEmbeddings",
+"npos": 0,
+"kwargs": [
+"model_name"
+]
+},
+{
+"key": "a18188f18b69c4d5",
+"kind": "name",
+"path": "langchain_classic.chains.LLMChain.run",
+"via": "instance"
+},
+{
+"key": "a2b67c7803e8b079",
+"kind": "name",
+"path": "langchain_openai.OpenAI"
+},
+{
+"key": "a41f4ef9f16e641d",
+"kind": "name",
+"path": "langchain_core.globals.set_verbose"
+},
+{
+"key": "a4a5e1af187f2988",
+"kind": "name",
+"path": "langchain_classic.agents.AgentExecutor"
+},
+{
+"key": "a5c559321f0a633a",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "a62991b685fc93d9",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools.run",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "a654b22a9d2f787c",
+"kind": "name",
+"path": "langchain_text_splitters.CharacterTextSplitter.split_documents",
+"via": "instance"
+},
+{
+"key": "aaebee00bb47b106",
+"kind": "name",
+"path": "langchain_text_splitters.Language.RUBY"
+},
+{
+"key": "ab6455f866347af8",
+"kind": "name",
+"path": "langchain_core.language_models.fake.FakeListLLM"
+},
+{
+"key": "ad091e6542658cd7",
+"kind": "name",
+"path": "langchain_classic.chains.ConversationChain"
+},
+{
+"key": "ad3267359a1a5f2e",
+"kind": "name",
+"path": "langchain_classic.agents.load_tools"
+},
+{
+"key": "ada69fcd550f6715",
+"kind": "name",
+"path": "langchain_text_splitters.LatexTextSplitter.split_documents",
+"via": "instance"
+},
+{
+"key": "ae2140a4004c3e63",
+"kind": "call",
+"path": "langchain_chroma.Chroma.from_documents",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "aecfc886758f7c0b",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI.invoke",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "af29c823ca5e464f",
+"kind": "call",
+"path": "langchain_chroma.Chroma.add_documents",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "b198235753c2cb23",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_text",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "b1f8a1c3c8a080e2",
+"kind": "name",
+"path": "langchain_text_splitters.LatexTextSplitter"
+},
+{
+"key": "b236dc204732407c",
+"kind": "name",
+"path": "langchain_community.document_loaders.PyPDFLoader"
+},
+{
+"key": "b258633ac0192f77",
+"kind": "call",
+"path": "langchain_classic.chains.ConversationChain.predict",
+"npos": 0,
+"kwargs": [
+"input"
+],
+"via": "instance"
+},
+{
+"key": "b735771179e85d0e",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.from_language",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size",
+"language"
+]
+},
+{
+"key": "b75f208f804a9ca7",
+"kind": "name",
+"path": "langchain_classic.chains"
+},
+{
+"key": "b7ba391dde9de543",
+"kind": "name",
+"path": "langchain_text_splitters.TokenTextSplitter"
+},
+{
+"key": "b87df1ac693fb92e",
+"kind": "call",
+"path": "langchain_core.prompts.ChatPromptTemplate.invoke",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "b986eecedf511f9b",
+"kind": "call",
+"path": "langchain_google_vertexai.VertexAI",
+"npos": 0,
+"kwargs": [
+"max_output_tokens"
+]
+},
+{
+"key": "ba2f7657985cb490",
+"kind": "name",
+"path": "langchain_community.document_loaders.DirectoryLoader.load",
+"via": "instance"
+},
+{
+"key": "bb502ad564a076ff",
+"kind": "name",
+"path": "langchain_core.language_models.fake"
+},
+{
+"key": "bc963bc604121166",
+"kind": "call",
+"path": "langchain_anthropic.ChatAnthropic",
+"npos": 0,
+"kwargs": [
+"callbacks",
+"model",
+"temperature"
+]
+},
+{
+"key": "bcbf9041783d8f56",
+"kind": "name",
+"path": "langchain_community.document_loaders.WebBaseLoader"
+},
+{
+"key": "be60172d77cdfa0a",
+"kind": "name",
+"path": "langchain_classic.retrievers"
+},
+{
+"key": "bed181dbd8c9a1cd",
+"kind": "name",
+"path": "langchain_classic.agents.AgentType.OPENAI_FUNCTIONS"
+},
+{
+"key": "beefc657ebd66a81",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate.format",
+"npos": 0,
+"kwargs": [
+"input"
+],
+"via": "instance"
+},
+{
+"key": "bfa5ed9e06874730",
+"kind": "call",
+"path": "langchain_core.tools.Tool",
+"npos": 0,
+"kwargs": [
+"description",
+"func",
+"name"
+]
+},
+{
+"key": "c0338098e17a2aa7",
+"kind": "call",
+"path": "langchain_community.document_loaders.DirectoryLoader.load",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "c0c370e8a4fd3fbd",
+"kind": "name",
+"path": "langchain_core.globals"
+},
+{
+"key": "c1d0ccab1404aad1",
+"kind": "name",
+"path": "langchain_classic.chains.RetrievalQA"
+},
+{
+"key": "c2a5a664164a14e8",
+"kind": "call",
+"path": "langchain_community.document_loaders.WebBaseLoader",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "c310becd42db02f9",
+"kind": "name",
+"path": "langchain_core.tools.Tool"
+},
+{
+"key": "c31bf776d8e04f81",
+"kind": "name",
+"path": "langchain_core.tracers.stdout.ConsoleCallbackHandler"
+},
+{
+"key": "c3916060f8664ad0",
+"kind": "name",
+"path": "langchain_classic.chains.question_answering"
+},
+{
+"key": "c40156bf9f3c0bb4",
+"kind": "call",
+"path": "langchain_community.vectorstores.FAISS.load_local",
+"npos": 2,
+"kwargs": [
+"allow_dangerous_deserialization",
+"normalize_L2"
+]
+},
+{
+"key": "c47d76c9a665726f",
+"kind": "name",
+"path": "langchain_classic.memory.ConversationBufferMemory"
+},
+{
+"key": "c62930a399056517",
+"kind": "name",
+"path": "langchain_text_splitters.Language.SOL"
+},
+{
+"key": "c637e83bced4a390",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter"
+},
+{
+"key": "c7d82387570b6f24",
+"kind": "name",
+"path": "langchain_community.vectorstores.FAISS.from_documents.save_local",
+"via": "instance"
+},
+{
+"key": "c865cd9a07b249a4",
+"kind": "name",
+"path": "langchain_huggingface.HuggingFacePipeline.invoke",
+"via": "instance"
+},
+{
+"key": "c8a91c346caa7706",
+"kind": "name",
+"path": "langchain_core.prompts.StringPromptTemplate"
+},
+{
+"key": "c9d0f72e85e6b03c",
+"kind": "name",
+"path": "langchain_chroma"
+},
+{
+"key": "cab0d357ac1e04f4",
+"kind": "name",
+"path": "langchain_core.example_selectors.base.BaseExampleSelector"
+},
+{
+"key": "cbc84110bbfab131",
+"kind": "call",
+"path": "langchain_core.prompts.ChatPromptTemplate",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "cce8784cae75a1ea",
+"kind": "name",
+"path": "langchain_core.document_loaders.BaseLoader"
+},
+{
+"key": "ce1050d680ae91a6",
+"kind": "name",
+"path": "langchain_core.callbacks.base"
+},
+{
+"key": "cec662668de3d80a",
+"kind": "name",
+"path": "langchain_classic.chains.combine_documents.create_stuff_documents_chain"
+},
+{
+"key": "cf1af4dadb171fd0",
+"kind": "name",
+"path": "langchain_text_splitters.Language.RUST"
+},
+{
+"key": "cfbcfcc1c6694611",
+"kind": "name",
+"path": "langchain_core.vectorstores"
+},
+{
+"key": "d031d391196fa7d5",
+"kind": "name",
+"path": "langchain_classic.chains.LLMChain.acall",
+"via": "instance"
+},
+{
+"key": "d037a609d2729b2f",
+"kind": "call",
+"path": "langchain_classic.agents.initialize_agent",
+"npos": 2,
+"kwargs": [
+"agent",
+"verbose"
+]
+},
+{
+"key": "d0c940f7d18f712a",
+"kind": "call",
+"path": "langchain_huggingface.HuggingFaceEmbeddings",
+"npos": 0,
+"kwargs": [
+"model_kwargs",
+"model_name"
+]
+},
+{
+"key": "d131dfe4132eabe7",
+"kind": "name",
+"path": "langchain_core.agents"
+},
+{
+"key": "d13dbfb87256a9d0",
+"kind": "name",
+"path": "langchain_community.vectorstores.FAISS.from_documents.delete",
+"via": "instance"
+},
+{
+"key": "d1ab983bb543464a",
+"kind": "name",
+"path": "langchain_text_splitters.Language.JAVA"
+},
+{
+"key": "d3521526805d0731",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor.invoke",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "d506a4c40ffe3ded",
+"kind": "call",
+"path": "langchain_classic.agents.load_tools",
+"npos": 1,
+"kwargs": [
+"llm"
+]
+},
+{
+"key": "d524967f45459ac4",
+"kind": "name",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type"
+},
+{
+"key": "d53138d5794672d2",
+"kind": "name",
+"path": "langchain_text_splitters.SpacyTextSplitter"
+},
+{
+"key": "d638c7034d1b2610",
+"kind": "name",
+"path": "langchain_core.example_selectors.base"
+},
+{
+"key": "d796ec11be165284",
+"kind": "name",
+"path": "langchain_chroma.Chroma.add_documents",
+"via": "instance"
+},
+{
+"key": "d88bdb0237ef81ba",
+"kind": "name",
+"path": "langchain_chroma.Chroma.from_documents.similarity_search",
+"via": "instance"
+},
+{
+"key": "d8b9be18acd1626a",
+"kind": "name",
+"path": "langchain_core.documents"
+},
+{
+"key": "d9efc21583978b79",
+"kind": "name",
+"path": "langchain_core.prompts.FewShotPromptTemplate"
+},
+{
+"key": "db31d05311b377dd",
+"kind": "call",
+"path": "langchain_text_splitters.TokenTextSplitter.split_documents",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "db33b85e2631aa46",
+"kind": "name",
+"path": "langchain_core.documents.Document"
+},
+{
+"key": "db35f94652a61505",
+"kind": "name",
+"path": "langchain_text_splitters.Language.PHP"
+},
+{
+"key": "dbef003a8762db50",
+"kind": "name",
+"path": "langchain_openai.OpenAIEmbeddings"
+},
+{
+"key": "de485974d12227d4",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor",
+"npos": 0,
+"kwargs": [
+"agent",
+"memory",
+"tools",
+"verbose"
+]
+},
+{
+"key": "df7034c7d470ba91",
+"kind": "name",
+"path": "langchain_community.vectorstores"
+},
+{
+"key": "dfc2a809db288ef7",
+"kind": "call",
+"path": "langchain_text_splitters.TokenTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size"
+]
+},
+{
+"key": "e0bd127b268f589d",
+"kind": "name",
+"path": "langchain_community.document_loaders"
+},
+{
+"key": "e0c42644f830f828",
+"kind": "call",
+"path": "langchain_core.language_models.fake.FakeListLLM",
+"npos": 0,
+"kwargs": [
+"callbacks",
+"responses"
+]
+},
+{
+"key": "e21863cf8e87d9dc",
+"kind": "name",
+"path": "langchain_community.utilities.DuckDuckGoSearchAPIWrapper.results",
+"via": "instance"
+},
+{
+"key": "e25b762933c05296",
+"kind": "call",
+"path": "langchain_core.runnables.RunnablePassthrough.assign",
+"npos": 0,
+"kwargs": [
+"text"
+]
+},
+{
+"key": "e26ed8b1463ba2ce",
+"kind": "name",
+"path": "langchain_community.utilities.BingSearchAPIWrapper"
+},
+{
+"key": "e2841b09f344669f",
+"kind": "name",
+"path": "langchain_chroma.Chroma.from_documents.as_retriever",
+"via": "instance"
+},
+{
+"key": "e3d4526a260cb481",
+"kind": "call",
+"path": "langchain_core.runnables.RunnablePassthrough",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "e4ad698b563cc657",
+"kind": "call",
+"path": "langchain_classic.chains.LLMChain.acall",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "e643b85b663b3da4",
+"kind": "name",
+"path": "langchain_core.vectorstores.VectorStore"
+},
+{
+"key": "e95815bc56fd4db1",
+"kind": "call",
+"path": "langchain_classic.agents.create_tool_calling_agent",
+"npos": 3,
+"kwargs": []
+},
+{
+"key": "e992438c9e4343df",
+"kind": "name",
+"path": "langchain_text_splitters.Language.GO"
+},
+{
+"key": "eaf1cb6e87b306b1",
+"kind": "name",
+"path": "langchain_core.runnables.RunnableBranch"
+},
+{
+"key": "eb81cbc395c2cf0a",
+"kind": "name",
+"path": "langchain_community.document_loaders.DirectoryLoader"
+},
+{
+"key": "ec0c24cb4b57d573",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.from_language"
+},
+{
+"key": "ed5d694618f2a0bd",
+"kind": "name",
+"path": "langchain_core.embeddings.Embeddings"
+},
+{
+"key": "ed994388618ed0cb",
+"kind": "call",
+"path": "langchain_text_splitters.LatexTextSplitter",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "edd0a5a8a93dd4a5",
+"kind": "call",
+"path": "langchain_core.runnables.RunnablePassthrough.assign.assign",
+"npos": 0,
+"kwargs": [
+"answer"
+],
+"via": "instance"
+},
+{
+"key": "ee8f9ec328c7582f",
+"kind": "name",
+"path": "llama_index.langchain_helpers.agents.IndexToolConfig"
+},
+{
+"key": "eea2b2c29ce3162b",
+"kind": "name",
+"path": "langchain.agents.create_agent"
+},
+{
+"key": "eeaaa4c5d734f329",
+"kind": "name",
+"path": "langchain_core.embeddings"
+},
+{
+"key": "eead8bd26ec271b8",
+"kind": "name",
+"path": "langchain_openai.AzureChatOpenAI"
+},
+{
+"key": "ef3ee4541e995215",
+"kind": "call",
+"path": "langchain_classic.chains.RetrievalQA.from_chain_type",
+"npos": 0,
+"kwargs": [
+"llm",
+"retriever"
+]
+},
+{
+"key": "ef4f9c7d5543e918",
+"kind": "name",
+"path": "langchain_classic.agents.AgentExecutor.invoke",
+"via": "instance"
+},
+{
+"key": "ef8184e90fd688c9",
+"kind": "name",
+"path": "langchain_core.tools.BaseTool"
+},
+{
+"key": "ef8b96f0ced93208",
+"kind": "name",
+"path": "langchain_classic.retrievers.document_compressors.chain_extract.LLMChainExtractor"
+},
+{
+"key": "f2f56eb5aa18683f",
+"kind": "call",
+"path": "langchain_community.utilities.SerpAPIWrapper",
+"npos": 0,
+"kwargs": [
+"params",
+"serpapi_api_key"
+]
+},
+{
+"key": "f30afb928f31adb0",
+"kind": "name",
+"path": "langchain_text_splitters.TokenTextSplitter.split_documents",
+"via": "instance"
+},
+{
+"key": "f483c18e9394e589",
+"kind": "name",
+"path": "langchain_anthropic.ChatAnthropic"
+},
+{
+"key": "f5df09cac2a564ea",
+"kind": "call",
+"path": "pydantic.model_validator",
+"npos": 0,
+"kwargs": [
+"mode"
+]
+},
+{
+"key": "f71f7b0cdd322b6c",
+"kind": "name",
+"path": "langchain.agents"
+},
+{
+"key": "f79e4e01d2e8405e",
+"kind": "name",
+"path": "langchain_core.tools.tool.name"
+},
+{
+"key": "f7d6529883f3845c",
+"kind": "call",
+"path": "langchain_classic.agents.AgentExecutor.from_agent_and_tools.invoke",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "f80d1671773a8215",
+"kind": "name",
+"path": "langchain_core.callbacks"
+},
+{
+"key": "fbd2018b60bfb600",
+"kind": "call",
+"path": "langchain_classic.chains.create_history_aware_retriever",
+"npos": 3,
+"kwargs": []
+},
+{
+"key": "fbf81ecc13e30826",
+"kind": "call",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter",
+"npos": 0,
+"kwargs": [
+"chunk_overlap",
+"chunk_size",
+"length_function"
+]
+},
+{
+"key": "fd4acd16cb284437",
+"kind": "name",
+"path": "langchain_text_splitters.RecursiveCharacterTextSplitter.split_text",
+"via": "instance"
+},
+{
+"key": "fe29fa30897bd507",
+"kind": "call",
+"path": "langchain_core.prompts.PromptTemplate",
+"npos": 0,
+"kwargs": [
+"input_variables",
+"template"
+]
+},
+{
+"key": "fefb44668f3bebd3",
+"kind": "call",
+"path": "langchain_openai.ChatOpenAI",
+"npos": 0,
+"kwargs": [
+"model_name",
+"openai_api_base",
+"openai_api_key",
+"streaming",
+"verbose"
+]
+},
+{
+"key": "ff644585457d5f2b",
+"kind": "call",
+"path": "langchain_classic.chains.LLMChain",
+"npos": 0,
+"kwargs": [
+"llm",
+"prompt"
+]
+}
+]
+},
+{
+"id": "langgraph==1.2.22@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"langgraph==1.2.22"
+],
+"uses": [
+{
+"key": "351e423f369f6364",
+"kind": "name",
+"path": "langgraph.checkpoint.memory"
+},
+{
+"key": "410c485c683bc08e",
+"kind": "name",
+"path": "langgraph.graph.StateGraph.compile",
+"via": "instance"
+},
+{
+"key": "6ed0d1520afe921b",
+"kind": "call",
+"path": "langgraph.checkpoint.memory.MemorySaver",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "8234625c78e985ee",
+"kind": "name",
+"path": "langgraph.checkpoint.memory.MemorySaver"
+},
+{
+"key": "eec7ad6192d6681e",
+"kind": "call",
+"path": "langgraph.graph.StateGraph.compile",
+"npos": 0,
+"kwargs": [
+"checkpointer"
+],
+"via": "instance"
+}
+]
+},
+{
+"id": "llama-index-core==0.14.26@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"llama-index-core==0.14.26"
+],
+"uses": [
+{
+"key": "00f064b13cb57fc3",
+"kind": "name",
+"path": "llama_index.core.agent.react.types.BaseReasoningStep"
+},
+{
+"key": "018a93dcf240c121",
+"kind": "name",
+"path": "llama_index.llms.gemini.Gemini.acomplete",
+"via": "instance"
+},
+{
+"key": "01c6a3c6a05a8d51",
+"kind": "call",
+"path": "llama_index.core.agent.workflow.ReActAgent",
+"npos": 0,
+"kwargs": [
+"llm",
+"system_prompt",
+"tools"
+]
+},
+{
+"key": "0775f435b9919f7c",
+"kind": "name",
+"path": "pydantic"
+},
+{
+"key": "0922cda3a62c0c01",
+"kind": "name",
+"path": "llama_index.core.agent.react.ReActChatFormatter.from_defaults"
+},
+{
+"key": "094a921f9e890011",
+"kind": "call",
+"path": "llama_index.core.agent.react.ReActOutputParser",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "0ab6244f709c2250",
+"kind": "name",
+"path": "llama_index.core.tools.acall_tool_with_selection"
+},
+{
+"key": "12ea694038bb0a0a",
+"kind": "call",
+"path": "llama_index.core.agent.react.types.ResponseReasoningStep",
+"npos": 0,
+"kwargs": [
+"response",
+"thought"
+]
+},
+{
+"key": "227fffd2552e0ca3",
+"kind": "name",
+"path": "llama_index.core.llms.MessageRole.ASSISTANT"
+},
+{
+"key": "2470f7127de6d45a",
+"kind": "name",
+"path": "llama_index.core.agent.react.types.ObservationReasoningStep"
+},
+{
+"key": "26db21522514f749",
+"kind": "call",
+"path": "llama_index.core.tools.ToolSelection",
+"npos": 0,
+"kwargs": [
+"tool_id",
+"tool_kwargs",
+"tool_name"
+]
+},
+{
+"key": "2775abb757e0c743",
+"kind": "name",
+"path": "llama_index.core.agent.workflow.ReActAgent"
+},
+{
+"key": "283712df84c09620",
+"kind": "name",
+"path": "nest_asyncio"
+},
+{
+"key": "2d907d84b4d1e5ac",
+"kind": "name",
+"path": "llama_index.core.tools"
+},
+{
+"key": "31cd13b0415cd56c",
+"kind": "name",
+"path": "llama_index.core.agent.react.types.ResponseReasoningStep.is_done",
+"via": "instance"
+},
+{
+"key": "366315d0979ab8fd",
+"kind": "call",
+"path": "llama_index.core.agent.workflow.FunctionAgent",
+"npos": 0,
+"kwargs": [
+"llm",
+"system_prompt",
+"tools"
+]
+},
+{
+"key": "399be5712cb91ba6",
+"kind": "call",
+"path": "llama_index.core.agent.react.ReActChatFormatter.from_defaults",
+"npos": 0,
+"kwargs": [
+"context"
+]
+},
+{
+"key": "3cfa51220c40ed95",
+"kind": "name",
+"path": "llama_index.core.agent.react"
+},
+{
+"key": "3ead97fc55d3d4dd",
+"kind": "name",
+"path": "llama_index.core.program.FunctionCallingProgram.from_defaults"
+},
+{
+"key": "4023a3fd03ecaabf",
+"kind": "name",
+"path": "llama_index.llms.gemini.Gemini.astream_complete",
+"via": "instance"
+},
+{
+"key": "43ad78bc5622f058",
+"kind": "name",
+"path": "llama_index.core.prompts.PromptTemplate"
+},
+{
+"key": "43cbe34af6e2ba5e",
+"kind": "call",
+"path": "llama_index.llms.gemini.Gemini.astream_complete",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "4484c8958c40a7c3",
+"kind": "name",
+"path": "llama_index.core.program"
+},
+{
+"key": "45776266f90a04be",
+"kind": "call",
+"path": "llama_index.core.llms.ChatMessage",
+"npos": 0,
+"kwargs": [
+"content",
+"role"
+]
+},
+{
+"key": "4a6514edfed450ce",
+"kind": "name",
+"path": "nest_asyncio.apply"
+},
+{
+"key": "4da0b87854c0740a",
+"kind": "name",
+"path": "llama_index.core.agent.workflow.AgentStream"
+},
+{
+"key": "515566a81c7a2e11",
+"kind": "call",
+"path": "llama_index.core.agent.ReActAgent",
+"npos": 0,
+"kwargs": [
+"llm",
+"tools",
+"verbose"
+]
+},
+{
+"key": "5405532145a536b0",
+"kind": "name",
+"path": "llama_index.core.tools.ToolSelection"
+},
+{
+"key": "62b7dacc2260f020",
+"kind": "call",
+"path": "llama_index.core.agent.workflow.FunctionAgent",
+"npos": 0,
+"kwargs": [
+"llm",
+"system_prompt",
+"tools",
+"verbose"
+]
+},
+{
+"key": "674ca0fecf4521c2",
+"kind": "name",
+"path": "llama_index.core.agent.workflow.ToolCall"
+},
+{
+"key": "67e4836f9d7ad936",
+"kind": "call",
+"path": "pydantic.Field",
+"npos": 0,
+"kwargs": [
+"default_factory",
+"description"
+]
+},
+{
+"key": "6b5283373d478aa9",
+"kind": "name",
+"path": "llama_index.core.program.FunctionCallingProgram"
+},
+{
+"key": "6c867454afed9866",
+"kind": "name",
+"path": "llama_index.core.workflow.Context.store",
+"via": "instance"
+},
+{
+"key": "7040255e44e6ac23",
+"kind": "call",
+"path": "llama_index.core.agent.workflow.ReActAgent",
+"npos": 0,
+"kwargs": [
+"llm",
+"system_prompt",
+"tools",
+"verbose"
+]
+},
+{
+"key": "72e37b30ccf67978",
+"kind": "name",
+"path": "llama_index.core.agent.workflow.AgentOutput"
+},
+{
+"key": "7408a697073f883f",
+"kind": "name",
+"path": "llama_index.core.prompts"
+},
+{
+"key": "74d5e41c07503669",
+"kind": "name",
+"path": "llama_index.core.agent.workflow.ToolCallResult"
+},
+{
+"key": "80cffff0cab5f192",
+"kind": "name",
+"path": "pydantic.BaseModel"
+},
+{
+"key": "81a35b746abe6068",
+"kind": "name",
+"path": "llama_index.core.Settings.llm"
+},
+{
+"key": "87e8a4680f81753c",
+"kind": "name",
+"path": "llama_index.core.agent.react.types.ActionReasoningStep"
+},
+{
+"key": "8e21c7f5582b5cf3",
+"kind": "name",
+"path": "llama_index.core.llms"
+},
+{
+"key": "932f3aae055d1b47",
+"kind": "name",
+"path": "llama_index.core.workflow"
+},
+{
+"key": "9b67b239b8e89a68",
+"kind": "name",
+"path": "llama_index.core.agent.react.types"
+},
+{
+"key": "a0bde086267a8a53",
+"kind": "call",
+"path": "llama_index.core.program.FunctionCallingProgram.from_defaults",
+"npos": 0,
+"kwargs": [
+"llm",
+"output_cls",
+"prompt_template_str",
+"verbose"
+]
+},
+{
+"key": "a28da43180d724eb",
+"kind": "name",
+"path": "llama_index.core.base.llms.types.ChatMessage"
+},
+{
+"key": "a415238f3f742964",
+"kind": "name",
+"path": "llama_index.core.llms.MessageRole.USER"
+},
+{
+"key": "a4e8d8c8a92a15d7",
+"kind": "call",
+"path": "pydantic.Field",
+"npos": 1,
+"kwargs": [
+"description"
+]
+},
+{
+"key": "a5681cf4cd1516fd",
+"kind": "name",
+"path": "llama_index.core.agent.workflow"
+},
+{
+"key": "a6cda3b539ba4a46",
+"kind": "name",
+"path": "llama_index.core.agent.workflow.FunctionAgent"
+},
+{
+"key": "af0e52afed5c6d72",
+"kind": "name",
+"path": "llama_index.core.agent.react.ReActChatFormatter"
+},
+{
+"key": "b7c55716a42afee4",
+"kind": "call",
+"path": "llama_index.llms.gemini.Gemini.acomplete",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "b7d7d4c1b17b8600",
+"kind": "call",
+"path": "llama_index.core.workflow.Context",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "b9ae7caa8879b58e",
+"kind": "name",
+"path": "llama_index.core.chat_engine.types.AgentChatResponse"
+},
+{
+"key": "ba196b0d16c16d4c",
+"kind": "call",
+"path": "pydantic.Field",
+"npos": 0,
+"kwargs": [
+"default",
+"description"
+]
+},
+{
+"key": "bd624d1105dbd8c4",
+"kind": "name",
+"path": "llama_index.core.agent.react.types.ResponseReasoningStep"
+},
+{
+"key": "c5073a2d09c9573e",
+"kind": "call",
+"path": "llama_index.core.agent.react.types.ObservationReasoningStep",
+"npos": 0,
+"kwargs": [
+"observation"
+]
+},
+{
+"key": "caa257625b20e204",
+"kind": "call",
+"path": "llama_index.core.agent.workflow.ReActAgent",
+"npos": 0,
+"kwargs": [
+"llm",
+"tools",
+"verbose"
+]
+},
+{
+"key": "d2ba204d6e56267e",
+"kind": "name",
+"path": "llama_index.core.llms.ChatMessage"
+},
+{
+"key": "d8bd47555592e2fd",
+"kind": "name",
+"path": "llama_index.core.agent.workflow.BaseWorkflowAgent"
+},
+{
+"key": "db4fd37c528fc785",
+"kind": "name",
+"path": "llama_index.core.tools.BaseTool"
+},
+{
+"key": "e451e042c365612d",
+"kind": "call",
+"path": "llama_index.core.chat_engine.types.AgentChatResponse",
+"npos": 0,
+"kwargs": [
+"response"
+]
+},
+{
+"key": "e5b33c213cd09740",
+"kind": "name",
+"path": "llama_index.core.workflow.Context"
+},
+{
+"key": "e7b9639eec410367",
+"kind": "call",
+"path": "nest_asyncio.apply",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "e9ceeea073713a7a",
+"kind": "call",
+"path": "pydantic.Field",
+"npos": 0,
+"kwargs": [
+"description",
+"ge",
+"le"
+]
+},
+{
+"key": "f2b17a8ef3015347",
+"kind": "name",
+"path": "llama_index.core.utils"
+},
+{
+"key": "f33ce0b33655bd85",
+"kind": "name",
+"path": "llama_index.core.chat_engine.types"
+},
+{
+"key": "fc6dabe7f7d1ca89",
+"kind": "name",
+"path": "llama_index.core.llms.MessageRole"
+},
+{
+"key": "fd913cc0dc783be2",
+"kind": "call",
+"path": "llama_index.core.tools.acall_tool_with_selection",
+"npos": 2,
+"kwargs": [
+"verbose"
+]
+},
+{
+"key": "ff85f7f6d259aca1",
+"kind": "name",
+"path": "llama_index.core.agent.react.ReActOutputParser"
+}
+]
+},
+{
+"id": "matplotlib==3.11.2@2026-10-11",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-10-11",
+"requires": [
+"matplotlib==3.11.2"
+],
+"uses": [
+{
+"key": "7d7bff8994895856",
+"kind": "call",
+"path": "matplotlib.pyplot.boxplot",
+"npos": 1,
+"kwargs": [
+"tick_labels"
+]
+},
+{
+"key": "a9b54418bfb5ebbe",
+"kind": "name",
+"path": "matplotlib.pyplot.boxplot"
+}
+]
+},
+{
+"id": "mcp==2.3.0@2026-11-01",
+"python": [
+"3.11",
+"3.10",
+"3.12",
+"3.9"
+],
+"exclude_newer": "2026-11-01",
+"requires": [
+"mcp==2.3.0"
+],
+"uses": [
+{
+"key": "0433623393a6d1b7",
+"kind": "call",
+"path": "mcp.types.ReadResourceResult",
+"npos": 0,
+"kwargs": [
+"contents"
+]
+},
+{
+"key": "04c490e605105743",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"npos": 0,
+"kwargs": [
+"host",
+"port",
+"transport"
+],
+"via": "instance"
+},
+{
+"key": "066911c74cebf1ee",
+"kind": "call",
+"path": "httpx2.ASGITransport",
+"npos": 0,
+"kwargs": [
+"app"
+]
+},
+{
+"key": "0871d5ee99b9b24d",
+"kind": "call",
+"path": "mcp.types.TextResourceContents",
+"npos": 0,
+"kwargs": [
+"mime_type",
+"text",
+"uri"
+]
+},
+{
+"key": "0a09d1ae510a07b5",
+"kind": "name",
+"path": "mcp.client.streamable_http.streamable_http_client"
+},
+{
+"key": "0cf0b44f4b1bd006",
+"kind": "name",
+"path": "mcp.types.ListResourcesResult"
+},
+{
+"key": "114ac522b2924ddd",
+"kind": "name",
+"path": "httpx2.Timeout"
+},
+{
+"key": "1c3a09b91a60973e",
+"kind": "name",
+"path": "mcp.server.context"
+},
+{
+"key": "22deed46d4f9d01c",
+"kind": "call",
+"path": "mcp.types.CallToolResult",
+"npos": 0,
+"kwargs": [
+"content",
+"is_error"
+]
+},
+{
+"key": "23d2a104af34fd17",
+"kind": "call",
+"path": "httpx2.AsyncClient.post",
+"npos": 1,
+"kwargs": [
+"content",
+"headers",
+"params"
+],
+"via": "instance"
+},
+{
+"key": "24554641ae2c8a0e",
+"kind": "call",
+"path": "mcp.types.CallToolResult",
+"npos": 0,
+"kwargs": [
+"content"
+]
+},
+{
+"key": "252a1cc94cc81e93",
+"kind": "call",
+"path": "httpx2.Timeout",
+"npos": 1,
+"kwargs": [
+"read"
+]
+},
+{
+"key": "279f4d349bbe8935",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"npos": 0,
+"kwargs": [
+"transport"
+],
+"via": "instance"
+},
+{
+"key": "28ddad01378e2c8a",
+"kind": "name",
+"path": "mcp.shared._httpx_utils"
+},
+{
+"key": "2dfd4bfe44b2e4c6",
+"kind": "name",
+"path": "httpx2.AsyncClient"
+},
+{
+"key": "3257517324c93e9a",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"headers",
+"timeout"
+]
+},
+{
+"key": "359bea03edd0cc6b",
+"kind": "call",
+"path": "mcp.server.Server",
+"npos": 1,
+"kwargs": [
+"on_call_tool",
+"on_list_tools"
+]
+},
+{
+"key": "3683a1f9a9e2c573",
+"kind": "name",
+"path": "mcp.server.Server"
+},
+{
+"key": "4140e0850d9057c1",
+"kind": "name",
+"path": "mcp.shared._httpx_utils.create_mcp_http_client"
+},
+{
+"key": "458220c783df95f1",
+"kind": "name",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"via": "instance"
+},
+{
+"key": "540116ac1b99269a",
+"kind": "name",
+"path": "httpx2.Auth"
+},
+{
+"key": "54211beb7de28090",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"headers"
+]
+},
+{
+"key": "58a261f8de9f1264",
+"kind": "name",
+"path": "httpx2.AsyncClient.get",
+"via": "instance"
+},
+{
+"key": "5ab48129fd649f80",
+"kind": "name",
+"path": "mcp.types.TextResourceContents"
+},
+{
+"key": "5d4196544a3fa371",
+"kind": "name",
+"path": "mcp.types.TextContent"
+},
+{
+"key": "6089d61fb33608f2",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "61e710bb56e24911",
+"kind": "name",
+"path": "httpx2"
+},
+{
+"key": "6b946c3c5b3cfee1",
+"kind": "name",
+"path": "httpx2.ASGITransport"
+},
+{
+"key": "6cffee7adb68da82",
+"kind": "call",
+"path": "mcp.shared.exceptions.MCPError",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "70bc3f0ac8743a62",
+"kind": "name",
+"path": "mcp.server.ServerRequestContext"
+},
+{
+"key": "7198ef2d728badd4",
+"kind": "call",
+"path": "mcp.client.streamable_http.streamable_http_client",
+"npos": 1,
+"kwargs": [
+"http_client"
+]
+},
+{
+"key": "71f99d013b000a39",
+"kind": "name",
+"path": "mcp.types.ListToolsResult"
+},
+{
+"key": "7497f98cfcb5217f",
+"kind": "name",
+"path": "httpx2.AsyncClient.post",
+"via": "instance"
+},
+{
+"key": "7b915bfed3526f08",
+"kind": "name",
+"path": "mcp.types.ReadResourceRequestParams"
+},
+{
+"key": "8250bb5ead56485a",
+"kind": "name",
+"path": "httpx2.Request"
+},
+{
+"key": "8b154ebdef98e48d",
+"kind": "call",
+"path": "mcp.types.Resource",
+"npos": 0,
+"kwargs": [
+"description",
+"mime_type",
+"name",
+"uri"
+]
+},
+{
+"key": "8bff3978946f7c2d",
+"kind": "name",
+"path": "mcp.types"
+},
+{
+"key": "922730ea2d1a11eb",
+"kind": "call",
+"path": "mcp.types.ListToolsResult",
+"npos": 0,
+"kwargs": [
+"tools"
+]
+},
+{
+"key": "94188be9dfd94cdf",
+"kind": "call",
+"path": "mcp.shared._httpx_utils.create_mcp_http_client",
+"npos": 0,
+"kwargs": [
+"headers"
+]
+},
+{
+"key": "986d68a3375969bc",
+"kind": "name",
+"path": "httpx2.Response"
+},
+{
+"key": "9a123535c98c15c0",
+"kind": "name",
+"path": "mcp.server.mcpserver.MCPServer.tool",
+"via": "instance"
+},
+{
+"key": "9a13523e2448e14f",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.tool",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "9a939c8ea5dd936d",
+"kind": "name",
+"path": "mcp.types.CallToolResult"
+},
+{
+"key": "9d4950e030b7cc50",
+"kind": "call",
+"path": "mcp.types.Tool",
+"npos": 0,
+"kwargs": [
+"description",
+"input_schema",
+"name"
+]
+},
+{
+"key": "a5e2582f6a145f19",
+"kind": "call",
+"path": "mcp.client.streamable_http.streamable_http_client",
+"npos": 0,
+"kwargs": [
+"http_client",
+"url"
+]
+},
+{
+"key": "a85d087cc9d5d5cc",
+"kind": "name",
+"path": "mcp.types.CallToolRequestParams"
+},
+{
+"key": "a88aa02f4fcbfb34",
+"kind": "name",
+"path": "mcp.shared.exceptions.MCPError"
+},
+{
+"key": "ad13176a0b907faf",
+"kind": "name",
+"path": "mcp.server"
+},
+{
+"key": "b0484b08714847ac",
+"kind": "call",
+"path": "mcp.client.streamable_http.streamable_http_client",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "b25ae9912d16ba4a",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"auth",
+"timeout"
+]
+},
+{
+"key": "b877d308ff45e2e4",
+"kind": "call",
+"path": "mcp.types.CallToolRequest",
+"npos": 0,
+"kwargs": [
+"params"
+]
+},
+{
+"key": "b97030575ee2c50c",
+"kind": "name",
+"path": "mcp.types.PaginatedRequestParams"
+},
+{
+"key": "bbb35448dda9542c",
+"kind": "name",
+"path": "mcp.server.mcpserver.MCPServer"
+},
+{
+"key": "c386844ea2d26b71",
+"kind": "name",
+"path": "mcp.types.ReadResourceResult"
+},
+{
+"key": "c53c241a9fce3ace",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "c6cdbc8b2dc2897a",
+"kind": "call",
+"path": "mcp.server.Server",
+"npos": 1,
+"kwargs": [
+"on_call_tool",
+"on_list_resources",
+"on_list_tools",
+"on_read_resource"
+]
+},
+{
+"key": "c87463cb78d0abd1",
+"kind": "call",
+"path": "mcp.types.ListResourcesResult",
+"npos": 0,
+"kwargs": [
+"resources"
+]
+},
+{
+"key": "d1844a9e1074f5b4",
+"kind": "call",
+"path": "mcp.types.PaginatedRequestParams",
+"npos": 0,
+"kwargs": [
+"meta"
+]
+},
+{
+"key": "d7a1efdee0605032",
+"kind": "call",
+"path": "mcp.server.mcpserver.MCPServer.run",
+"npos": 0,
+"kwargs": [
+"host",
+"port",
+"stateless_http",
+"transport"
+],
+"via": "instance"
+},
+{
+"key": "ddc9e6b25e654a5a",
+"kind": "name",
+"path": "mcp.server.mcpserver"
+},
+{
+"key": "e10b316ec1a63046",
+"kind": "name",
+"path": "mcp.server.context.ServerRequestContext"
+},
+{
+"key": "f190d454247330e3",
+"kind": "name",
+"path": "mcp.server.Server.middleware",
+"via": "instance"
+},
+{
+"key": "f30d6260f8ce4f94",
+"kind": "call",
+"path": "httpx2.AsyncClient.get",
+"npos": 1,
+"kwargs": [
+"headers"
+],
+"via": "instance"
+},
+{
+"key": "f4fc1d522b699131",
+"kind": "call",
+"path": "httpx2.AsyncClient",
+"npos": 0,
+"kwargs": [
+"base_url",
+"transport"
+]
+}
+]
+},
+{
+"id": "mistralai==3.7.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"mistralai==3.7.0"
+],
+"uses": [
+{
+"key": "0ce51276336db959",
+"kind": "name",
+"path": "mistralai.client"
+},
+{
+"key": "13188f5d4494d63f",
+"kind": "name",
+"path": "mistralai.client.models.ToolMessage"
+},
+{
+"key": "1d7a82739f7b845f",
+"kind": "name",
+"path": "mistralai.client.models.FunctionCall"
+},
+{
+"key": "1df818c88eb1c1c6",
+"kind": "name",
+"path": "mistralai.client.models.SystemMessage"
+},
+{
+"key": "400f5551b3261670",
+"kind": "name",
+"path": "mistralai.client.models.DocumentURLChunk"
+},
+{
+"key": "45925d7b62ca6046",
+"kind": "name",
+"path": "mistralai.client.models.ToolCall"
+},
+{
+"key": "45f63fbce98f0079",
+"kind": "name",
+"path": "mistralai.client.models"
+},
+{
+"key": "4e44a54d4630c86a",
+"kind": "name",
+"path": "mistralai.client.models.ChatCompletionRequestMessage"
+},
+{
+"key": "56245bfcaf95dceb",
+"kind": "call",
+"path": "mistralai.client.models.UserMessage",
+"npos": 0,
+"kwargs": [
+"content"
+]
+},
+{
+"key": "5706f1d971be00f2",
+"kind": "call",
+"path": "mistralai.client.models.AssistantMessage",
+"npos": 0,
+"kwargs": [
+"content",
+"tool_calls"
+]
+},
+{
+"key": "59b933fc7a518d37",
+"kind": "name",
+"path": "mistralai.client.models.TextChunk"
+},
+{
+"key": "61a5855e30fc1fdd",
+"kind": "call",
+"path": "mistralai.client.models.ImageURLChunk",
+"npos": 0,
+"kwargs": [
+"image_url"
+]
+},
+{
+"key": "6523ecd0cd70b906",
+"kind": "name",
+"path": "mistralai.client.Mistral.embeddings",
+"via": "instance"
+},
+{
+"key": "6993ef44800b8456",
+"kind": "call",
+"path": "mistralai.client.Mistral",
+"npos": 0,
+"kwargs": [
+"api_key"
+]
+},
+{
+"key": "7d9f6d9a93fab7c1",
+"kind": "call",
+"path": "mistralai.client.models.TextChunk",
+"npos": 0,
+"kwargs": [
+"text"
+]
+},
+{
+"key": "8557a92904192613",
+"kind": "name",
+"path": "mistralai.client.Mistral"
+},
+{
+"key": "952fe1fb2872c294",
+"kind": "call",
+"path": "mistralai.client.models.ToolMessage",
+"npos": 0,
+"kwargs": [
+"content",
+"name",
+"tool_call_id"
+]
+},
+{
+"key": "96ef2362819c0702",
+"kind": "name",
+"path": "mistralai.client.models.AssistantMessage"
+},
+{
+"key": "b1de7c9c53343aff",
+"kind": "call",
+"path": "mistralai.client.models.DocumentURLChunk",
+"npos": 0,
+"kwargs": [
+"document_url"
+]
+},
+{
+"key": "b2f9c01cc2be5e00",
+"kind": "name",
+"path": "mistralai.client.Mistral.chat",
+"via": "instance"
+},
+{
+"key": "b584c7ffb2ab13e2",
+"kind": "call",
+"path": "mistralai.client.models.ToolCall",
+"npos": 0,
+"kwargs": [
+"function",
+"id"
+]
+},
+{
+"key": "b876e1b6b462c2e8",
+"kind": "name",
+"path": "mistralai.client.models.OCRResponse"
+},
+{
+"key": "b98986b8e7cce1ed",
+"kind": "name",
+"path": "mistralai.client.models.ChatCompletionResponse"
+},
+{
+"key": "c3e1cead55f21f11",
+"kind": "name",
+"path": "mistralai.client.models.ResponseFormat"
+},
+{
+"key": "c6b7fde5b3d90426",
+"kind": "call",
+"path": "mistralai.client.Mistral",
+"npos": 0,
+"kwargs": [
+"api_key",
+"server_url"
+]
+},
+{
+"key": "c8e57c289aa044a3",
+"kind": "call",
+"path": "mistralai.client.models.FunctionCall",
+"npos": 0,
+"kwargs": [
+"arguments",
+"name"
+]
+},
+{
+"key": "ddd928109fc1ebef",
+"kind": "name",
+"path": "mistralai.client.models.UserMessage"
+},
+{
+"key": "e0733d351c3a88fd",
+"kind": "name",
+"path": "mistralai.client.models.ImageURLChunk"
+},
+{
+"key": "e5dce9a39724bea5",
+"kind": "call",
+"path": "mistralai.client.models.SystemMessage",
+"npos": 0,
+"kwargs": [
+"content"
+]
+}
+]
+},
+{
+"id": "openai==3.51.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"openai==3.51.0"
+],
+"uses": [
+{
+"key": "0ad18ecefacf7da2",
+"kind": "call",
+"path": "httpx.Client",
+"npos": 0,
+"kwargs": [
+"proxy"
+]
+},
+{
+"key": "0c47cfc600fb0eec",
+"kind": "call",
+"path": "openai.OpenAI",
+"npos": 0,
+"kwargs": [
+"api_key"
+]
+},
+{
+"key": "25bcca661059cc76",
+"kind": "name",
+"path": "openai.RateLimitError"
+},
+{
+"key": "394c0cd6a01d321f",
+"kind": "name",
+"path": "openai.InternalServerError"
+},
+{
+"key": "4f659f157e6937e6",
+"kind": "call",
+"path": "openai.AzureOpenAI",
+"npos": 0,
+"kwargs": [
+"api_key",
+"api_version",
+"azure_endpoint",
+"http_client"
+]
+},
+{
+"key": "65e00d1820c6b584",
+"kind": "name",
+"path": "openai"
+},
+{
+"key": "69f9d0b28964f04a",
+"kind": "call",
+"path": "openai.DefaultHttpx2Client",
+"npos": 0,
+"kwargs": [
+"proxy"
+]
+},
+{
+"key": "79f230cce3d96263",
+"kind": "call",
+"path": "openai.OpenAI",
+"npos": 0,
+"kwargs": [
+"api_key",
+"base_url",
+"http_client"
+]
+},
+{
+"key": "890fa968521d5284",
+"kind": "name",
+"path": "httpx.Client"
+},
+{
+"key": "a7e308e1bed5999d",
+"kind": "name",
+"path": "openai.DefaultHttpx2Client"
+},
+{
+"key": "b1c84e7bc78fb51a",
+"kind": "name",
+"path": "openai.APIConnectionError"
+},
+{
+"key": "b34bdc991b2f4cb8",
+"kind": "name",
+"path": "openai.APITimeoutError"
+},
+{
+"key": "c85c513b56624952",
+"kind": "name",
+"path": "httpx"
+},
+{
+"key": "d7de11886e6f4357",
+"kind": "name",
+"path": "openai.APIError"
+},
+{
+"key": "faff881151fd11d7",
+"kind": "name",
+"path": "openai.OpenAI"
+},
+{
+"key": "fb93c9cb407b9e63",
+"kind": "name",
+"path": "openai.AzureOpenAI"
+}
+]
+},
+{
+"id": "pinecone==10.3.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"pinecone==10.3.0"
+],
+"uses": [
+{
+"key": "50a64c71d755a729",
+"kind": "name",
+"path": "pinecone.Pinecone"
+},
+{
+"key": "59d6b46d150923b4",
+"kind": "name",
+"path": "pinecone"
+},
+{
+"key": "b5e247cf208de599",
+"kind": "call",
+"path": "pinecone.Pinecone",
+"npos": 0,
+"kwargs": [
+"api_key"
+]
+}
+]
+},
+{
+"id": "polars==2.1.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"polars==2.1.0"
+],
+"uses": [
+{
+"key": "4d68e1301c4ed7fd",
+"kind": "call",
+"path": "polars.read_database_uri",
+"npos": 0,
+"kwargs": [
+"query",
+"uri"
+]
+},
+{
+"key": "9fdb162818283bd3",
+"kind": "name",
+"path": "polars.read_database_uri"
+}
+]
+},
+{
+"id": "pydantic-ai-slim==2.68.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"pydantic-ai-slim==2.68.0"
+],
+"uses": [
+{
+"key": "01e209b6693d419c",
+"kind": "call",
+"path": "pydantic_ai.providers.anthropic.AnthropicProvider",
+"npos": 0,
+"kwargs": [
+"api_key"
+]
+},
+{
+"key": "06a918598126ccab",
+"kind": "name",
+"path": "pydantic_graph.GraphBuilder.build",
+"via": "instance"
+},
+{
+"key": "08f92d140e41e63e",
+"kind": "call",
+"path": "pydantic_ai.providers.google_cloud.GoogleCloudProvider",
+"npos": 0,
+"kwargs": [
+"credentials"
+]
+},
+{
+"key": "0f89a67f176a9a84",
+"kind": "name",
+"path": "pydantic_ai.mcp"
+},
+{
+"key": "0fd24c4e339cb099",
+"kind": "name",
+"path": "pydantic_graph.StepContext"
+},
+{
+"key": "10aded08091b7b01",
+"kind": "name",
+"path": "pydantic_ai.messages.ToolReturnPart"
+},
+{
+"key": "135c5bb978d6313d",
+"kind": "name",
+"path": "pydantic_ai.models.openai"
+},
+{
+"key": "154500f3bca4e8d2",
+"kind": "call",
+"path": "pydantic_ai.providers.openai.OpenAIProvider",
+"npos": 0,
+"kwargs": [
+"openai_client"
+]
+},
+{
+"key": "1a25428e67b014a9",
+"kind": "call",
+"path": "pydantic_ai.Agent",
+"npos": 0,
+"kwargs": [
+"deps_type",
+"model",
+"output_type",
+"system_prompt"
+]
+},
+{
+"key": "1dfffc3188400da1",
+"kind": "name",
+"path": "pydantic_graph.GraphRunContext"
+},
+{
+"key": "208aeac2d4f0e18e",
+"kind": "name",
+"path": "pydantic_ai.providers.openai.OpenAIProvider"
+},
+{
+"key": "298a1e1f6833d3ac",
+"kind": "call",
+"path": "pydantic_ai.Agent",
+"npos": 1,
+"kwargs": [
+"deps_type",
+"output_type",
+"retries",
+"system_prompt"
+]
+},
+{
+"key": "2e6cf912f90e0b90",
+"kind": "name",
+"path": "pydantic_graph"
+},
+{
+"key": "384646c44d4ad350",
+"kind": "name",
+"path": "pydantic_graph.GraphBuilder"
+},
+{
+"key": "3d188cceacfd88ad",
+"kind": "call",
+"path": "pydantic_ai.Agent",
+"npos": 0,
+"kwargs": [
+"capabilities",
+"deps_type",
+"instructions",
+"model",
+"model_settings",
+"output_type",
+"retries",
+"tools",
+"toolsets"
+]
+},
+{
+"key": "4d3dcbe68cee978a",
+"kind": "call",
+"path": "pydantic_ai.capabilities.Instrumentation",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "5509d5f5713f6500",
+"kind": "call",
+"path": "pydantic_ai.usage.RunUsage",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "57a8f22ac8266da6",
+"kind": "call",
+"path": "pydantic_graph.GraphBuilder.add",
+"npos": 4,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "58684334c25a168c",
+"kind": "name",
+"path": "pydantic_graph.GraphBuilder.node",
+"via": "instance"
+},
+{
+"key": "5b76aa712a2e5c92",
+"kind": "name",
+"path": "pydantic_ai.providers.anthropic.AnthropicProvider"
+},
+{
+"key": "5c4accf91dbfa905",
+"kind": "name",
+"path": "pydantic_ai.mcp.MCPToolset"
+},
+{
+"key": "5ecbecc7b1cea6d9",
+"kind": "call",
+"path": "pydantic_ai._function_schema.FunctionSchema",
+"npos": 0,
+"kwargs": [
+"description",
+"function",
+"is_async",
+"json_schema",
+"name",
+"takes_ctx",
+"validator"
+]
+},
+{
+"key": "65d0cb430c703c36",
+"kind": "name",
+"path": "pydantic_ai.capabilities.Instrumentation"
+},
+{
+"key": "667b261f177e7595",
+"kind": "name",
+"path": "pydantic_ai.messages.NativeToolCallPart"
+},
+{
+"key": "668c0e136841bce5",
+"kind": "name",
+"path": "pydantic_ai.usage.RunUsage"
+},
+{
+"key": "6d5bb3d0841ddfe7",
+"kind": "call",
+"path": "pydantic_ai.messages.is_retry",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "70852fc66c31986d",
+"kind": "name",
+"path": "pydantic_graph.End"
+},
+{
+"key": "72da0cf2a5312ca1",
+"kind": "call",
+"path": "pydantic_ai.models.openai.OpenAIChatModel",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "7472ee730b6da0c4",
+"kind": "call",
+"path": "pydantic_ai.messages.ToolReturnPart",
+"npos": 0,
+"kwargs": [
+"content",
+"outcome",
+"tool_call_id",
+"tool_name"
+]
+},
+{
+"key": "7abf1645cbbda01e",
+"kind": "name",
+"path": "pydantic_ai.providers.google_cloud"
+},
+{
+"key": "820794dfbc5a02b7",
+"kind": "name",
+"path": "pydantic_ai.capabilities"
+},
+{
+"key": "87a76a055438ba0e",
+"kind": "call",
+"path": "pydantic_graph.GraphBuilder.add",
+"npos": 5,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "8f425030a76631ec",
+"kind": "name",
+"path": "pydantic_ai.models.openai.OpenAIChatModel"
+},
+{
+"key": "90c40e059c9bff9b",
+"kind": "name",
+"path": "pydantic_graph.BaseNode"
+},
+{
+"key": "914153a7e2a67a40",
+"kind": "name",
+"path": "pydantic_ai.providers.anthropic"
+},
+{
+"key": "930e9c1a03c1f8fa",
+"kind": "call",
+"path": "pydantic_graph.GraphBuilder.edge_from",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "9692574b65838fed",
+"kind": "call",
+"path": "pydantic_ai.mcp.MCPToolset",
+"npos": 1,
+"kwargs": [
+"headers"
+]
+},
+{
+"key": "9783436424c44ddd",
+"kind": "call",
+"path": "pydantic_ai.Agent",
+"npos": 0,
+"kwargs": [
+"deps_type",
+"model",
+"name",
+"output_type"
+]
+},
+{
+"key": "9b27a06219a96f61",
+"kind": "name",
+"path": "pydantic_ai.messages.is_retry"
+},
+{
+"key": "9c3dbb4833f7feac",
+"kind": "call",
+"path": "pydantic_ai.Agent",
+"npos": 1,
+"kwargs": [
+"deps_type",
+"output_type",
+"system_prompt"
+]
+},
+{
+"key": "9e5dc25b452507af",
+"kind": "name",
+"path": "pydantic_ai.models.anthropic.AnthropicModel"
+},
+{
+"key": "a050930ee8054266",
+"kind": "name",
+"path": "pydantic_ai.providers.google_cloud.GoogleCloudProvider"
+},
+{
+"key": "a2f831a13657f091",
+"kind": "call",
+"path": "pydantic_graph.GraphBuilder",
+"npos": 0,
+"kwargs": [
+"state_type"
+]
+},
+{
+"key": "a42847cb779b64db",
+"kind": "name",
+"path": "pydantic_graph.GraphBuilder.edge_from",
+"via": "instance"
+},
+{
+"key": "a477203396d7363b",
+"kind": "call",
+"path": "pydantic_ai.Agent",
+"npos": 0,
+"kwargs": [
+"model",
+"name",
+"output_type",
+"system_prompt"
+]
+},
+{
+"key": "ad2e46f4caaaaf50",
+"kind": "call",
+"path": "pydantic_ai.Agent",
+"npos": 0,
+"kwargs": [
+"model",
+"retries",
+"system_prompt",
+"tools"
+]
+},
+{
+"key": "b18f0a02542c1687",
+"kind": "call",
+"path": "pydantic_ai.messages.FunctionToolResultEvent",
+"npos": 0,
+"kwargs": [
+"part"
+]
+},
+{
+"key": "b3a33ee4a01bc715",
+"kind": "name",
+"path": "pydantic_graph.GraphBuilder.start_node",
+"via": "instance"
+},
+{
+"key": "b886ab53c4bed6bb",
+"kind": "call",
+"path": "pydantic_graph.GraphBuilder",
+"npos": 0,
+"kwargs": [
+"output_type",
+"state_type"
+]
+},
+{
+"key": "bb490a09b7cbeac6",
+"kind": "call",
+"path": "pydantic_graph.GraphBuilder.node",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "bdd5b897b9d9dce6",
+"kind": "name",
+"path": "pydantic_graph.GraphBuilder.add",
+"via": "instance"
+},
+{
+"key": "c1e91ba10206a1cb",
+"kind": "call",
+"path": "pydantic_ai.Agent",
+"npos": 0,
+"kwargs": [
+"model",
+"output_type",
+"system_prompt"
+]
+},
+{
+"key": "cbc0f9d78ff820bc",
+"kind": "name",
+"path": "pydantic_graph.GraphBuilder.step",
+"via": "instance"
+},
+{
+"key": "da83f809cfb83c4a",
+"kind": "name",
+"path": "pydantic_ai.providers.openai"
+},
+{
+"key": "e441cd3dee79776b",
+"kind": "call",
+"path": "pydantic_graph.GraphBuilder.build",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "efdbabe132eb08ce",
+"kind": "call",
+"path": "pydantic_ai.models.anthropic.AnthropicModel",
+"npos": 1,
+"kwargs": [
+"provider"
+]
+},
+{
+"key": "fc2de8f696b64ef7",
+"kind": "call",
+"path": "pydantic_ai.models.openai.OpenAIChatModel",
+"npos": 0,
+"kwargs": [
+"model_name",
+"provider"
+]
+}
+]
+},
+{
+"id": "qdrant-client==1.20.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"qdrant-client==1.20.0"
+],
+"uses": [
+{
+"key": "026392286570d744",
+"kind": "name",
+"path": "qdrant_client.QdrantClient.query_points",
+"via": "instance"
+},
+{
+"key": "ca5c0f0054584fef",
+"kind": "call",
+"path": "qdrant_client.QdrantClient.query_points",
+"npos": 0,
+"kwargs": [
+"collection_name",
+"limit",
+"query"
+],
+"via": "instance"
+}
+]
+},
+{
+"id": "streamlit==1.67.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"streamlit==1.67.0"
+],
+"uses": [
+{
+"key": "2dd3420678326179",
+"kind": "name",
+"path": "streamlit.query_params.to_dict"
+},
+{
+"key": "2ff412a3880db216",
+"kind": "call",
+"path": "streamlit.query_params.get",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "4d8150ea48c05e99",
+"kind": "name",
+"path": "streamlit.query_params.to_dict.get",
+"via": "instance"
+},
+{
+"key": "645dfc37283e6fc9",
+"kind": "name",
+"path": "streamlit.query_params.get"
+},
+{
+"key": "83f332fc917daad9",
+"kind": "call",
+"path": "streamlit.query_params.to_dict",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "c6065a22104e6d84",
+"kind": "call",
+"path": "streamlit.query_params.to_dict.get",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "fdcfd57ad8528f1e",
+"kind": "name",
+"path": "streamlit.query_params"
+}
+]
+},
+{
+"id": "transformers==5.23.0@2026-11-16",
+"python": [
+"3.12",
+"3.11",
+"3.13"
+],
+"exclude_newer": "2026-11-16",
+"requires": [
+"transformers==5.23.0"
+],
+"uses": [
+{
+"key": "004a04b2bf123690",
+"kind": "name",
+"path": "transformers.trainer_utils.IntervalStrategy.STEPS"
+},
+{
+"key": "008e743f901d3107",
+"kind": "name",
+"path": "transformers.vision_utils.get_vision_position_ids"
+},
+{
+"key": "0613d2791b39c0c3",
+"kind": "name",
+"path": "transformers.pytorch_utils"
+},
+{
+"key": "06ba2a16d45a6d56",
+"kind": "name",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.repeat_kv"
+},
+{
+"key": "0743086fe3d082d6",
+"kind": "name",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.apply_rotary_pos_emb_vision"
+},
+{
+"key": "0843243951ab6563",
+"kind": "call",
+"path": "transformers.utils.logging.get_logger.warning",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "09f3675cf8a21548",
+"kind": "name",
+"path": "transformers.modeling_utils.ALL_ATTENTION_FUNCTIONS"
+},
+{
+"key": "0f35ab8bc1311ff7",
+"kind": "name",
+"path": "transformers.cache_utils.DynamicCache.get_max_length",
+"via": "instance"
+},
+{
+"key": "117fe7f952c9ed1e",
+"kind": "name",
+"path": "transformers.conversion_mapping.get_checkpoint_conversion_mapping"
+},
+{
+"key": "1723299c2731b179",
+"kind": "name",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.apply_rotary_pos_emb"
+},
+{
+"key": "180d52ed82c403ce",
+"kind": "name",
+"path": "transformers.integrations.deepspeed.is_deepspeed_zero3_enabled"
+},
+{
+"key": "19fdcffac3165703",
+"kind": "name",
+"path": "transformers.cache_utils.DynamicCache"
+},
+{
+"key": "1c0d36f35a677032",
+"kind": "call",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.repeat_kv",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "1d40de8c4a00f2e5",
+"kind": "name",
+"path": "transformers.trainer_utils.HubStrategy"
+},
+{
+"key": "1e2a0476bfa8097a",
+"kind": "name",
+"path": "transformers.models.clip.modeling_clip"
+},
+{
+"key": "1e380535b414b85a",
+"kind": "call",
+"path": "transformers.conversion_mapping.get_checkpoint_conversion_mapping",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "1fc286308719df95",
+"kind": "name",
+"path": "transformers.models.gpt2.modeling_gpt2.GPT2PreTrainedModel"
+},
+{
+"key": "21c02d513364e856",
+"kind": "name",
+"path": "flash_attn.layers.rotary.apply_rotary_emb.type_as",
+"via": "instance"
+},
+{
+"key": "272b665fe2827ecb",
+"kind": "call",
+"path": "transformers.PreTrainedConfig",
+"npos": 0,
+"kwargs": [
+"name"
+]
+},
+{
+"key": "27edff2756bb2dab",
+"kind": "call",
+"path": "transformers.AutoModelForCausalLM.from_pretrained",
+"npos": 1,
+"kwargs": [
+"device_map",
+"dtype"
+]
+},
+{
+"key": "293803068169302d",
+"kind": "name",
+"path": "flash_attn.layers.rotary"
+},
+{
+"key": "2a6af11ca8be24b8",
+"kind": "name",
+"path": "transformers.trainer_utils"
+},
+{
+"key": "2dd0d181974b08d6",
+"kind": "name",
+"path": "transformers.processing_utils.ProcessingKwargs"
+},
+{
+"key": "3067345f8b0cf088",
+"kind": "call",
+"path": "transformers.Qwen2_5_VLForConditionalGeneration.from_pretrained",
+"npos": 1,
+"kwargs": [
+"attn_implementation",
+"device_map",
+"dtype"
+]
+},
+{
+"key": "39d7e60dd7b06bde",
+"kind": "name",
+"path": "transformers.cache_utils.DynamicLayer"
+},
+{
+"key": "3cc1f9bd3a08d57a",
+"kind": "name",
+"path": "torch.fx"
+},
+{
+"key": "3e975e835e36fbfa",
+"kind": "call",
+"path": "transformers.AutoModelForCausalLM.from_pretrained",
+"npos": 1,
+"kwargs": [
+"device_map",
+"quantization_config"
+]
+},
+{
+"key": "47852958cae4135c",
+"kind": "name",
+"path": "transformers.models.clip.modeling_clip.CLIPAttention"
+},
+{
+"key": "49ccee3c57db41e5",
+"kind": "name",
+"path": "transformers.configuration_utils.PretrainedConfig"
+},
+{
+"key": "4bcbd554dcdef6d8",
+"kind": "name",
+"path": "transformers.video_utils"
+},
+{
+"key": "4d97ad4005f17941",
+"kind": "name",
+"path": "transformers.configuration_utils"
+},
+{
+"key": "50bfad26308f69bc",
+"kind": "call",
+"path": "transformers.modeling_utils.ALL_ATTENTION_FUNCTIONS.get_interface",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "50e4ba49476bb626",
+"kind": "name",
+"path": "torch.fx.wrap"
+},
+{
+"key": "52aa8527c0159a6c",
+"kind": "call",
+"path": "trl.SFTConfig",
+"npos": 0,
+"kwargs": [
+"ddp_find_unused_parameters",
+"eval_accumulation_steps",
+"eval_strategy",
+"gradient_accumulation_steps",
+"learning_rate",
+"logging_steps",
+"lr_scheduler_type",
+"max_grad_norm",
+"max_length",
+"max_steps",
+"optim",
+"output_dir",
+"per_device_eval_batch_size",
+"per_device_train_batch_size",
+"resume_from_checkpoint",
+"save_steps",
+"train_sampling_strategy",
+"warmup_steps"
+]
+},
+{
+"key": "54fee94c88bff96f",
+"kind": "call",
+"path": "torch.arange",
+"npos": 3,
+"kwargs": [
+"dtype"
+]
+},
+{
+"key": "5748e9d50e1e1beb",
+"kind": "call",
+"path": "transformers.PreTrainedConfig",
+"npos": 0,
+"kwargs": [
+"_name_or_path",
+"bos_token_id",
+"cross_esm_graph",
+"eos_token_id",
+"esm",
+"esm_model_name",
+"gpt_model_name",
+"pad_token_id",
+"prot2text_version",
+"rgcn",
+"rgcn_input_dim",
+"rgcn_n_layers"
+]
+},
+{
+"key": "58565ba3134a4e4f",
+"kind": "name",
+"path": "trl"
+},
+{
+"key": "5967bd8631f12e08",
+"kind": "name",
+"path": "transformers.integrations.deepspeed"
+},
+{
+"key": "5c64de14b8367590",
+"kind": "name",
+"path": "transformers.video_utils.VideoInput"
+},
+{
+"key": "5c91c29bf5e55c3b",
+"kind": "call",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.apply_rotary_pos_emb",
+"npos": 4,
+"kwargs": []
+},
+{
+"key": "5d89c931879c19f3",
+"kind": "name",
+"path": "transformers.processing_utils"
+},
+{
+"key": "62097b58c1d84ca3",
+"kind": "name",
+"path": "transformers.models.gpt2.modeling_gpt2"
+},
+{
+"key": "620c39a016ebc984",
+"kind": "call",
+"path": "transformers.cache_utils.DynamicCache.update",
+"npos": 3,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "622522ebf2a22e3c",
+"kind": "name",
+"path": "typing_extensions"
+},
+{
+"key": "672c94ae07ed4651",
+"kind": "call",
+"path": "torch.fx.wrap",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "698acc9c00e29d5d",
+"kind": "name",
+"path": "transformers.models.gpt2.modeling_gpt2.GPT2Attention"
+},
+{
+"key": "69b964f8342bc8de",
+"kind": "call",
+"path": "flash_attn.layers.rotary.apply_rotary_emb.type_as",
+"npos": 1,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "6ac62591da1e2de3",
+"kind": "name",
+"path": "transformers.models.gpt2.modeling_gpt2.GPT2MLP"
+},
+{
+"key": "77e6b089c6eced64",
+"kind": "name",
+"path": "transformers.utils.logging.get_logger.warning",
+"via": "instance"
+},
+{
+"key": "79b5b456820a789a",
+"kind": "name",
+"path": "transformers.GPT2Model"
+},
+{
+"key": "7c2f1af5a6d6d4ca",
+"kind": "call",
+"path": "transformers.configuration_utils.PretrainedConfig",
+"npos": 0,
+"kwargs": [
+"name"
+]
+},
+{
+"key": "810304bd27039e10",
+"kind": "name",
+"path": "transformers.EsmConfig.from_dict"
+},
+{
+"key": "82fbd6921e9981b6",
+"kind": "call",
+"path": "transformers.BitsAndBytesConfig",
+"npos": 0,
+"kwargs": [
+"load_in_8bit"
+]
+},
+{
+"key": "834ae5af8fcbf41e",
+"kind": "name",
+"path": "transformers.pytorch_utils.ALL_LAYERNORM_LAYERS"
+},
+{
+"key": "8441913a2f92786b",
+"kind": "name",
+"path": "transformers.conversion_mapping"
+},
+{
+"key": "855440519440cde3",
+"kind": "name",
+"path": "transformers.vision_utils"
+},
+{
+"key": "85d184b9f3aa4f47",
+"kind": "name",
+"path": "transformers.BitsAndBytesConfig"
+},
+{
+"key": "86eb675012b20589",
+"kind": "name",
+"path": "transformers.vision_utils.get_vision_window_index"
+},
+{
+"key": "8c9ff02da869d686",
+"kind": "name",
+"path": "trl.SFTConfig"
+},
+{
+"key": "8dce1bcd825f4672",
+"kind": "call",
+"path": "transformers.Seq2SeqTrainingArguments",
+"npos": 0,
+"kwargs": [
+"do_eval",
+"do_predict",
+"do_train",
+"eval_accumulation_steps",
+"eval_steps",
+"eval_strategy",
+"gradient_accumulation_steps",
+"greater_is_better",
+"learning_rate",
+"load_best_model_at_end",
+"logging_steps",
+"lr_scheduler_type",
+"metric_for_best_model",
+"num_train_epochs",
+"output_dir",
+"per_device_eval_batch_size",
+"per_device_train_batch_size",
+"predict_with_generate",
+"prediction_loss_only",
+"save_steps",
+"save_total_limit",
+"warmup_steps",
+"weight_decay"
+]
+},
+{
+"key": "9037346643d0c275",
+"kind": "call",
+"path": "transformers.TrainingArguments",
+"npos": 0,
+"kwargs": [
+"ddp_find_unused_parameters",
+"eval_accumulation_steps",
+"eval_strategy",
+"gradient_accumulation_steps",
+"learning_rate",
+"logging_steps",
+"lr_scheduler_type",
+"max_grad_norm",
+"max_steps",
+"optim",
+"output_dir",
+"per_device_eval_batch_size",
+"per_device_train_batch_size",
+"resume_from_checkpoint",
+"save_steps",
+"train_sampling_strategy",
+"warmup_steps"
+]
+},
+{
+"key": "90830cda91d0307b",
+"kind": "call",
+"path": "flash_attn.layers.rotary.apply_rotary_emb",
+"npos": 3,
+"kwargs": []
+},
+{
+"key": "913da04fc02b97ba",
+"kind": "name",
+"path": "transformers.trainer_utils.SchedulerType"
+},
+{
+"key": "914f2ba2dfa19fe7",
+"kind": "name",
+"path": "transformers.modeling_utils.PreTrainedModel"
+},
+{
+"key": "91b6b174f0c160af",
+"kind": "call",
+"path": "transformers.cache_utils.DynamicCache",
+"npos": 0,
+"kwargs": [
+"ddp_cache_data"
+]
+},
+{
+"key": "9b038b7215e0c0ae",
+"kind": "name",
+"path": "transformers.modeling_utils"
+},
+{
+"key": "9f1e80dcad099c79",
+"kind": "name",
+"path": "transformers.configuration_utils.PretrainedConfig.from_dict"
+},
+{
+"key": "a27f548d5eda1e7f",
+"kind": "call",
+"path": "transformers.cache_utils.DynamicCache.get_max_length",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "a4b86b12d70f8754",
+"kind": "call",
+"path": "transformers.cache_utils.DynamicCache",
+"npos": 0,
+"kwargs": [
+"config"
+]
+},
+{
+"key": "a53c76d68138914f",
+"kind": "call",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.apply_rotary_pos_emb_vision",
+"npos": 4,
+"kwargs": []
+},
+{
+"key": "a6aa7884c566289e",
+"kind": "name",
+"path": "transformers.AutoModelForCausalLM.from_pretrained"
+},
+{
+"key": "a9a90c988f678465",
+"kind": "call",
+"path": "transformers.PretrainedConfig",
+"npos": 0,
+"kwargs": [
+"bos_token_id",
+"cross_esm_graph",
+"decoder_start_token_id",
+"eos_token_id",
+"esm",
+"esm_model_name",
+"gpt_model_name",
+"name_or_path",
+"pad_token_id",
+"prot2text_version",
+"rgcn",
+"rgcn_input_dim",
+"rgcn_n_layers"
+]
+},
+{
+"key": "ab07317bc5f69a58",
+"kind": "call",
+"path": "transformers.EsmConfig.from_dict",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "b1b505487aed950d",
+"kind": "name",
+"path": "transformers.image_utils"
+},
+{
+"key": "b426322e8923e832",
+"kind": "name",
+"path": "transformers.cache_utils.DynamicCache.layers",
+"via": "instance"
+},
+{
+"key": "b5c2502bb99c7240",
+"kind": "call",
+"path": "transformers.vision_utils.get_vision_position_ids",
+"npos": 2,
+"kwargs": []
+},
+{
+"key": "b7c591eacbdfd238",
+"kind": "name",
+"path": "transformers.masking_utils"
+},
+{
+"key": "b815b89feabcd9b9",
+"kind": "call",
+"path": "transformers.vision_utils.get_vision_window_index",
+"npos": 4,
+"kwargs": []
+},
+{
+"key": "bcadc3224ff902e4",
+"kind": "call",
+"path": "transformers.conversion_mapping.register_checkpoint_conversion_mapping",
+"npos": 2,
+"kwargs": [
+"overwrite"
+]
+},
+{
+"key": "be41f34c524192c2",
+"kind": "name",
+"path": "transformers.PreTrainedConfig"
+},
+{
+"key": "c0e25ea7d18a8760",
+"kind": "name",
+"path": "transformers.modeling_utils.ALL_ATTENTION_FUNCTIONS.get_interface"
+},
+{
+"key": "c1be0b54ed085d70",
+"kind": "name",
+"path": "transformers.Qwen2RMSNorm"
+},
+{
+"key": "c480fe882883cce7",
+"kind": "call",
+"path": "transformers.modeling_flash_attention_utils.flash_attn_supports_top_left_mask",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "c91feba2118ab3b6",
+"kind": "name",
+"path": "transformers.masking_utils.create_causal_mask"
+},
+{
+"key": "cb465309e1ecc83f",
+"kind": "name",
+"path": "transformers.cache_utils.DynamicCache.update",
+"via": "instance"
+},
+{
+"key": "cc567657f67c4a65",
+"kind": "name",
+"path": "transformers.cache_utils.DynamicCache.get_seq_length",
+"via": "instance"
+},
+{
+"key": "cd468667a18f2e76",
+"kind": "name",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.eager_attention_forward"
+},
+{
+"key": "d656f5285fdfecd0",
+"kind": "name",
+"path": "transformers.PreTrainedTokenizerBase"
+},
+{
+"key": "da335cc178069419",
+"kind": "name",
+"path": "transformers.PreTrainedConfig.esm_model_name",
+"via": "instance"
+},
+{
+"key": "dd1c208d67b7270c",
+"kind": "call",
+"path": "transformers.Qwen2RMSNorm",
+"npos": 1,
+"kwargs": [
+"eps"
+]
+},
+{
+"key": "df489121e4c3910d",
+"kind": "name",
+"path": "trl.SFTTrainer"
+},
+{
+"key": "e259568f2addf1d2",
+"kind": "name",
+"path": "transformers.models.qwen2_5_vl.processing_qwen2_5_vl.Qwen2_5_VLProcessor"
+},
+{
+"key": "e2d7a667198f1b5d",
+"kind": "call",
+"path": "transformers.integrations.deepspeed.is_deepspeed_zero3_enabled",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "e4c2b815beb456c3",
+"kind": "name",
+"path": "safetensors.torch"
+},
+{
+"key": "e5e862a3aa3a5c9f",
+"kind": "name",
+"path": "transformers.modeling_flash_attention_utils.flash_attn_supports_top_left_mask"
+},
+{
+"key": "e9a2fa4c953eee79",
+"kind": "name",
+"path": "transformers.models.clip.modeling_clip.CLIPEncoder"
+},
+{
+"key": "ee68778201d0accb",
+"kind": "name",
+"path": "typing_extensions.Unpack"
+},
+{
+"key": "ef51380297840833",
+"kind": "call",
+"path": "transformers.cache_utils.DynamicCache.get_seq_length",
+"npos": 0,
+"kwargs": [],
+"via": "instance"
+},
+{
+"key": "eff5377c2c6cce59",
+"kind": "call",
+"path": "transformers.cache_utils.DynamicLayer",
+"npos": 0,
+"kwargs": []
+},
+{
+"key": "f0bc3644c80362fc",
+"kind": "name",
+"path": "transformers.conversion_mapping.register_checkpoint_conversion_mapping"
+},
+{
+"key": "f1926e95bb09b2cc",
+"kind": "call",
+"path": "transformers.GPT2Config.from_pretrained",
+"npos": 1,
+"kwargs": [
+"_name_or_path",
+"add_cross_attention",
+"bos_token_id",
+"eos_token_id",
+"is_encoder_decoder",
+"pad_token_id",
+"use_cache",
+"vocab_size"
+]
+},
+{
+"key": "f401bda35d39183a",
+"kind": "call",
+"path": "trl.SFTTrainer",
+"npos": 0,
+"kwargs": [
+"args",
+"data_collator",
+"eval_dataset",
+"formatting_func",
+"model",
+"processing_class",
+"train_dataset"
+]
+},
+{
+"key": "fa0e3393eeb248d2",
+"kind": "name",
+"path": "transformers.models.clip.modeling_clip.CLIPEncoderLayer"
+},
+{
+"key": "fbae894337cc1122",
+"kind": "call",
+"path": "transformers.configuration_utils.PretrainedConfig.from_dict",
+"npos": 1,
+"kwargs": []
+},
+{
+"key": "fc246cc61eb5f7ce",
+"kind": "name",
+"path": "transformers.models.qwen2_5_vl.modeling_qwen2_5_vl.Qwen2_5_VLVisionAttention"
+}
+]
+}
+]
+}

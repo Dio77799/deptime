@@ -1,0 +1,189 @@
+diff --git a/code/frontend/mermaid.py b/code/frontend/mermaid.py
+index fde8639..278d9d1 100644
+--- a/code/frontend/mermaid.py
++++ b/code/frontend/mermaid.py
+@@ -43,7 +43,7 @@ config:
+ def to_gradio(mmd: str, theme: str = "dark") -> gr.HTML:
+     """Create a Gradio HTML component for a mermaid graph."""
+     html = to_html(mmd, theme)
+-    mmd_component = gr.HTML(html)
++    mmd_component = gr.HTML(html, padding=True)  # gradio 6 defaults to no padding
+     mmd_component.change(None, js="mermaid.init")
+     return mmd_component
+ 
+diff --git a/code/frontend/pages/__init__.py b/code/frontend/pages/__init__.py
+index e6b358f..447cd24 100644
+--- a/code/frontend/pages/__init__.py
++++ b/code/frontend/pages/__init__.py
+@@ -15,9 +15,9 @@
+ 
+ """A collection of pages available to views."""
+ 
+-import gradio as gr
+-
+ from .chat import page as chat
++from .chat import page_settings as chat_settings
+ from .control import page as control
++from .control import page_settings as control_settings
+ 
+-__all__ = ["chat", "control"]
++__all__ = ["chat", "chat_settings", "control", "control_settings"]
+diff --git a/code/frontend/pages/chat/__init__.py b/code/frontend/pages/chat/__init__.py
+index 823637d..80cf7a0 100644
+--- a/code/frontend/pages/chat/__init__.py
++++ b/code/frontend/pages/chat/__init__.py
+@@ -41,8 +41,11 @@ _ONLOAD = "async()=>{ registerHandlers(); chatResize(); }"
+ _CHAIN: RemoteRunnable[dict[str, Any], str] = RemoteRunnable(str(config.chain_url))
+ 
+ 
++# theme, css, and head are applied when the page is mounted (gradio 6 no longer accepts them in gr.Blocks)
++page_settings: dict[str, Any] = {"theme": THEME, "css": _CSS, "head": _HEAD}
++
+ # web ui definition
+-with gr.Blocks(theme=THEME, css=_CSS, head=_HEAD) as page:
++with gr.Blocks() as page:
+     session_id = gr.State("")
+     use_kb = gr.Checkbox(USE_KB_INITIAL, elem_id="use_kb", visible=False)
+     use_reranker = gr.Checkbox(USE_RERANKER_INITIAL, elem_id="use_reranker", visible=False)
+@@ -51,10 +54,10 @@ with gr.Blocks(theme=THEME, css=_CSS, head=_HEAD) as page:
+         chatbot = gr.Chatbot(
+             elem_id="chat",
+             container=False,
+-            bubble_full_width=False,
+             sanitize_html=True,
++            allow_tags=False,
+             avatar_images=_AVATAR_IMAGES,
+-            show_copy_button=False,
++            buttons=[],
+         )
+ 
+     with gr.Row(elem_id="input-row"):
+@@ -74,26 +77,27 @@ with gr.Blocks(theme=THEME, css=_CSS, head=_HEAD) as page:
+         outputs=[msg, chatbot],
+     )
+     async def stream_chain(
+-        sid: str, message: str, chat: list[list[str]], kb: bool, reranker: bool
+-    ) -> AsyncGenerator[tuple[str, list[list[str]]], None]:
++        sid: str, message: str, chat: list[dict[str, Any]], kb: bool, reranker: bool
++    ) -> AsyncGenerator[tuple[str, list[dict[str, Any]]], None]:
+         """Call the chain and stream the result back to Gradio."""
+-        chat += [[message, ""]]
++        chat = chat or []
++        chat += [{"role": "user", "content": message}, {"role": "assistant", "content": ""}]
+         chain = _CHAIN.with_config(configurable={"session_id": sid})
+ 
+         try:
+             async for chunk in chain.astream({"question": message, "use_kb": kb, "use_reranker": reranker}):
+-                chat[-1][1] += chunk.content  # type: ignore  # langchain quirkiness
++                chat[-1]["content"] += chunk.content  # type: ignore  # langchain quirkiness
+                 yield "", chat
+         except (HTTPStatusError, ConnectError) as exc:
+             if isinstance(exc, ConnectError) or 400 <= exc.response.status_code < 500:
+-                chat[-1][1] = (
++                chat[-1]["content"] = (
+                     "❌ **Uh oh...**\n"
+                     "I can't seem to reach to the chain server. "
+                     "Please make sure the chain server is running and the frontend is properly configured. "
+                     "For more details, check the logs for the frontend and chain server."
+                 )
+             else:
+-                chat[-1][1] = (
++                chat[-1]["content"] = (
+                     "❌ **Uh oh...**\n"
+                     "There was an error inside the chain server. "
+                     "Please check the chain server logs for more information on this error."
+diff --git a/code/frontend/pages/control/__init__.py b/code/frontend/pages/control/__init__.py
+index 20cb05b..5cd93e7 100644
+--- a/code/frontend/pages/control/__init__.py
++++ b/code/frontend/pages/control/__init__.py
+@@ -18,7 +18,7 @@
+ from pathlib import Path
+ import shutil
+ import glob
+-from typing import List
++from typing import Any, List
+ import time
+ 
+ import os
+@@ -99,8 +99,11 @@ vector_store = Milvus(
+     auto_id=True,
+ )
+ 
++# theme, css, and head are applied when the page is mounted (gradio 6 no longer accepts them in gr.Blocks)
++page_settings: dict[str, Any] = {"theme": THEME, "css": _CSS, "head": mermaid.HEAD}
++
+ # web ui definition
+-with gr.Blocks(theme=THEME, css=_CSS, head=mermaid.HEAD) as page:
++with gr.Blocks() as page:
+ 
+     # %% contrl panel tab
+     with gr.Tab("Control Panel", elem_id="cp-tab", elem_classes=["invert-bg"]):
+diff --git a/code/frontend/server.py b/code/frontend/server.py
+index 4ef4d6a..4bd3360 100644
+--- a/code/frontend/server.py
++++ b/code/frontend/server.py
+@@ -37,7 +37,13 @@ app = FastAPI()
+ 
+ # %% define and mount the views
+ views: list[view.View] = [
+-    view.View("Portability", left=pages.control, right=pages.chat),
++    view.View(
++        "Portability",
++        left=pages.control,
++        right=pages.chat,
++        left_settings=pages.control_settings,
++        right_settings=pages.chat_settings,
++    ),
+ ]
+ app = view.mount_views(app, views)
+ 
+diff --git a/code/frontend/view.py b/code/frontend/view.py
+index f5f9e62..18cf753 100644
+--- a/code/frontend/view.py
++++ b/code/frontend/view.py
+@@ -16,6 +16,7 @@
+ """Helpers for defining frontend views in pure Python."""
+ 
+ from dataclasses import dataclass, field
++from typing import Any
+ 
+ import gradio as gr
+ from fastapi import FastAPI
+@@ -31,6 +32,9 @@ class View:
+     name: str
+     left: None | gr.Blocks = field(default=None)
+     right: None | gr.Blocks = field(default=None)
++    # theme, css, head, etc. passed to gr.mount_gradio_app for each pane (gradio 6 moved them out of gr.Blocks)
++    left_settings: dict[str, Any] = field(default_factory=dict)
++    right_settings: dict[str, Any] = field(default_factory=dict)
+ 
+     @property
+     def left_url(self) -> None | str:
+@@ -54,9 +58,13 @@ class View:
+     def mount_view(self, server: FastAPI) -> FastAPI:
+         """Mount the pages in the view to the server."""
+         if self.left:
+-            server = gr.mount_gradio_app(server, self.left, path=self.left_url, root_path=self.left_url)
++            server = gr.mount_gradio_app(
++                server, self.left, path=self.left_url, root_path=self.left_url, **self.left_settings
++            )
+         if self.right:
+-            server = gr.mount_gradio_app(server, self.right, path=self.right_url, root_path=self.right_url)
++            server = gr.mount_gradio_app(
++                server, self.right, path=self.right_url, root_path=self.right_url, **self.right_settings
++            )
+         return server
+ 
+ 
+diff --git a/requirements.txt b/requirements.txt
+index dac87e6..db003f0 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,6 +1,6 @@
+ confz==2.0.1
+ fastapi==0.115.6
+-gradio==5.9.1
++gradio==6.32.0
+ grandalf==0.8
+ jupyterlab>3.0
+ langchain==0.3.14

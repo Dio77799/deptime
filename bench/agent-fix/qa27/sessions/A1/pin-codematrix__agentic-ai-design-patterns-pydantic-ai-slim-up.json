@@ -1,0 +1,113 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 65,
+  "duration_ms": 262796,
+  "total_cost_usd": 0.6339033,
+  "usage": {
+   "input_tokens": 38,
+   "cache_creation_input_tokens": 66125,
+   "cache_read_input_tokens": 771379,
+   "output_tokens": 22792,
+   "output_tokens_details": {
+    "thinking_tokens": 7756
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 66125,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1106,
+     "cache_read_input_tokens": 71736,
+     "cache_creation_input_tokens": 166,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 166
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794906000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.1,
+    "resetsAt": 1794906000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.34,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 3,
+  "Glob": 1,
+  "Read": 11,
+  "Bash": 1,
+  "WebSearch": 2,
+  "WebFetch": 16,
+  "Edit": 30
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://ai.pydantic.dev/changelog/",
+  "https://pydantic.dev/docs/ai/project/changelog/",
+  "https://pydantic.dev/docs/ai/project/changelog/index.md",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_ai_slim/pydantic_ai/usage.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_ai_slim/pydantic_ai/messages.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_ai_slim/pydantic_ai/result.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_graph/pydantic_graph/__init__.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_ai_slim/pydantic_ai/tools.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_graph/pydantic_graph/__init__.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_graph/pydantic_graph/graph_builder.py",
+  "https://pydantic.dev/docs/ai/graph/graph/",
+  "https://pydantic.dev/docs/ai/graph/builder/",
+  "https://pydantic.dev/docs/ai/api/pydantic_graph/graph_builder/index.md",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_graph/pydantic_graph/basenode.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_ai_slim/pydantic_ai/agent/__init__.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.0.0/pydantic_ai_slim/pydantic_ai/agent/abstract.py"
+ ],
+ "denied": 0,
+ "task": "pin-codematrix__agentic-ai-design-patterns-pydantic-ai-slim-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 263.3,
+ "service_error": false
+}

@@ -1,0 +1,40 @@
+diff --git a/requirements.txt b/requirements.txt
+index 09faded..aeb7b40 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -8,5 +8,5 @@ pandas==2.2.3
+ langchain==0.3.19
+ langchain-google-genai==2.0.10
+ langchain-community==0.3.18
+-mcp==1.6.0
++mcp==2.3.0
+ loguru
+\ No newline at end of file
+diff --git a/servers/server_mcp.py b/servers/server_mcp.py
+index 687ec5e..2f7830f 100644
+--- a/servers/server_mcp.py
++++ b/servers/server_mcp.py
+@@ -1,4 +1,4 @@
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from langchain.tools import tool
+ import sqlite3
+ from loguru import logger
+@@ -24,7 +24,7 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", max_tokens=2048, temperat
+         HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+         HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE})
+ 
+-mcp = FastMCP("security-hub")
++mcp = MCPServer("security-hub")
+ 
+ 
+ # Database Authentication
+@@ -79,7 +79,7 @@ db=db,
+ llm=llm
+ )
+ 
+-mcp = FastMCP("security-hub")
++mcp = MCPServer("security-hub")
+ 
+ # Extract the individual tools from your toolkit
+ query_tool = toolkit.get_tools()[0]  # QuerySQLDatabaseTool

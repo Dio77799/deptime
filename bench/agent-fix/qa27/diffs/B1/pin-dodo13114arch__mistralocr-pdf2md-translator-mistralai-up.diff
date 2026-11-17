@@ -1,0 +1,15 @@
+diff --git a/mistralocr_app.py b/mistralocr_app.py
+index 1510859..df771f7 100644
+--- a/mistralocr_app.py
++++ b/mistralocr_app.py
+@@ -36,8 +36,8 @@ load_dotenv(override=True)
+ import gradio as gr
+ 
+ # Mistral AI
+-from mistralai import Mistral
+-from mistralai.models import OCRResponse, ImageURLChunk, DocumentURLChunk, TextChunk
++from mistralai.client import Mistral
++from mistralai.client.models import OCRResponse, ImageURLChunk, DocumentURLChunk, TextChunk
+ 
+ # Google Gemini
+ from google import genai

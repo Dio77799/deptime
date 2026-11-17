@@ -1,0 +1,105 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 37,
+  "duration_ms": 69690,
+  "total_cost_usd": 0.22946479999999997,
+  "usage": {
+   "input_tokens": 22,
+   "cache_creation_input_tokens": 24729,
+   "cache_read_input_tokens": 198775,
+   "output_tokens": 9456,
+   "output_tokens_details": {
+    "thinking_tokens": 1981
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 24729,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1092,
+     "cache_read_input_tokens": 28045,
+     "cache_creation_input_tokens": 2461,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2461
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794906000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.03,
+    "resetsAt": 1794906000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.34,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Glob": 1,
+  "Grep": 2,
+  "Read": 4,
+  "Bash": 1,
+  "WebFetch": 9,
+  "Edit": 19
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://pypi.org/pypi/langchain/1.5.0/json",
+  "https://pypi.org/pypi/langchain-classic/json",
+  "https://pypi.org/pypi/langchain-google-vertexai/json",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain/langchain_classic/agents/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain/langchain_classic/memory/__init__.py",
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/langchain/langchain_classic/chains/__init__.py",
+  "https://pypi.org/pypi/langchain-community/json",
+  "https://pypi.org/pypi/langchain-core/1.8.0/json",
+  "https://raw.githubusercontent.com/langchain-ai/langchain-google/main/libs/vertexai/langchain_google_vertexai/__init__.py"
+ ],
+ "denied": 0,
+ "task": "pin-jay4codes__googlevertexai-langchain-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 70.2,
+ "service_error": false
+}

@@ -1,0 +1,298 @@
+diff --git a/client/kali_mcp_client.py b/client/kali_mcp_client.py
+index 1731d2e..678fced 100644
+--- a/client/kali_mcp_client.py
++++ b/client/kali_mcp_client.py
+@@ -57,17 +57,24 @@ def result_to_dict(res):
+             {"type": getattr(c, "type", "text"), "text": getattr(c, "text", "")}
+             for c in (getattr(res, "content", None) or [])
+         ],
+-        "isError": getattr(res, "isError", False),
++        "isError": getattr(res, "is_error", False),
+     }
+ 
+ 
++def tool_schema(t) -> dict:
++    """Return a tool's JSON input schema (mcp 2.x field: input_schema)."""
++    if isinstance(t, dict):
++        return t.get("inputSchema") or t.get("input_schema") or {}
++    return getattr(t, "input_schema", None) or {}
++
++
+ def format_tools(tools) -> str:
+     lines = [f"{len(tools)} tools available:", ""]
+     for t in tools:
+         name = t.name if hasattr(t, "name") else t.get("name", "?")
+         desc = (t.description if hasattr(t, "description") else t.get("description", "")) or ""
+         required = []
+-        schema = t.inputSchema if hasattr(t, "inputSchema") else t.get("inputSchema", {}) or {}
++        schema = tool_schema(t)
+         props = schema.get("properties", {})
+         required = schema.get("required", [])
+         args = ", ".join(
+@@ -125,9 +132,9 @@ class Client:
+             self._ctx = sse_client(self._url())
+             read, write = await self._ctx.__aenter__()
+         elif a.transport == "streamable-http":
+-            from mcp.client.streamable_http import streamablehttp_client
+-            self._ctx = streamablehttp_client(self._url())
+-            read, write, _session_id = await self._ctx.__aenter__()
++            from mcp.client.streamable_http import streamable_http_client
++            self._ctx = streamable_http_client(self._url())
++            read, write = await self._ctx.__aenter__()
+         else:
+             raise ValueError(f"unknown transport: {a.transport}")
+ 
+@@ -152,30 +159,17 @@ class Client:
+     async def _rpc(self, method: str, params: dict | None = None):
+         """Send a request, injecting _meta.auth_token when a token is set."""
+         params = dict(params or {})
+-        if self.token:
+-            meta = dict(params.get("_meta") or {})
+-            meta["auth_token"] = self.token
+-            params["_meta"] = meta
+-            # Build the typed request and use send_request so _meta reaches
+-            # the server middleware (public helpers drop unknown _meta keys).
+-            from mcp.types import ListToolsRequest, CallToolRequest, ListToolsResult, CallToolResult
+-            if method == "tools/list":
+-                request = ListToolsRequest.model_validate(
+-                    {"method": "tools/list", "params": params}
+-                )
+-                return await self.session.send_request(request, ListToolsResult)
+-            if method == "tools/call":
+-                request = CallToolRequest.model_validate(
+-                    {"method": "tools/call", "params": params}
+-                )
+-                return await self.session.send_request(request, CallToolResult)
+-            raise ValueError(f"unsupported method: {method}")
+-        # No auth — use the public API.
++        # mcp 2.x: _meta is an open mapping on request params and the public
++        # helpers accept it directly (``meta=``), so no send_request is needed.
++        meta = {"auth_token": self.token} if self.token else None
+         if method == "tools/list":
+-            return await self.session.list_tools()
++            from mcp.types import PaginatedRequestParams
++            return await self.session.list_tools(
++                params=PaginatedRequestParams(meta=meta) if meta else None
++            )
+         if method == "tools/call":
+             return await self.session.call_tool(
+-                params["name"], params.get("arguments") or {}
++                params["name"], params.get("arguments") or {}, meta=meta
+             )
+         raise ValueError(f"unsupported method: {method}")
+ 
+@@ -263,7 +257,7 @@ async def run_interactive(client: Client) -> int:
+                 get = lambda o, k, d="": getattr(o, k, d) if not isinstance(o, dict) else o.get(k, d)
+                 print(f"{get(t, 'name')}\n{'=' * len(get(t, 'name'))}")
+                 print(get(t, "description", "(no description)"))
+-                schema = get(t, "inputSchema", {}) or {}
++                schema = tool_schema(t)
+                 props = schema.get("properties", {})
+                 required = schema.get("required", [])
+                 if props:
+diff --git a/docker/server-requirements.txt b/docker/server-requirements.txt
+index c2bd62f..b6deb10 100644
+--- a/docker/server-requirements.txt
++++ b/docker/server-requirements.txt
+@@ -1 +1 @@
+-mcp==1.30.0
++mcp==2.3.0
+diff --git a/pyproject.toml b/pyproject.toml
+index 63966fe..b25eda5 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -4,7 +4,7 @@ version = "0.1.0"
+ description = "MCP server exposing popular Kali Linux tools for AI applications"
+ requires-python = ">=3.10"
+ dependencies = [
+-    "mcp>=1.9,<2",
++    "mcp>=2.3,<3",
+ ]
+ 
+ [project.scripts]
+diff --git a/src/kali_mcp/server.py b/src/kali_mcp/server.py
+index 088c0ae..f656a76 100644
+--- a/src/kali_mcp/server.py
++++ b/src/kali_mcp/server.py
+@@ -7,22 +7,19 @@ import os
+ import sys
+ import tempfile
+ import urllib.parse
+-from mcp.server import Server
++from mcp.server import Server, ServerRequestContext
+ from mcp.server.stdio import stdio_server
+-from mcp.shared.exceptions import McpError
++from mcp.shared.exceptions import MCPError
+ from mcp.types import (
+-    Tool,
+     TextContent,
+     ListToolsResult,
+     CallToolResult,
+     CallToolRequestParams,
+-    ListToolsRequest,
+-    ErrorData,
++    PaginatedRequestParams,
+ )
+ 
+ from kali_mcp.tools import ALL_TOOLS, TOOL_DISPATCH
+ 
+-server = Server("kali-mcp")
+ AUTH_TOKEN: str = ""
+ _AUTH_HEADER_OK: contextvars.ContextVar[bool] = contextvars.ContextVar(
+     "kali_mcp_auth_header_ok", default=False
+@@ -69,96 +66,79 @@ def _limit_result(text: str) -> str:
+     )
+ 
+ 
+-async def handle_list_tools(ctx, _req: ListToolsRequest) -> ListToolsResult:
++async def handle_list_tools(
++    ctx: ServerRequestContext, params: PaginatedRequestParams | None
++) -> ListToolsResult:
+     return ListToolsResult(tools=ALL_TOOLS)
+ 
+ 
+-async def handle_call_tool(ctx, req: CallToolRequestParams) -> CallToolResult:
+-    handler = TOOL_DISPATCH.get(req.name)
++async def handle_call_tool(
++    ctx: ServerRequestContext, params: CallToolRequestParams
++) -> CallToolResult:
++    handler = TOOL_DISPATCH.get(params.name)
+     if not handler:
+         return CallToolResult(
+-            content=[TextContent(type="text", text=f"[error] unknown tool: {req.name}")],
+-            isError=True,
++            content=[TextContent(type="text", text=f"[error] unknown tool: {params.name}")],
++            is_error=True,
+         )
+ 
+-    args = req.arguments or {}
+-    loop = asyncio.get_event_loop()
+-    result = await loop.run_in_executor(None, functools.partial(handler, **args))
++    args = params.arguments or {}
++    loop = asyncio.get_running_loop()
++    try:
++        result = await loop.run_in_executor(None, functools.partial(handler, **args))
++    except Exception as exc:
++        # mcp 2.x turns uncaught handler exceptions into JSON-RPC errors; keep
++        # reporting tool failures as tool results (isError) like mcp 1.x did.
++        return CallToolResult(
++            content=[TextContent(type="text", text=f"[error] {exc}")],
++            is_error=True,
++        )
+     text = str(result)
+     return CallToolResult(
+         content=[TextContent(type="text", text=_limit_result(text))],
+-        isError=text.startswith("[error]"),
++        is_error=text.startswith("[error]"),
+     )
+ 
+ 
+-def register_handlers() -> None:
+-    @server.list_tools()
+-    async def _list_tools() -> list[Tool]:
+-        return await handle_list_tools(None, ListToolsRequest())
++# mcp 2.x: handlers are passed to the constructor (the @server.list_tools() /
++# @server.call_tool() decorators were removed).
++server = Server(
++    "kali-mcp",
++    on_list_tools=handle_list_tools,
++    on_call_tool=handle_call_tool,
++)
+ 
+-    @server.call_tool()
+-    async def _call_tool(name: str, arguments: dict | None) -> CallToolResult:
+-        return await handle_call_tool(
+-            None, CallToolRequestParams(name=name, arguments=arguments)
+-        )
++_AUTHED_METHODS = ("tools/list", "tools/call")
+ 
+ 
+ def register_auth_middleware() -> None:
+-    """Token auth via handler wrapping (mcp >= 1.9 has no middleware API).
++    """Token auth via server middleware (mcp 2.x ``Server.middleware``).
+ 
+-    Replaces the handlers registered by register_handlers() so every
+-    tools/list and tools/call request must carry _meta.auth_token.
++    Every tools/list and tools/call request must carry _meta.auth_token.
+     """
+-    handlers = server.request_handlers
+-    from mcp.types import ListToolsRequest as _LTR, CallToolRequest as _CTR
+-
+-    original_list = handlers.get(_LTR)
+-    original_call = handlers.get(_CTR)
+-    if original_list is None or original_call is None:
+-        raise RuntimeError(
+-            "register_handlers() must be called before register_auth_middleware()"
+-        )
+ 
+-    def _check(req) -> None:
+-        if not AUTH_TOKEN:
+-            return
+-        # HTTP-header auth (validated by HeaderAuthMiddleware) bypasses the
+-        # _meta.auth_token check for clients that only support custom headers.
+-        if _AUTH_HEADER_OK.get():
+-            return
+-        # Requests are pydantic models with a .params (or root.params) attribute;
+-        # _meta.auth_token arrives inside params.
+-        params = getattr(req, "params", None)
+-        if params is None and hasattr(req, "root"):
+-            params = getattr(req.root, "params", None)
+-        meta = getattr(params, "meta", None) if params is not None else None
+-        if meta is None and isinstance(params, dict):
+-            meta = params.get("_meta", {})
+-        token = ""
+-        if isinstance(meta, dict):
+-            token = meta.get("auth_token", "")
+-        elif meta is not None:
+-            token = getattr(meta, "auth_token", "") or ""
+-        if token != AUTH_TOKEN:
+-            raise McpError(
+-                ErrorData(
+-                    code=-32001,
+-                    message="Unauthorized: invalid or missing auth_token in _meta",
++    def _extract_token(ctx: ServerRequestContext) -> str:
++        # ctx.params is the raw inbound params mapping, so _meta.auth_token is
++        # visible even though it is not a declared field of the typed params.
++        raw = ctx.params
++        meta = raw.get("_meta") if raw is not None else None
++        if meta is None:
++            meta = ctx.meta
++        token = meta.get("auth_token", "") if isinstance(meta, dict) else ""
++        return token if isinstance(token, str) else ""
++
++    async def auth_middleware(ctx: ServerRequestContext, call_next):
++        if AUTH_TOKEN and ctx.method in _AUTHED_METHODS:
++            # HTTP-header auth (validated by HeaderAuthMiddleware) bypasses the
++            # _meta.auth_token check for clients that only support custom headers.
++            if not _AUTH_HEADER_OK.get() and _extract_token(ctx) != AUTH_TOKEN:
++                raise MCPError(
++                    -32001,
++                    "Unauthorized: invalid or missing auth_token in _meta",
+                 )
+-            )
+-
+-    async def authed_list(req):
+-        # The SDK passes None when refreshing its internal tool-schema cache.
+-        if req is not None:
+-            _check(req)
+-        return await original_list(req)
+-
+-    async def authed_call(req):
+-        _check(req)
+-        return await original_call(req)
++        return await call_next(ctx)
+ 
+-    handlers[_LTR] = authed_list
+-    handlers[_CTR] = authed_call
++    server.middleware.append(auth_middleware)
+ 
+ 
+ class HeaderAuthMiddleware:
+@@ -398,7 +378,6 @@ def main() -> None:
+     args = _parse_args()
+     AUTH_TOKEN = args.auth_token
+ 
+-    register_handlers()
+     register_auth_middleware()
+ 
+     # Diagnostics go to stderr: in stdio mode stdout carries the JSON-RPC

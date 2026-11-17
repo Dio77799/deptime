@@ -1,0 +1,109 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 16,
+  "duration_ms": 47083,
+  "total_cost_usd": 0.11648410000000001,
+  "usage": {
+   "input_tokens": 20,
+   "cache_creation_input_tokens": 12095,
+   "cache_read_input_tokens": 155555,
+   "output_tokens": 3571,
+   "output_tokens_details": {
+    "thinking_tokens": 308
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 12095,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 861,
+     "cache_read_input_tokens": 20564,
+     "cache_creation_input_tokens": 1997,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1997
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.22,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.32,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 5,
+  "Read": 3,
+  "mcp__plugin_deptime_deptime__check_symbols": 1,
+  "WebFetch": 1,
+  "Edit": 3,
+  "Grep": 1,
+  "WebSearch": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.3 check-upgrade . --package transformers --to 5.23.0 --from 4.34.1 --format markdown --output .deptime-report.md",
+  "check_symbols",
+  "uvx deptime==0.2.3 check-upgrade . --package transformers --to 5.23.0 --from 4.34.1 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 3,
+ "fetched": [
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/training_args.py"
+ ],
+ "denied": 1,
+ "task": "pin-xiongsiheng__tg-llm-transformers-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 49.0,
+ "service_error": false
+}

@@ -1,0 +1,15 @@
+diff --git a/retrieval/document_causal_retriever_rl.py b/retrieval/document_causal_retriever_rl.py
+index ff96250..73dae2a 100644
+--- a/retrieval/document_causal_retriever_rl.py
++++ b/retrieval/document_causal_retriever_rl.py
+@@ -13,8 +13,8 @@ class RetrievalState(TypedDict):
+ class DocumentRetriever:
+     def __init__(self):
+         self.index_name = CONFIG["PINECONE_INDEX"]
+-        pinecone.init(api_key=CONFIG["PINECONE_API_KEY"], environment=CONFIG["PINECONE_ENV"])
+-        self.index = pinecone.Index(self.index_name)
++        self.pc = pinecone.Pinecone(api_key=CONFIG["PINECONE_API_KEY"])
++        self.index = self.pc.Index(name=self.index_name)
+         self.encoder = SentenceTransformer(CONFIG["ENCODER_MODEL"])
+     
+     def retrieve(self, query: str, top_k: int = 5):

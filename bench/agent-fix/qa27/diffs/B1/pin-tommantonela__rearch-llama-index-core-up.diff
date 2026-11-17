@@ -1,0 +1,44 @@
+diff --git a/.deptime-report.md b/.deptime-report.md
+new file mode 100644
+index 0000000..1d74983
+--- /dev/null
++++ b/.deptime-report.md
+@@ -0,0 +1,38 @@
++## DepTime upgrade check
++
++**2 breaks found** in this project's code: llama-index-core 0.11.17 → 0.14.26.
++
++### llama-index-core 0.11.17 → 0.14.26
++
++63 names used in 3 files.
++
++**Breaks**
++- `llama_index.core.agent.AgentRunner`: missing at 0.14.26. Last in 0.12.52.post1, gone in 0.13.0. At `archmind.py:27`, `archmind.py:722`.
++- `llama_index.core.agent.Task`: missing at 0.14.26. Last in 0.12.52.post1, gone in 0.13.0. At `archmind.py:29`.
++
++<details><summary>DepTime can't tell, so check these yourself (never fails the check): 3</summary>
++
++- `llama_index.core.agent.ReActAgent.from_tools`: llama\_index.core.agent.ReActAgent inherits from \`workflows.workflow.Workflow\`, from another distribution DepTime can't check here, which may have it. At `archmind.py:705`.
++- `llama_index.core.Settings.embed_model`: llama\_index.core.Settings is an attribute (\`llama\_index.core.settings.Settings\`), not a module or class, so the index doesn't list its attributes (often made at runtime). At `stores.py:54`.
++- `llama_index.core.Settings.embed_model.model_name`: llama\_index.core.Settings is an attribute (\`llama\_index.core.settings.Settings\`), not a module or class, so the index doesn't list its attributes (often made at runtime). At `stores.py:54`.
++
++</details>
++
++<details><summary>For a coding agent</summary>
++
++```text
++DepTime confirmed these uses break with this update (failing at the new version, not at the old).
++Fix these lines. Where no replacement is given, find how the new version does the same thing (its source, release notes or migration guide) and rewrite the code to it.
++- archmind.py:27, archmind.py:722: llama_index.core.agent.AgentRunner: gone in llama-index-core 0.14.26
++- archmind.py:29: llama_index.core.agent.Task: gone in llama-index-core 0.14.26
++DepTime can't tell whether these uses still work at the new version: check each one yourself.
++- archmind.py:705: llama_index.core.agent.ReActAgent.from_tools in llama-index-core 0.14.26
++- stores.py:54: llama_index.core.Settings.embed_model in llama-index-core 0.14.26
++- stores.py:54: llama_index.core.Settings.embed_model.model_name in llama-index-core 0.14.26
++Deprecations still work, and uses that fail at the old version too aren't caused by this update.
++Then run deptime check-upgrade again: it should find no breaks.
++```
++
++</details>
++
++DepTime reads the code and the index; it runs nothing and asks no model. A break is a use the index shows failing at the new version and not at the old one.

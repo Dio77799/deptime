@@ -1,0 +1,25 @@
+diff --git a/kitchenai/core/agents.py b/kitchenai/core/agents.py
+index 7a8ac6e..89deb19 100644
+--- a/kitchenai/core/agents.py
++++ b/kitchenai/core/agents.py
+@@ -1,6 +1,6 @@
+ 
+ from abc import ABC, abstractmethod
+-from llama_index.core.agent import ReActAgent
++from llama_index.core.agent.workflow import ReActAgent
+ from llama_index.llms.openai import OpenAI
+ from llama_index.core.tools import FunctionTool
+ from llama_index.core.llms import ChatMessage
+@@ -14,10 +14,10 @@ class CoreAgent(BaseAgent):
+     def __init__(self) -> None:
+         self.llm = OpenAI(model="gpt-3.5-turbo", temperature=1)
+         #multiply_tool = FunctionTool.from_defaults(fn=multiply)
+-        self.agent = ReActAgent.from_tools([], llm=self.llm, verbose=True)
++        self.agent = ReActAgent(tools=[], llm=self.llm, verbose=True)
+ 
+     async def achat(self, message: str) -> str:
+-        #response = await self.agent.achat(message)
++        #response = await self.agent.run(message)
+         messages = [
+             ChatMessage(
+                 role="system", content="You are a pirate with a colorful personality"

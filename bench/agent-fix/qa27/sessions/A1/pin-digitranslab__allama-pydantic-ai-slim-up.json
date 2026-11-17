@@ -1,0 +1,121 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 84,
+  "duration_ms": 333848,
+  "total_cost_usd": 0.9777070000000002,
+  "usage": {
+   "input_tokens": 70,
+   "cache_creation_input_tokens": 104142,
+   "cache_read_input_tokens": 2133200,
+   "output_tokens": 25696,
+   "output_tokens_details": {
+    "thinking_tokens": 4831
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 104142,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1342,
+     "cache_read_input_tokens": 107881,
+     "cache_creation_input_tokens": 2038,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2038
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794906000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.33,
+    "resetsAt": 1794906000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.36,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 10,
+  "Bash": 1,
+  "Glob": 2,
+  "WebSearch": 1,
+  "WebFetch": 24,
+  "Read": 15,
+  "Edit": 30
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://pydantic.dev/docs/ai/project/changelog/",
+  "https://pydantic.dev/docs/ai/project/changelog/",
+  "https://pydantic.dev/docs/ai/overview/migration/",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/mcp.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/_function_schema.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/capabilities/__init__.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/run.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/agent/__init__.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/capabilities/instrumentation.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/messages.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/messages.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/messages.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/messages.py",
+  "https://pydantic.dev/docs/ai/api/pydantic-ai/messages/",
+  "https://pydantic.dev/docs/ai/api/pydantic-ai/messages/",
+  "https://pydantic.dev/docs/ai/api/pydantic-ai/messages/",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/messages.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/tools.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/durable_exec/temporal/__init__.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/durable_exec/temporal/__init__.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/providers/google.py",
+  "https://pydantic.dev/docs/ai/api/pydantic-ai/providers/",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/providers/google_cloud.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pyproject.toml"
+ ],
+ "denied": 0,
+ "task": "pin-digitranslab__allama-pydantic-ai-slim-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 334.4,
+ "service_error": false
+}

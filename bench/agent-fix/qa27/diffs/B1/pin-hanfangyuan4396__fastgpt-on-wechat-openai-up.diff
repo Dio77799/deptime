@@ -1,0 +1,465 @@
+diff --git a/bot/ali/ali_qwen_bot.py b/bot/ali/ali_qwen_bot.py
+index c97a52a..60c6802 100644
+--- a/bot/ali/ali_qwen_bot.py
++++ b/bot/ali/ali_qwen_bot.py
+@@ -5,7 +5,6 @@ import time
+ from typing import List, Tuple
+ 
+ import openai
+-import openai.error
+ import broadscope_bailian
+ from broadscope_bailian import ChatQaMessage
+ 
+@@ -127,25 +126,26 @@ class AliQwenBot(Bot, OpenAIImage, OpenAIVision):
+         except Exception as e:
+             need_retry = retry_count < 2
+             result = {"completion_tokens": 0, "content": "我现在有点累了，等会再来吧"}
+-            if isinstance(e, openai.error.RateLimitError):
++            # in openai>=1.0 APITimeoutError < APIConnectionError < APIError, so check the most specific first
++            if isinstance(e, openai.RateLimitError):
+                 logger.warn("[QWEN] RateLimitError: {}".format(e))
+                 result["content"] = "提问太快啦，请休息一下再问我吧"
+                 if need_retry:
+                     time.sleep(20)
+-            elif isinstance(e, openai.error.Timeout):
++            elif isinstance(e, openai.APITimeoutError):
+                 logger.warn("[QWEN] Timeout: {}".format(e))
+                 result["content"] = "我没有收到你的消息"
+                 if need_retry:
+                     time.sleep(5)
+-            elif isinstance(e, openai.error.APIError):
++            elif isinstance(e, openai.APIConnectionError):
++                logger.warn("[QWEN] APIConnectionError: {}".format(e))
++                need_retry = False
++                result["content"] = "我连接不到你的网络"
++            elif isinstance(e, openai.APIError):
+                 logger.warn("[QWEN] Bad Gateway: {}".format(e))
+                 result["content"] = "请再问我一次"
+                 if need_retry:
+                     time.sleep(10)
+-            elif isinstance(e, openai.error.APIConnectionError):
+-                logger.warn("[QWEN] APIConnectionError: {}".format(e))
+-                need_retry = False
+-                result["content"] = "我连接不到你的网络"
+             else:
+                 logger.exception("[QWEN] Exception: {}".format(e))
+                 need_retry = False
+diff --git a/bot/chatgpt/chat_gpt_bot.py b/bot/chatgpt/chat_gpt_bot.py
+index 1659db4..4440ece 100644
+--- a/bot/chatgpt/chat_gpt_bot.py
++++ b/bot/chatgpt/chat_gpt_bot.py
+@@ -10,7 +10,6 @@ from minio import Minio
+ from minio.error import S3Error
+ 
+ import openai
+-import openai.error
+ import requests
+ from bridge.context import ContextType
+ from bridge.reply import Reply, ReplyType
+@@ -22,6 +21,7 @@ from bot.bot import Bot
+ from bot.chatgpt.chat_gpt_session import ChatGPTSession
+ from bot.openai.open_ai_image import OpenAIImage
+ from bot.openai.open_ai_vision import OpenAIVision
++from bot.openai.openai_client import create_azure_client, create_openai_client, with_api_key
+ from bot.session_manager import SessionManager
+ from common.token_bucket import TokenBucket
+ from common import memory, utils
+@@ -31,13 +31,8 @@ from bot.baidu.baidu_wenxin_session import BaiduWenxinSession
+ class ChatGPTBot(Bot, OpenAIImage, OpenAIVision):
+     def __init__(self):
+         super().__init__()
+-        # set the default api_key
+-        openai.api_key = conf().get("open_ai_api_key")
+-        if conf().get("open_ai_api_base"):
+-            openai.api_base = conf().get("open_ai_api_base")
+-        proxy = conf().get("proxy")
+-        if proxy:
+-            openai.proxy = proxy
++        # the default api_key, api base and proxy are read from the config by the client
++        self.openai_client = create_openai_client()
+         if conf().get("rate_limit_chatgpt"):
+             self.tb4chatgpt = TokenBucket(conf().get("rate_limit_chatgpt", 20))
+         conf_model = conf().get("model") or "gpt-3.5-turbo"
+@@ -51,9 +46,10 @@ class ChatGPTBot(Bot, OpenAIImage, OpenAIVision):
+             "top_p": conf().get("top_p", 1),
+             "frequency_penalty": conf().get("frequency_penalty", 0.0),  # [-2,2]之间，该值越大则更倾向于产生不同的内容
+             "presence_penalty": conf().get("presence_penalty", 0.0),  # [-2,2]之间，该值越大则更倾向于产生不同的内容
+-            "request_timeout": conf().get("request_timeout", None),  # 请求超时时间，openai接口默认设置为600，对于难问题一般需要较长时间
+-            "timeout": conf().get("request_timeout", None),  # 重试超时时间，在这个时间内，将会自动重试
+         }
++        # 请求超时时间，openai接口默认设置为600，对于难问题一般需要较长时间 (openai>=1.0用timeout代替request_timeout)
++        if conf().get("request_timeout", None) is not None:
++            self.args["timeout"] = conf().get("request_timeout")
+         # o1相关模型固定了部分参数，暂时去掉
+         if conf_model in [const.O1, const.O1_MINI]:
+             self.sessions = SessionManager(BaiduWenxinSession, model=conf().get("model") or const.O1_MINI)
+@@ -255,8 +251,10 @@ class ChatGPTBot(Bot, OpenAIImage, OpenAIVision):
+         """
+         try:
+             if conf().get("rate_limit_chatgpt") and not self.tb4chatgpt.get_token():
+-                raise openai.error.RateLimitError("RateLimitError: rate limit exceeded")
+-            # if api_key == None, the default openai.api_key will be used
++                # openai>=1.0 exceptions can't be built by hand, so answer as the RateLimitError handler below does
++                logger.warning("[CHATGPT] 触发速率限制：rate limit exceeded")
++                return {"completion_tokens": 0, "content": "提问太快啦，请休息一下再问我吧"}
++            # if api_key == None, the client's default api_key will be used
+             if args is None:
+                 args = self.args
+ 
+@@ -315,14 +313,13 @@ class ChatGPTBot(Bot, OpenAIImage, OpenAIVision):
+                 }
+             else:
+                 # 使用普通的 OpenAI API
+-                response = openai.ChatCompletion.create(
+-                    api_key=api_key,
++                response = with_api_key(self.openai_client, api_key).chat.completions.create(
+                     messages=session.messages,
+                     **args
+                 )
+ 
+                 logger.debug(f"[CHATGPT] API响应：{response}")
+-                content = response.choices[0]["message"]["content"]
++                content = response.choices[0].message.content
+ 
+                 # 处理工具调用格式
+                 if isinstance(content, list):
+@@ -333,27 +330,29 @@ class ChatGPTBot(Bot, OpenAIImage, OpenAIVision):
+                                 tool_content.append(f"{tool.get('toolName', '')}: {tool.get('content', '')}")
+                     content = "\n".join(tool_content)
+ 
+-                total_tokens = response["usage"]["total_tokens"] if "usage" in response else 0
++                usage = response.usage
++                total_tokens = usage.total_tokens if usage else 0
+                 logger.info(f"[CHATGPT] 回复内容：{content}，使用tokens：{total_tokens}")
+ 
+                 return {
+                     "total_tokens": total_tokens,
+-                    "completion_tokens": response["usage"]["completion_tokens"] if "usage" in response else 0,
++                    "completion_tokens": usage.completion_tokens if usage else 0,
+                     "content": content
+                 }
+ 
+-        except openai.error.RateLimitError as e:
++        except openai.RateLimitError as e:
+             logger.warning(f"[CHATGPT] 触发速率限制：{e}")
+             return {"completion_tokens": 0, "content": "提问太快啦，请休息一下再问我吧"}
+ 
+-        except openai.error.APIError as e:
+-            logger.error(f"[CHATGPT] API错误：{e}")
+-            return {"completion_tokens": 0, "content": "抱歉，服务器出现问题，请稍后再试"}
+-
+-        except openai.error.Timeout as e:
++        # APITimeoutError is a subclass of APIError in openai>=1.0, so it has to be caught first
++        except openai.APITimeoutError as e:
+             logger.warning(f"[CHATGPT] 请求超时：{e}")
+             return {"completion_tokens": 0, "content": "请求超时，请稍后再试"}
+ 
++        except openai.APIError as e:
++            logger.error(f"[CHATGPT] API错误：{e}")
++            return {"completion_tokens": 0, "content": "抱歉，服务器出现问题，请稍后再试"}
++
+         except Exception as e:
+             logger.exception(f"[CHATGPT] 处理请求异常：{e}")
+             if retry_count < 2:
+@@ -447,9 +446,9 @@ class AzureChatGPTBot(ChatGPTBot):
+     
+     def __init__(self):
+         super().__init__()
+-        openai.api_type = "azure"
+-        openai.api_version = conf().get("azure_api_version", "2023-06-01-preview")
+-        self.args["deployment_id"] = conf().get("azure_deployment_id")
++        # openai>=1.0: Azure has its own client, and the deployment is passed as the model
++        self.openai_client = create_azure_client()
++        self.args["model"] = conf().get("azure_deployment_id") or self.args["model"]
+ 
+     def create_img(self, query, context):
+         """处理图片分析请求"""
+diff --git a/bot/claudeapi/claude_api_bot.py b/bot/claudeapi/claude_api_bot.py
+index e3e7a2b..50eae31 100644
+--- a/bot/claudeapi/claude_api_bot.py
++++ b/bot/claudeapi/claude_api_bot.py
+@@ -3,7 +3,6 @@
+ import time
+ 
+ import openai
+-import openai.error
+ import anthropic
+ 
+ from bot.bot import Bot
+@@ -95,17 +94,17 @@ class ClaudeAPIBot(Bot, OpenAIImage):
+         except Exception as e:
+             need_retry = retry_count < 2
+             result = {"total_tokens": 0, "completion_tokens": 0, "content": "我现在有点累了，等会再来吧"}
+-            if isinstance(e, openai.error.RateLimitError):
++            if isinstance(e, openai.RateLimitError):
+                 logger.warn("[CLAUDE_API] RateLimitError: {}".format(e))
+                 result["content"] = "提问太快啦，请休息一下再问我吧"
+                 if need_retry:
+                     time.sleep(20)
+-            elif isinstance(e, openai.error.Timeout):
++            elif isinstance(e, openai.APITimeoutError):
+                 logger.warn("[CLAUDE_API] Timeout: {}".format(e))
+                 result["content"] = "我没有收到你的消息"
+                 if need_retry:
+                     time.sleep(5)
+-            elif isinstance(e, openai.error.APIConnectionError):
++            elif isinstance(e, openai.APIConnectionError):
+                 logger.warn("[CLAUDE_API] APIConnectionError: {}".format(e))
+                 need_retry = False
+                 result["content"] = "我连接不到你的网络"
+diff --git a/bot/minimax/minimax_bot.py b/bot/minimax/minimax_bot.py
+index 40112d8..4b8e1f8 100644
+--- a/bot/minimax/minimax_bot.py
++++ b/bot/minimax/minimax_bot.py
+@@ -3,7 +3,6 @@
+ import time
+ 
+ import openai
+-import openai.error
+ from bot.bot import Bot
+ from bot.minimax.minimax_session import MinimaxSession
+ from bot.session_manager import SessionManager
+diff --git a/bot/moonshot/moonshot_bot.py b/bot/moonshot/moonshot_bot.py
+index 61eb26d..1e38a24 100644
+--- a/bot/moonshot/moonshot_bot.py
++++ b/bot/moonshot/moonshot_bot.py
+@@ -3,7 +3,6 @@
+ import time
+ 
+ import openai
+-import openai.error
+ from bot.bot import Bot
+ from bot.session_manager import SessionManager
+ from bridge.context import ContextType
+diff --git a/bot/openai/open_ai_bot.py b/bot/openai/open_ai_bot.py
+index 893c12e..2a0d8a2 100644
+--- a/bot/openai/open_ai_bot.py
++++ b/bot/openai/open_ai_bot.py
+@@ -3,11 +3,11 @@
+ import time
+ 
+ import openai
+-import openai.error
+ 
+ from bot.bot import Bot
+ from bot.openai.open_ai_image import OpenAIImage
+ from bot.openai.open_ai_session import OpenAISession
++from bot.openai.openai_client import create_openai_client
+ from bot.session_manager import SessionManager
+ from bridge.context import ContextType
+ from bridge.reply import Reply, ReplyType
+@@ -25,15 +25,8 @@ class OpenAIBot(Bot, OpenAIImage):
+         api_key = conf().get("open_ai_api_key", "")
+         if not api_key:
+             logger.warning("[OPEN_AI] API密钥未配置")
+-        openai.api_key = api_key
+-        
+-        api_base = conf().get("open_ai_api_base")
+-        if api_base:
+-            openai.api_base = api_base
+-            
+-        proxy = conf().get("proxy")
+-        if proxy:
+-            openai.proxy = proxy
++        # api base和proxy由create_openai_client从配置中读取
++        self.openai_client = create_openai_client(api_key=api_key)
+ 
+         self.sessions = SessionManager(OpenAISession, model=conf().get("model") or "text-davinci-003")
+         self.args = {
+@@ -43,10 +36,11 @@ class OpenAIBot(Bot, OpenAIImage):
+             "top_p": 1,
+             "frequency_penalty": conf().get("frequency_penalty", 0.0),  # [-2,2]之间，该值越大则更倾向于产生不同的内容
+             "presence_penalty": conf().get("presence_penalty", 0.0),  # [-2,2]之间，该值越大则更倾向于产生不同的内容
+-            "request_timeout": conf().get("request_timeout", None),  # 请求超时时间，openai接口默认设置为600，对于难问题一般需要较长时间
+-            "timeout": conf().get("request_timeout", None),  # 重试超时时间，在这个时间内，将会自动重试
+             "stop": ["\n\n\n"],
+         }
++        # 请求超时时间，openai接口默认设置为600，对于难问题一般需要较长时间 (openai>=1.0用timeout代替request_timeout)
++        if conf().get("request_timeout", None) is not None:
++            self.args["timeout"] = conf().get("request_timeout")
+ 
+     def reply(self, query, context=None):
+         # acquire reply content
+@@ -90,10 +84,10 @@ class OpenAIBot(Bot, OpenAIImage):
+ 
+     def reply_text(self, session: OpenAISession, retry_count=0):
+         try:
+-            response = openai.Completion.create(prompt=str(session), **self.args)
+-            res_content = response.choices[0]["text"].strip().replace("<|pad|>", "")
+-            total_tokens = response["usage"]["total_tokens"]
+-            completion_tokens = response["usage"]["completion_tokens"]
++            response = self.openai_client.completions.create(prompt=str(session), **self.args)
++            res_content = response.choices[0].text.strip().replace("<|pad|>", "")
++            total_tokens = response.usage.total_tokens
++            completion_tokens = response.usage.completion_tokens
+             logger.info("[OPEN_AI] reply={}".format(res_content))
+             return {
+                 "total_tokens": total_tokens,
+@@ -103,17 +97,17 @@ class OpenAIBot(Bot, OpenAIImage):
+         except Exception as e:
+             need_retry = retry_count < 2
+             result = {"completion_tokens": 0, "content": "我现在有点累了，等会再来吧"}
+-            if isinstance(e, openai.error.RateLimitError):
++            if isinstance(e, openai.RateLimitError):
+                 logger.warn("[OPEN_AI] RateLimitError: {}".format(e))
+                 result["content"] = "提问太快啦，请休息一下再问我吧"
+                 if need_retry:
+                     time.sleep(20)
+-            elif isinstance(e, openai.error.Timeout):
++            elif isinstance(e, openai.APITimeoutError):
+                 logger.warn("[OPEN_AI] Timeout: {}".format(e))
+                 result["content"] = "我没有收到你的消息"
+                 if need_retry:
+                     time.sleep(5)
+-            elif isinstance(e, openai.error.APIConnectionError):
++            elif isinstance(e, openai.APIConnectionError):
+                 logger.warn("[OPEN_AI] APIConnectionError: {}".format(e))
+                 need_retry = False
+                 result["content"] = "我连接不到你的网络"
+diff --git a/bot/openai/open_ai_image.py b/bot/openai/open_ai_image.py
+index e45a9aa..6fbf98e 100644
+--- a/bot/openai/open_ai_image.py
++++ b/bot/openai/open_ai_image.py
+@@ -1,7 +1,7 @@
+ import time
+ 
+ import openai
+-import openai.error
++from bot.openai.openai_client import create_openai_client, with_api_key
+ from bridge.reply import Reply, ReplyType
+ 
+ from common.log import logger
+@@ -12,8 +12,7 @@ from config import conf
+ # OPENAI提供的画图接口
+ class OpenAIImage(object):
+     def __init__(self):
+-        openai.api_base = conf().get("open_ai_api_base")
+-        openai.api_key = conf().get("open_ai_api_key")
++        self.openai_client = create_openai_client()
+         if conf().get("rate_limit_dalle"):
+             self.tb4dalle = TokenBucket(conf().get("rate_limit_dalle", 50))
+ 
+@@ -26,18 +25,17 @@ class OpenAIImage(object):
+             if conf().get("rate_limit_dalle") and not self.tb4dalle.get_token():
+                 return False, "请求太快了，请休息一下再问我吧"
+             logger.info("[OPEN_AI] image_query={}".format(query))
+-            response = openai.Image.create(
+-                api_key=api_key,
++            response = with_api_key(self.openai_client, api_key).images.generate(
+                 prompt=query,  # 图片描述
+                 n=1,  # 每次生成图片的数量
+                 model=conf().get("text_to_image") or "dall-e-2",
+                 # size=conf().get("image_create_size", "256x256"),  # 图片大小,可选有 256x256, 512x512, 1024x1024
+             )
+-            self.send_revised_prompt(context, response["data"][0].get("revised_prompt", ""), query)
+-            image_url = response["data"][0]["url"]
++            self.send_revised_prompt(context, response.data[0].revised_prompt or "", query)
++            image_url = response.data[0].url
+             logger.info("[OPEN_AI] image_url={}".format(image_url))
+             return True, image_url
+-        except openai.error.RateLimitError as e:
++        except openai.RateLimitError as e:
+             logger.warn(e)
+             if retry_count < 1:
+                 time.sleep(5)
+diff --git a/bot/openai/openai_client.py b/bot/openai/openai_client.py
+new file mode 100644
+index 0000000..ac20ce6
+--- /dev/null
++++ b/bot/openai/openai_client.py
+@@ -0,0 +1,47 @@
++# encoding:utf-8
++"""Builds openai>=1.0 client objects from the project config.
++
++openai 0.x used module-level settings (openai.api_key, openai.api_base, openai.proxy,
++openai.api_type, ...). From 1.0 on, requests go through client objects instead.
++"""
++
++import httpx
++import openai
++
++from config import conf
++
++DEFAULT_BASE_URL = "https://api.openai.com/v1"
++
++
++def _http_client():
++    proxy = conf().get("proxy")
++    if proxy:
++        return httpx.Client(proxy=proxy)
++    return None
++
++
++def create_openai_client(api_key=None, base_url=None):
++    """OpenAI client from the "open_ai_*" and "proxy" config values."""
++    return openai.OpenAI(
++        # an empty key would make the client raise on construction; the request fails later instead
++        api_key=api_key or conf().get("open_ai_api_key") or "missing-api-key",
++        base_url=base_url or conf().get("open_ai_api_base") or DEFAULT_BASE_URL,
++        http_client=_http_client(),
++    )
++
++
++def create_azure_client(api_key=None, azure_endpoint=None, api_version=None):
++    """Azure OpenAI client; the "model" of each request is the Azure deployment name."""
++    return openai.AzureOpenAI(
++        api_key=api_key or conf().get("open_ai_api_key") or "missing-api-key",
++        azure_endpoint=azure_endpoint or conf().get("open_ai_api_base"),
++        api_version=api_version or conf().get("azure_api_version", "2023-06-01-preview"),
++        http_client=_http_client(),
++    )
++
++
++def with_api_key(client, api_key=None):
++    """The client, or a copy of it that uses `api_key` for its requests."""
++    if api_key:
++        return client.with_options(api_key=api_key)
++    return client
+diff --git a/bot/zhipuai/zhipuai_bot.py b/bot/zhipuai/zhipuai_bot.py
+index d8eed4d..7328c03 100644
+--- a/bot/zhipuai/zhipuai_bot.py
++++ b/bot/zhipuai/zhipuai_bot.py
+@@ -3,7 +3,6 @@
+ import time
+ 
+ import openai
+-import openai.error
+ from bot.bot import Bot
+ from bot.zhipuai.zhipu_ai_session import ZhipuAISession
+ from bot.zhipuai.zhipu_ai_image import ZhipuAIImage
+@@ -117,26 +116,27 @@ class ZHIPUAIBot(Bot, ZhipuAIImage):
+         except Exception as e:
+             need_retry = retry_count < 2
+             result = {"completion_tokens": 0, "content": "我现在有点累了，等会再来吧"}
+-            if isinstance(e, openai.error.RateLimitError):
++            # in openai>=1.0 APITimeoutError < APIConnectionError < APIError, so check the most specific first
++            if isinstance(e, openai.RateLimitError):
+                 logger.warn("[ZHIPU_AI] RateLimitError: {}".format(e))
+                 result["content"] = "提问太快啦，请休息一下再问我吧"
+                 if need_retry:
+                     time.sleep(20)
+-            elif isinstance(e, openai.error.Timeout):
++            elif isinstance(e, openai.APITimeoutError):
+                 logger.warn("[ZHIPU_AI] Timeout: {}".format(e))
+                 result["content"] = "我没有收到你的消息"
+                 if need_retry:
+                     time.sleep(5)
+-            elif isinstance(e, openai.error.APIError):
+-                logger.warn("[ZHIPU_AI] Bad Gateway: {}".format(e))
+-                result["content"] = "请再问我一次"
+-                if need_retry:
+-                    time.sleep(10)
+-            elif isinstance(e, openai.error.APIConnectionError):
++            elif isinstance(e, openai.APIConnectionError):
+                 logger.warn("[ZHIPU_AI] APIConnectionError: {}".format(e))
+                 result["content"] = "我连接不到你的网络"
+                 if need_retry:
+                     time.sleep(5)
++            elif isinstance(e, openai.APIError):
++                logger.warn("[ZHIPU_AI] Bad Gateway: {}".format(e))
++                result["content"] = "请再问我一次"
++                if need_retry:
++                    time.sleep(10)
+             else:
+                 logger.exception("[ZHIPU_AI] Exception: {}".format(e), e)
+                 need_retry = False

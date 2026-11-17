@@ -1,0 +1,340 @@
+diff --git a/02_PromptTemple/1_prompt.py b/02_PromptTemple/1_prompt.py
+index 5c11e94..543d62f 100644
+--- a/02_PromptTemple/1_prompt.py
++++ b/02_PromptTemple/1_prompt.py
+@@ -1,5 +1,5 @@
+ # 字符串模板
+-from  langchain.prompts import PromptTemplate
++from langchain_core.prompts import PromptTemplate
+ prompt = PromptTemplate.from_template("你是一个{name},帮我起1个具有{county}特色的{sex}名字")
+ prompts = prompt.format(name="起名大师", county="可爱", sex="女孩")
+ print(prompts)
+\ No newline at end of file
+diff --git a/02_PromptTemple/2_chat_template.py b/02_PromptTemple/2_chat_template.py
+index 8a4963d..b2c372b 100644
+--- a/02_PromptTemple/2_chat_template.py
++++ b/02_PromptTemple/2_chat_template.py
+@@ -1,5 +1,5 @@
+ # 对话模板应用
+-from  langchain.prompts import ChatPromptTemplate
++from langchain_core.prompts import ChatPromptTemplate
+ chat_template = ChatPromptTemplate.from_messages([
+     ("system", "你是一名起名大师，你的名字叫{name}。"),
+     ("human", "你好{name}! 你感觉如何？"),
+diff --git a/02_PromptTemple/3_messagesPlaceholder.py b/02_PromptTemple/3_messagesPlaceholder.py
+index 060699a..372538d 100644
+--- a/02_PromptTemple/3_messagesPlaceholder.py
++++ b/02_PromptTemple/3_messagesPlaceholder.py
+@@ -1,6 +1,6 @@
+ # 消息占位符应用
+ 
+-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, prompt
++from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+ from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+ 
+ prompt_template = ChatPromptTemplate([
+diff --git a/05_RAG/chatDocHelper.py b/05_RAG/chatDocHelper.py
+index efc2b51..1cc1f33 100644
+--- a/05_RAG/chatDocHelper.py
++++ b/05_RAG/chatDocHelper.py
+@@ -3,13 +3,13 @@ from langchain_community.document_loaders import Docx2txtLoader
+ from langchain_community.document_loaders import PyPDFLoader
+ from langchain_community.document_loaders import UnstructuredExcelLoader
+ # 修正导入模块名
+-from langchain.text_splitter import CharacterTextSplitter
++from langchain_text_splitters import CharacterTextSplitter
+ from langchain_core.prompts import ChatPromptTemplate
+ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+ from langchain_openai import ChatOpenAI
+-from langchain.retrievers.multi_query import MultiQueryRetriever
+-from langchain.retrievers import ContextualCompressionRetriever
+-from langchain.retrievers.document_compressors.chain_extract import LLMChainExtractor
++from langchain_classic.retrievers.multi_query import MultiQueryRetriever
++from langchain_classic.retrievers import ContextualCompressionRetriever
++from langchain_classic.retrievers.document_compressors.chain_extract import LLMChainExtractor
+ from langchain_chroma import Chroma
+ from dotenv import load_dotenv
+ 
+@@ -172,7 +172,7 @@ chat_doc_helper.spliSentences()
+ print(chat_doc_helper.splitText)
+ import logging
+ logging.basicConfig(level=logging.INFO)  # 设置日志级别为DEBUG
+-logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)  # 设置多查询检索器的日志级别为DEBUG
++logging.getLogger("langchain_classic.retrievers.multi_query").setLevel(logging.INFO)  # 设置多查询检索器的日志级别为DEBUG
+ unique_doc = chat_doc_helper.askAndFindFiles("如何使用LangChain进行多查询检索？")
+ print(unique_doc)
+ 
+diff --git a/05_RAG/demo3.py b/05_RAG/demo3.py
+index 9a6b469..4050fd9 100644
+--- a/05_RAG/demo3.py
++++ b/05_RAG/demo3.py
+@@ -1,7 +1,7 @@
+ from langchain_openai import OpenAIEmbeddings
+ from langchain_community.vectorstores import FAISS
+-from langchain.chains import RetrievalQA
+-from langchain.llms import OpenAI
++from langchain_classic.chains import RetrievalQA
++from langchain_openai import OpenAI
+ import os
+ from dotenv import load_dotenv
+ 
+diff --git a/06_Agent/agent.py b/06_Agent/agent.py
+index bb695cb..903ece6 100644
+--- a/06_Agent/agent.py
++++ b/06_Agent/agent.py
+@@ -1,5 +1,5 @@
+-from langchain.agents import initialize_agent, AgentType, load_tools
+-from langchain.llms import OpenAI
++from langchain_classic.agents import initialize_agent, AgentType, load_tools
++from langchain_openai import OpenAI
+ 
+ # 初始化 LLM
+ llm = OpenAI(openai_api_key="你的OPENAI_API_KEY")
+diff --git a/08_example/english/agents_01/src/AddDoc.py b/08_example/english/agents_01/src/AddDoc.py
+index a42e3c4..580dfca 100644
+--- a/08_example/english/agents_01/src/AddDoc.py
++++ b/08_example/english/agents_01/src/AddDoc.py
+@@ -9,7 +9,7 @@ _load_dotenv()
+ 
+ from langchain_openai import OpenAIEmbeddings
+ from langchain_community.document_loaders import WebBaseLoader
+-from langchain.text_splitter import RecursiveCharacterTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter
+ from langchain_qdrant import QdrantVectorStore
+ from langchain_core.documents import Document
+ 
+diff --git a/08_example/english/agents_01/src/Agents.py b/08_example/english/agents_01/src/Agents.py
+index 2c56816..f48cb29 100644
+--- a/08_example/english/agents_01/src/Agents.py
++++ b/08_example/english/agents_01/src/Agents.py
+@@ -1,4 +1,4 @@
+-from langchain.agents import AgentExecutor,create_tool_calling_agent,create_structured_chat_agent
++from langchain_classic.agents import AgentExecutor,create_tool_calling_agent,create_structured_chat_agent
+ from langchain_openai import ChatOpenAI
+ from langchain_deepseek import ChatDeepSeek
+ from langchain_core.runnables import ConfigurableField
+diff --git a/08_example/english/agents_01/src/Memory.py b/08_example/english/agents_01/src/Memory.py
+index edeb2df..52ecd5a 100644
+--- a/08_example/english/agents_01/src/Memory.py
++++ b/08_example/english/agents_01/src/Memory.py
+@@ -1,4 +1,4 @@
+-from langchain.memory import ConversationBufferMemory
++from langchain_classic.memory import ConversationBufferMemory
+ from langchain_community.chat_message_histories import RedisChatMessageHistory
+ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+ from langchain_openai import ChatOpenAI
+diff --git a/08_example/english/agents_01/src/Tools.py b/08_example/english/agents_01/src/Tools.py
+index 4a111b1..89e4af0 100644
+--- a/08_example/english/agents_01/src/Tools.py
++++ b/08_example/english/agents_01/src/Tools.py
+@@ -4,14 +4,14 @@ import time
+ import requests
+ from pydantic import BaseModel, Field
+ from dotenv import load_dotenv
+-from langchain.agents import tool
++from langchain_core.tools import tool
+ from langchain_community.utilities import SerpAPIWrapper
+ from langchain_qdrant import QdrantVectorStore
+ from qdrant_client import QdrantClient
+ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+ from langchain_core.prompts import ChatPromptTemplate
+-from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+-from langchain.chains.combine_documents import create_stuff_documents_chain
++from langchain_classic.chains import create_history_aware_retriever, create_retrieval_chain
++from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+ from .Memory import MemoryClass
+ from .Storage import get_user
+ from langchain_core.output_parsers import PydanticOutputParser
+diff --git a/08_example/english/maion.py b/08_example/english/maion.py
+index 9a50bd2..272e90a 100644
+--- a/08_example/english/maion.py
++++ b/08_example/english/maion.py
+@@ -1,7 +1,7 @@
+ from langchain_openai import ChatOpenAI
+-from langchain.prompts import PromptTemplate
+-from langchain.tools import tool
+-from langchain.agents import AgentExecutor, create_structured_chat_agent
++from langchain_core.prompts import PromptTemplate
++from langchain_core.tools import tool
++from langchain_classic.agents import AgentExecutor, create_structured_chat_agent
+ import os
+ from dotenv import load_dotenv
+ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+diff --git a/08_example/langchain_agent/agent.py b/08_example/langchain_agent/agent.py
+index 52c277a..e4c3802 100644
+--- a/08_example/langchain_agent/agent.py
++++ b/08_example/langchain_agent/agent.py
+@@ -9,8 +9,8 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+ from langchain_openai import ChatOpenAI
+ 
+ # 导入LangChain Agent相关模块
+-from langchain.agents import AgentExecutor, create_openai_functions_agent
+-from langchain.agents import AgentType, Tool, initialize_agent
++from langchain_classic.agents import AgentExecutor, create_openai_functions_agent
++from langchain_classic.agents import AgentType, Tool, initialize_agent
+ 
+ # 加载环境变量
+ load_dotenv()
+diff --git a/08_example/langchain_agent/agent_01.py b/08_example/langchain_agent/agent_01.py
+index 703e2d2..ec11dc0 100644
+--- a/08_example/langchain_agent/agent_01.py
++++ b/08_example/langchain_agent/agent_01.py
+@@ -1,6 +1,6 @@
+ import os
+ from dotenv import load_dotenv
+-from langchain.agents import create_openai_functions_agent, AgentExecutor
++from langchain_classic.agents import create_openai_functions_agent, AgentExecutor
+ from langchain_core.tools import tool
+ from langchain_openai import ChatOpenAI
+ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+diff --git a/08_example/langchain_agent/agent_02.py b/08_example/langchain_agent/agent_02.py
+index 52c277a..e4c3802 100644
+--- a/08_example/langchain_agent/agent_02.py
++++ b/08_example/langchain_agent/agent_02.py
+@@ -9,8 +9,8 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+ from langchain_openai import ChatOpenAI
+ 
+ # 导入LangChain Agent相关模块
+-from langchain.agents import AgentExecutor, create_openai_functions_agent
+-from langchain.agents import AgentType, Tool, initialize_agent
++from langchain_classic.agents import AgentExecutor, create_openai_functions_agent
++from langchain_classic.agents import AgentType, Tool, initialize_agent
+ 
+ # 加载环境变量
+ load_dotenv()
+diff --git a/08_example/langchain_agent/agent_memory.py b/08_example/langchain_agent/agent_memory.py
+index 7c4d3a9..6b5e347 100644
+--- a/08_example/langchain_agent/agent_memory.py
++++ b/08_example/langchain_agent/agent_memory.py
+@@ -16,7 +16,7 @@
+ import os
+ import json
+ from dotenv import load_dotenv
+-from langchain.agents import create_openai_functions_agent, AgentExecutor
++from langchain_classic.agents import create_openai_functions_agent, AgentExecutor
+ from langchain_core.tools import tool
+ from langchain_openai import ChatOpenAI
+ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+diff --git a/08_example/llm_agent/main.py b/08_example/llm_agent/main.py
+index 57956bc..f31e208 100644
+--- a/08_example/llm_agent/main.py
++++ b/08_example/llm_agent/main.py
+@@ -1,7 +1,7 @@
+ from langchain_openai import ChatOpenAI
+-from langchain.memory import ConversationBufferMemory
+-from langchain.chains import ConversationChain
+-from langchain.prompts import PromptTemplate  # New import
++from langchain_classic.memory import ConversationBufferMemory
++from langchain_classic.chains import ConversationChain
++from langchain_core.prompts import PromptTemplate  # New import
+ import os
+ from dotenv import load_dotenv
+ 
+diff --git a/08_example/rag_demo_01.py b/08_example/rag_demo_01.py
+index a60d3f1..8176974 100644
+--- a/08_example/rag_demo_01.py
++++ b/08_example/rag_demo_01.py
+@@ -6,7 +6,7 @@ from langchain_core.prompts import PromptTemplate
+ from langchain_community.document_loaders import PyPDFLoader
+ from langchain_community.vectorstores import Chroma
+ from langchain_community.embeddings import FastEmbedEmbeddings
+-from langchain.vectorstores.utils import filter_complex_metadata
++from langchain_community.vectorstores.utils import filter_complex_metadata
+ from langchain_core.runnables import RunnablePassthrough
+ from langchain_core.output_parsers import StrOutputParser
+ 
+diff --git a/demo.py b/demo.py
+index e69ac0b..01bb952 100644
+--- a/demo.py
++++ b/demo.py
+@@ -1,6 +1,6 @@
+-from langchain.agents import initialize_agent, Tool
+-from langchain.prompts import PromptTemplate
+-from langchain.llms import OpenAI
++from langchain_classic.agents import initialize_agent, Tool
++from langchain_core.prompts import PromptTemplate
++from langchain_openai import OpenAI
+ 
+ # 定义提示词工具
+ def english_assistant_tool(query: str) -> str:
+diff --git a/demo/autogen_langchain_demo.py b/demo/autogen_langchain_demo.py
+index fea146d..0900a7a 100644
+--- a/demo/autogen_langchain_demo.py
++++ b/demo/autogen_langchain_demo.py
+@@ -3,7 +3,7 @@ import os
+ from dotenv import load_dotenv
+ import autogen
+ from langchain_openai import OpenAI
+-from langchain.chains import LLMChain
++from langchain_classic.chains import LLMChain
+ from langchain_core.prompts import PromptTemplate
+ 
+ # 加载环境变量
+diff --git a/demo/chat-bot/chatbot.py b/demo/chat-bot/chatbot.py
+index 04f982b..b04b9fb 100644
+--- a/demo/chat-bot/chatbot.py
++++ b/demo/chat-bot/chatbot.py
+@@ -1,4 +1,4 @@
+-from langchain.agents import initialize_agent, AgentType
++from langchain_classic.agents import initialize_agent, AgentType
+ from langchain_openai import ChatOpenAI
+ from langchain_community.agent_toolkits.load_tools import load_tools
+ import os
+diff --git a/demo/chat-bot/requirements.txt b/demo/chat-bot/requirements.txt
+index f97b760..be918a5 100644
+--- a/demo/chat-bot/requirements.txt
++++ b/demo/chat-bot/requirements.txt
+@@ -1,4 +1,7 @@
+-langchain>=0.1.0
++langchain>=1.0.0
++langchain-classic
++langchain-community
++langchain-openai
+ langgraph>=0.0.10
+ openai
+ python-dotenv
+diff --git a/demo/langchain_multi_agent_demo.py b/demo/langchain_multi_agent_demo.py
+index e01b65d..77c6b10 100644
+--- a/demo/langchain_multi_agent_demo.py
++++ b/demo/langchain_multi_agent_demo.py
+@@ -2,11 +2,11 @@
+ import os
+ from dotenv import load_dotenv
+ from langchain_openai import ChatOpenAI
+-from langchain.agents import initialize_agent, Tool
+-from langchain.agents import AgentType
++from langchain_classic.agents import initialize_agent, Tool
++from langchain_classic.agents import AgentType
+ from langchain_core.prompts import ChatPromptTemplate
+-from langchain.tools import BaseTool
+-from langchain.chains import LLMChain
++from langchain_core.tools import BaseTool
++from langchain_classic.chains import LLMChain
+ from langchain_core.tools import StructuredTool
+ from typing import Optional, Type
+ 
+diff --git a/mcp_tool.py b/mcp_tool.py
+index a1fdfb4..52b965d 100644
+--- a/mcp_tool.py
++++ b/mcp_tool.py
+@@ -1,4 +1,4 @@
+-from langchain.tools import Tool
++from langchain_core.tools import Tool
+ import requests
+ 
+ def call_mcp_api(input_text: str) -> str:
+diff --git a/old-requirements.txt b/old-requirements.txt
+index cd508c6..5049a81 100644
+--- a/old-requirements.txt
++++ b/old-requirements.txt
+@@ -1,4 +1,9 @@
+-langchain==0.2.16
++langchain==1.5.0
++langchain-classic
++langchain-core
++langchain-community
++langchain-openai
++langchain-text-splitters
+ openai==1.70.0
+ docx2txt==0.8
+ python-dotenv=1.0.1

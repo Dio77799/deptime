@@ -1,0 +1,419 @@
+diff --git a/gpt-3-5-turbo-1106.py b/gpt-3-5-turbo-1106.py
+index c2ea217..0743cf8 100644
+--- a/gpt-3-5-turbo-1106.py
++++ b/gpt-3-5-turbo-1106.py
+@@ -1,14 +1,10 @@
+ import os
+-from crewai import Agent, Task, Crew, Process
+-from tools.custom_tools import CustomTools
++from crewai import Agent, Task, Crew, Process, LLM
++from tools.custom_tools import CustomTools, search_tool
+ 
+ os.environ["OPENAI_API_KEY"] = "YourKey"
+ 
+-from langchain.chat_models import ChatOpenAI
+-llm_gpt35=ChatOpenAI(model_name="gpt-3.5-turbo-1106", temperature=0.2)
+-
+-from langchain.tools import DuckDuckGoSearchRun
+-search_tool = DuckDuckGoSearchRun()
++llm_gpt35 = LLM(model="openai/gpt-3.5-turbo-1106", temperature=0.2)
+ 
+ # Define your agents with roles and goals
+ researcher = Agent(
+@@ -53,6 +49,7 @@ task1 = Task(
+   description="""Conduct a brief research about School Holidays in Hamburg in 2024.
+   Define the start and end and duration.
+   Your final answer MUST be a brief report""",
++  expected_output="A brief report about the school holidays in Hamburg in 2024.",
+   agent=researcher
+ )
+ 
+@@ -60,6 +57,7 @@ task2 = Task(
+   description="""Using the information provided, create a brief note.
+   If there is a listing in the content use markdown table to structure it.
+   Your final answer MUST be a note in markdown.""",
++  expected_output="A brief note in markdown.",
+   agent=editor
+ )
+ 
+@@ -68,6 +66,7 @@ task3 = Task(
+   You must save the contetnt as a note to the Obsidian note taking App.
+   It is bvery important to store the content as a note to be used later.
+   Your final answer MUST be the information is the note is stored or not.""",
++  expected_output="Information whether the note was stored or not.",
+   agent=note_taker
+ )
+ 
+@@ -75,7 +74,7 @@ task3 = Task(
+ crew = Crew(
+   agents=[researcher, editor, note_taker],
+   tasks=[task1, task2, task3],
+-  verbose=2, # You can set it to 1 or 2 to different logging levels
++  verbose=True,
+ )
+ 
+ # Get your crew to work!
+diff --git a/gpt-4-1106-preview.py b/gpt-4-1106-preview.py
+index 46c22e6..b9e0475 100644
+--- a/gpt-4-1106-preview.py
++++ b/gpt-4-1106-preview.py
+@@ -1,12 +1,9 @@
+ import os
+ from crewai import Agent, Task, Crew, Process
+-from tools.custom_tools import CustomTools
++from tools.custom_tools import CustomTools, search_tool
+ 
+ os.environ["OPENAI_API_KEY"] = "YourKey"
+ 
+-from langchain.tools import DuckDuckGoSearchRun
+-search_tool = DuckDuckGoSearchRun()
+-
+ # Define your agents with roles and goals
+ researcher = Agent(
+   role='Research Analyst',
+@@ -47,6 +44,7 @@ task1 = Task(
+   description="""Conduct a brief research about School Holidays in Hamburg in 2024.
+   Define the start and end and duration.
+   Your final answer MUST be a brief report""",
++  expected_output="A brief report about the school holidays in Hamburg in 2024.",
+   agent=researcher
+ )
+ 
+@@ -54,6 +52,7 @@ task2 = Task(
+   description="""Using the information provided, create a brief note.
+   If there is a listing in the content use markdown table to structure it.
+   Your final answer MUST be a note in markdown.""",
++  expected_output="A brief note in markdown.",
+   agent=editor
+ )
+ 
+@@ -62,6 +61,7 @@ task3 = Task(
+   You must save the contetnt as a note to the Obsidian note taking App.
+   It is bvery important to store the content as a note to be used later.
+   Your final answer MUST be the information is the note is stored or not.""",
++  expected_output="Information whether the note was stored or not.",
+   agent=note_taker
+ )
+ 
+@@ -69,7 +69,7 @@ task3 = Task(
+ crew = Crew(
+   agents=[researcher, editor, note_taker],
+   tasks=[task1, task2, task3],
+-  verbose=2, # You can set it to 1 or 2 to different logging levels
++  verbose=True,
+ )
+ 
+ # Get your crew to work!
+diff --git a/local_mistral.py b/local_mistral.py
+index 8f7fa96..35ccaf5 100644
+--- a/local_mistral.py
++++ b/local_mistral.py
+@@ -1,12 +1,8 @@
+ import os
+-from crewai import Agent, Task, Crew, Process
+-from tools.custom_tools import CustomTools
++from crewai import Agent, Task, Crew, Process, LLM
++from tools.custom_tools import CustomTools, search_tool
+ 
+-from langchain.llms import Ollama
+-ollama_llm = Ollama(model="mistral")
+-
+-from langchain.tools import DuckDuckGoSearchRun
+-search_tool = DuckDuckGoSearchRun()
++ollama_llm = LLM(model="ollama/mistral", base_url="http://localhost:11434")
+ 
+ # Define your agents with roles and goals
+ researcher = Agent(
+@@ -51,6 +47,7 @@ task1 = Task(
+   description="""Conduct a brief research about School Holidays in Hamburg in 2024.
+   Define the start and end and duration.
+   Your final answer MUST be a brief report""",
++  expected_output="A brief report about the school holidays in Hamburg in 2024.",
+   agent=researcher
+ )
+ 
+@@ -58,6 +55,7 @@ task2 = Task(
+   description="""Using the information provided, create a brief note.
+   If there is a listing in the content use markdown table to structure it.
+   Your final answer MUST be a note in markdown.""",
++  expected_output="A brief note in markdown.",
+   agent=editor
+ )
+ 
+@@ -66,6 +64,7 @@ task3 = Task(
+   You must save the contetnt as a note to the Obsidian note taking App.
+   It is bvery important to store the content as a note to be used later.
+   Your final answer MUST be the information is the note is stored or not.""",
++  expected_output="Information whether the note was stored or not.",
+   agent=note_taker
+ )
+ 
+@@ -73,7 +72,7 @@ task3 = Task(
+ crew = Crew(
+   agents=[researcher, editor, note_taker],
+   tasks=[task1, task2, task3],
+-  verbose=2, # You can set it to 1 or 2 to different logging levels
++  verbose=True,
+ )
+ 
+ # Get your crew to work!
+diff --git a/local_nexusraven.py b/local_nexusraven.py
+index ebf4f22..5c93cf7 100644
+--- a/local_nexusraven.py
++++ b/local_nexusraven.py
+@@ -1,12 +1,8 @@
+ import os
+-from crewai import Agent, Task, Crew, Process
+-from tools.custom_tools import CustomTools
++from crewai import Agent, Task, Crew, Process, LLM
++from tools.custom_tools import CustomTools, search_tool
+ 
+-from langchain.llms import Ollama
+-ollama_llm = Ollama(model="nexusraven")
+-
+-from langchain.tools import DuckDuckGoSearchRun
+-search_tool = DuckDuckGoSearchRun()
++ollama_llm = LLM(model="ollama/nexusraven", base_url="http://localhost:11434")
+ 
+ # Define your agents with roles and goals
+ researcher = Agent(
+@@ -51,6 +47,7 @@ task1 = Task(
+   description="""Conduct a brief research about School Holidays in Hamburg in 2024.
+   Define the start and end and duration.
+   Your final answer MUST be a brief report""",
++  expected_output="A brief report about the school holidays in Hamburg in 2024.",
+   agent=researcher
+ )
+ 
+@@ -58,6 +55,7 @@ task2 = Task(
+   description="""Using the information provided, create a brief note.
+   If there is a listing in the content use markdown table to structure it.
+   Your final answer MUST be a note in markdown.""",
++  expected_output="A brief note in markdown.",
+   agent=editor
+ )
+ 
+@@ -66,6 +64,7 @@ task3 = Task(
+   You must save the contetnt as a note to the Obsidian note taking App.
+   It is bvery important to store the content as a note to be used later.
+   Your final answer MUST be the information is the note is stored or not.""",
++  expected_output="Information whether the note was stored or not.",
+   agent=note_taker
+ )
+ 
+@@ -73,7 +72,7 @@ task3 = Task(
+ crew = Crew(
+   agents=[researcher, editor, note_taker],
+   tasks=[task1, task2, task3],
+-  verbose=2, # You can set it to 1 or 2 to different logging levels
++  verbose=True,
+ )
+ 
+ # Get your crew to work!
+diff --git a/local_openchat.py b/local_openchat.py
+index 7d1d20d..d913b1c 100644
+--- a/local_openchat.py
++++ b/local_openchat.py
+@@ -1,12 +1,8 @@
+ import os
+-from crewai import Agent, Task, Crew, Process
+-from tools.custom_tools import CustomTools
++from crewai import Agent, Task, Crew, Process, LLM
++from tools.custom_tools import CustomTools, search_tool
+ 
+-from langchain.llms import Ollama
+-ollama_llm = Ollama(model="openchat")
+-
+-from langchain.tools import DuckDuckGoSearchRun
+-search_tool = DuckDuckGoSearchRun()
++ollama_llm = LLM(model="ollama/openchat", base_url="http://localhost:11434")
+ 
+ # Define your agents with roles and goals
+ researcher = Agent(
+@@ -53,6 +49,7 @@ task1 = Task(
+   description="""Conduct a brief research about School Holidays in Hamburg in 2024.
+   Define the start and end and duration.
+   Your final answer MUST be a brief report""",
++  expected_output="A brief report about the school holidays in Hamburg in 2024.",
+   agent=researcher
+ )
+ 
+@@ -60,6 +57,7 @@ task2 = Task(
+   description="""Using the information provided, create a brief note.
+   If there is a listing in the content use markdown table to structure it.
+   Your final answer MUST be a note in markdown.""",
++  expected_output="A brief note in markdown.",
+   agent=editor
+ )
+ 
+@@ -68,6 +66,7 @@ task3 = Task(
+   You must save the contetnt as a note to the Obsidian note taking App.
+   It is bvery important to store the content as a note to be used later.
+   Your final answer MUST be the information is the note is stored or not.""",
++  expected_output="Information whether the note was stored or not.",
+   agent=note_taker
+ )
+ 
+@@ -75,7 +74,7 @@ task3 = Task(
+ crew = Crew(
+   agents=[researcher, editor, note_taker],
+   tasks=[task1, task2, task3],
+-  verbose=2, # You can set it to 1 or 2 to different logging levels
++  verbose=True,
+ )
+ 
+ # Get your crew to work!
+diff --git a/local_openhermes.py b/local_openhermes.py
+index 84a9294..f32bfb7 100644
+--- a/local_openhermes.py
++++ b/local_openhermes.py
+@@ -1,12 +1,8 @@
+ import os
+-from crewai import Agent, Task, Crew, Process
+-from tools.custom_tools import CustomTools
++from crewai import Agent, Task, Crew, Process, LLM
++from tools.custom_tools import CustomTools, search_tool
+ 
+-from langchain.llms import Ollama
+-ollama_llm = Ollama(model="openhermes")
+-
+-from langchain.tools import DuckDuckGoSearchRun
+-search_tool = DuckDuckGoSearchRun()
++ollama_llm = LLM(model="ollama/openhermes", base_url="http://localhost:11434")
+ 
+ # Define your agents with roles and goals
+ researcher = Agent(
+@@ -51,6 +47,7 @@ task1 = Task(
+   description="""Conduct a brief research about School Holidays in Hamburg in 2024.
+   Define the start and end and duration.
+   Your final answer MUST be a brief report""",
++  expected_output="A brief report about the school holidays in Hamburg in 2024.",
+   agent=researcher
+ )
+ 
+@@ -58,6 +55,7 @@ task2 = Task(
+   description="""Using the information provided, create a brief note.
+   If there is a listing in the content use markdown table to structure it.
+   Your final answer MUST be a note in markdown.""",
++  expected_output="A brief note in markdown.",
+   agent=editor
+ )
+ 
+@@ -66,6 +64,7 @@ task3 = Task(
+   You must save the contetnt as a note to the Obsidian note taking App.
+   It is bvery important to store the content as a note to be used later.
+   Your final answer MUST be the information is the note is stored or not.""",
++  expected_output="Information whether the note was stored or not.",
+   agent=note_taker
+ )
+ 
+@@ -73,7 +72,7 @@ task3 = Task(
+ crew = Crew(
+   agents=[researcher, editor, note_taker],
+   tasks=[task1, task2, task3],
+-  verbose=2, # You can set it to 1 or 2 to different logging levels
++  verbose=True,
+ )
+ 
+ # Get your crew to work!
+diff --git a/main.py b/main.py
+index 7f1a8db..b6127dc 100644
+--- a/main.py
++++ b/main.py
+@@ -2,4 +2,4 @@ from tools.custom_tools import CustomTools
+ 
+ tool = CustomTools.store_note_to_obsidian
+ 
+-tool.run(tool_input="Hello, **world**!")
+\ No newline at end of file
++tool.run(content="Hello, **world**!")
+\ No newline at end of file
+diff --git a/requirements.txt b/requirements.txt
+index adece08..5e962b6 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,50 +1,2 @@
+-aiohttp==3.9.1
+-aiosignal==1.3.1
+-annotated-types==0.6.0
+-anyio==4.2.0
+-attrs==23.2.0
+-certifi==2023.11.17
+-cffi==1.16.0
+-charset-normalizer==3.3.2
+-click==8.1.7
+-colorama==0.4.6
+-crewai==0.1.32
+-curl-cffi==0.5.10
+-dataclasses-json==0.6.3
+-distro==1.9.0
+-duckduckgo_search==4.2
+-frozenlist==1.4.1
+-greenlet==3.0.3
+-h11==0.14.0
+-httpcore==1.0.2
+-httpx==0.26.0
+-idna==3.6
+-jsonpatch==1.33
+-jsonpointer==2.4
+-langchain==0.1.1
+-langchain-community==0.0.13
+-langchain-core==0.1.13
+-langchain-openai==0.0.2.post1
+-langsmith==0.0.83
+-lxml==5.1.0
+-marshmallow==3.20.2
+-multidict==6.0.4
+-mypy-extensions==1.0.0
+-numpy==1.26.3
+-openai==1.8.0
+-packaging==23.2
+-pycparser==2.21
+-pydantic==2.5.3
+-pydantic_core==2.14.6
+-PyYAML==6.0.1
+-regex==2023.12.25
+-requests==2.31.0
+-sniffio==1.3.0
+-SQLAlchemy==2.0.25
+-tenacity==8.2.3
+-tiktoken==0.5.2
+-tqdm==4.66.1
+-typing-inspect==0.9.0
+-typing_extensions==4.9.0
+-urllib3==2.1.0
+-yarl==1.9.4
++crewai[litellm]==1.15.41
++ddgs
+diff --git a/tools/custom_tools.py b/tools/custom_tools.py
+index e7caa88..d937cfc 100644
+--- a/tools/custom_tools.py
++++ b/tools/custom_tools.py
+@@ -1,8 +1,26 @@
+-from langchain.tools import tool
++from crewai.tools import tool
+ import datetime
+ import os
+ 
+ 
++@tool("Search the internet")
++def search_tool(query: str) -> str:
++    """Useful to search the internet for current information.
++       The input to this tool should be a search query string.
++
++       :param query: str, the search query
++       """
++    try:
++        from ddgs import DDGS
++        results = DDGS().text(query, max_results=5)
++        return "\n\n".join(
++            f"{r.get('title', '')}\n{r.get('href', '')}\n{r.get('body', '')}"
++            for r in results
++        ) or "No results found."
++    except Exception as e:
++        return f"Error while searching: {e}"
++
++
+ class CustomTools():
+ 
+     @tool("Write File with content")

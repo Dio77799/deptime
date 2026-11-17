@@ -1,0 +1,10 @@
+diff --git a/doc_embedding/embed_documents.py b/doc_embedding/embed_documents.py
+index 5c82392..f5570cb 100644
+--- a/doc_embedding/embed_documents.py
++++ b/doc_embedding/embed_documents.py
+@@ -1,4 +1,4 @@
+-from langchain.text_splitter import RecursiveCharacterTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter
+ from langchain_community.docstore.in_memory import InMemoryDocstore
+ from langchain_community.vectorstores import FAISS
+ import faiss

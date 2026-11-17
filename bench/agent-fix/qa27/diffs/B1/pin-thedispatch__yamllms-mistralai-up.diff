@@ -1,0 +1,32 @@
+diff --git a/missions/plugins/mistral.py b/missions/plugins/mistral.py
+index 9fbd934..b4894f7 100644
+--- a/missions/plugins/mistral.py
++++ b/missions/plugins/mistral.py
+@@ -1,6 +1,6 @@
+ import os
+-from mistralai.client import MistralClient
+-from mistralai.models.chat_completion import ChatMessage
++from mistralai.client import Mistral
++from mistralai.client.models import UserMessage
+ from ..util import *
+ from missions import plugins
+ 
+@@ -21,14 +21,15 @@ def chat_mistral(task, prompt):
+ 
+     api_key = os.environ["MISTRAL_API_KEY"]
+     model = MISTRAL_MODEL
+-    client = MistralClient(api_key=api_key)
++    client = Mistral(api_key=api_key)
+ 
+     counter = 0
+     task.response = ""
+-    for chunk in client.chat_stream(
++    for event in client.chat.stream(
+         model=model,
+-        messages=[ChatMessage(role="user", content=final_prompt)],
++        messages=[UserMessage(content=final_prompt)],
+     ):
++        chunk = event.data
+         counter += 1
+         if chunk.choices[0].delta.content is not None:
+             task.response += chunk.choices[0].delta.content

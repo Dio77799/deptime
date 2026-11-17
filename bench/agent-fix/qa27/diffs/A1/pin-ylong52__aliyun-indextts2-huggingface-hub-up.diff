@@ -1,0 +1,84 @@
+diff --git a/python_indextts_code/indextts/BigVGAN/bigvgan.py b/python_indextts_code/indextts/BigVGAN/bigvgan.py
+index 58e4ba1..93b9156 100644
+--- a/python_indextts_code/indextts/BigVGAN/bigvgan.py
++++ b/python_indextts_code/indextts/BigVGAN/bigvgan.py
+@@ -460,8 +460,6 @@ class BigVGAN(
+         revision: str,
+         cache_dir: str,
+         force_download: bool,
+-        proxies: Optional[Dict],
+-        resume_download: bool,
+         local_files_only: bool,
+         token: Union[str, bool, None],
+         map_location: str = "cpu",  # Additional argument
+@@ -482,12 +480,10 @@ class BigVGAN(
+                 revision=revision,
+                 cache_dir=cache_dir,
+                 force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+                 token=token,
+                 local_files_only=local_files_only,
+             )
+-        h = load_hparams_from_json(config_file)
++        h =load_hparams_from_json(config_file)
+ 
+         # instantiate BigVGAN using h
+         if use_cuda_kernel:
+@@ -514,8 +510,6 @@ class BigVGAN(
+                 revision=revision,
+                 cache_dir=cache_dir,
+                 force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+                 token=token,
+                 local_files_only=local_files_only,
+             )
+diff --git a/python_indextts_code/indextts/app/rabbitmq_worker.py b/python_indextts_code/indextts/app/rabbitmq_worker.py
+index 81b73bf..d6004a5 100644
+--- a/python_indextts_code/indextts/app/rabbitmq_worker.py
++++ b/python_indextts_code/indextts/app/rabbitmq_worker.py
+@@ -198,7 +198,6 @@ def check_and_download_hf_models():
+             snapshot_download(
+                 repo_id=repo_id,
+                 local_dir=str(model_dir),
+-                local_dir_use_symlinks=False,
+             )
+             # 验证下载是否成功
+             is_valid = True
+diff --git a/python_indextts_code/indextts/s2mel/modules/bigvgan/bigvgan.py b/python_indextts_code/indextts/s2mel/modules/bigvgan/bigvgan.py
+index 65f0cc4..39774b7 100644
+--- a/python_indextts_code/indextts/s2mel/modules/bigvgan/bigvgan.py
++++ b/python_indextts_code/indextts/s2mel/modules/bigvgan/bigvgan.py
+@@ -418,8 +418,6 @@ class BigVGAN(
+             revision: str,
+             cache_dir: str,
+             force_download: bool,
+-            proxies: Optional[Dict],
+-            resume_download: bool,
+             local_files_only: bool,
+             token: Union[str, bool, None],
+             map_location: str = "cpu",  # Additional argument
+@@ -440,12 +438,10 @@ class BigVGAN(
+                 revision=revision,
+                 cache_dir=cache_dir,
+                 force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+                 token=token,
+                 local_files_only=local_files_only,
+             )
+-        h = load_hparams_from_json(config_file)
++        h =load_hparams_from_json(config_file)
+ 
+         # instantiate BigVGAN using h
+         if use_cuda_kernel:
+@@ -472,8 +468,6 @@ class BigVGAN(
+                 revision=revision,
+                 cache_dir=cache_dir,
+                 force_download=force_download,
+-                proxies=proxies,
+-                resume_download=resume_download,
+                 token=token,
+                 local_files_only=local_files_only,
+             )

@@ -1,0 +1,54 @@
+diff --git a/agent_chat.py b/agent_chat.py
+index 2cb619d..5ea3ce6 100644
+--- a/agent_chat.py
++++ b/agent_chat.py
+@@ -2,22 +2,21 @@ from dotenv import load_dotenv
+ import os
+ import re
+ import datetime as dt
+-from langchain.chat_models import ChatOpenAI
+-from langchain.llms import VertexAI
+-from langchain.tools import Tool
++from langchain_openai import ChatOpenAI
++from langchain_google_vertexai import VertexAI
++from langchain_core.tools import Tool
+ import client_calendar as cc
+ import client_gmail as cg
+ import datetime as dt
+ import streamlit as st
+ 
+-from langchain.agents import Tool, AgentExecutor, LLMSingleActionAgent, AgentOutputParser
+-from langchain.agents import LLMSingleActionAgent
+-from langchain.prompts import StringPromptTemplate
+-from langchain.memory import ConversationBufferWindowMemory
+-from langchain import LLMChain
+-from langchain.utilities import SerpAPIWrapper
++from langchain_classic.agents import AgentExecutor, LLMSingleActionAgent, AgentOutputParser
++from langchain_core.prompts import StringPromptTemplate
++from langchain_classic.memory import ConversationBufferWindowMemory
++from langchain_classic.chains import LLMChain
++from langchain_community.utilities import SerpAPIWrapper
+ from typing import List, Union
+-from langchain.schema import AgentAction, AgentFinish
++from langchain_core.agents import AgentAction, AgentFinish
+ from dotenv import dotenv_values
+ import gcloud_services as gs
+ import streamlit as st
+diff --git a/requirements.txt b/requirements.txt
+index 17a4747..564a95b 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -72,7 +72,12 @@ jsonschema>=4.18.0
+ jsonschema-specifications>=2023.6.1
+ jupyter_client>=8.3.0
+ jupyter_core>=5.3.1
+-langchain>=0.0.228
++langchain>=1.5.0
++langchain-classic>=1.0.0
++langchain-community>=0.4.0
++langchain-core>=1.0.0
++langchain-google-vertexai
++langchain-openai>=1.0.0
+ langchainplus-sdk>=0.0.20
+ lxml>=4.9.3
+ markdown-it-py>=3.0.0

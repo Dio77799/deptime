@@ -1,0 +1,1022 @@
+diff --git a/llava/train/llava_trainer.py b/llava/train/llava_trainer.py
+index ce2853a..c5fa7ad 100644
+--- a/llava/train/llava_trainer.py
++++ b/llava/train/llava_trainer.py
+@@ -9,9 +9,9 @@ from transformers.trainer import (
+     is_sagemaker_mp_enabled,
+     get_parameter_names,
+     has_length,
+-    ALL_LAYERNORM_LAYERS,
+     logger,
+ )
++from transformers.pytorch_utils import ALL_LAYERNORM_LAYERS
+ from typing import List, Optional
+ 
+ 
+diff --git a/llava_gp/model/language_model/llava_llama.py b/llava_gp/model/language_model/llava_llama.py
+index fb9a5a8..dddff13 100644
+--- a/llava_gp/model/language_model/llava_llama.py
++++ b/llava_gp/model/language_model/llava_llama.py
+@@ -945,7 +945,7 @@ class LlavaLlamaForCausalLM_GP(LlamaForCausalLM, LlavaMetaForCausalLM):
+ 
+     def _update_causal_mask(self, attention_mask, inputs_embeds, past_key_values):
+         batch_size, seq_length = attention_mask.shape
+-        past_key_values_length = past_key_values.get_usable_length(seq_length) if past_key_values is not None else 0
++        past_key_values_length = past_key_values.get_seq_length() if past_key_values is not None else 0
+         
+         if self.model._use_flash_attention_2:
+             # 2d mask is passed through the layers
+@@ -1103,11 +1103,12 @@ class LlavaLlamaForCausalLM_GP(LlamaForCausalLM, LlavaMetaForCausalLM):
+         if kv_cache.get_seq_length() <= max_length:
+             return
+ 
+-        kv_cache.seen_tokens = max_length
+-        for idx in range(len(kv_cache.key_cache)):
+-            if kv_cache.key_cache[idx].numel():
+-                kv_cache.key_cache[idx] = kv_cache.key_cache[idx][..., :max_length, :]
+-                kv_cache.value_cache[idx] = kv_cache.value_cache[idx][..., :max_length, :]
++        # transformers >= 4.56 / 5: the cache is a list of layers, each holding its own `keys` / `values`
++        # (`key_cache` / `value_cache` / `seen_tokens` no longer exist).
++        for layer in kv_cache.layers:
++            if layer.keys is not None and layer.keys.numel():
++                layer.keys = layer.keys[..., :max_length, :]
++                layer.values = layer.values[..., :max_length, :]
+                 
+     def _decode_image_token_mask_logits(self, batched_attn_map, grid_hw, selected_image_embeds):
+         return self.attn_fuser(batched_attn_map, grid_hw, selected_image_embeds)
+@@ -1180,8 +1181,8 @@ class LlavaLlamaForCausalLM_GP(LlamaForCausalLM, LlavaMetaForCausalLM):
+         # Step 1
+         B = input_ids.shape[0]
+         if past_key_values is not None:
+-            old_key_states = past_key_values.key_cache
+-            old_value_states = past_key_values.value_cache
++            old_key_states = [layer.keys for layer in past_key_values.layers]
++            old_value_states = [layer.values for layer in past_key_values.layers]
+         else:
+             old_key_states = None
+             old_value_states = None
+@@ -1257,9 +1258,10 @@ class LlavaLlamaForCausalLM_GP(LlamaForCausalLM, LlavaMetaForCausalLM):
+         
+         if past_key_values is not None:
+             # Because past_key_values is an object, we just overwrite the attribute of it directly.
+-            past_key_values.seen_tokens = max_remain_len
+-            past_key_values.key_cache = padded_key_states
+-            past_key_values.value_cache = padded_value_states
++            # (the sequence length is derived from the per-layer keys, so there is no `seen_tokens` to set)
++            for layer, new_k, new_v in zip(past_key_values.layers, padded_key_states, padded_value_states):
++                layer.keys = new_k
++                layer.values = new_v
+ 
+         return {
+             "input_ids": padded_input_ids,
+@@ -1371,8 +1373,8 @@ class LlavaLlamaForCausalLM_GP(LlamaForCausalLM, LlavaMetaForCausalLM):
+         if use_cache:
+             use_legacy_cache = not isinstance(past_key_values, Cache)
+             if use_legacy_cache:
+-                past_key_values = DynamicCache.from_legacy_cache(past_key_values)
+-            past_key_values_length = past_key_values.get_usable_length(seq_length)
++                past_key_values = DynamicCache(ddp_cache_data=past_key_values)
++            past_key_values_length = past_key_values.get_seq_length()
+             
+         if position_ids is None:
+             device = input_ids.device if input_ids is not None else inputs_embeds.device
+@@ -1474,7 +1476,7 @@ class LlavaLlamaForCausalLM_GP(LlamaForCausalLM, LlavaMetaForCausalLM):
+                         hidden_states_for_reduction = hidden_states.clone()
+                         if use_cache:
+                             kv_cache_for_reduction = DynamicCache()
+-                            for layer_idx, (key_cache, value_cache) in enumerate(next_decoder_cache):
++                            for layer_idx, (key_cache, value_cache, *_) in enumerate(next_decoder_cache):  # transformers 5 also yields a sliding-window tensor
+                                 kv_cache_for_reduction.update(key_cache.clone(), value_cache.clone(), layer_idx)
+                         else:
+                             kv_cache_for_reduction = None
+@@ -1595,7 +1597,7 @@ class LlavaLlamaForCausalLM_GP(LlamaForCausalLM, LlavaMetaForCausalLM):
+             cached_attention_mask = self.glimpse_return_before_selection.attention_mask.clone()
+             cached_position_ids = self.glimpse_return_before_selection.position_ids.clone()
+             cached_past_key_values = DynamicCache()
+-            for layer_idx, (key_cache, value_cache) in enumerate(self.glimpse_return_before_selection.past_key_values):
++            for layer_idx, (key_cache, value_cache, *_) in enumerate(self.glimpse_return_before_selection.past_key_values):  # transformers 5 also yields a sliding-window tensor
+                 cached_past_key_values.update(key_cache.clone(), value_cache.clone(), layer_idx)
+             grid_hw = self.glimpse_return_before_selection.grid_hw
+         else:
+@@ -1875,8 +1877,10 @@ class LlavaLlamaForCausalLM_GP(LlamaForCausalLM, LlavaMetaForCausalLM):
+         if past_key_values is not None:
+             if isinstance(past_key_values, Cache):
+                 cache_length = past_key_values.get_seq_length()
+-                past_length = past_key_values.seen_tokens
++                past_length = cache_length  # `seen_tokens` was removed in transformers 5
+                 max_cache_length = past_key_values.get_max_length()
++                if max_cache_length is not None and max_cache_length < 0:
++                    max_cache_length = None  # transformers 5 returns -1 for caches without a maximum length
+             else:
+                 cache_length = past_length = past_key_values[0][0].shape[2]
+                 max_cache_length = None
+diff --git a/llava_pdrop/model/modeling_llama_pdrop.py b/llava_pdrop/model/modeling_llama_pdrop.py
+index 7e511a9..3eea4d6 100644
+--- a/llava_pdrop/model/modeling_llama_pdrop.py
++++ b/llava_pdrop/model/modeling_llama_pdrop.py
+@@ -49,7 +49,6 @@ from transformers.utils import (
+     logging,
+     replace_return_docstrings,
+ )
+-from transformers.utils.import_utils import is_torch_fx_available
+ from transformers.models.llama.configuration_llama import LlamaConfig
+ 
+ if is_flash_attn_2_available():
+@@ -59,11 +58,10 @@ if is_flash_attn_2_available():
+ 
+ # This makes `_prepare_4d_causal_attention_mask` a leaf function in the FX graph.
+ # It means that the function will not be traced through and simply appear as a node in the graph.
+-if is_torch_fx_available():
+-    if not is_torch_greater_or_equal_than_1_13:
+-        import torch.fx
++# (`is_torch_fx_available` was removed in transformers 5.0; torch.fx ships with every supported torch.)
++import torch.fx
+ 
+-    _prepare_4d_causal_attention_mask = torch.fx.wrap(_prepare_4d_causal_attention_mask)
++_prepare_4d_causal_attention_mask = torch.fx.wrap(_prepare_4d_causal_attention_mask)
+ 
+ 
+ logger = logging.get_logger(__name__)
+@@ -400,7 +398,7 @@ class LlamaAttention(nn.Module):
+                     "for auto-regressive decoding with k/v caching, please make sure to initialize the attention class "
+                     "with a layer index."
+                 )
+-            kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
++            kv_seq_len += past_key_value.get_seq_length(self.layer_idx)
+         cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+ 
+@@ -505,7 +503,7 @@ class LlamaFlashAttention2(LlamaAttention):
+ 
+         kv_seq_len = key_states.shape[-2]
+         if past_key_value is not None:
+-            kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
++            kv_seq_len += past_key_value.get_seq_length(self.layer_idx)
+         cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+ 
+@@ -701,7 +699,7 @@ class LlamaSdpaAttention(LlamaAttention):
+ 
+         kv_seq_len = key_states.shape[-2]
+         if past_key_value is not None:
+-            kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
++            kv_seq_len += past_key_value.get_seq_length(self.layer_idx)
+         cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+ 
+         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+@@ -1014,8 +1012,8 @@ class LlamaModel(LlamaPreTrainedModel):
+         if use_cache:
+             use_legacy_cache = not isinstance(past_key_values, Cache)
+             if use_legacy_cache:
+-                past_key_values = DynamicCache.from_legacy_cache(past_key_values)
+-            past_key_values_length = past_key_values.get_usable_length(seq_length)
++                past_key_values = DynamicCache(ddp_cache_data=past_key_values)
++            past_key_values_length = past_key_values.get_seq_length()
+ 
+         if position_ids is None:
+             device = input_ids.device if input_ids is not None else inputs_embeds.device
+@@ -1093,7 +1091,7 @@ class LlamaModel(LlamaPreTrainedModel):
+ 
+         next_cache = None
+         if use_cache:
+-            next_cache = next_decoder_cache.to_legacy_cache() if use_legacy_cache else next_decoder_cache
++            next_cache = tuple((layer.keys, layer.values) for layer in next_decoder_cache.layers) if use_legacy_cache else next_decoder_cache
+         if not return_dict:
+             return tuple(v for v in [hidden_states, next_cache, all_hidden_states, all_self_attns] if v is not None)
+         return BaseModelOutputWithPast(
+@@ -1145,8 +1143,8 @@ class LlamaModel(LlamaPreTrainedModel):
+         if use_cache:
+             use_legacy_cache = not isinstance(past_key_values, Cache)
+             if use_legacy_cache:
+-                past_key_values = DynamicCache.from_legacy_cache(past_key_values)
+-            past_key_values_length = past_key_values.get_usable_length(seq_length)
++                past_key_values = DynamicCache(ddp_cache_data=past_key_values)
++            past_key_values_length = past_key_values.get_seq_length()
+ 
+         if position_ids is None:
+             device = input_ids.device if input_ids is not None else inputs_embeds.device
+@@ -1275,7 +1273,7 @@ class LlamaModel(LlamaPreTrainedModel):
+ 
+         next_cache = None
+         if use_cache:
+-            next_cache = next_decoder_cache.to_legacy_cache() if use_legacy_cache else next_decoder_cache
++            next_cache = tuple((layer.keys, layer.values) for layer in next_decoder_cache.layers) if use_legacy_cache else next_decoder_cache
+ 
+         if not return_dict:
+             return tuple(v for v in [hidden_states, next_cache, all_hidden_states, all_self_attns] if v is not None),labels
+@@ -1597,8 +1595,10 @@ class LlamaForCausalLM(LlamaPreTrainedModel):
+         if past_key_values is not None:
+             if isinstance(past_key_values, Cache):
+                 cache_length = past_key_values.get_seq_length()
+-                past_length = past_key_values.seen_tokens
++                past_length = cache_length  # `seen_tokens` was removed in transformers 5
+                 max_cache_length = past_key_values.get_max_length()
++                if max_cache_length is not None and max_cache_length < 0:
++                    max_cache_length = None  # transformers 5 returns -1 for caches without a maximum length
+             else:
+                 cache_length = past_length = past_key_values[0][0].shape[2]
+                 max_cache_length = None
+diff --git a/llava_visionzip/utils.py b/llava_visionzip/utils.py
+index 6165eb5..13eed70 100644
+--- a/llava_visionzip/utils.py
++++ b/llava_visionzip/utils.py
+@@ -3,7 +3,7 @@ import torch.nn as nn
+ 
+ from transformers import CLIPVisionModel, CLIPImageProcessor, CLIPVisionConfig
+ from typing import Any, Optional, Tuple, Union, List
+-from transformers.models.clip.modeling_clip import CLIPEncoderLayer, CLIPAttention, CLIPVisionTransformer, CLIPEncoder
++from transformers.models.clip.modeling_clip import CLIPEncoderLayer, CLIPAttention, CLIPEncoder
+ from transformers.modeling_outputs import BaseModelOutput, BaseModelOutputWithPooling, ImageClassifierOutput
+ 
+ 
+diff --git a/llava_vscan/model/modeling_llama_x.py b/llava_vscan/model/modeling_llama_x.py
+index 07df67d..d8734bc 100644
+--- a/llava_vscan/model/modeling_llama_x.py
++++ b/llava_vscan/model/modeling_llama_x.py
+@@ -51,7 +51,6 @@ from transformers.utils import (
+     logging,
+     replace_return_docstrings,
+ )
+-from transformers.utils.import_utils import is_torch_fx_available
+ from transformers.models.llama.configuration_llama import LlamaConfig
+ 
+ if is_flash_attn_2_available():
+@@ -61,11 +60,10 @@ if is_flash_attn_2_available():
+ 
+ # This makes `_prepare_4d_causal_attention_mask` a leaf function in the FX graph.
+ # It means that the function will not be traced through and simply appear as a node in the graph.
+-if is_torch_fx_available():
+-    if not is_torch_greater_or_equal_than_1_13:
+-        import torch.fx
++# (`is_torch_fx_available` was removed in transformers 5.0; torch.fx ships with every supported torch.)
++import torch.fx
+ 
+-    _prepare_4d_causal_attention_mask = torch.fx.wrap(_prepare_4d_causal_attention_mask)
++_prepare_4d_causal_attention_mask = torch.fx.wrap(_prepare_4d_causal_attention_mask)
+ 
+ 
+ logger = logging.get_logger(__name__)
+@@ -402,7 +400,7 @@ class LlamaAttention(nn.Module):
+                     "for auto-regressive decoding with k/v caching, please make sure to initialize the attention class "
+                     "with a layer index."
+                 )
+-            kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
++            kv_seq_len += past_key_value.get_seq_length(self.layer_idx)
+         cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+ 
+@@ -507,7 +505,7 @@ class LlamaFlashAttention2(LlamaAttention):
+ 
+         kv_seq_len = key_states.shape[-2]
+         if past_key_value is not None:
+-            kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
++            kv_seq_len += past_key_value.get_seq_length(self.layer_idx)
+         cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+ 
+@@ -703,7 +701,7 @@ class LlamaSdpaAttention(LlamaAttention):
+ 
+         kv_seq_len = key_states.shape[-2]
+         if past_key_value is not None:
+-            kv_seq_len += past_key_value.get_usable_length(kv_seq_len, self.layer_idx)
++            kv_seq_len += past_key_value.get_seq_length(self.layer_idx)
+         cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+ 
+         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin, position_ids)
+@@ -1017,8 +1015,8 @@ class LlamaModel(LlamaPreTrainedModel):
+         if use_cache:
+             use_legacy_cache = not isinstance(past_key_values, Cache)
+             if use_legacy_cache:
+-                past_key_values = DynamicCache.from_legacy_cache(past_key_values)
+-            past_key_values_length = past_key_values.get_usable_length(seq_length)
++                past_key_values = DynamicCache(ddp_cache_data=past_key_values)
++            past_key_values_length = past_key_values.get_seq_length()
+ 
+         if position_ids is None:
+             device = input_ids.device if input_ids is not None else inputs_embeds.device
+@@ -1098,7 +1096,7 @@ class LlamaModel(LlamaPreTrainedModel):
+ 
+         next_cache = None
+         if use_cache:
+-            next_cache = next_decoder_cache.to_legacy_cache() if use_legacy_cache else next_decoder_cache
++            next_cache = tuple((layer.keys, layer.values) for layer in next_decoder_cache.layers) if use_legacy_cache else next_decoder_cache
+         if not return_dict:
+             return tuple(v for v in [hidden_states, next_cache, all_hidden_states, all_self_attns] if v is not None)
+         return BaseModelOutputWithPast(
+@@ -1152,8 +1150,8 @@ class LlamaModel(LlamaPreTrainedModel):
+         if use_cache:
+             use_legacy_cache = not isinstance(past_key_values, Cache)
+             if use_legacy_cache:
+-                past_key_values = DynamicCache.from_legacy_cache(past_key_values)
+-            past_key_values_length = past_key_values.get_usable_length(seq_length)
++                past_key_values = DynamicCache(ddp_cache_data=past_key_values)
++            past_key_values_length = past_key_values.get_seq_length()
+ 
+         if position_ids is None:
+             device = input_ids.device if input_ids is not None else inputs_embeds.device
+@@ -1306,7 +1304,7 @@ class LlamaModel(LlamaPreTrainedModel):
+ 
+         next_cache = None
+         if use_cache:
+-            next_cache = next_decoder_cache.to_legacy_cache() if use_legacy_cache else next_decoder_cache
++            next_cache = tuple((layer.keys, layer.values) for layer in next_decoder_cache.layers) if use_legacy_cache else next_decoder_cache
+         if not return_dict:
+             return tuple(v for v in [hidden_states, next_cache, all_hidden_states, all_self_attns] if v is not None), labels
+         return BaseModelOutputWithPast(
+@@ -1641,8 +1639,10 @@ class LlamaForCausalLM(LlamaPreTrainedModel):
+         if past_key_values is not None:
+             if isinstance(past_key_values, Cache):
+                 cache_length = past_key_values.get_seq_length()
+-                past_length = past_key_values.seen_tokens
++                past_length = cache_length  # `seen_tokens` was removed in transformers 5
+                 max_cache_length = past_key_values.get_max_length()
++                if max_cache_length is not None and max_cache_length < 0:
++                    max_cache_length = None  # transformers 5 returns -1 for caches without a maximum length
+             else:
+                 cache_length = past_length = past_key_values[0][0].shape[2]
+                 max_cache_length = None
+diff --git a/llava_vscan/train/llava_next_trainer.py b/llava_vscan/train/llava_next_trainer.py
+index 8ecac96..882db39 100644
+--- a/llava_vscan/train/llava_next_trainer.py
++++ b/llava_vscan/train/llava_next_trainer.py
+@@ -9,9 +9,9 @@ from transformers.trainer import (
+     is_sagemaker_mp_enabled,
+     get_parameter_names,
+     has_length,
+-    ALL_LAYERNORM_LAYERS,
+     logger,
+ )
++from transformers.pytorch_utils import ALL_LAYERNORM_LAYERS
+ from typing import List, Optional
+ 
+ def get_vision_tower_state_maybe_zero_3(named_params, keys_to_match=['']):
+diff --git a/llava_vscan/train/llava_trainer.py b/llava_vscan/train/llava_trainer.py
+index ce2853a..c5fa7ad 100644
+--- a/llava_vscan/train/llava_trainer.py
++++ b/llava_vscan/train/llava_trainer.py
+@@ -9,9 +9,9 @@ from transformers.trainer import (
+     is_sagemaker_mp_enabled,
+     get_parameter_names,
+     has_length,
+-    ALL_LAYERNORM_LAYERS,
+     logger,
+ )
++from transformers.pytorch_utils import ALL_LAYERNORM_LAYERS
+ from typing import List, Optional
+ 
+ 
+diff --git a/my_lmms_eval/models/qwen2_5_vl_vscan.py b/my_lmms_eval/models/qwen2_5_vl_vscan.py
+index c00c0e6..b3b2ec9 100644
+--- a/my_lmms_eval/models/qwen2_5_vl_vscan.py
++++ b/my_lmms_eval/models/qwen2_5_vl_vscan.py
+@@ -13,8 +13,7 @@ from tqdm import tqdm
+ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
+     Qwen2_5_VisionTransformerPretrainedModel,
+     Qwen2_5_VLVisionBlock,
+-    Qwen2_5_VLVisionSdpaAttention,
+-    Qwen2_5_VLVisionFlashAttention2,
++    Qwen2_5_VLVisionAttention,
+     Qwen2_5_VisionPatchEmbed,
+     Qwen2_5_VLModel,
+ )
+@@ -26,9 +25,8 @@ from qwen_vscan.model.qwen2_5_vl_custom import (
+         Qwen2_5_VLForConditionalGeneration_X, 
+         Qwen2_5_VisionTransformerPretrainedModel_X, 
+         Qwen2_5_VLVisionBlock_X, 
+-        Qwen2_5_VLVisionSdpaAttention_X,
+-        Qwen2_5_VLVisionFlashAttention2_X,
+-        Qwen2_5_VisionPatchEmbed_X, 
++        Qwen2_5_VLVisionAttention_X,
++        Qwen2_5_VisionPatchEmbed_X,
+         Qwen2_5_VLModel_X
+     )
+ 
+@@ -101,8 +99,7 @@ class Qwen2_5_VL_Vscan(lmms):
+         
+         Qwen2_5_VisionTransformerPretrainedModel.forward = Qwen2_5_VisionTransformerPretrainedModel_X.forward
+         Qwen2_5_VLVisionBlock.forward = Qwen2_5_VLVisionBlock_X.forward
+-        Qwen2_5_VLVisionSdpaAttention.forward = Qwen2_5_VLVisionSdpaAttention_X.forward
+-        Qwen2_5_VLVisionFlashAttention2.forward = Qwen2_5_VLVisionFlashAttention2_X.forward
++        Qwen2_5_VLVisionAttention.forward = Qwen2_5_VLVisionAttention_X.forward
+         Qwen2_5_VisionPatchEmbed.forward = Qwen2_5_VisionPatchEmbed_X.forward
+         Qwen2_5_VLModel.forward = Qwen2_5_VLModel_X.forward
+         Qwen2_5_VLModel.layer_prune = Qwen2_5_VLModel_X.layer_prune
+diff --git a/qwen_visionzip/qwen2_5vl_visionzip.py b/qwen_visionzip/qwen2_5vl_visionzip.py
+index 92b8b9e..263318f 100644
+--- a/qwen_visionzip/qwen2_5vl_visionzip.py
++++ b/qwen_visionzip/qwen2_5vl_visionzip.py
+@@ -1356,7 +1356,7 @@ class Qwen2_5_VLModel(Qwen2_5_VLPreTrainedModel):
+         sequence_length = input_tensor.shape[1]
+         # SlidingWindowCache or StaticCache
+         if using_sliding_window_cache or using_static_cache:
+-            target_length = past_key_values.get_max_cache_shape()
++            target_length = past_key_values.get_max_length()
+         # DynamicCache or no cache
+         else:
+             target_length = (
+@@ -2354,7 +2354,7 @@ class Qwen2_5_VLForConditionalGeneration(Qwen2_5_VLPreTrainedModel, GenerationMi
+             attention_mask = self.model._prepare_4d_causal_attention_mask_with_cache_position(
+                 attention_mask,
+                 sequence_length=sequence_length,
+-                target_length=past_key_values.get_max_cache_shape(),
++                target_length=past_key_values.get_max_length(),
+                 dtype=self.lm_head.weight.dtype,
+                 device=device,
+                 cache_position=cache_position,
+diff --git a/qwen_vscan/model/qwen2_5_vl_custom.py b/qwen_vscan/model/qwen2_5_vl_custom.py
+index 863f60d..693cd36 100644
+--- a/qwen_vscan/model/qwen2_5_vl_custom.py
++++ b/qwen_vscan/model/qwen2_5_vl_custom.py
+@@ -15,9 +15,16 @@ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
+     Qwen2_5_VLForConditionalGeneration,
+     Qwen2_5_VisionTransformerPretrainedModel,
+     Qwen2_5_VLModel,
+-    Qwen2_5_VLCausalLMOutputWithPast
+ )
+-from transformers.modeling_outputs import BaseModelOutputWithPast
++from transformers.modeling_outputs import BaseModelOutputWithPast, CausalLMOutputWithPast
++
++
++@dataclass
++class Qwen2_5_VLCausalLMOutputWithPast(CausalLMOutputWithPast):
++    # `Qwen2_5_VLCausalLMOutputWithPast` was removed from transformers in 5.23.0 (the model now returns a plain
++    # `CausalLMOutputWithPast`). Same fields as before: the standard ones plus `rope_deltas`.
++    rope_deltas: Optional[torch.LongTensor] = None
++
+ 
+ from qwen_vscan.model.qwen2_5_vl_utils import apply_rotary_pos_emb_vision, rotate_half, token_merging, window_selection, repeat_kv, apply_multimodal_rotary_pos_emb, apply_rotary_pos_emb_flashatt
+ 
+@@ -804,7 +811,33 @@ class Qwen2_5_VLVisionSdpaAttention_X(nn.Module):
+         attn_output = attn_output.reshape(seq_length, -1)
+         attn_output = self.proj(attn_output)
+         return attn_output, attn_weights
+-    
++
++
++class Qwen2_5_VLVisionAttention_X(nn.Module):
++    """transformers >= 4.53 merged `Qwen2_5_VLVisionSdpaAttention` / `Qwen2_5_VLVisionFlashAttention2` into the single
++    `Qwen2_5_VLVisionAttention` (the backend is picked from `config._attn_implementation`). Patch this forward onto
++    that class; it dispatches to the matching custom forward above, as the per-backend classes used to."""
++
++    def forward(
++        self,
++        hidden_states: torch.Tensor,
++        cu_seqlens: torch.Tensor,
++        rotary_pos_emb: Optional[torch.Tensor] = None,
++        position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
++        output_attentions: Optional[bool] = None,
++        **kwargs,
++    ) -> torch.Tensor:
++        impl = Qwen2_5_VLVisionFlashAttention2_X if self.config._attn_implementation == "flash_attention_2" else Qwen2_5_VLVisionSdpaAttention_X
++        return impl.forward(
++            self,
++            hidden_states,
++            cu_seqlens=cu_seqlens,
++            rotary_pos_emb=rotary_pos_emb,
++            position_embeddings=position_embeddings,
++            output_attentions=output_attentions,
++        )
++
++
+ class Qwen2_5_VLModel_X(Qwen2_5_VLModel):
+     def forward(
+         self,
+@@ -1136,24 +1169,23 @@ class Qwen2_5_VLModel_X(Qwen2_5_VLModel):
+                 gather_indices[b, pad_left:] = keep_idx_b
+ 
+         # Update cached K/V for already-processed layers so all layers share the same (pruned) prompt length.
+-        if past_key_values is not None and hasattr(past_key_values, "key_cache"):
++        # (`DynamicCache.key_cache` / `.value_cache` / `._seen_tokens` were removed: the cache is now a list of layers,
++        # `past_key_values.layers`, each holding its own `keys` / `values`.)
++        if past_key_values is not None and hasattr(past_key_values, "layers"):
+             # Layers < rank_layer have already been run (we prune caches for them).
+-            prune_layers = min(int(rank_layer), len(past_key_values.key_cache))
++            prune_layers = min(int(rank_layer), len(past_key_values.layers))
+             for layer_idx in range(prune_layers):
+-                if layer_idx >= len(past_key_values.key_cache):
+-                    break
+-                key_cache = past_key_values.key_cache[layer_idx]
+-                value_cache = past_key_values.value_cache[layer_idx]
++                cache_layer = past_key_values.layers[layer_idx]
++                key_cache = cache_layer.keys
++                value_cache = cache_layer.values
+                 if key_cache is None or (hasattr(key_cache, "numel") and key_cache.numel() == 0):
+                     continue
+                 # key_cache: [bs, heads, seq, head_dim]
+                 idx = gather_indices.view(batch_size, 1, max_new_len, 1).expand(
+                     batch_size, key_cache.shape[1], max_new_len, key_cache.shape[3]
+                 )
+-                past_key_values.key_cache[layer_idx] = torch.gather(key_cache, dim=2, index=idx)
+-                past_key_values.value_cache[layer_idx] = torch.gather(value_cache, dim=2, index=idx)
+-            if hasattr(past_key_values, "_seen_tokens"):
+-                past_key_values._seen_tokens = max_new_len
++                cache_layer.keys = torch.gather(key_cache, dim=2, index=idx)
++                cache_layer.values = torch.gather(value_cache, dim=2, index=idx)
+ 
+         # Update model state for later pruning / generation.
+         self.image_token_mask = new_image_token_mask
+diff --git a/train_llava_gp.py b/train_llava_gp.py
+index c90752c..c1e53bc 100644
+--- a/train_llava_gp.py
++++ b/train_llava_gp.py
+@@ -21,10 +21,6 @@ from transformers import (
+     TrainingArguments, 
+     Trainer,
+ )
+-from transformers.utils import (
+-    is_safetensors_available, 
+-)
+-
+ 
+ from accelerate.utils import set_seed
+ 
+diff --git a/train_qwen_gp.py b/train_qwen_gp.py
+index 296a4ef..57d7eef 100644
+--- a/train_qwen_gp.py
++++ b/train_qwen_gp.py
+@@ -29,12 +29,11 @@ from transformers import (
+ )
+ from transformers.modeling_utils import PreTrainedModel
+ from transformers.utils import (
+-    is_safetensors_available, 
+     is_peft_available
+ )
+ 
+-if is_safetensors_available():
+-    import safetensors.torch
++# `is_safetensors_available` was removed in transformers 5 (safetensors is a hard dependency now).
++import safetensors.torch
+ from peft import PeftConfig, get_peft_model, PeftModel
+ from accelerate.utils import is_peft_model, set_seed
+ 
+diff --git a/transformers_gp/models/internvl2_5/model_gp.py b/transformers_gp/models/internvl2_5/model_gp.py
+index eb69e8b..5b744cc 100644
+--- a/transformers_gp/models/internvl2_5/model_gp.py
++++ b/transformers_gp/models/internvl2_5/model_gp.py
+@@ -12,7 +12,7 @@ import torch
+ import torch.nn as nn
+ import torch.nn.functional as F
+ from transformers import AutoModel, AutoTokenizer, GenerationConfig
+-from transformers.cache_utils import DynamicCache
++from transformers.cache_utils import DynamicCache, DynamicLayer
+ from transformers.modeling_outputs import ModelOutput
+ from transformers.activations import ACT2FN
+ 
+@@ -27,11 +27,15 @@ except Exception:
+     _FLASH_ATTN_AVAILABLE = False
+ 
+ 
++# `DynamicCache.key_cache` / `.value_cache` / `._seen_tokens` were removed (4.56 / 5.0): a DynamicCache is now a list of
++# layers (`cache.layers`), each holding its own `keys` / `values`; the cached length is derived from them.
+ def _dynamic_cache_layer_past(past_key_value, layer_idx):
+     if not isinstance(past_key_value, DynamicCache) or layer_idx is None:
+         return past_key_value, False
+-    if layer_idx < len(past_key_value.key_cache) and past_key_value.key_cache[layer_idx].numel():
+-        return (past_key_value.key_cache[layer_idx], past_key_value.value_cache[layer_idx]), True
++    if layer_idx < len(past_key_value.layers):
++        layer = past_key_value.layers[layer_idx]
++        if layer.keys is not None and layer.keys.numel():
++            return (layer.keys, layer.values), True
+     return None, True
+ 
+ 
+@@ -39,23 +43,16 @@ def _dynamic_cache_store_layer(cache, layer_idx, present_key_value):
+     if present_key_value is None or layer_idx is None:
+         return cache
+     key_states, value_states = present_key_value
+-    old_len = 0
+-    if layer_idx < len(cache.key_cache) and cache.key_cache[layer_idx].numel():
+-        old_len = cache.key_cache[layer_idx].shape[-2]
+-        cache.key_cache[layer_idx] = key_states
+-        cache.value_cache[layer_idx] = value_states
++    while len(cache.layers) <= layer_idx:
++        cache.layers.append(DynamicLayer())
++    layer = cache.layers[layer_idx]
++    if layer.is_initialized:
++        # Replace the stored states (present_key_value already holds the full key/value sequence).
++        layer.keys = key_states
++        layer.values = value_states
+     else:
+-        while len(cache.key_cache) < layer_idx:
+-            cache.key_cache.append(torch.tensor([], device=key_states.device, dtype=key_states.dtype))
+-            cache.value_cache.append(torch.tensor([], device=value_states.device, dtype=value_states.dtype))
+-        if len(cache.key_cache) == layer_idx:
+-            cache.key_cache.append(key_states)
+-            cache.value_cache.append(value_states)
+-        else:
+-            cache.key_cache[layer_idx] = key_states
+-            cache.value_cache[layer_idx] = value_states
+-    if layer_idx == 0:
+-        cache._seen_tokens += key_states.shape[-2] - old_len
++        # First write: let the layer initialise itself (dtype / device / is_initialized).
++        layer.update(key_states, value_states)
+     return cache
+ 
+ 
+@@ -913,7 +910,7 @@ class InternVL2_5_GP_ForConditionalGeneration(nn.Module):
+                        attention_mask, position_ids, image_token_bool_masks):
+         """Drop image tokens not in image_token_bool_masks; left-pad to max remaining length.
+ 
+-        Crops the per-layer KV cache the same way and resets _seen_tokens.
++        Crops the per-layer KV cache the same way.
+         """
+         bsz, seq_len = input_ids.shape
+         device = input_ids.device
+@@ -952,9 +949,10 @@ class InternVL2_5_GP_ForConditionalGeneration(nn.Module):
+         else:
+             new_pos = None
+ 
+-        if past_key_values is not None and hasattr(past_key_values, "key_cache") and len(past_key_values.key_cache) > 0:
++        if past_key_values is not None and hasattr(past_key_values, "layers") and len(past_key_values.layers) > 0:
+             new_keys, new_vals = [], []
+-            for old_k, old_v in zip(past_key_values.key_cache, past_key_values.value_cache):
++            for cache_layer in past_key_values.layers:
++                old_k, old_v = cache_layer.keys, cache_layer.values
+                 # old_k: [B, num_kv_heads, seq, head_dim]
+                 rmask = remain.to(old_k.device).unsqueeze(1).expand(-1, old_k.shape[1], -1)
+                 pmask = repad.to(old_k.device).unsqueeze(1).expand(-1, old_k.shape[1], -1)
+@@ -966,9 +964,9 @@ class InternVL2_5_GP_ForConditionalGeneration(nn.Module):
+                 new_v[pmask] = old_v[rmask]
+                 new_keys.append(new_k)
+                 new_vals.append(new_v)
+-            past_key_values.key_cache = new_keys
+-            past_key_values.value_cache = new_vals
+-            past_key_values._seen_tokens = max_len
++            for cache_layer, new_k, new_v in zip(past_key_values.layers, new_keys, new_vals):
++                cache_layer.keys = new_k
++                cache_layer.values = new_v
+ 
+         self.reduced_input_ids = new_ids
+ 
+@@ -1100,18 +1098,19 @@ class InternVL2_5_GP_ForConditionalGeneration(nn.Module):
+ 
+     @staticmethod
+     def _trim_cache_by_keep(past_key_values, keep, new_len):
+-        if past_key_values is None or not hasattr(past_key_values, "key_cache") or len(past_key_values.key_cache) == 0:
++        if past_key_values is None or not hasattr(past_key_values, "layers") or len(past_key_values.layers) == 0:
+             return past_key_values
+         new_keys, new_vals = [], []
+-        for old_k, old_v in zip(past_key_values.key_cache, past_key_values.value_cache):
++        for cache_layer in past_key_values.layers:
++            old_k, old_v = cache_layer.keys, cache_layer.values
+             rmask = keep.to(old_k.device).unsqueeze(1).expand(-1, old_k.shape[1], -1)
+             new_k = old_k[rmask].view(old_k.shape[0], old_k.shape[1], new_len, old_k.shape[-1])
+             new_v = old_v[rmask].view(old_v.shape[0], old_v.shape[1], new_len, old_v.shape[-1])
+             new_keys.append(new_k)
+             new_vals.append(new_v)
+-        past_key_values.key_cache = new_keys
+-        past_key_values.value_cache = new_vals
+-        past_key_values._seen_tokens = new_len
++        for cache_layer, new_k, new_v in zip(past_key_values.layers, new_keys, new_vals):
++            cache_layer.keys = new_k
++            cache_layer.values = new_v
+         return past_key_values
+ 
+     def _trim_le_tokens(self, le_token_mask, input_ids, inputs_embeds, labels, hidden_states,
+@@ -1291,10 +1290,10 @@ class InternVL2_5_GP_ForConditionalGeneration(nn.Module):
+                     captured_cache = past_key_values
+                 else:
+                     captured_hidden = hidden_states.clone()
+-                    if past_key_values is not None and hasattr(past_key_values, "key_cache"):
++                    if past_key_values is not None and hasattr(past_key_values, "layers"):
+                         cloned = DynamicCache()
+-                        for li, (k, v) in enumerate(zip(past_key_values.key_cache, past_key_values.value_cache)):
+-                            cloned.update(k.clone(), v.clone(), li)
++                        for li, cache_layer in enumerate(past_key_values.layers):
++                            cloned.update(cache_layer.keys.clone(), cache_layer.values.clone(), li)
+                         captured_cache = cloned
+                     else:
+                         captured_cache = None
+diff --git a/transformers_gp/models/qwen2_5_vl/model_gp.py b/transformers_gp/models/qwen2_5_vl/model_gp.py
+index fb6af02..e5c31bc 100644
+--- a/transformers_gp/models/qwen2_5_vl/model_gp.py
++++ b/transformers_gp/models/qwen2_5_vl/model_gp.py
+@@ -28,25 +28,49 @@ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
+     Qwen2_5_VLModel,
+     Qwen2_5_VisionTransformerPretrainedModel,
+     Qwen2_5_VLDecoderLayer,
+-    Qwen2_5_VisionRotaryEmbedding,
+     Qwen2_5_VLRotaryEmbedding,
+-    Qwen2RMSNorm,
+     Qwen2MLP,
+-    Qwen2_5_VLFlashAttention2,
+-    Qwen2_5_VLSdpaAttention,
+     Qwen2_5_VLAttention,
+     repeat_kv,
+-    apply_multimodal_rotary_pos_emb,
++    apply_rotary_pos_emb,
+     apply_rotary_pos_emb_vision,
+-    apply_rotary_pos_emb_flashatt,
+ )
++# `Qwen2RMSNorm` is no longer importable from modeling_qwen2_5_vl (removed in 5.2.0); it is exported by `transformers`.
++from transformers import Qwen2RMSNorm
+ from transformers.activations import ACT2FN
+ 
+ from transformers.modeling_flash_attention_utils import (
+     _flash_attention_forward,
++    flash_attn_supports_top_left_mask,
+ )
+ from flash_attn import flash_attn_varlen_func
+-    
++from flash_attn.layers.rotary import apply_rotary_emb
++
++
++# The three helpers below were removed from transformers (Qwen2_5_VisionRotaryEmbedding in 5.17.0,
++# apply_rotary_pos_emb_flashatt in 4.53.0); they are self-contained, so they are kept here as they were in 4.51.3.
++class Qwen2_5_VisionRotaryEmbedding(nn.Module):
++    def __init__(self, dim: int, theta: float = 10000.0) -> None:
++        super().__init__()
++        inv_freq = 1.0 / (theta ** (torch.arange(0, dim, 2, dtype=torch.float) / dim))
++        self.register_buffer("inv_freq", inv_freq, persistent=False)
++
++    def forward(self, seqlen: int) -> torch.Tensor:
++        seq = torch.arange(seqlen, device=self.inv_freq.device, dtype=self.inv_freq.dtype)
++        freqs = torch.outer(seq, self.inv_freq)
++        return freqs
++
++
++def apply_rotary_pos_emb_flashatt(
++    q: torch.Tensor, k: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor
++) -> Tuple[torch.Tensor, torch.Tensor]:
++    cos = cos.chunk(2, dim=-1)[0].contiguous()
++    sin = sin.chunk(2, dim=-1)[0].contiguous()
++    q_embed = apply_rotary_emb(q.float(), cos.float(), sin.float()).type_as(q)
++    k_embed = apply_rotary_emb(k.float(), cos.float(), sin.float()).type_as(k)
++    return q_embed, k_embed
++
++
+ from .configuration import *
+ from transformers.modeling_outputs import ModelOutput   
+ from utils.warppers import debug_calls, time_logger
+@@ -514,9 +538,7 @@ class Qwen2_5_VLAttention_GP(Qwen2_5_VLAttention):
+         value_states = value_states.view(bsz, q_len, -1, self.head_dim).transpose(1, 2)
+ 
+         cos, sin = position_embeddings
+-        query_states, key_states = apply_multimodal_rotary_pos_emb(
+-            query_states, key_states, cos, sin, self.rope_scaling["mrope_section"]
+-        )
++        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+ 
+         if past_key_value is not None:
+             cache_kwargs = {"sin": sin, "cos": cos, "cache_position": cache_position}  # Specific to RoPE models
+@@ -569,7 +591,9 @@ class Qwen2_5_VLAttention_GP(Qwen2_5_VLAttention):
+ 
+         return attn_output, attn_weights_out, past_key_value
+ 
+-class Qwen2_5_VLSdpaAttention_GP(Qwen2_5_VLSdpaAttention):
++# transformers >= 4.53 has a single `Qwen2_5_VLAttention` (the per-backend `...SdpaAttention` / `...FlashAttention2`
++# subclasses were removed); this class overrides `forward` completely, so it only needs the base's projections.
++class Qwen2_5_VLSdpaAttention_GP(Qwen2_5_VLAttention):
+     
+     def _cal_attn_weights(self,
+                           query_states: torch.Tensor,
+@@ -625,9 +649,7 @@ class Qwen2_5_VLSdpaAttention_GP(Qwen2_5_VLSdpaAttention):
+         value_states = value_states.view(bsz, q_len, -1, self.head_dim).transpose(1, 2)
+ 
+         cos, sin = position_embeddings
+-        query_states, key_states = apply_multimodal_rotary_pos_emb(
+-            query_states, key_states, cos, sin, self.rope_scaling["mrope_section"]
+-        )
++        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+ 
+         if past_key_value is not None:
+             cache_kwargs = {"sin": sin, "cos": cos, "cache_position": cache_position}  # Specific to RoPE models
+@@ -675,7 +697,7 @@ class Qwen2_5_VLSdpaAttention_GP(Qwen2_5_VLSdpaAttention):
+         return attn_output, attn_weights, past_key_value
+ 
+ 
+-class Qwen2_5_VLFlashAttention2_GP(Qwen2_5_VLFlashAttention2):
++class Qwen2_5_VLFlashAttention2_GP(Qwen2_5_VLAttention):
+     # @time_logger
+     def _cal_attn_weights(self,
+                           query_states: torch.Tensor,
+@@ -726,9 +748,7 @@ class Qwen2_5_VLFlashAttention2_GP(Qwen2_5_VLFlashAttention2):
+ 
+         # Because the input can be padded, the absolute sequence length depends on the max position id.
+         cos, sin = position_embeddings
+-        query_states, key_states = apply_multimodal_rotary_pos_emb(
+-            query_states, key_states, cos, sin, self.rope_scaling["mrope_section"]
+-        )
++        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+ 
+         if past_key_value is not None:
+             cache_kwargs = {"sin": sin, "cos": cos, "cache_position": cache_position}  # Specific to RoPE models
+@@ -791,7 +811,7 @@ class Qwen2_5_VLFlashAttention2_GP(Qwen2_5_VLFlashAttention2):
+             dropout=dropout_rate,
+             sliding_window=sliding_window,
+             is_causal=self.is_causal,
+-            use_top_left_mask=self._flash_attn_uses_top_left_mask,
++            use_top_left_mask=flash_attn_supports_top_left_mask(),
+         )
+             
+         attn_output = attn_output.reshape(bsz, q_len, self.hidden_size).contiguous()
+@@ -1481,7 +1501,7 @@ class Qwen2_5_VL_GP_ForConditionalGeneration(Qwen2_5_VLForConditionalGeneration)
+                         hidden_states_for_reduction = hidden_states.clone()
+                         if use_cache:
+                             kv_cache_for_reduction = DynamicCache()
+-                            for layer_idx, (key_cache, value_cache) in enumerate(next_decoder_cache):
++                            for layer_idx, (key_cache, value_cache, *_) in enumerate(next_decoder_cache):  # transformers 5 also yields a sliding-window tensor
+                                 kv_cache_for_reduction.update(key_cache.clone(), value_cache.clone(), layer_idx)
+                         else:
+                             kv_cache_for_reduction = None
+@@ -1612,7 +1632,7 @@ class Qwen2_5_VL_GP_ForConditionalGeneration(Qwen2_5_VLForConditionalGeneration)
+             cached_attention_mask = self.glimpse_return_before_selection.attention_mask.clone()
+             cached_position_ids = self.glimpse_return_before_selection.position_ids.clone()
+             cached_past_key_values = DynamicCache()
+-            for layer_idx, (key_cache, value_cache) in enumerate(self.glimpse_return_before_selection.past_key_values):
++            for layer_idx, (key_cache, value_cache, *_) in enumerate(self.glimpse_return_before_selection.past_key_values):  # transformers 5 also yields a sliding-window tensor
+                 cached_past_key_values.update(key_cache.clone(), value_cache.clone(), layer_idx)
+             attn_grid = self.glimpse_return_before_selection.attn_grid
+         else:
+@@ -1937,8 +1957,9 @@ class Qwen2_5_VL_GP_ForConditionalGeneration(Qwen2_5_VLForConditionalGeneration)
+     ):
+         B = input_ids.shape[0]
+         if past_key_values is not None:
+-            old_key_states = past_key_values.key_cache
+-            old_value_states = past_key_values.value_cache
++            # `DynamicCache.key_cache` / `.value_cache` were removed in 4.56: each cache layer holds `keys` / `values`.
++            old_key_states = [layer.keys for layer in past_key_values.layers]
++            old_value_states = [layer.values for layer in past_key_values.layers]
+         else:
+             old_key_states = None
+             old_value_states = None
+@@ -2015,9 +2036,10 @@ class Qwen2_5_VL_GP_ForConditionalGeneration(Qwen2_5_VLForConditionalGeneration)
+ 
+         if past_key_values is not None:
+             # Because past_key_values is an object, we just overwrite the attribute of it directly.
+-            past_key_values._seen_tokens = max_remain_len
+-            past_key_values.key_cache = padded_key_states
+-            past_key_values.value_cache = padded_value_states
++            # (the cached length is derived from the per-layer keys, so there is no `_seen_tokens` to update)
++            for layer, new_k, new_v in zip(past_key_values.layers, padded_key_states, padded_value_states):
++                layer.keys = new_k
++                layer.values = new_v
+             
+         self.reduced_input_ids = padded_input_ids
+ 
+diff --git a/transformers_gp/models/qwen2_5_vl/model_sep.py b/transformers_gp/models/qwen2_5_vl/model_sep.py
+index e2a35ef..4c394eb 100644
+--- a/transformers_gp/models/qwen2_5_vl/model_sep.py
++++ b/transformers_gp/models/qwen2_5_vl/model_sep.py
+@@ -23,33 +23,43 @@ from transformers.models.qwen2_5_vl.configuration_qwen2_5_vl import (
+ 
+ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
+     Qwen2_5_VLForConditionalGeneration,
+-    Qwen2_5_VLCausalLMOutputWithPast,
+     Qwen2_5_VisionTransformerPretrainedModel,
+     Qwen2_5_VLModel,
+     Qwen2_5_VLDecoderLayer,
+     Qwen2_5_VLPreTrainedModel,
+     Qwen2MLP,
+-    Qwen2RMSNorm,
+-    Qwen2_5_VLFlashAttention2,
++    Qwen2_5_VLAttention,
+     Qwen2_5_VLRotaryEmbedding,
+     repeat_kv,
+-    apply_multimodal_rotary_pos_emb,
++    apply_rotary_pos_emb,
+ )
++# `Qwen2RMSNorm` is no longer importable from modeling_qwen2_5_vl (removed in 5.2.0); it is exported by `transformers`.
++from transformers import Qwen2RMSNorm
+ from transformers.activations import ACT2FN
+ from transformers.modeling_flash_attention_utils import (
+     _flash_attention_forward,
++    flash_attn_supports_top_left_mask,
+ )
+ from transformers.cache_utils import DynamicCache
+-from transformers.modeling_outputs import BaseModelOutputWithPast
++from transformers.modeling_outputs import BaseModelOutputWithPast, CausalLMOutputWithPast
+ from transformers.utils import logging
+ 
++
++@dataclass
++class Qwen2_5_VLCausalLMOutputWithPast(CausalLMOutputWithPast):
++    # `Qwen2_5_VLCausalLMOutputWithPast` was removed from transformers in 5.23.0 (the model now returns a plain
++    # `CausalLMOutputWithPast`). Same fields as before: the standard ones plus `rope_deltas`.
++    rope_deltas: Optional[torch.LongTensor] = None
++
+ from .model_gp import convert_2d_to_4d_mask
+ from utils.warppers import time_logger
+ 
+ logger = logging.get_logger(__name__)
+ 
+ 
+-class Qwen2_5_VLFlashAttention2_Sep(Qwen2_5_VLFlashAttention2):
++# transformers >= 4.53 has a single `Qwen2_5_VLAttention` (`Qwen2_5_VLFlashAttention2` was removed); this class
++# overrides `forward` completely, so it only needs the base's projections.
++class Qwen2_5_VLFlashAttention2_Sep(Qwen2_5_VLAttention):
+     def _cal_attn_weights(self,
+                           query_states: torch.Tensor,
+                           key_states: torch.Tensor,
+@@ -94,9 +104,7 @@ class Qwen2_5_VLFlashAttention2_Sep(Qwen2_5_VLFlashAttention2):
+ 
+         # Because the input can be padded, the absolute sequence length depends on the max position id.
+         cos, sin = position_embeddings
+-        query_states, key_states = apply_multimodal_rotary_pos_emb(
+-            query_states, key_states, cos, sin, self.rope_scaling["mrope_section"]
+-        )
++        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+ 
+         if past_key_value is not None:
+             cache_kwargs = {"sin": sin, "cos": cos, "cache_position": cache_position}  # Specific to RoPE models
+@@ -159,7 +167,7 @@ class Qwen2_5_VLFlashAttention2_Sep(Qwen2_5_VLFlashAttention2):
+             dropout=dropout_rate,
+             sliding_window=sliding_window,
+             is_causal=self.is_causal,
+-            use_top_left_mask=self._flash_attn_uses_top_left_mask,
++            use_top_left_mask=flash_attn_supports_top_left_mask(),
+         )
+             
+         attn_output = attn_output.reshape(bsz, q_len, self.hidden_size).contiguous()
+diff --git a/transformers_gp/models/qwen2_5_vl/process_gp.py b/transformers_gp/models/qwen2_5_vl/process_gp.py
+index b1492f2..514d092 100644
+--- a/transformers_gp/models/qwen2_5_vl/process_gp.py
++++ b/transformers_gp/models/qwen2_5_vl/process_gp.py
+@@ -3,10 +3,15 @@ import math
+ from PIL import Image
+ import torch
+ from transformers.feature_extraction_utils import BatchFeature
+-from transformers.image_utils import ImageInput, VideoInput
+-from transformers.processing_utils import Unpack
++from typing_extensions import Unpack  # `transformers.processing_utils.Unpack` was removed in 5.21.0
++from transformers.image_utils import ImageInput
++from transformers.video_utils import VideoInput  # moved out of `transformers.image_utils` in 4.52
++from transformers.processing_utils import ProcessingKwargs
+ from transformers.tokenization_utils_base import PreTokenizedInput, TextInput
+-from transformers.models.qwen2_5_vl.processing_qwen2_5_vl import Qwen2_5_VLProcessor, Qwen2_5_VLProcessorKwargs
++from transformers.models.qwen2_5_vl.processing_qwen2_5_vl import Qwen2_5_VLProcessor
++
++# `Qwen2_5_VLProcessorKwargs` was removed in 5.23.0 (only a deprecated alias of `ProcessingKwargs` remains).
++Qwen2_5_VLProcessorKwargs = ProcessingKwargs
+ 
+ 
+ def find_indices_of_bbox_on_grid(bboxes, grid):
+diff --git a/viscot_eval/models/qwen2_5_vl.py b/viscot_eval/models/qwen2_5_vl.py
+index 69404f4..b995ed4 100644
+--- a/viscot_eval/models/qwen2_5_vl.py
++++ b/viscot_eval/models/qwen2_5_vl.py
+@@ -21,16 +21,14 @@ class Qwen2_5_VL(BaseInferModel):
+             Qwen2_5_VLForConditionalGeneration_X,
+             Qwen2_5_VisionTransformerPretrainedModel_X,
+             Qwen2_5_VLVisionBlock_X,
+-            Qwen2_5_VLVisionSdpaAttention_X,
+-            Qwen2_5_VLVisionFlashAttention2_X,
++            Qwen2_5_VLVisionAttention_X,
+             Qwen2_5_VisionPatchEmbed_X,
+             Qwen2_5_VLModel_X,
+         )
+         from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
+             Qwen2_5_VisionTransformerPretrainedModel,
+             Qwen2_5_VLVisionBlock,
+-            Qwen2_5_VLVisionSdpaAttention,
+-            Qwen2_5_VLVisionFlashAttention2,
++            Qwen2_5_VLVisionAttention,
+             Qwen2_5_VisionPatchEmbed,
+             Qwen2_5_VLModel,
+         )
+@@ -40,8 +38,7 @@ class Qwen2_5_VL(BaseInferModel):
+         Qwen2_5_VLForConditionalGeneration.prepare_inputs_for_generation = Qwen2_5_VLForConditionalGeneration_X.prepare_inputs_for_generation
+         Qwen2_5_VisionTransformerPretrainedModel.forward = Qwen2_5_VisionTransformerPretrainedModel_X.forward
+         Qwen2_5_VLVisionBlock.forward = Qwen2_5_VLVisionBlock_X.forward
+-        Qwen2_5_VLVisionSdpaAttention.forward = Qwen2_5_VLVisionSdpaAttention_X.forward
+-        Qwen2_5_VLVisionFlashAttention2.forward = Qwen2_5_VLVisionFlashAttention2_X.forward
++        Qwen2_5_VLVisionAttention.forward = Qwen2_5_VLVisionAttention_X.forward
+         Qwen2_5_VisionPatchEmbed.forward = Qwen2_5_VisionPatchEmbed_X.forward
+         Qwen2_5_VLModel.forward = Qwen2_5_VLModel_X.forward
+         Qwen2_5_VLModel.layer_prune = Qwen2_5_VLModel_X.layer_prune
+diff --git a/viscot_eval/models/qwen2_5_vl_vscan.py b/viscot_eval/models/qwen2_5_vl_vscan.py
+index ba68dd0..e82de41 100644
+--- a/viscot_eval/models/qwen2_5_vl_vscan.py
++++ b/viscot_eval/models/qwen2_5_vl_vscan.py
+@@ -10,8 +10,7 @@ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
+         Qwen2_5_VLForConditionalGeneration,
+         Qwen2_5_VisionTransformerPretrainedModel,
+         Qwen2_5_VLVisionBlock,
+-        Qwen2_5_VLVisionSdpaAttention,
+-        Qwen2_5_VLVisionFlashAttention2,
++        Qwen2_5_VLVisionAttention,
+         Qwen2_5_VisionPatchEmbed,
+         Qwen2_5_VLModel,
+     )
+@@ -19,9 +18,8 @@ from qwen_vscan.model.qwen2_5_vl_custom import (
+         Qwen2_5_VLForConditionalGeneration_X, 
+         Qwen2_5_VisionTransformerPretrainedModel_X, 
+         Qwen2_5_VLVisionBlock_X, 
+-        Qwen2_5_VLVisionSdpaAttention_X,
+-        Qwen2_5_VLVisionFlashAttention2_X,
+-        Qwen2_5_VisionPatchEmbed_X, 
++        Qwen2_5_VLVisionAttention_X,
++        Qwen2_5_VisionPatchEmbed_X,
+         Qwen2_5_VLModel_X
+     )
+ 
+@@ -43,8 +41,7 @@ class Qwen2_5_VL_VScan(BaseInferModel):
+         
+         Qwen2_5_VisionTransformerPretrainedModel.forward = Qwen2_5_VisionTransformerPretrainedModel_X.forward
+         Qwen2_5_VLVisionBlock.forward = Qwen2_5_VLVisionBlock_X.forward
+-        Qwen2_5_VLVisionSdpaAttention.forward = Qwen2_5_VLVisionSdpaAttention_X.forward
+-        Qwen2_5_VLVisionFlashAttention2.forward = Qwen2_5_VLVisionFlashAttention2_X.forward
++        Qwen2_5_VLVisionAttention.forward = Qwen2_5_VLVisionAttention_X.forward
+         Qwen2_5_VisionPatchEmbed.forward = Qwen2_5_VisionPatchEmbed_X.forward
+         Qwen2_5_VLModel.forward = Qwen2_5_VLModel_X.forward
+         Qwen2_5_VLModel.layer_prune = Qwen2_5_VLModel_X.layer_prune

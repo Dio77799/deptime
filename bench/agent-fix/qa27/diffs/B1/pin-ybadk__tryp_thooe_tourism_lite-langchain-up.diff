@@ -1,0 +1,58 @@
+diff --git a/chat_interface.py b/chat_interface.py
+index 8a76df1..8f60531 100644
+--- a/chat_interface.py
++++ b/chat_interface.py
+@@ -49,13 +49,13 @@ warnings.filterwarnings('ignore')
+ try:
+     from langchain_core.messages import AIMessage, HumanMessage
+     from langchain_community.document_loaders import WebBaseLoader
+-    from langchain.text_splitter import RecursiveCharacterTextSplitter
++    from langchain_text_splitters import RecursiveCharacterTextSplitter
+     from langchain_community.vectorstores import Chroma
+     from langchain_community.embeddings import HuggingFaceEmbeddings
+     from langchain_community.llms import HuggingFacePipeline
+     from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+-    from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+-    from langchain.chains.combine_documents import create_stuff_documents_chain
++    from langchain_classic.chains import create_history_aware_retriever, create_retrieval_chain
++    from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+     from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+     import torch
+     LANGCHAIN_AVAILABLE = True
+diff --git a/improved_offline_rag.py b/improved_offline_rag.py
+index c30dc31..370dec3 100644
+--- a/improved_offline_rag.py
++++ b/improved_offline_rag.py
+@@ -1,14 +1,14 @@
+ import os
+ import re
+ from typing import List, Dict, Any
+-from langchain.chains import LLMChain, RetrievalQA
+-from langchain.llms import HuggingFacePipeline
+-from langchain.chains.question_answering import load_qa_chain
+-from langchain.prompts import PromptTemplate
++from langchain_classic.chains import LLMChain, RetrievalQA
++from langchain_community.llms import HuggingFacePipeline
++from langchain_classic.chains.question_answering import load_qa_chain
++from langchain_core.prompts import PromptTemplate
+ from transformers import pipeline
+ from langchain_community.vectorstores import FAISS
+ from langchain_community.embeddings import HuggingFaceEmbeddings, Model2vecEmbeddings
+-from langchain.schema import Document
++from langchain_core.documents import Document
+ from langchain_community.document_loaders import TextLoader
+ import numpy as np
+ from sklearn.metrics.pairwise import cosine_similarity
+diff --git a/services/tourism_ai_service.py b/services/tourism_ai_service.py
+index ff77c34..ef18d0f 100644
+--- a/services/tourism_ai_service.py
++++ b/services/tourism_ai_service.py
+@@ -5,7 +5,7 @@ from dataclasses import dataclass
+ from typing import Any, Dict, Iterable, List, Sequence, Tuple
+ 
+ try:
+-    from langchain.text_splitter import RecursiveCharacterTextSplitter
++    from langchain_text_splitters import RecursiveCharacterTextSplitter
+ except ImportError:  # pragma: no cover - optional dependency at runtime
+     RecursiveCharacterTextSplitter = None
+ 

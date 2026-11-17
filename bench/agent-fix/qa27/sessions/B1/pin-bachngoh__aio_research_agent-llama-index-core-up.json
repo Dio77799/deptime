@@ -1,0 +1,107 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 27,
+  "duration_ms": 85524,
+  "total_cost_usd": 0.32351569999999996,
+  "usage": {
+   "input_tokens": 32,
+   "cache_creation_input_tokens": 37651,
+   "cache_read_input_tokens": 452677,
+   "output_tokens": 12758,
+   "output_tokens_details": {
+    "thinking_tokens": 3782
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 37651,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1387,
+     "cache_read_input_tokens": 47954,
+     "cache_creation_input_tokens": 163,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 163
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.28,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.33,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 12,
+  "Read": 2,
+  "mcp__plugin_deptime_deptime__diff_versions": 1,
+  "mcp__plugin_deptime_deptime__check_symbols": 1,
+  "Edit": 9,
+  "Grep": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.3 check-upgrade . --package llama-index-core --to 0.14.26 --from 0.10.26 --format markdown --output .deptime-report.md",
+  "diff_versions",
+  "check_symbols",
+  "uvx deptime==0.2.3 check-upgrade . --package llama-index-core --to 0.14.26 --from 0.10.26 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 10,
+ "fetched": [],
+ "denied": 2,
+ "task": "pin-bachngoh__aio_research_agent-llama-index-core-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 87.5,
+ "service_error": false
+}

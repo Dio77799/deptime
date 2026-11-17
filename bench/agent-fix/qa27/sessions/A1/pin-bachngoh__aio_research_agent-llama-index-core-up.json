@@ -1,0 +1,127 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 64,
+  "duration_ms": 234443,
+  "total_cost_usd": 0.7780980999999997,
+  "usage": {
+   "input_tokens": 48,
+   "cache_creation_input_tokens": 80654,
+   "cache_read_input_tokens": 1337806,
+   "output_tokens": 26261,
+   "output_tokens_details": {
+    "thinking_tokens": 11084
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 80654,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1150,
+     "cache_read_input_tokens": 86021,
+     "cache_creation_input_tokens": 410,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 410
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.28,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.33,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 3,
+  "Glob": 1,
+  "Read": 13,
+  "Bash": 1,
+  "WebFetch": 30,
+  "Edit": 14,
+  "Write": 1
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/agent/__init__.py",
+  "https://pypi.org/pypi/llama-index-core/0.14.26/json",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/agent/workflow/base_agent.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/agent/workflow/workflow_events.py",
+  "https://pypi.org/pypi/llama-index-llms-openai/json",
+  "https://pypi.org/pypi/llama-index-llms-gemini/json",
+  "https://pypi.org/pypi/llama-index-llms-groq/json",
+  "https://pypi.org/pypi/llama-index-llms-ollama/json",
+  "https://pypi.org/pypi/llama-index-program-openai/json",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/program/function_program.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/question_gen/types.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/question_gen/prompts.py",
+  "https://api.github.com/repos/run-llama/llama_index/contents/llama-index-core/llama_index/core/utilities?ref=v0.14.26",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/agent/workflow/react_agent.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/memory/__init__.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/agent/workflow/function_agent.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/agent/workflow/base_agent.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/utilities/gemini_utils.py",
+  "https://pypi.org/pypi/llama-index-llms-google-genai/json",
+  "https://pypi.org/pypi/llama-index-embeddings-huggingface/json",
+  "https://pypi.org/pypi/llama-index-embeddings-ollama/json",
+  "https://pypi.org/pypi/llama-index-embeddings-openai/json",
+  "https://pypi.org/pypi/llama-index-vector-stores-chroma/json",
+  "https://pypi.org/pypi/llama-index-vector-stores-qdrant/json",
+  "https://pypi.org/pypi/llama-index-llms-huggingface/json",
+  "https://pypi.org/pypi/llama-index-tools-duckduckgo/json",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/indices/vector_store/base.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/vector_stores/__init__.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/postprocessor/__init__.py",
+  "https://raw.githubusercontent.com/run-llama/llama_index/v0.14.26/llama-index-core/llama_index/core/agent/workflow/__init__.py"
+ ],
+ "denied": 0,
+ "task": "pin-bachngoh__aio_research_agent-llama-index-core-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 235.0,
+ "service_error": false
+}

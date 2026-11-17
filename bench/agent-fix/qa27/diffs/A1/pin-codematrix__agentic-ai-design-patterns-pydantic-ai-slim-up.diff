@@ -1,0 +1,414 @@
+diff --git a/_utils/message_history.py b/_utils/message_history.py
+index fe872b5..615606e 100644
+--- a/_utils/message_history.py
++++ b/_utils/message_history.py
+@@ -20,8 +20,13 @@ class MessageHistory:
+         return self
+ 
+     def append(self, part: ModelMessage) -> Self:
++        def unwrap(t):
++            # each union member may itself be Annotated[Cls, Tag(...)]
++            return get_args(t)[0] if get_origin(t) is Annotated else t
++
+         def get_raw_types(annotated_type):
+-            return get_args(get_args(annotated_type)[0]) if get_origin(annotated_type) is Annotated else get_args(annotated_type)
++            union = unwrap(annotated_type)
++            return tuple(unwrap(member) for member in get_args(union))
+ 
+         model_request_parts = get_raw_types(ModelRequestPart)
+         model_response_parts = get_raw_types(ModelResponsePart)
+diff --git a/design_patterns/full_autonomous/console.py b/design_patterns/full_autonomous/console.py
+index 7472694..a7be71b 100644
+--- a/design_patterns/full_autonomous/console.py
++++ b/design_patterns/full_autonomous/console.py
+@@ -22,7 +22,7 @@ tools = AsanaTools()
+ 
+ async def main_async():            
+     agent = Agent(
+-        model="openai:gpt-4o-mini",
++        model="openai-chat:gpt-4o-mini",
+         tools=tools.get_tools(),        
+         system_prompt=(
+             "You are a personal assistant to help manage project tasks. "
+diff --git a/design_patterns/full_autonomous/streamlit_ui.py b/design_patterns/full_autonomous/streamlit_ui.py
+index 3dfcd2d..002a8aa 100644
+--- a/design_patterns/full_autonomous/streamlit_ui.py
++++ b/design_patterns/full_autonomous/streamlit_ui.py
+@@ -24,7 +24,7 @@ load_dotenv()
+ tools = AsanaTools()
+ 
+ agent = Agent(
+-    model="openai:gpt-4o-mini",
++    model="openai-chat:gpt-4o-mini",
+     tools=tools.get_tools(),        
+     system_prompt=(
+         "You are a personal assistant to help manage project tasks. "
+diff --git a/design_patterns/prompt_chaining/city_insights.py b/design_patterns/prompt_chaining/city_insights.py
+index 4ceb3db..8686c83 100644
+--- a/design_patterns/prompt_chaining/city_insights.py
++++ b/design_patterns/prompt_chaining/city_insights.py
+@@ -11,14 +11,14 @@ from colorama import Fore
+ from dotenv import load_dotenv
+ from pydantic import BaseModel, Field
+ from pydantic_ai import Agent
+-from pydantic_ai.models.openai import OpenAIModel
++from pydantic_ai.models.openai import OpenAIChatModel
+ from pydantic_ai.models.groq import GroqModel
+-from pydantic_ai.usage import Usage
+-from pydantic_graph import BaseNode, End, Graph, GraphRunContext
++from pydantic_ai.usage import RunUsage
++from pydantic_graph import BaseNode, End, GraphBuilder, GraphRunContext, StepContext
+ 
+ load_dotenv()
+ 
+-open_ai_model = OpenAIModel("gpt-4o-mini")
++open_ai_model = OpenAIChatModel("gpt-4o-mini")
+ groq_model_llama = GroqModel("llama-3.3-70b-versatile")
+ groq_model_mixtral = GroqModel("mixtral-8x7b-32768")
+ 
+@@ -38,14 +38,14 @@ class CityInsightsState(BaseModel):
+     city_details: Optional[CityDetailsResponse] = None
+     brief_history: Optional[str] = None
+     summarized: Optional[str] = None
+-    usage: Usage = Usage()
++    usage: RunUsage = RunUsage()
+ 
+ class CityInsights:
+-    class CityDetails(BaseNode[CityInsightsState]):
++    class CityDetails(BaseNode[CityInsightsState, object, None]):
+         def __init__(self):
+             self.agent = Agent(
+                 model=open_ai_model,      
+-                result_type=CityDetailsResponse,                
++                output_type=CityDetailsResponse,
+                 system_prompt=("""
+                     You're an assistant that provides regional details about a city.
+ 
+@@ -64,7 +64,7 @@ class CityInsights:
+                 usage=ctx.state.usage                
+             )            
+             
+-            ctx.state.city_details = capital_result.data
++            ctx.state.city_details = capital_result.output
+         
+             if ctx.state.city_details.city is None:
+                 return End(None)
+@@ -84,11 +84,11 @@ class CityInsights:
+                 usage=ctx.state.usage                
+             )
+ 
+-            ctx.state.brief_history = capital_history_result.data         
++            ctx.state.brief_history = capital_history_result.output
+                                
+             return CityInsights.SummarizeResult()
+ 
+-    class SummarizeResult(BaseNode[CityInsightsState]):
++    class SummarizeResult(BaseNode[CityInsightsState, object, None]):
+         def __init__(self):
+             self.agent = Agent(                
+                 model=groq_model_mixtral,
+@@ -101,22 +101,30 @@ class CityInsights:
+                 usage=ctx.state.usage          
+             )
+             
+-            ctx.state.summarized = summarized_result.data
++            ctx.state.summarized = summarized_result.output
+             
+             return End(None)           
+                 
+     def __init__(self):
+-        self.graph = Graph(nodes=[
+-            CityInsights.CityDetails, 
+-            CityInsights.CityHistory, 
+-            CityInsights.SummarizeResult
+-        ])
+-    
++        builder = GraphBuilder(state_type=CityInsightsState)
++
++        @builder.step
++        async def start(ctx: StepContext[CityInsightsState, None, None]) -> CityInsights.CityDetails:
++            return CityInsights.CityDetails()
++
++        builder.add(
++            builder.node(CityInsights.CityDetails),
++            builder.node(CityInsights.CityHistory),
++            builder.node(CityInsights.SummarizeResult),
++            builder.edge_from(builder.start_node).to(start),
++        )
++        self.graph = builder.build()
++
+     async def get_details_async(self, prompt: str) -> CityDetailResponse:
+         graphState = CityInsightsState()
+         graphState.prompt = prompt
+-        
+-        await self.graph.run(CityInsights.CityDetails(), state=graphState)
++
++        await self.graph.run(state=graphState)
+         return CityDetailResponse(
+             city_details=graphState.city_details if graphState.city_details else None,  
+             summarized_history=graphState.summarized
+diff --git a/design_patterns/supervisor/call_centre_multi_agent.py b/design_patterns/supervisor/call_centre_multi_agent.py
+index ad1aaf2..d8dc0c6 100644
+--- a/design_patterns/supervisor/call_centre_multi_agent.py
++++ b/design_patterns/supervisor/call_centre_multi_agent.py
+@@ -29,15 +29,15 @@ from colorama import Fore
+ from dotenv import load_dotenv
+ from pydantic import BaseModel, Field
+ from pydantic_ai import Agent
+-from pydantic_ai.models.openai import OpenAIModel
+-from pydantic_ai.usage import Usage
+-from pydantic_graph import BaseNode, End, Graph, GraphRunContext
++from pydantic_ai.models.openai import OpenAIChatModel
++from pydantic_ai.usage import RunUsage
++from pydantic_graph import BaseNode, End, GraphBuilder, GraphRunContext, StepContext
+ 
+ from _utils.message_history import MessageHistory
+ 
+ load_dotenv()
+ 
+-open_ai_model = OpenAIModel("gpt-4o-mini")
++open_ai_model = OpenAIChatModel("gpt-4o-mini")
+ 
+ class Specialist(Enum):
+     General = "general"
+@@ -50,7 +50,7 @@ class Specialist(Enum):
+ class CallCentreResponse(BaseModel):
+     specialist: Specialist = Field(default=Specialist.General)
+     response: str | None = Field(default=None)
+-    usage: Usage | None = Field(default=None)    
++    usage: RunUsage | None = Field(default=None)
+     
+ class CallCentre:
+     class GraphState:
+@@ -58,7 +58,7 @@ class CallCentre:
+         specialist: Specialist = Field(default=Specialist.General)
+         response: CallCentreResponse = None
+         history: MessageHistory = MessageHistory()
+-        usage: Usage = Usage()              
++        usage: RunUsage = RunUsage()
+         
+     class Specialist:
+         def finalize(self, response: str, ctx: GraphRunContext[CallCentre.GraphState]):
+@@ -69,7 +69,7 @@ class CallCentre:
+                 usage=ctx.state.usage
+             )                        
+         
+-    class Supervisor(BaseNode[GraphState], Specialist):
++    class Supervisor(BaseNode[GraphState, object, CallCentreResponse], Specialist):
+         class Response(BaseModel):
+             specialist: Specialist = Specialist.General
+             general_response: Optional[str] = None        
+@@ -77,7 +77,7 @@ class CallCentre:
+         def __init__(self):
+             self.agent = Agent(
+                 model=open_ai_model,      
+-                result_type=CallCentre.Supervisor.Response,               
++                output_type=CallCentre.Supervisor.Response,
+                 system_prompt=("""
+                     You're a customer service rep that works for a company that sells Cell Phone products and services. Analyze the user's input and select the most appropriate support team from these options: 
+                     - Billing
+@@ -112,9 +112,9 @@ class CallCentre:
+                 )
+                 
+                 ctx.state.history.assign(result.all_messages()).remove_part_kind("system-prompt")
+-                ctx.state.specialist = result.data.specialist                                                                                              
+-                        
+-                match result.data.specialist:
++                ctx.state.specialist = result.output.specialist
++
++                match result.output.specialist:
+                     case Specialist.Account | Specialist.Billing:
+                         return CallCentre.BillingAccountSpecialist()
+                 
+@@ -125,7 +125,7 @@ class CallCentre:
+                         return CallCentre.TechnicalSupportSpecialist()
+             
+                 # general response                
+-                super().finalize(response=result.data.general_response, ctx=ctx)
++                super().finalize(response=result.output.general_response, ctx=ctx)
+         
+             # print(Fore.LIGHTGREEN_EX + ctx.state.history.to_json(indent=2))
+             return End(ctx.state.response )
+@@ -152,7 +152,7 @@ class CallCentre:
+             )            
+             
+             ctx.state.history.assign(result.all_messages())      
+-            super().finalize(response=result.data, ctx=ctx)
++            super().finalize(response=result.output, ctx=ctx)
+                              
+             return CallCentre.Supervisor()  
+ 
+@@ -180,7 +180,7 @@ class CallCentre:
+             )            
+             
+             ctx.state.history.assign(result.all_messages())      
+-            super().finalize(response=result.data, ctx=ctx)
++            super().finalize(response=result.output, ctx=ctx)
+             
+             return CallCentre.Supervisor()  
+         
+@@ -208,25 +208,36 @@ class CallCentre:
+             )            
+             
+             ctx.state.history.assign(result.all_messages())      
+-            super().finalize(response=result.data, ctx=ctx)
++            super().finalize(response=result.output, ctx=ctx)
+               
+             return CallCentre.Supervisor()  
+     
+     def __init__(self):
+         self.reset_state()
+-        
+-        self.graph = Graph(nodes=[
+-            CallCentre.Supervisor, 
+-            CallCentre.BillingAccountSpecialist, 
+-            CallCentre.TechnicalSupportSpecialist,
+-            CallCentre.ProductServiceSpecialist,
+-        ])                
+-        
++
++        builder = GraphBuilder(
++            state_type=CallCentre.GraphState,
++            output_type=CallCentreResponse,
++        )
++
++        @builder.step
++        async def start(ctx: StepContext[CallCentre.GraphState, None, None]) -> CallCentre.Supervisor:
++            return CallCentre.Supervisor()
++
++        builder.add(
++            builder.node(CallCentre.Supervisor),
++            builder.node(CallCentre.BillingAccountSpecialist),
++            builder.node(CallCentre.TechnicalSupportSpecialist),
++            builder.node(CallCentre.ProductServiceSpecialist),
++            builder.edge_from(builder.start_node).to(start),
++        )
++        self.graph = builder.build()
++
+     async def ask_async(self, prompt: str) -> CallCentreResponse:
+-        self.state.prompt = prompt 
++        self.state.prompt = prompt
+         self.state.response = None
+-               
+-        await self.graph.run(CallCentre.Supervisor(), state=self.state)
++
++        await self.graph.run(state=self.state)
+         return self.state.response
+ 
+     def reset_state(self):
+diff --git a/design_patterns/supervisor/call_centre_multi_agent_as_tools.py b/design_patterns/supervisor/call_centre_multi_agent_as_tools.py
+index 75be455..cf95422 100644
+--- a/design_patterns/supervisor/call_centre_multi_agent_as_tools.py
++++ b/design_patterns/supervisor/call_centre_multi_agent_as_tools.py
+@@ -22,25 +22,25 @@ from colorama import Fore
+ from dotenv import load_dotenv
+ from pydantic_ai import Agent
+ from pydantic_ai.messages import TextPart
+-from pydantic_ai.models.openai import OpenAIModel
+-from pydantic_ai.usage import Usage
++from pydantic_ai.models.openai import OpenAIChatModel
++from pydantic_ai.usage import RunUsage
+ from call_centre_tools import CallCentreTools, CallCentreToolStates
+ from _utils.message_history import MessageHistory
+ from _utils.utils import Utils
+ 
+ load_dotenv()
+ 
+-open_ai_model = OpenAIModel("gpt-4o-mini")
+-        
+-class CallCentreResponse:    
+-    def __init__(self, response: str, usage: Usage):
++open_ai_model = OpenAIChatModel("gpt-4o-mini")
++
++class CallCentreResponse:
++    def __init__(self, response: str, usage: RunUsage):
+         self.response = response        
+         self.usage = usage             
+     
+ class CallCentre:    
+     class States:                
+         history: MessageHistory = MessageHistory()
+-        usage: Usage = Usage()
++        usage: RunUsage = RunUsage()
+         
+     def __init__(self):
+         self.initialize()
+@@ -52,7 +52,7 @@ class CallCentre:
+         self.supervisor = Agent(
+             model=open_ai_model,      
+             tools=CallCentreTools(self.tool_states).get_tools(),             
+-            result_retries=1,                                     
++            retries={"output": 1},
+             system_prompt=("""
+                 You're a call-centre supervisor. You have the following specialists on your team:                
+                 - technical support 
+diff --git a/design_patterns/supervisor/call_centre_tools.py b/design_patterns/supervisor/call_centre_tools.py
+index 3223fff..6606d35 100644
+--- a/design_patterns/supervisor/call_centre_tools.py
++++ b/design_patterns/supervisor/call_centre_tools.py
+@@ -8,13 +8,13 @@ from typing import List
+ from pydantic_ai import Agent
+ from pydantic_ai.models import Model
+ from pydantic_ai.tools import Tool
+-from pydantic_ai.usage import Usage
++from pydantic_ai.usage import RunUsage
+ 
+ class CallCentreToolStates:
+     model: Model
+-    usage: Usage
+-    
+-    def __init__(self, model: Model, usage: Usage):
++    usage: RunUsage
++
++    def __init__(self, model: Model, usage: RunUsage):
+         self.model = model
+         self.usage = usage    
+ 
+@@ -89,8 +89,8 @@ class CallCentreTools:
+             user_prompt=user_prompt,
+             usage=self.__states__.usage
+         )
+-        
+-        return result.data
++
++        return result.output
+     
+     async def billing_account_specialist(self, user_prompt: str) -> str:
+         """
+@@ -109,8 +109,8 @@ class CallCentreTools:
+             user_prompt=user_prompt,
+             usage=self.__states__.usage
+         )
+-                
+-        return result.data
++
++        return result.output
+     
+     async def product_service_specialist(self, user_prompt: str) -> str:
+         """
+@@ -130,7 +130,7 @@ class CallCentreTools:
+             usage=self.__states__.usage
+         )
+         
+-        return result.data        
++        return result.output
+ 
+     def get_tools(self) -> List[Tool]:
+         return self.__tools__
+diff --git a/requirements.txt b/requirements.txt
+index f9d0e7d..280d1a8 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -48,9 +48,9 @@ pyarrow==19.0.0
+ pyasn1==0.6.1
+ pyasn1_modules==0.4.1
+ pydantic==2.10.6
+-pydantic-ai==0.0.20
+-pydantic-ai-slim==0.0.20
+-pydantic-graph==0.0.20
++pydantic-ai==2.68.0
++pydantic-ai-slim[openai,groq]==2.68.0
++pydantic-graph==2.68.0
+ pydantic_core==2.27.2
+ pydeck==0.9.1
+ Pygments==2.19.1

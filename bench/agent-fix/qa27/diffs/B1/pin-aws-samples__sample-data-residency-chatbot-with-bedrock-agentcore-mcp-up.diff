@@ -1,0 +1,80 @@
+diff --git a/src/agent/handler.py b/src/agent/handler.py
+index 279122f..69e301d 100644
+--- a/src/agent/handler.py
++++ b/src/agent/handler.py
+@@ -82,13 +82,14 @@ def _history_text(turns: list[dict]) -> str:
+ def _build_agent(history_block: str):
+     """Construct the Strands Agent + Gateway MCP client (returns (agent, mcp_client)).
+ 
+-    The MCP client connects to the Gateway MCP URL using a SigV4 ``httpx.Auth``
++    The MCP client connects to the Gateway MCP URL using a SigV4 ``httpx2.Auth``
+     for service ``bedrock-agentcore`` in-region. Imports are local so the pure
+     helpers (and tests) don't require the strands/mcp stack to be importable.
+     """
+     from strands.models import BedrockModel
+     from strands.tools.mcp import MCPClient
+-    from mcp.client.streamable_http import streamablehttp_client
++    import httpx2
++    from mcp.client.streamable_http import streamable_http_client
+ 
+     from agent.sigv4 import SigV4HTTPXAuth
+ 
+@@ -104,8 +105,14 @@ def _build_agent(history_block: str):
+         raise RuntimeError("GATEWAY_URL is not configured")
+ 
+     auth = SigV4HTTPXAuth(region=REGION)
++    # mcp 2.x's streamable_http_client has no ``auth=`` kwarg: auth rides on a
++    # pre-built ``httpx2.AsyncClient`` passed as ``http_client``. A fresh client
++    # per transport so each connection owns its own client lifecycle.
+     mcp_client = MCPClient(
+-        lambda: streamablehttp_client(url=GATEWAY_URL, auth=auth)
++        lambda: streamable_http_client(
++            url=GATEWAY_URL,
++            http_client=httpx2.AsyncClient(auth=auth, timeout=httpx2.Timeout(30, read=300)),
++        )
+     )
+ 
+     # Some in-region models do not support tool use in streaming mode, so
+diff --git a/src/agent/sigv4.py b/src/agent/sigv4.py
+index 344c06b..82b3146 100644
+--- a/src/agent/sigv4.py
++++ b/src/agent/sigv4.py
+@@ -9,13 +9,14 @@ role's credentials (the role holds ``bedrock-agentcore:InvokeGateway``).
+ 
+ Rather than pull in the heavyweight ``mcp-proxy-for-aws`` (which depends on
+ ``fastmcp`` and can clash with the ``mcp`` SDK that ships inside ``strands-agents``),
+-we implement a tiny ``httpx.Auth`` that signs each outgoing request with botocore's
+-``SigV4Auth`` (botocore is already a transitive dependency of boto3). This auth is
+-handed to Strands' bundled ``streamablehttp_client(..., auth=...)``.
++we implement a tiny ``httpx2.Auth`` (mcp 2.x's HTTP stack) that signs each outgoing
++request with botocore's ``SigV4Auth`` (botocore is already a transitive dependency of
++boto3). This auth is set on an ``httpx2.AsyncClient`` handed to
++``streamable_http_client(..., http_client=...)``.
+ """
+ from __future__ import annotations
+ 
+-import httpx
++import httpx2
+ from botocore.auth import SigV4Auth
+ from botocore.awsrequest import AWSRequest
+ from botocore.session import Session as BotocoreSession
+@@ -26,8 +27,8 @@ _SERVICE = "bedrock-agentcore"
+ _SKIP_HEADERS = {"connection", "content-length", "host", "transfer-encoding"}
+ 
+ 
+-class SigV4HTTPXAuth(httpx.Auth):
+-    """An ``httpx.Auth`` that SigV4-signs each request for ``bedrock-agentcore``.
++class SigV4HTTPXAuth(httpx2.Auth):
++    """An ``httpx2.Auth`` that SigV4-signs each request for ``bedrock-agentcore``.
+ 
+     Credentials are resolved from the standard botocore provider chain (the
+     Lambda execution role at runtime; the local profile during a CLI smoke test).
+@@ -46,7 +47,7 @@ class SigV4HTTPXAuth(httpx.Auth):
+                 "No AWS credentials available to sign AgentCore Gateway requests."
+             )
+ 
+-    def auth_flow(self, request: httpx.Request):
++    def auth_flow(self, request: httpx2.Request):
+         body = request.content or b""
+ 
+         # Build a botocore request mirroring the httpx request, carrying only the

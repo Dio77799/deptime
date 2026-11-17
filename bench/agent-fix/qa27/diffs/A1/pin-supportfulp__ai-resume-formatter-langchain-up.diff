@@ -1,0 +1,105 @@
+diff --git a/api_requirements.txt b/api_requirements.txt
+index aca87ba..8c235bd 100644
+--- a/api_requirements.txt
++++ b/api_requirements.txt
+@@ -8,12 +8,9 @@ python-dotenv==1.0.0
+ psycopg2-binary==2.9.9
+ 
+ # Existing project dependencies (from requirements.txt)
+-langchain==0.0.335
+-langchain-community==0.0.8
+-langchain-google-genai==0.0.5
+-google-generativeai==0.3.1
+-pydantic==2.5.0
+-pydantic-core==2.14.1
++langchain==1.5.0
++langchain-google-genai==4.5.0
++pydantic>=2.7.4
+ pypdf2==3.0.1
+ python-docx==1.1.0
+ pillow==10.1.0
+\ No newline at end of file
+diff --git a/pyproject.toml b/pyproject.toml
+index 7a5b77c..00ac21d 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -8,7 +8,7 @@ version = "1.0.0"
+ description = "An intelligent resume formatting system using LangChain and LLMs"
+ authors = [{name = "Your Name", email = "your.email@example.com"}]
+ readme = "README.md"
+-requires-python = ">=3.8"
++requires-python = ">=3.11"
+ classifiers = [
+     "Development Status :: 3 - Alpha",
+     "Intended Audience :: Developers",
+@@ -20,17 +20,15 @@ classifiers = [
+     "Programming Language :: Python :: 3.11",
+ ]
+ dependencies = [
+-    "langchain>=0.1.0",
+-    "langchain-google-genai>=0.0.5",
+-    "langchain-community>=0.0.10",
+-    "pydantic>=2.0.0",
++    "langchain>=1.5.0",
++    "langchain-google-genai>=4.5.0",
++    "pydantic>=2.7.4",
+     "python-dotenv>=1.0.0",
+     "pypdf2>=3.0.0",
+     "python-docx>=0.8.11",
+     "jinja2>=3.1.0",
+     "fastapi>=0.104.0",
+     "uvicorn>=0.24.0",
+-    "google-generativeai>=0.3.0",
+ ]
+ 
+ [project.optional-dependencies]
+diff --git a/src/chains/resume_formatter.py b/src/chains/resume_formatter.py
+index d4522b6..5a5679c 100644
+--- a/src/chains/resume_formatter.py
++++ b/src/chains/resume_formatter.py
+@@ -4,7 +4,7 @@ import json
+ import re
+ from typing import Dict, Any, Optional
+ from langchain_google_genai import ChatGoogleGenerativeAI
+-from langchain.output_parsers import PydanticOutputParser
++from langchain_core.output_parsers import PydanticOutputParser
+ 
+ from ..models.resume_models import ResumeData, ResumeProcessingRequest, ResumeProcessingResponse
+ from ..prompts.resume_prompts import (
+diff --git a/src/chains/resume_restructure_chain.py b/src/chains/resume_restructure_chain.py
+index e35e3b8..fea292a 100644
+--- a/src/chains/resume_restructure_chain.py
++++ b/src/chains/resume_restructure_chain.py
+@@ -11,7 +11,7 @@ from ..prompts.resume_restructure_prompts import RESUME_RESTRUCTURE_PROMPT
+ from ..adapters.pdf_adapter import PDFAdapter
+ from ..adapters.docx_adapter import DOCXAdapter
+ from ..utils.text_processor import TextProcessor
+-from langchain.prompts import PromptTemplate
++from langchain_core.prompts import PromptTemplate
+ 
+ 
+ class ResumeRestructureChain:
+diff --git a/src/prompts/resume_prompts.py b/src/prompts/resume_prompts.py
+index fef8bd8..1af0561 100644
+--- a/src/prompts/resume_prompts.py
++++ b/src/prompts/resume_prompts.py
+@@ -1,6 +1,6 @@
+ """Prompt templates for resume processing tasks."""
+ 
+-from langchain.prompts import PromptTemplate
++from langchain_core.prompts import PromptTemplate
+ 
+ 
+ # Extract structured information from resume text
+diff --git a/src/prompts/resume_restructure_prompts.py b/src/prompts/resume_restructure_prompts.py
+index ec0b7b0..dcdf041 100644
+--- a/src/prompts/resume_restructure_prompts.py
++++ b/src/prompts/resume_restructure_prompts.py
+@@ -1,6 +1,6 @@
+ """Prompt templates for resume restructuring according to predefined template."""
+ 
+-from langchain.prompts import PromptTemplate
++from langchain_core.prompts import PromptTemplate
+ 
+ 
+ # Main resume restructuring prompt

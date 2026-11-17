@@ -1,0 +1,13 @@
+diff --git a/src/t20/core/agents/llm.py b/src/t20/core/agents/llm.py
+index 9ac3eb4..bac7d8f 100644
+--- a/src/t20/core/agents/llm.py
++++ b/src/t20/core/agents/llm.py
+@@ -634,7 +634,7 @@ class Opi(LLM):
+ ##
+ 
+ 
+-from mistralai import Mistral as MistralClient
++from mistralai.client import Mistral as MistralClient
+ from mistralai.extra.utils import response_format_from_pydantic_model
+ 
+ @register_provider("mistral")

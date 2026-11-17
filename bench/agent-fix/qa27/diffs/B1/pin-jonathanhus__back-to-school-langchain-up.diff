@@ -1,0 +1,62 @@
+diff --git a/baselines/main.py b/baselines/main.py
+index c58b079..2e2cd00 100644
+--- a/baselines/main.py
++++ b/baselines/main.py
+@@ -10,28 +10,30 @@ from typing import Any, Dict, List, Literal, Optional, Union
+ import numpy as np
+ import pylcs
+ import torch
+-from langchain.callbacks.base import BaseCallbackHandler
+-from langchain.chains import LLMChain
++from langchain_core.callbacks.base import BaseCallbackHandler
++from langchain_core.globals import set_verbose
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.runnables import RunnablePassthrough
+ from langchain_community.chat_models import ChatAnthropic, ChatOpenAI
+ from langchain_openai import ChatOpenAI, AzureChatOpenAI
+ # from langchain.chat_models import ChatAnthropic, ChatOpenAI
+-from langchain.docstore.document import Document
++from langchain_core.documents import Document
+ from langchain_community.document_loaders import TextLoader
+ # from langchain.document_loaders import TextLoader
+ # from langchain.embeddings import HuggingFaceEmbeddings
+ from langchain_community.embeddings import HuggingFaceEmbeddings
+ # from langchain.llms import HuggingFacePipeline, OpenAI
+ from langchain_community.llms import HuggingFacePipeline, OpenAI
+-from langchain.llms.fake import FakeListLLM
++from langchain_core.language_models.fake import FakeListLLM
+ # from langchain.prompts import FewShotPromptTemplate, PromptTemplate
+-from langchain.prompts.few_shot import FewShotPromptTemplate
+-from langchain.prompts.prompt import PromptTemplate
++from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
+ # from langchain.prompts.base import DEFAULT_FORMATTER_MAPPING
+ from langchain_core.prompts.string import DEFAULT_FORMATTER_MAPPING
+-from langchain.prompts.example_selector.ngram_overlap import BaseExampleSelector, BaseModel
+-from langchain.text_splitter import LatexTextSplitter, TokenTextSplitter
++from langchain_core.example_selectors import BaseExampleSelector
++from pydantic import BaseModel
++from langchain_text_splitters import LatexTextSplitter, TokenTextSplitter
+ from langchain_community.vectorstores import Chroma
+-from langchain.vectorstores.base import VectorStore
++from langchain_core.vectorstores import VectorStore
+ #from pydantic import root_validator
+ from tap import Tap
+ from tqdm import tqdm
+@@ -542,11 +544,12 @@ few_shot_prompt_template = MultipleFewShotPromptTemplate(
+     input_variables=['source']
+ )
+ 
+-# Example chain with few-shot examples
+-llm_fewshot_chain = LLMChain(
+-    llm=llm, 
+-    prompt=few_shot_prompt_template, 
+-    verbose=args.verbose
++# Example chain with few-shot examples.
++# LLMChain was removed in langchain 1.0; this LCEL chain returns the same dict
++# (the input keys plus 'text'), which the loop below relies on.
++set_verbose(args.verbose)
++llm_fewshot_chain = RunnablePassthrough.assign(
++    text=few_shot_prompt_template | llm | StrOutputParser()
+ )
+ chain = llm_fewshot_chain
+ 

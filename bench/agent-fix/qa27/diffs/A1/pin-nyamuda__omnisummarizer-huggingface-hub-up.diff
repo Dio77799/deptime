@@ -1,0 +1,59 @@
+diff --git a/server_code/ServerModule1.py b/server_code/ServerModule1.py
+index d8492b2..c2dee58 100644
+--- a/server_code/ServerModule1.py
++++ b/server_code/ServerModule1.py
+@@ -1,15 +1,15 @@
+ import anvil.secrets
+ import anvil.server
+ from huggingface_hub import InferenceClient
+-from huggingface_hub.inference_api import InferenceApi
+ import re
+ API_TOKEN=anvil.secrets.get_secret('HUGGINGFACE_API_TOKEN')
+ client = InferenceClient("nyamuda/summasphere",
+                          token=API_TOKEN)
+ 
+-# Initialize the Inference API
+-inference = InferenceApi(
+-    repo_id="nyamuda/extractive-summarization ", token=API_TOKEN, task="summarization")
++# Second client for the length-controlled summarization model.
++# (InferenceApi was removed in huggingface-hub 1.0; InferenceClient replaces it.)
++length_client = InferenceClient("nyamuda/extractive-summarization",
++                                token=API_TOKEN)
+ 
+ # This is a server module. It runs on the Anvil server,
+ # rather than in the user's browser.
+@@ -35,18 +35,20 @@ def summarize_text(text):
+   prompt=f"summarize: {text}"
+   response=client.summarization(prompt)
+   #clean summary
+-  summary=clean_summary(response["summary_text"])
++  summary=clean_summary(response.summary_text)
+   return summary
+ #summarize using the inference API
+ #this allows to set the max and min summary length
+ @anvil.server.callable
+ def summarize_with_length(prompt,text, max_length,min_length):
+-  parameters = {
+-        "min_length": min_length     
++  # Extra generation settings are passed through `generate_parameters`
++  generate_parameters = {
++        "min_length": min_length
+     }
+-  response = inference(f"{prompt}: {text}", params=parameters)
++  response = length_client.summarization(
++      f"{prompt}: {text}", generate_parameters=generate_parameters)
+   # Get the summarized text
+-  summaryText = response[0]["summary_text"]
++  summaryText = response.summary_text
+   return summaryText
+   
+ 
+diff --git a/server_code/requirements.txt b/server_code/requirements.txt
+index fae3495..cb723ed 100644
+--- a/server_code/requirements.txt
++++ b/server_code/requirements.txt
+@@ -1 +1 @@
+-huggingface-hub==0.26.2
+\ No newline at end of file
++huggingface-hub==2.4.0
+\ No newline at end of file

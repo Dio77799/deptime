@@ -1,0 +1,99 @@
+diff --git a/experiments/pydantic_demo.py b/experiments/pydantic_demo.py
+index 114c005..62408ef 100644
+--- a/experiments/pydantic_demo.py
++++ b/experiments/pydantic_demo.py
+@@ -6,6 +6,7 @@ from anthropic import Anthropic
+ from pydantic_ai import Agent, RunContext
+ from dataclasses import dataclass
+ from pydantic_ai.models.anthropic import AnthropicModel
++from pydantic_ai.providers.anthropic import AnthropicProvider
+ # from openai import OpenAI
+ 
+ 
+@@ -87,9 +88,12 @@ class DiagramDigitizerDependencies:
+ 
+ 
+ diagram_digitizer_agent = Agent(
+-    AnthropicModel("claude-3-5-sonnet-latest", api_key=anthropic_api_key),
++    AnthropicModel(
++        "claude-3-5-sonnet-latest",
++        provider=AnthropicProvider(api_key=anthropic_api_key),
++    ),
+     deps_type=DiagramDigitizerDependencies,
+-    result_type=Graph,
++    output_type=Graph,
+     system_prompt="You are a data scientist and you are working on a project to extract information from a diagram in json format. Which is compatiable with knowledge graph databases. Consider their shape and translate it's purpose(process, decision, etc.) as it is important for the data extraction. only give the json format of the diagram.",
+ )
+ 
+@@ -111,7 +115,7 @@ async def main():
+     result = await diagram_digitizer_agent.run(
+         "Extract the details from the image", deps=deps
+     )
+-    print("Structured Result:", result.data)
++    print("Structured Result:", result.output)
+     print("=" * 100)
+ 
+ 
+diff --git a/phase1/main.py b/phase1/main.py
+index 1220a82..eeb21e7 100644
+--- a/phase1/main.py
++++ b/phase1/main.py
+@@ -4,6 +4,7 @@ import dotenv
+ import os
+ import json
+ from pydantic_ai.models.anthropic import AnthropicModel
++from pydantic_ai.providers.anthropic import AnthropicProvider
+ from neo4j import GraphDatabase
+ from utils import create_edges, create_nodes, check_for_env
+ from models import (
+@@ -25,10 +26,10 @@ driver = GraphDatabase.driver(neo4j_uri, auth=("neo4j", neo4j_password))
+ diagram_digitizer_agent = Agent(
+     AnthropicModel(
+         "claude-3-5-sonnet-latest",
+-        api_key=anthropic_api_key,
++        provider=AnthropicProvider(api_key=anthropic_api_key),
+     ),
+     deps_type=DiagramDigitizerDependencies,
+-    result_type=Graph,
++    output_type=Graph,
+     retries=3,
+     system_prompt="You are a data scientist and you are working on a project to extract information from a diagram in json format. Which is compatiable with knowledge graph databases.Do not change the labels from the image in the output as it should be intact. Consider their shape and translate it's purpose as it is important for the data extraction. only give the json format of the diagram. extract all other information in lowercase and in the same format as the image. But not the labels.",
+ )
+@@ -75,14 +76,14 @@ async def upload_file(file: UploadFile = File(...)):
+ 
+         os.makedirs("outputs", exist_ok=True)
+         with open(f"outputs/{filename}.json", "w") as f:
+-            f.write(json.dumps(result.data.model_dump(), indent=4))
+-            # json.dump(result.data.model_dump(), f, indent=4)
++            f.write(json.dumps(result.output.model_dump(), indent=4))
++            # json.dump(result.output.model_dump(), f, indent=4)
+ 
+     except Exception as e:
+         raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e))
+     finally:
+         with driver.session() as session:
+-            session.execute_write(create_nodes, result.data.model_dump()["nodes"])
+-            session.execute_write(create_edges, result.data.model_dump()["edges"])
++            session.execute_write(create_nodes, result.output.model_dump()["nodes"])
++            session.execute_write(create_edges, result.output.model_dump()["edges"])
+ 
+-    return result.data.model_dump()
++    return result.output.model_dump()
+diff --git a/requirements.txt b/requirements.txt
+index 5585332..3699249 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -75,10 +75,10 @@ pyarrow==19.0.0
+ pyasn1==0.6.1
+ pyasn1-modules==0.4.1
+ pydantic==2.10.6
+-pydantic-ai==0.0.23
+-pydantic-ai-slim==0.0.23
++pydantic-ai==2.68.0
++pydantic-ai-slim==2.68.0
+ pydantic-core==2.27.2
+-pydantic-graph==0.0.23
++pydantic-graph==2.68.0
+ pygments==2.19.1
+ python-dateutil==2.9.0.post0
+ python-dotenv==1.0.1

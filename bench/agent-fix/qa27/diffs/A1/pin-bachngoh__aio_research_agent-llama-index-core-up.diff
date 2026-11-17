@@ -1,0 +1,532 @@
+diff --git a/api/controller.py b/api/controller.py
+index 36c862b..c3f0851 100644
+--- a/api/controller.py
++++ b/api/controller.py
+@@ -33,7 +33,7 @@ async def schedule_task():
+ async def complete_text(request: Request):
+     data = await request.json()
+     message = data.get("message")
+-    response = assistant.predict(message)
++    response = await assistant.predict(message)
+     return response
+ 
+ # Update the schedule time
+diff --git a/api/service.py b/api/service.py
+index 35aa8cd..24a5ffa 100644
+--- a/api/service.py
++++ b/api/service.py
+@@ -6,11 +6,14 @@ from llama_index.llms.groq import Groq
+ from llama_index.llms.openai import OpenAI
+ from llama_index.llms.ollama import Ollama
+ from llama_index.llms.gemini import Gemini
+-from llama_index.core.agent import AgentRunner
+-from llama_index.core.callbacks import CallbackManager
+-# from src.agents.assistant_agent import AssistantAgent
+-from llama_index.agent.openai import OpenAIAgent
+-from llama_index.core.agent import ReActAgent
++from llama_index.core.agent.workflow import (
++    AgentStream,
++    BaseWorkflowAgent,
++    FunctionAgent,
++    ReActAgent,
++    ToolCall,
++    ToolCallResult,
++)
+ # from src.agents.gemini_agent import GeminiForFunctionCalling
+ from llama_index.core import Settings
+ from src.tools.paper_search_tool import load_paper_search_tool, load_daily_paper_tool, load_get_time_tool
+@@ -24,6 +27,7 @@ from llama_index.core.base.llms.types import ChatMessage
+ from dotenv import load_dotenv
+ import logging
+ 
++from src.callbacks.chainlit_callback import show_tool_call, show_tool_result
+ from src.utils.chat_utils import setup_history, handle_next_question_generation, handle_generate_actions
+ from src.constants import (
+     SERVICE,
+@@ -37,11 +41,10 @@ load_dotenv(override=True)
+ 
+ 
+ class AssistantService:
+-    query_engine: AgentRunner
++    query_engine: BaseWorkflowAgent
+     tools_dict: dict
+-    
+-    def __init__(self, callback_manager: Optional[CallbackManager] = None):
+-        self.callback_manager = callback_manager
++
++    def __init__(self):
+         self.query_engine = self.create_query_engine()
+         
+         if ENABLE_QUESTION_RECOMMENDER:
+@@ -61,35 +64,37 @@ class AssistantService:
+     def create_query_engine(self):
+         """
+         Creates and configures a query engine for routing queries to the appropriate tools.
+-        
++
+         This method initializes and configures a query engine for routing queries to specialized tools based on the query type.
+         It loads a language model, along with specific tools for tasks such as code search and paper search.
+-        
++
+         Returns:
+-            AgentRunner: An instance of AgentRunner configured with the necessary tools and settings.
++            BaseWorkflowAgent: A ReActAgent (or a FunctionAgent for OpenAI) configured with the necessary tools and settings.
+         """
+-        
++
+         llm = self.load_model(SERVICE, MODEL_ID)
+         Settings.llm = llm
+         self.tools = self.load_tools()
+-        
++
+         if SERVICE != "openai":
+-            query_engine = ReActAgent.from_tools(
++            # The ReAct agent streams its reasoning ("Thought: ...") as well, so
++            # only the final answer is sent to the user.
++            self.streams_tokens = False
++            query_engine = ReActAgent(
+                 tools=self.tools,
+                 verbose=True,
+                 llm=llm,
+-                system_prompt = SYSTEM_PROMPT,
+-                callback_manager=self.callback_manager
++                system_prompt=SYSTEM_PROMPT,
+             )
+         else:
+-            query_engine = OpenAIAgent.from_tools(
++            self.streams_tokens = True
++            query_engine = FunctionAgent(
+                 tools=self.tools,
+                 verbose=True,
+                 llm=llm,
+-                system_prompt = SYSTEM_PROMPT,
+-                callback_manager=self.callback_manager
++                system_prompt=SYSTEM_PROMPT,
+             )
+-        
++
+         return query_engine
+     
+     def load_model(self, service, model_id):
+@@ -121,7 +126,26 @@ class AssistantService:
+         else:
+             raise NotImplementedError("The implementation for other types of LLMs are not ready yet!")
+     
+-    def predict(self, prompt):
++    @staticmethod
++    def _answer_text(result) -> str:
++        """Extract the final answer text from the AgentOutput returned by an agent run."""
++        return str(result.response.content or "")
++
++    async def _stream_answer(self, prompt):
++        """Run the agent and yield the answer text (token by token when the agent supports it)."""
++        handler = self.query_engine.run(user_msg=prompt)
++
++        streamed = False
++        async for event in handler.stream_events():
++            if self.streams_tokens and isinstance(event, AgentStream) and event.delta:
++                streamed = True
++                yield event.delta
++
++        result = await handler
++        if not streamed:
++            yield self._answer_text(result)
++
++    async def predict(self, prompt):
+         """
+         Predicts the next sequence of text given a prompt using the loaded language model.
+ 
+@@ -129,19 +153,16 @@ class AssistantService:
+             prompt (str): The input prompt for text generation.
+ 
+         Returns:
+-            str: The generated text based on the prompt.
++            Response: The generated text based on the prompt.
+         """
+-        # Assuming query_engine is already created or accessible
++        # Every call is stateless: the agent starts from a fresh memory.
+         if STREAM:
+-            self.query_engine.memory.reset()
+-            streaming_response = self.query_engine.stream_chat(prompt)
+-            
+-            return StreamingResponse(streaming_response.response_gen, media_type="application/text; charset=utf-8")
+-            # return StreamingResponse(streaming_response.response_gen, media_type="application/text; charset=utf-8")
+-            
++            return StreamingResponse(self._stream_answer(prompt), media_type="application/text; charset=utf-8")
++
+         else:
+-            return Response(self.query_engine.chat(prompt).response, media_type="application/text; charset=utf-8")
+-    
++            result = await self.query_engine.run(user_msg=prompt)
++            return Response(self._answer_text(result), media_type="application/text; charset=utf-8")
++
+     
+     async def aon_start(self):
+         cl.user_session.set("history", [])
+@@ -162,24 +183,36 @@ class AssistantService:
+         query_engine = cl.user_session.get("query_engine")
+     
+         history = cl.user_session.get("history")
++        # The agent receives the previous turns as chat history and the new
++        # message separately, so the new message must not be part of the history yet.
++        message_history = [ChatMessage(**m) for m in history]
+         history.append({"role": "user", "content": message.content})
+ 
+-        message_history = [ChatMessage(**message) for message in history]
+-        
+-        res = await cl.make_async(query_engine.stream_chat)(message.content, message_history)
+-        # res = query_engine.stream_chat(message.content)
++        handler = query_engine.run(user_msg=message.content, chat_history=message_history)
+ 
+         msg = cl.Message(content="", author="Assistant")
+ 
+-        for token in res.response_gen:
+-            await msg.stream_token(token)
+-            
++        streamed = False
++        async for event in handler.stream_events():
++            if isinstance(event, ToolCall):
++                await show_tool_call(event)
++            elif isinstance(event, ToolCallResult):
++                await show_tool_result(event)
++            elif self.streams_tokens and isinstance(event, AgentStream) and event.delta:
++                streamed = True
++                await msg.stream_token(event.delta)
++
++        result = await handler
++        response = self._answer_text(result)
++        if not streamed:
++            await msg.stream_token(response)
++
+         await msg.send()
+-        
++
+         if ENABLE_QUESTION_RECOMMENDER:
+-            history.append({"role": "assistant", "content": res.response})
+-            
+-            next_questions = handle_next_question_generation(tools=self.tools, query_str=message.content, llm_response=res.response)
++            history.append({"role": "assistant", "content": response})
++
++            next_questions = handle_next_question_generation(tools=self.tools, query_str=message.content, llm_response=response)
+             handle_generate_actions(next_questions)
+             
+             actions = [
+diff --git a/chainlit_app.py b/chainlit_app.py
+index 85b96c3..a199c0c 100644
+--- a/chainlit_app.py
++++ b/chainlit_app.py
+@@ -3,14 +3,12 @@ from chainlit.types import ThreadDict
+ from chainlit.server import app
+ from api.controller import router
+ from api.service import AssistantService
+-from src.callbacks.chainlit_callback import ChainlitCallback
+-from llama_index.core.callbacks import CallbackManager
+ 
+ app.include_router(router=router, prefix="/v1")
+ 
+ @cl.cache
+ def create_assistant_serivce():
+-    return AssistantService(callback_manager=CallbackManager([ChainlitCallback()]))
++    return AssistantService()
+ 
+ assistant_service = create_assistant_serivce()
+ 
+diff --git a/requirements.txt b/requirements.txt
+index 763eca9..b0dc3bc 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,17 +1,18 @@
+ python-dotenv
+-llama-index-core==0.10.26
+-llama-index-llms-openai==0.1.19
+-llama-index-llms-groq==0.1.3
+-llama-index-llms-huggingface==0.1.4
+-llama-index-llms-ollama==0.1.3
+-llama-index-llms-gemini==0.1.7
++llama-index-core==0.14.26
++llama-index-llms-openai==0.9.0
++llama-index-llms-groq==0.7.0
++llama-index-llms-huggingface==0.9.0
++llama-index-llms-ollama==0.12.0
++llama-index-llms-gemini==0.6.2
+ 
+-llama-index-embeddings-huggingface==0.1.3
+-llama-index-embeddings-ollama==0.1.2
++llama-index-embeddings-huggingface==0.9.0
++llama-index-embeddings-ollama==0.11.0
++llama-index-embeddings-openai==0.8.0
+ 
+-llama-index-tools-duckduckgo==0.1.0
+-llama-index-vector-stores-chroma==0.1.5
+-llama-index-vector-stores-qdrant==0.1.6
++llama-index-tools-duckduckgo==0.7.0
++llama-index-vector-stores-chroma==0.7.0
++llama-index-vector-stores-qdrant==0.11.0
+ 
+ 
+ vllm==0.4.0
+diff --git a/src/callbacks/chainlit_callback.py b/src/callbacks/chainlit_callback.py
+index 5b4a7a7..101d728 100644
+--- a/src/callbacks/chainlit_callback.py
++++ b/src/callbacks/chainlit_callback.py
+@@ -1,128 +1,69 @@
++"""Chainlit rendering of agent tool calls.
++
++llama-index-core >= 0.13 agents are workflow based and no longer emit the
++``CBEventType.FUNCTION_CALL`` callback events. Instead, ``agent.run(...)``
++returns a handler whose ``stream_events()`` yields ``ToolCall`` and
++``ToolCallResult`` events. The helpers below render those events in Chainlit.
++"""
++
+ import ast
+ import logging
+ import chainlit as cl
+-from chainlit import run_sync
+-from typing import Any, Dict, List, Optional
+ 
+-from llama_index.core.callbacks.base_handler import BaseCallbackHandler
+-from llama_index.core.callbacks.schema import CBEventType, EventPayload
++from llama_index.core.agent.workflow import ToolCall, ToolCallResult
+ from ui_templates.source_container import SOURCE_CONTAINER_TEMPLATE, SOURCE_NODE_CONTENT_TEMPLATE
+ from src.utils.misc import get_website_info
+ 
+ logger = logging.getLogger(__name__)
+ logger.setLevel(logging.WARNING)
+ 
+-async def run_step(payload):
+-    function_response = ast.literal_eval(payload["function_call_response"])
++
++def _extract_sources(event: ToolCallResult):
++    """Return the tool output as a list (of source dicts) if it is one, else None."""
++    output = event.tool_output
++    raw_output = getattr(output, "raw_output", None)
++    if isinstance(raw_output, list):
++        return raw_output
++
++    try:
++        parsed = ast.literal_eval(str(output.content))
++    except (ValueError, SyntaxError):
++        return None
++    return parsed if isinstance(parsed, list) else None
++
++
++async def show_tool_call(event: ToolCall) -> None:
++    """Display a "calling function" step when the agent starts a tool call."""
++    async with cl.Step(name=event.tool_name) as step:
++        step.input = f"""
++Calling function: {event.tool_name} with parameters {event.tool_kwargs}
++
++"""
++
++
++async def show_tool_result(event: ToolCallResult) -> None:
++    """Display the sources returned by a tool call (if any)."""
++    function_response = _extract_sources(event)
++    if not function_response:
++        return
++
+     source_nodes = []
++    for source in function_response:
++        if not isinstance(source, dict) or "link" not in source or "title" not in source:
++            continue
++
++        website_name, favicon_url = get_website_info(source["link"])
++        source_nodes.append(SOURCE_NODE_CONTENT_TEMPLATE.format(
++            title=" ".join(source["title"].split(" ")[:5] + ["..."]),
++            link=source["link"],
++            web_favicon=favicon_url,
++            web_name=website_name
++        ))
++
++    if not source_nodes:
++        return
+ 
+-    if(isinstance(function_response, list)):
+-        for source in function_response:
+-            
+-            website_name, favicon_url = get_website_info(source["link"])
+-            source_nodes.append(SOURCE_NODE_CONTENT_TEMPLATE.format(
+-                title=" ".join(source["title"].split(" ")[:5] + ["..."]),
+-                link=source["link"],
+-                web_favicon=favicon_url,
+-                web_name=website_name
+-            ))
+-        
+-        source_content = SOURCE_CONTAINER_TEMPLATE.format("".join(source_nodes))
+-        await cl.Message(content="", author="Assistant", elements=[
+-            cl.Text(name="Sources", content=source_content, display="inline")
+-        ]).send()
+-
+-class ChainlitCallback(BaseCallbackHandler):
+-    """
+-    Chainlit callback class.
+-
+-    Args:
+-        repo (:obj:`str`, optional):
+-            Aim repository path or Repo object to which Run object is bound.
+-            If skipped, default Repo is used.
+-        experiment_name (:obj:`str`, optional):
+-            Sets Run's `experiment` property. 'default' if not specified.
+-            Can be used later to query runs/sequences.
+-        system_tracking_interval (:obj:`int`, optional):
+-            Sets the tracking interval in seconds for system usage
+-            metrics (CPU, Memory, etc.). Set to `None` to disable
+-            system metrics tracking.
+-        log_system_params (:obj:`bool`, optional):
+-            Enable/Disable logging of system params such as installed packages,
+-            git info, environment variables, etc.
+-        capture_terminal_logs (:obj:`bool`, optional):
+-            Enable/Disable terminal stdout logging.
+-        event_starts_to_ignore (Optional[List[CBEventType]]):
+-            list of event types to ignore when tracking event starts.
+-        event_ends_to_ignore (Optional[List[CBEventType]]):
+-            list of event types to ignore when tracking event ends.
+-    """
+-
+-    def __init__(
+-        self,
+-        event_starts_to_ignore: Optional[List[CBEventType]] = None,
+-        event_ends_to_ignore: Optional[List[CBEventType]] = None,
+-    ) -> None:
+-        
+-        event_starts_to_ignore = (
+-            event_starts_to_ignore if event_starts_to_ignore else []
+-        )
+-        event_ends_to_ignore = event_ends_to_ignore if event_ends_to_ignore else []
+-        
+-        super().__init__(
+-            event_starts_to_ignore=event_starts_to_ignore,
+-            event_ends_to_ignore=event_ends_to_ignore,
+-        )
+-        
+-    def on_event_start(
+-        self,
+-        event_type: CBEventType,
+-        payload: Optional[Dict[str, Any]] = None,
+-        event_id: str = "",
+-        parent_id: str = "",
+-        **kwargs: Any,
+-    ) -> str:
+-        """
+-        Args:
+-            event_type (CBEventType): event type to store.
+-            payload (Optional[Dict[str, Any]]): payload to store.
+-            event_id (str): event id to store.
+-            parent_id (str): parent event id.
+-        """
+-        if event_type == CBEventType.FUNCTION_CALL:
+-            async def run_step():
+-                async with cl.Step(name=payload[EventPayload.TOOL].name) as step:
+-                    step.input = f"""
+-Calling function: {payload[EventPayload.TOOL].name} with parameters {payload[EventPayload.FUNCTION_CALL]}
+-            
+-            """        
+-            run_sync(run_step())
+-        
+-
+-    def on_event_end(
+-        self,
+-        event_type: CBEventType,
+-        payload: Optional[Dict[str, Any]] = None,
+-        event_id: str = "",
+-        **kwargs: Any,
+-    ) -> None:
+-        """
+-        Args:
+-            event_type (CBEventType): event type to store.
+-            payload (Optional[Dict[str, Any]]): payload to store.
+-            event_id (str): event id to store.
+-        """
+-
+-        if event_type == CBEventType.FUNCTION_CALL:
+-            run_sync(run_step(payload))
+-
+-
+-    def start_trace(self, trace_id: Optional[str] = None) -> None:
+-        pass
+-
+-    def end_trace(
+-        self,
+-        trace_id: Optional[str] = None,
+-        trace_map: Optional[Dict[str, List[str]]] = None,
+-    ) -> None:
+-        pass
+\ No newline at end of file
++    source_content = SOURCE_CONTAINER_TEMPLATE.format("".join(source_nodes))
++    await cl.Message(content="", author="Assistant", elements=[
++        cl.Text(name="Sources", content=source_content, display="inline")
++    ]).send()
+diff --git a/src/tasks/question_recommend_task.py b/src/tasks/question_recommend_task.py
+index b0d51d8..536d432 100644
+--- a/src/tasks/question_recommend_task.py
++++ b/src/tasks/question_recommend_task.py
+@@ -9,7 +9,7 @@ from llama_index.core.question_gen.types import (
+ )
+ from llama_index.core.settings import Settings
+ from llama_index.core.tools.types import ToolMetadata
+-from llama_index.program.openai import OpenAIPydanticProgram
++from llama_index.core.program import FunctionCallingProgram
+ 
+ DEFAULT_MODEL_NAME = "gpt-3.5-turbo"
+ 
+@@ -46,7 +46,7 @@ Here is the list of tools that you can use:
+ class QuestionRecommender:
+     def __init__(
+         self,
+-        program: OpenAIPydanticProgram,
++        program: FunctionCallingProgram,
+         verbose: bool = False,
+     ) -> None:
+         self._program = program
+@@ -60,7 +60,7 @@ class QuestionRecommender:
+         verbose: bool = False,
+     ) -> "QuestionRecommender":
+         llm = llm or Settings.llm
+-        program = OpenAIPydanticProgram.from_defaults(
++        program = FunctionCallingProgram.from_defaults(
+             output_cls=SubQuestionList,
+             llm=llm,
+             prompt_template_str=prompt_template_str,
+diff --git a/src/tools/summarize_tool.py b/src/tools/summarize_tool.py
+index 55e40fe..e3d3ecf 100644
+--- a/src/tools/summarize_tool.py
++++ b/src/tools/summarize_tool.py
+@@ -1,3 +1,4 @@
++import asyncio
+ import os
+ from datetime import datetime
+ from llama_index.core.tools import FunctionTool
+@@ -81,21 +82,22 @@ def load_summarize_tool():
+                 if STREAM:
+                     msg = cl.Message(content="", author="Assistant")
+ 
+-                    response = summarize_llm.stream_complete(prompt)
+-                    for token in response:
+-                        await msg.stream_token(token)
+-                    
++                    response = await summarize_llm.astream_complete(prompt)
++                    async for token in response:
++                        await msg.stream_token(token.delta or "")
++
+                     await msg.send()
++                    return {"content": "Summarize completed and responded to user. DON'T make any further response until the next message from user"}
+                 else:
+-                    response = summarize_llm.complete(prompt)
+-                    
++                    response = await summarize_llm.acomplete(prompt)
++
+             except Exception as _:
+-                time.sleep(120)
+-                response = summarize_llm.acomplete(prompt)
++                await asyncio.sleep(120)
++                response = await summarize_llm.acomplete(prompt)
+ 
+             # run_sync(cl.Message(content=response.text, author="Summarize Assistant").send())
+-            return response
++            return {"content": response}
+         else:
+-            return f"Cannot find paper with id {arxiv_id}."
++            return {"content":  f"Cannot find or download paper with id {arxiv_id}."}
+     
+     return FunctionTool.from_defaults(summarize, async_fn=asummarize)
+\ No newline at end of file

@@ -1,0 +1,901 @@
+diff --git a/mcp/mcp_server.py b/mcp/mcp_server.py
+index 8c50e48..92c864c 100644
+--- a/mcp/mcp_server.py
++++ b/mcp/mcp_server.py
+@@ -23,22 +23,29 @@ to MCP-compatible clients like Cursor.
+ 
+ import argparse
+ import asyncio
++import contextvars
+ import os
+ import sys
+ import tempfile
+ from pathlib import Path
+ from typing import Any, Dict
+-from mcp.server import Server
++from mcp.server import Server, ServerRequestContext
+ from mcp.server.sse import SseServerTransport
+ from mcp.server.stdio import stdio_server
+ from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
+ from mcp.types import (
+     CallToolRequest,
++    CallToolRequestParams,
+     CallToolResult,
++    ListResourcesResult,
+     ListToolsRequest,
+     ListToolsResult,
++    PaginatedRequestParams,
++    ReadResourceRequestParams,
++    ReadResourceResult,
+     Tool,
+     TextContent,
++    TextResourceContents,
+     Resource,
+ )
+ from starlette.applications import Starlette
+@@ -95,7 +102,6 @@ class InferenceBuilderMCPServer:
+     """MCP Server that exposes Inference Builder functionality"""
+ 
+     def __init__(self, workspace_root: Path | None = None, model_root: Path | None = None):
+-        self.server = Server("deepstream-inference-builder")
+         self.logger = logging.getLogger("deepstream-inference-builder")
+         # Per-client workspace support (SSE transport only)
+         self._workspace_root = workspace_root
+@@ -107,39 +113,39 @@ class InferenceBuilderMCPServer:
+         # System info collected once at startup
+         self._system_info: dict | None = None
+ 
+-        # Register handlers using decorators
+-        self._setup_handlers()
+-
+-    def _setup_handlers(self):
+-        """Setup MCP server handlers using decorators"""
+-
+-        @self.server.list_tools()
+-        async def handle_list_tools():
+-            # The low-level server expects a list[Tool], not ListToolsResult
+-            result = await self.list_tools(None)
+-            return result.tools
+-
+-        @self.server.call_tool()
+-        async def handle_call_tool(name: str, arguments: Dict[str, Any]):
+-            # Bridge to existing implementation which returns CallToolResult
+-            from mcp.types import CallToolRequestParams
+-            params = CallToolRequestParams(name=name, arguments=arguments)
+-            request = CallToolRequest(params=params)
+-            result = await self.call_tool(request)
+-            if getattr(result, "isError", False):
+-                # Let the low-level server wrap this as an error result
+-                message = ""
+-                for block in getattr(result, "content", []) or []:
+-                    if getattr(block, "type", "") == "text":
+-                        message = getattr(block, "text", "")
+-                        break
+-                raise RuntimeError(message or "Tool execution error")
+-            # Return unstructured content so low-level server wraps it properly
+-            return getattr(result, "content", [])
++        # Request context of the MCP request currently being handled.  In
++        # mcp 2.x the low-level Server no longer exposes ``request_context``;
++        # the context is passed to each handler instead, so the handlers store
++        # it here for the helper methods (``_log``, ``_get_session_id``).
++        self._request_ctx: contextvars.ContextVar[ServerRequestContext | None] = (
++            contextvars.ContextVar("inference_builder_request_ctx", default=None)
++        )
+ 
+-        @self.server.list_resources()
+-        async def handle_list_resources():
++        # Create the low-level server and register handlers
++        self.server = self._setup_handlers()
++
++    def _setup_handlers(self) -> Server:
++        """Create the low-level MCP server with its request handlers."""
++
++        async def handle_list_tools(
++            ctx: ServerRequestContext, params: PaginatedRequestParams | None
++        ) -> ListToolsResult:
++            self._request_ctx.set(ctx)
++            return await self.list_tools(None)
++
++        async def handle_call_tool(
++            ctx: ServerRequestContext, params: CallToolRequestParams
++        ) -> CallToolResult:
++            self._request_ctx.set(ctx)
++            # Bridge to existing implementation, which already converts
++            # failures into CallToolResult(is_error=True).
++            return await self.call_tool(CallToolRequest(params=params))
++
++        async def handle_list_resources(
++            ctx: ServerRequestContext, params: PaginatedRequestParams | None
++        ) -> ListResourcesResult:
+             """List available schema and sample resources"""
++            self._request_ctx.set(ctx)
+             self.logger.info("list_resources handler called")
+             resources = []
+ 
+@@ -156,7 +162,7 @@ class InferenceBuilderMCPServer:
+                             "Defines required fields (name, model_repo, models), "
+                             "tensor specifications, backend types, and server configuration."
+                         ),
+-                        mimeType="application/json"
++                        mime_type="application/json"
+                     ),
+                     Resource(
+                         uri="schema://readme",
+@@ -166,7 +172,7 @@ class InferenceBuilderMCPServer:
+                             "examples, backend-specific parameters, data types, "
+                             "preprocessors/postprocessors, and server responder configuration."
+                         ),
+-                        mimeType="text/markdown"
++                        mime_type="text/markdown"
+                     ),
+                     Resource(
+                         uri="schema://index.json",
+@@ -177,7 +183,7 @@ class InferenceBuilderMCPServer:
+                             "(e.g., 'vllm' -> 'backends/parameters/vllm-parameters.schema.json'). "
+                             "Read this first to understand schema navigation."
+                         ),
+-                        mimeType="application/json"
++                        mime_type="application/json"
+                     ),
+                     # Documentation resources
+                     Resource(
+@@ -188,7 +194,7 @@ class InferenceBuilderMCPServer:
+                             "Includes overview, getting started guide, installation instructions, "
+                             "and links to examples and detailed documentation."
+                         ),
+-                        mimeType="text/markdown"
++                        mime_type="text/markdown"
+                     ),
+                     Resource(
+                         uri="docs://mcp/README-MCP.md",
+@@ -199,7 +205,7 @@ class InferenceBuilderMCPServer:
+                             "schema navigation, pipeline generation, container build, finalisation), "
+                             "version control integration, and troubleshooting common issues."
+                         ),
+-                        mimeType="text/markdown"
++                        mime_type="text/markdown"
+                     ),
+                     Resource(
+                         uri="docs://usage.md",
+@@ -210,7 +216,7 @@ class InferenceBuilderMCPServer:
+                             "model definitions, preprocessors/postprocessors, server configuration, "
+                             "routing, and runtime environment variables."
+                         ),
+-                        mimeType="text/markdown"
++                        mime_type="text/markdown"
+                     ),
+                     Resource(
+                         uri="docs://platform-guide.md",
+@@ -224,7 +230,7 @@ class InferenceBuilderMCPServer:
+                             "avoid runtime failures caused by mismatched base images or missing "
+                             "platform libraries (e.g. libnvbufsurface on Tegra)."
+                         ),
+-                        mimeType="text/markdown"
++                        mime_type="text/markdown"
+                     ),
+                 ]
+                 self.logger.info("Created %d base_resources objects", len(base_resources))
+@@ -252,7 +258,7 @@ class InferenceBuilderMCPServer:
+                                 f"JSON Schema for {backend_name} backend configuration. "
+                                 f"Defines backend-specific parameters and settings."
+                             ),
+-                            mimeType="application/json"
++                            mime_type="application/json"
+                         ))
+ 
+                     # Backend parameter schemas (e.g., deepstream-parameters.schema.json)
+@@ -267,7 +273,7 @@ class InferenceBuilderMCPServer:
+                                     f"JSON Schema for {backend_name} backend parameters. "
+                                     f"Defines detailed parameter options for model configuration."
+                                 ),
+-                                mimeType="application/json"
++                                mime_type="application/json"
+                             ))
+                 self.logger.info("After backend discovery, resources has %d items", len(resources))
+             except Exception as exc:
+@@ -315,7 +321,7 @@ class InferenceBuilderMCPServer:
+                                         "DeepStream backend parameters, not used as a pipeline "
+                                         "configuration YAML."
+                                     ),
+-                                    mimeType="application/x-yaml"
++                                    mime_type="application/x-yaml"
+                                 ))
+ 
+                             # Category 1b: DeepStream preprocess runtime configs (e.g., nvdspreprocess_config*.yaml)
+@@ -341,7 +347,7 @@ class InferenceBuilderMCPServer:
+                                         "in the DeepStream backend parameters, not used as a pipeline "
+                                         "configuration YAML."
+                                     ),
+-                                    mimeType="application/x-yaml"
++                                    mime_type="application/x-yaml"
+                                 ))
+ 
+                             # Category 1c: OpenAPI / server specification YAML files
+@@ -371,7 +377,7 @@ class InferenceBuilderMCPServer:
+                                         "generating a FastAPI/NIM/TRITON server, not as a model or "
+                                         "pipeline configuration."
+                                     ),
+-                                    mimeType="application/x-yaml"
++                                    mime_type="application/x-yaml"
+                                 ))
+ 
+                             # Category 1d: Pipeline / application configuration YAML files
+@@ -397,7 +403,7 @@ class InferenceBuilderMCPServer:
+                                         f"Sample pipeline/application configuration YAML for "
+                                         f"{sample_name}. {description}"
+                                     ) if description else f"Sample configuration: {rel_path}",
+-                                    mimeType="application/x-yaml"
++                                    mime_type="application/x-yaml"
+                                 ))
+ 
+                             # Category 2: Dockerfiles
+@@ -411,7 +417,7 @@ class InferenceBuilderMCPServer:
+                                         f"Dockerfile for {sample_name}. "
+                                         f"Use as reference for container image builds."
+                                     ),
+-                                    mimeType="text/plain"
++                                    mime_type="text/plain"
+                                 ))
+ 
+                             # Category 3: Processor Python files (files with "processor" in name)
+@@ -428,7 +434,7 @@ class InferenceBuilderMCPServer:
+                                         f"Sample preprocessor/postprocessor for {sample_name}. "
+                                         f"Python module with callable classes for pipeline processing."
+                                     ),
+-                                    mimeType="text/x-python"
++                                    mime_type="text/x-python"
+                                 ))
+ 
+                 self.logger.info("After sample discovery, resources has %d items", len(resources))
+@@ -442,13 +448,14 @@ class InferenceBuilderMCPServer:
+             else:
+                 self.logger.warning("Resources list is EMPTY - this is the problem!")
+ 
+-            return resources
++            return ListResourcesResult(resources=resources)
+ 
+-        @self.server.read_resource()
+-        async def handle_read_resource(uri):
++        async def handle_read_resource(
++            ctx: ServerRequestContext, params: ReadResourceRequestParams
++        ) -> ReadResourceResult:
+             """Read a schema or sample resource by URI"""
+-            # Convert AnyUrl to string for string operations
+-            uri = str(uri)
++            self._request_ctx.set(ctx)
++            uri = str(params.uri)
+             schema_dir = Path(__file__).parent.parent / "schemas"
+             samples_dir = Path(__file__).parent.parent / "builder" / "samples"
+ 
+@@ -573,7 +580,19 @@ class InferenceBuilderMCPServer:
+             with open(file_path, 'r', encoding='utf-8') as f:
+                 content = f.read()
+ 
+-            return content
++            return ReadResourceResult(
++                contents=[
++                    TextResourceContents(uri=uri, mime_type="text/plain", text=content)
++                ]
++            )
++
++        return Server(
++            "deepstream-inference-builder",
++            on_list_tools=handle_list_tools,
++            on_call_tool=handle_call_tool,
++            on_list_resources=handle_list_resources,
++            on_read_resource=handle_read_resource,
++        )
+ 
+     def _sanitize_arguments(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+         """Redact sensitive values in tool arguments for logging."""
+@@ -607,7 +626,7 @@ class InferenceBuilderMCPServer:
+                         "Read 'samples://*' resources for example configurations, "
+                         "or 'schema://config.schema.json' resource for the full configuration schema."
+                     ),
+-                    inputSchema={
++                    input_schema={
+                         "type": "object",
+                         "properties": {
+                             "config": {
+@@ -673,7 +692,7 @@ class InferenceBuilderMCPServer:
+                         "tar.gz archive produced by 'generate_inference_pipeline' "
+                         "(for example, using 'ADD <pipeline>.tar.gz /app')."
+                     ),
+-                    inputSchema={
++                    input_schema={
+                         "type": "object",
+                         "properties": {
+                             "image_name": {
+@@ -717,7 +736,7 @@ class InferenceBuilderMCPServer:
+                         "'http://{mcp_server}/logs/{container}.log' — replace {mcp_server} with the "
+                         "MCP server address and fetch via HTTP GET with the mcp-session-id header."
+                     ),
+-                    inputSchema={
++                    input_schema={
+                         "type": "object",
+                         "properties": {
+                             "image_name": {
+@@ -799,7 +818,7 @@ class InferenceBuilderMCPServer:
+                         "Use this to stop a container started by docker_run_image — "
+                         "pass the container_name from that tool's structured response."
+                     ),
+-                    inputSchema={
++                    input_schema={
+                         "type": "object",
+                         "properties": {
+                             "container_name": {
+@@ -825,7 +844,7 @@ class InferenceBuilderMCPServer:
+                         "returning. Timestamps are always included in the output so the caller "
+                         "can pass them back via since for incremental polling."
+                     ),
+-                    inputSchema={
++                    input_schema={
+                         "type": "object",
+                         "properties": {
+                             "container_name": {
+@@ -872,7 +891,7 @@ class InferenceBuilderMCPServer:
+                         "'ngc registry model info <org>/<team>/<model_name>' to list available versions. "
+                         "Always confirm the exact registry path and version tag before downloading.**"
+                     ),
+-                    inputSchema={
++                    input_schema={
+                         "type": "object",
+                         "properties": {
+                             "model_configs": {
+@@ -968,7 +987,7 @@ class InferenceBuilderMCPServer:
+                         "parameter conventions. Also search NGC for model information and check whether an "
+                         "nvinfer configuration file (YAML or TXT) is already provided with the model. "
+                         "If one exists, use the information it contains for that model.** "),
+-                    inputSchema={
++                    input_schema={
+                         "type": "object",
+                         "properties": {
+                             "onnx_file": {
+@@ -1118,7 +1137,7 @@ class InferenceBuilderMCPServer:
+                         "hardware. Returns GPU model, driver and CUDA version, CPU architecture "
+                         "(x86_64 / aarch64), OS distribution, and Docker version."
+                     ),
+-                    inputSchema={"type": "object", "properties": {}},
++                    input_schema={"type": "object", "properties": {}},
+                 ),
+                 Tool(
+                     name="read_model_file",
+@@ -1132,7 +1151,7 @@ class InferenceBuilderMCPServer:
+                         "downloads a model named 'trafficcamnet', its files are accessible "
+                         "at 'trafficcamnet/{filename}'."
+                     ),
+-                    inputSchema={
++                    input_schema={
+                         "type": "object",
+                         "properties": {
+                             "path": {
+@@ -1152,7 +1171,7 @@ class InferenceBuilderMCPServer:
+     async def call_tool(self, request: CallToolRequest) -> CallToolResult:
+         """Execute a tool"""
+         name = request.params.name
+-        arguments = request.params.arguments
++        arguments = request.params.arguments or {}
+ 
+         start_time = time.perf_counter()
+         self.logger.info(
+@@ -1187,7 +1206,7 @@ class InferenceBuilderMCPServer:
+             self.logger.info(
+                 "tool_call_completed name=%s error=%s duration_ms=%.2f",
+                 name,
+-                bool(getattr(result, "isError", False)),
++                bool(getattr(result, "is_error", False)),
+                 duration_ms,
+             )
+             return self._inject_session_context(result)
+@@ -1201,7 +1220,7 @@ class InferenceBuilderMCPServer:
+             )
+             return CallToolResult(
+                 content=[TextContent(type="text", text=f"Error: {str(e)}")],
+-                isError=True
++                is_error=True
+             )
+ 
+     async def _log(self, message: str, level: str = "info") -> None:
+@@ -1214,7 +1233,9 @@ class InferenceBuilderMCPServer:
+         """
+         self.logger.info("[%s] %s", level, message)
+         try:
+-            ctx = self.server.request_context
++            ctx = self._request_ctx.get()
++            if ctx is None:
++                return
+             await ctx.session.send_log_message(level=level, data=message)
+         except Exception:
+             pass  # no request context in stdio mode — local log is sufficient
+@@ -1225,8 +1246,8 @@ class InferenceBuilderMCPServer:
+         Returns None when running over stdio or when the transport is stateless.
+         """
+         try:
+-            ctx = self.server.request_context
+-            if ctx.request is not None:
++            ctx = self._request_ctx.get()
++            if ctx is not None and ctx.request is not None:
+                 return ctx.request.headers.get("mcp-session-id")
+         except Exception:
+             pass
+@@ -1241,7 +1262,7 @@ class InferenceBuilderMCPServer:
+         meta = TextContent(type="text", text=json.dumps({"session_id": sid}))
+         return CallToolResult(
+             content=[*result.content, meta],
+-            isError=getattr(result, "isError", False),
++            is_error=getattr(result, "is_error", False),
+         )
+ 
+     def _get_session_workspace(self) -> Path | None:
+@@ -1429,7 +1450,7 @@ class InferenceBuilderMCPServer:
+                         }, indent=2),
+                     ),
+                 ],
+-                isError=True
++                is_error=True
+             )
+ 
+     def _get_sample_description(self, sample_name: str) -> str:
+@@ -1543,7 +1564,7 @@ class InferenceBuilderMCPServer:
+                         ),
+                     )
+                 ],
+-                isError=True,
++                is_error=True,
+             )
+         except subprocess.TimeoutExpired:
+             await self._log(
+@@ -1598,7 +1619,7 @@ class InferenceBuilderMCPServer:
+                             }, indent=2),
+                         )
+                     ],
+-                    isError=True,
++                    is_error=True,
+                 )
+             else:
+                 # Non-serverless (persistent) servers are expected to keep
+@@ -1627,7 +1648,7 @@ class InferenceBuilderMCPServer:
+                             }, indent=2),
+                         ),
+                     ],
+-                    isError=False,
++                    is_error=False,
+                 )
+         except Exception as exc:
+             return CallToolResult(
+@@ -1637,7 +1658,7 @@ class InferenceBuilderMCPServer:
+                         text=f"Exception while running Docker image '{image_name}': {exc}",
+                     )
+                 ],
+-                isError=True,
++                is_error=True,
+             )
+ 
+         await self._log(
+@@ -1674,7 +1695,7 @@ class InferenceBuilderMCPServer:
+                     **({"url": log_path} if log_path else {}),
+                 }, indent=2)),
+             ],
+-            isError=result.returncode != 0,
++            is_error=result.returncode != 0,
+         )
+ 
+     async def _docker_stop_container(self, arguments: Dict[str, Any]) -> CallToolResult:
+@@ -1715,7 +1736,7 @@ class InferenceBuilderMCPServer:
+                             "error": result.stderr.strip(),
+                         }, indent=2)),
+                     ],
+-                    isError=True,
++                    is_error=True,
+                 )
+ 
+             structured: Dict[str, Any] = {"container_name": container_name, "status": "removed"}
+@@ -1749,12 +1770,12 @@ class InferenceBuilderMCPServer:
+         except FileNotFoundError:
+             return CallToolResult(
+                 content=[TextContent(type="text", text="Docker not found. Please ensure Docker is installed.")],
+-                isError=True,
++                is_error=True,
+             )
+         except Exception as exc:
+             return CallToolResult(
+                 content=[TextContent(type="text", text=f"Exception stopping container '{container_name}': {exc}")],
+-                isError=True,
++                is_error=True,
+             )
+ 
+     async def _docker_fetch_log(self, arguments: Dict[str, Any]) -> CallToolResult:
+@@ -1787,12 +1808,12 @@ class InferenceBuilderMCPServer:
+         except FileNotFoundError:
+             return CallToolResult(
+                 content=[TextContent(type="text", text="Docker not found. Please ensure Docker is installed.")],
+-                isError=True,
++                is_error=True,
+             )
+         except Exception as exc:
+             return CallToolResult(
+                 content=[TextContent(type="text", text=f"Exception fetching logs for '{container_name}': {exc}")],
+-                isError=True,
++                is_error=True,
+             )
+ 
+         # docker logs writes log lines to stderr by default; stdout is only used
+@@ -1811,7 +1832,7 @@ class InferenceBuilderMCPServer:
+                         "error": error_msg,
+                     }, indent=2)),
+                 ],
+-                isError=True,
++                is_error=True,
+             )
+ 
+         lines = log_text.splitlines()
+@@ -1883,7 +1904,7 @@ class InferenceBuilderMCPServer:
+                     "Model root is not configured. "
+                     "Start the server with --model-root or set MCP_MODEL_ROOT."
+                 ))],
+-                isError=True,
++                is_error=True,
+             )
+ 
+         model_root = self._model_root
+@@ -2188,7 +2209,7 @@ class InferenceBuilderMCPServer:
+                                  f"Command: {' '.join(cmd)}"
+                         )
+                     ],
+-                    isError=True
++                    is_error=True
+                 )
+         except FileNotFoundError:
+             return CallToolResult(
+@@ -2201,7 +2222,7 @@ class InferenceBuilderMCPServer:
+                         )
+                     )
+                 ],
+-                isError=True
++                is_error=True
+             )
+ 
+     async def _collect_system_info(self) -> None:
+@@ -2289,7 +2310,7 @@ class InferenceBuilderMCPServer:
+         def _result(data: dict, is_error: bool = False) -> CallToolResult:
+             return CallToolResult(
+                 content=[TextContent(type="text", text=_json.dumps(data, indent=2))],
+-                isError=is_error,
++                is_error=is_error,
+             )
+ 
+         if self._model_root is None:
+@@ -2334,7 +2355,7 @@ class InferenceBuilderMCPServer:
+                     f"Invalid onnx_file '{onnx_file}': must end with '.onnx'. "
+                     f"Use read_model_file to inspect the model directory and locate the correct .onnx file."
+                 ))],
+-                isError=True,
++                is_error=True,
+             )
+         network_type = arguments["network_type"]
+         input_dims = arguments["input_dims"]
+@@ -2370,7 +2391,7 @@ class InferenceBuilderMCPServer:
+                              f"or 100 (custom)."
+                     )
+                 ],
+-                isError=True
++                is_error=True
+             )
+ 
+         # Validate precision_mode
+@@ -2383,7 +2404,7 @@ class InferenceBuilderMCPServer:
+                         text=f"Invalid precision_mode: {precision_mode}. Must be 0 (FP32), 1 (INT8), or 2 (FP16)."
+                     )
+                 ],
+-                isError=True
++                is_error=True
+             )
+ 
+         # Validate input_dims format (should be channel;height;width)
+@@ -2397,7 +2418,7 @@ class InferenceBuilderMCPServer:
+                              f"Expected format: 'channel;height;width' (e.g., '3;224;224')"
+                     )
+                 ],
+-                isError=True
++                is_error=True
+             )
+ 
+         try:
+@@ -2412,7 +2433,7 @@ class InferenceBuilderMCPServer:
+                         text=f"Invalid input_dims: '{input_dims}'. All dimensions must be integers."
+                     )
+                 ],
+-                isError=True
++                is_error=True
+             )
+ 
+         # Build the configuration
+diff --git a/mcp/test_mcp_client.py b/mcp/test_mcp_client.py
+index 6382fc3..43317da 100644
+--- a/mcp/test_mcp_client.py
++++ b/mcp/test_mcp_client.py
+@@ -33,8 +33,9 @@ import asyncio
+ import json
+ import sys
+ 
++import httpx2
+ from mcp import ClientSession
+-from mcp.client.streamable_http import streamablehttp_client
++from mcp.client.streamable_http import streamable_http_client
+ 
+ 
+ async def run_tests(url: str, api_key: str | None) -> None:
+@@ -44,7 +45,9 @@ async def run_tests(url: str, api_key: str | None) -> None:
+     if api_key:
+         print("Using Bearer token authentication")
+ 
+-    async with streamablehttp_client(url, headers=headers) as (read, write, _):
++    # In mcp 2.x headers (and auth/timeouts) are configured on the httpx2 client.
++    async with httpx2.AsyncClient(headers=headers) as http_client, \
++            streamable_http_client(url, http_client=http_client) as (read, write):
+         async with ClientSession(read, write) as session:
+             # Step 1: Initialize
+             print("\nStep 1: Initialize MCP connection")
+@@ -73,7 +76,7 @@ async def run_tests(url: str, api_key: str | None) -> None:
+                 "generate_inference_pipeline",
+                 {"config": "invalid: yaml: ["},
+             )
+-            if not result.isError:
++            if not result.is_error:
+                 for block in result.content:
+                     print(f"  {block.text}")
+                 raise AssertionError(
+diff --git a/mcp/test_mcp_server.py b/mcp/test_mcp_server.py
+index 04c66dd..2325a7e 100644
+--- a/mcp/test_mcp_server.py
++++ b/mcp/test_mcp_server.py
+@@ -20,7 +20,7 @@ import uuid
+ from pathlib import Path
+ from types import SimpleNamespace
+ 
+-import httpx
++import httpx2
+ 
+ from mcp_server import ApiKeyMiddleware, InferenceBuilderMCPServer, create_sse_app
+ from mcp.types import CallToolRequest, CallToolRequestParams
+@@ -42,7 +42,7 @@ class MCPServerTests(unittest.IsolatedAsyncioTestCase):
+         params = CallToolRequestParams(name="does_not_exist", arguments={})
+         req = CallToolRequest(params=params)
+         res = await self.server.call_tool(req)
+-        self.assertTrue(res.isError)
++        self.assertTrue(res.is_error)
+         self.assertIn("Unknown tool", res.content[0].text)
+ 
+     async def test_generate_deepstream_nvinfer_config(self):
+@@ -62,7 +62,7 @@ class MCPServerTests(unittest.IsolatedAsyncioTestCase):
+         req = CallToolRequest(params=params)
+         res = await self.server.call_tool(req)
+ 
+-        self.assertFalse(res.isError, f"Tool call failed: {res.content[0].text if res.content else 'No content'}")
++        self.assertFalse(res.is_error, f"Tool call failed: {res.content[0].text if res.content else 'No content'}")
+         content = res.content[0].text
+         self.assertIn("onnx-file: test_model.onnx", content)
+         self.assertIn("network-type: 0", content)
+@@ -84,7 +84,7 @@ class MCPServerTests(unittest.IsolatedAsyncioTestCase):
+         req = CallToolRequest(params=params)
+         res = await self.server.call_tool(req)
+ 
+-        self.assertTrue(res.isError)
++        self.assertTrue(res.is_error)
+         self.assertIn("Invalid network_type", res.content[0].text)
+ 
+     async def test_generate_deepstream_nvinfer_config_invalid_dims(self):
+@@ -101,7 +101,7 @@ class MCPServerTests(unittest.IsolatedAsyncioTestCase):
+         req = CallToolRequest(params=params)
+         res = await self.server.call_tool(req)
+ 
+-        self.assertTrue(res.isError)
++        self.assertTrue(res.is_error)
+         self.assertIn("Invalid input_dims format", res.content[0].text)
+ 
+     async def test_generate_deepstream_nvinfer_config_with_output_tensor_meta(self):
+@@ -121,7 +121,7 @@ class MCPServerTests(unittest.IsolatedAsyncioTestCase):
+         req = CallToolRequest(params=params)
+         res = await self.server.call_tool(req)
+ 
+-        self.assertFalse(res.isError, f"Tool call failed: {res.content[0].text if res.content else 'No content'}")
++        self.assertFalse(res.is_error, f"Tool call failed: {res.content[0].text if res.content else 'No content'}")
+         content = res.content[0].text
+         self.assertIn("output-tensor-meta: 1", content)
+         self.assertIn("onnx-file: custom_model.onnx", content)
+@@ -129,7 +129,7 @@ class MCPServerTests(unittest.IsolatedAsyncioTestCase):
+ class SSETransportTests(unittest.IsolatedAsyncioTestCase):
+     """Tests for the SSE/HTTP remote transport layer.
+ 
+-    All requests are dispatched in-process via ``httpx.ASGITransport`` — no
++    All requests are dispatched in-process via ``httpx2.ASGITransport`` — no
+     real network socket is opened.  The tests cover:
+ 
+     * ``ApiKeyMiddleware`` authentication logic (missing / wrong / correct key).
+@@ -150,7 +150,7 @@ class SSETransportTests(unittest.IsolatedAsyncioTestCase):
+         extra_headers: dict | None = None,
+         params: dict | None = None,
+         body: bytes = b"{}",
+-    ) -> httpx.Response:
++    ) -> httpx2.Response:
+         """POST to /messages/ through the ASGI app in-process.
+ 
+         Content-Type is set to application/json by default because the MCP
+@@ -159,8 +159,8 @@ class SSETransportTests(unittest.IsolatedAsyncioTestCase):
+         headers = {"Content-Type": "application/json"}
+         if extra_headers:
+             headers.update(extra_headers)
+-        async with httpx.AsyncClient(
+-            transport=httpx.ASGITransport(app=app),
++        async with httpx2.AsyncClient(
++            transport=httpx2.ASGITransport(app=app),
+             base_url="http://testserver",
+         ) as client:
+             return await client.post(
+@@ -235,7 +235,7 @@ class SSETransportTests(unittest.IsolatedAsyncioTestCase):
+ class ArtifactEndpointTests(unittest.IsolatedAsyncioTestCase):
+     """Tests for the GET /artifact/{session_id}/{filename} download endpoint.
+ 
+-    All requests are dispatched in-process via httpx.ASGITransport — no real
++    All requests are dispatched in-process via httpx2.ASGITransport — no real
+     network socket is opened.  Tests cover:
+ 
+     * Serving an existing file from a registered session workspace.
+@@ -258,10 +258,10 @@ class ArtifactEndpointTests(unittest.IsolatedAsyncioTestCase):
+         filename: str,
+         *,
+         extra_headers: dict | None = None,
+-    ) -> httpx.Response:
++    ) -> httpx2.Response:
+         headers = {"mcp-session-id": session_id, **(extra_headers or {})}
+-        async with httpx.AsyncClient(
+-            transport=httpx.ASGITransport(app=app),
++        async with httpx2.AsyncClient(
++            transport=httpx2.ASGITransport(app=app),
+             base_url="http://testserver",
+         ) as client:
+             return await client.get(f"/{filename}", headers=headers)
+@@ -489,7 +489,7 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+             "server_type": "serverless",
+             "timeout": 30,
+         })
+-        self.assertFalse(res.isError, res.content[0].text)
++        self.assertFalse(res.is_error, res.content[0].text)
+         data = self._structured(res)
+         self.assertIn("container_name", data)
+         self.assertEqual(data["image_name"], self.TEST_IMAGE)
+@@ -518,7 +518,7 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+             "server_type": "serverless",
+             "timeout": 30,
+         })
+-        self.assertFalse(res.isError)
++        self.assertFalse(res.is_error)
+         self.assertIn("mcp-marker-12345", res.content[0].text)
+ 
+     async def test_run_image_timeout_leaves_container_running(self):
+@@ -534,7 +534,7 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+             "timeout": 3,
+         })
+         data = self._structured(res)
+-        self.assertFalse(res.isError, res.content[0].text)
++        self.assertFalse(res.is_error, res.content[0].text)
+         self.assertEqual(data["status"], "running")
+         self.assertIn("container_name", data)
+         # Cleanup so the container doesn't linger
+@@ -551,7 +551,7 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+         self.assertEqual(rc, 0, f"Failed to start test container '{name}'")
+         try:
+             res = await self._call("docker_stop_container", {"container_name": name})
+-            self.assertFalse(res.isError, res.content[0].text)
++            self.assertFalse(res.is_error, res.content[0].text)
+             data = self._structured(res)
+             self.assertEqual(data["container_name"], name)
+             self.assertEqual(data["status"], "removed")
+@@ -566,7 +566,7 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+             "container_name": "ib-test-nonexistent-zzz",
+         })
+         # Modern Docker (20.10+) exits 0 for 'docker rm -f <missing>' — treat as OK.
+-        self.assertFalse(res.isError, res.content[0].text)
++        self.assertFalse(res.is_error, res.content[0].text)
+         data = self._structured(res)
+         self.assertIn(data["status"], {"removed", "error"})
+ 
+@@ -580,7 +580,7 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+                 "container_name": name,
+                 "remove_image": True,
+             })
+-            self.assertFalse(res.isError, res.content[0].text)
++            self.assertFalse(res.is_error, res.content[0].text)
+             data = self._structured(res)
+             self.assertEqual(data["status"], "removed")
+             self.assertIn("image_name", data)
+@@ -609,7 +609,7 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+             await asyncio.sleep(1)   # give the container a moment to emit output
+ 
+             res = await self._call("docker_fetch_log", {"container_name": name})
+-            self.assertFalse(res.isError, res.content[0].text)
++            self.assertFalse(res.is_error, res.content[0].text)
+             self.assertIn("log-line-one", res.content[0].text)
+             self.assertIn("log-line-two", res.content[0].text)
+             data = self._structured(res)
+@@ -634,7 +634,7 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+                 "container_name": name,
+                 "tail": 1,
+             })
+-            self.assertFalse(res.isError, res.content[0].text)
++            self.assertFalse(res.is_error, res.content[0].text)
+             self.assertIn("second-line", res.content[0].text)
+             data = self._structured(res)
+             self.assertEqual(data["line_count"], 1)
+@@ -664,18 +664,18 @@ class DockerToolTests(unittest.IsolatedAsyncioTestCase):
+                 "container_name": name,
+                 "since": data["last_timestamp"],
+             })
+-            self.assertFalse(res2.isError)
++            self.assertFalse(res2.is_error)
+             data2 = self._structured(res2)
+             self.assertLessEqual(data2["line_count"], data["line_count"])
+         finally:
+             await self._force_remove(name)
+ 
+     async def test_fetch_log_nonexistent_container_returns_error(self):
+-        """Fetching logs from a non-existent container returns isError=True."""
++        """Fetching logs from a non-existent container returns is_error=True."""
+         res = await self._call("docker_fetch_log", {
+             "container_name": "ib-test-nonexistent-log-zzz",
+         })
+-        self.assertTrue(res.isError)
++        self.assertTrue(res.is_error)
+         data = self._structured(res)
+         self.assertEqual(data["status"], "error")
+ 
+@@ -722,7 +722,7 @@ class GetSystemInfoTests(unittest.IsolatedAsyncioTestCase):
+         await self._collect(fake_run)
+         res = await self._call()
+ 
+-        self.assertFalse(res.isError)
++        self.assertFalse(res.is_error)
+         data = json.loads(res.content[0].text)
+         for key in ("arch", "os", "cuda_version", "gpus", "docker"):
+             self.assertIn(key, data)
+@@ -761,7 +761,7 @@ class GetSystemInfoTests(unittest.IsolatedAsyncioTestCase):
+         await self._collect(fake_run)
+         res = await self._call()
+ 
+-        self.assertFalse(res.isError)
++        self.assertFalse(res.is_error)
+         data = json.loads(res.content[0].text)
+         self.assertEqual(data["gpus"], [])
+         self.assertIsNone(data["cuda_version"])
+@@ -840,7 +840,7 @@ class DockerRunLogUrlTests(unittest.IsolatedAsyncioTestCase):
+         import json
+ 
+         res = await self._call({"image_name": "alpine", "cmd": ["echo", "hi"]})
+-        self.assertFalse(res.isError)
++        self.assertFalse(res.is_error)
+ 
+         data = json.loads(res.content[1].text)
+         self.assertIn("url", data)
+@@ -877,9 +877,9 @@ class LogEndpointTests(unittest.IsolatedAsyncioTestCase):
+     def _register_workspace(self, session_id: str, path: Path) -> None:
+         self.server._session_workspaces[session_id] = path
+ 
+-    async def _get_logs(self, app, session_id: str, container_name: str) -> httpx.Response:
+-        async with httpx.AsyncClient(
+-            transport=httpx.ASGITransport(app=app),
++    async def _get_logs(self, app, session_id: str, container_name: str) -> httpx2.Response:
++        async with httpx2.AsyncClient(
++            transport=httpx2.ASGITransport(app=app),
+             base_url="http://testserver",
+         ) as client:
+             return await client.get(
+diff --git a/requirements.txt b/requirements.txt
+index 8cffc55..3b9ef59 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -13,4 +13,4 @@ click==8.0.4
+ jsonschema==4.21.1
+ pyyaml==6.0.1
+ huggingface_hub>=0.20.0
+-mcp==1.23.0
++mcp==2.3.0

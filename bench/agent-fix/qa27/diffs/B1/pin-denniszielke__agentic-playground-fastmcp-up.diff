@@ -1,0 +1,30 @@
+diff --git a/src/10-mcp/server-mcp-sse.py b/src/10-mcp/server-mcp-sse.py
+index 052332e..a497e36 100644
+--- a/src/10-mcp/server-mcp-sse.py
++++ b/src/10-mcp/server-mcp-sse.py
+@@ -95,18 +95,18 @@ def get_user_time(username: str) -> list[base.Message]:
+ 
+ async def check_mcp(mcp: FastMCP):
+     # List the components that were created
+-    tools = await mcp.get_tools()
+-    resources = await mcp.get_resources()
+-    templates = await mcp.get_resource_templates()
+-    
++    tools = await mcp.list_tools()
++    resources = await mcp.list_resources()
++    templates = await mcp.list_resource_templates()
++
+     print(
+-        f"{len(tools)} Tool(s): {', '.join([t.name for t in tools.values()])}"
++        f"{len(tools)} Tool(s): {', '.join([t.name for t in tools])}"
+     )
+     print(
+-        f"{len(resources)} Resource(s): {', '.join([r.name for r in resources.values()])}"
++        f"{len(resources)} Resource(s): {', '.join([r.name for r in resources])}"
+     )
+     print(
+-        f"{len(templates)} Resource Template(s): {', '.join([t.name for t in templates.values()])}"
++        f"{len(templates)} Resource Template(s): {', '.join([t.name for t in templates])}"
+     )
+     
+     return mcp

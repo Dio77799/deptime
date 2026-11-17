@@ -1,0 +1,57 @@
+diff --git a/config.py b/config.py
+index 06273bb..ef21a78 100644
+--- a/config.py
++++ b/config.py
+@@ -15,6 +15,7 @@ CONFIG = {
+     "KNOWLEDGE_REWRITING_MODEL": "gpt-4",
+ 
+     "PINECONE_API_KEY": os.getenv("PINECONE_API_KEY"),  # If using Pinecone for vector retrieval
++    "PINECONE_INDEX": os.getenv("PINECONE_INDEX"),  # Name of the Pinecone index to query
+ 
+     "QUERY_REFINEMENT_MODEL": "gpt-4",  # Default OpenAI model
+     "LLM_MODEL": "gpt-4",  # Model used for response generation
+diff --git a/requirements.txt b/requirements.txt
+index 529fbd8..ab4ede2 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -80,8 +80,7 @@ pandas==2.2.3
+ pansi==2024.11.0
+ peft==0.15.2
+ pillow==11.2.1
+-pinecone==7.0.1
+-pinecone-plugin-interface==0.0.7
++pinecone==10.3.0
+ propcache==0.3.1
+ psutil==7.0.0
+ py2neo==2021.2.4
+diff --git a/retrieval/document_causal_retriever_rl.py b/retrieval/document_causal_retriever_rl.py
+index ff96250..3387eb7 100644
+--- a/retrieval/document_causal_retriever_rl.py
++++ b/retrieval/document_causal_retriever_rl.py
+@@ -1,4 +1,4 @@
+-import pinecone
++from pinecone import Pinecone
+ import networkx as nx
+ from sentence_transformers import SentenceTransformer
+ from langgraph.graph import StateGraph, END
+@@ -13,14 +13,16 @@ class RetrievalState(TypedDict):
+ class DocumentRetriever:
+     def __init__(self):
+         self.index_name = CONFIG["PINECONE_INDEX"]
+-        pinecone.init(api_key=CONFIG["PINECONE_API_KEY"], environment=CONFIG["PINECONE_ENV"])
+-        self.index = pinecone.Index(self.index_name)
++        # pinecone.init() / pinecone.Index() were removed; use a Pinecone client instance.
++        # The environment/region is no longer needed (it is resolved from the index itself).
++        self.pc = Pinecone(api_key=CONFIG["PINECONE_API_KEY"])
++        self.index = self.pc.index(name=self.index_name)
+         self.encoder = SentenceTransformer(CONFIG["ENCODER_MODEL"])
+-    
++
+     def retrieve(self, query: str, top_k: int = 5):
+         query_vector = self.encoder.encode(query).tolist()
+         results = self.index.query(vector=query_vector, top_k=top_k, include_metadata=True)
+-        return [item["metadata"]["text"] for item in results["matches"]]
++        return [match.metadata["text"] for match in results.matches]
+ 
+ class CausalGraphRetriever:
+     def __init__(self):

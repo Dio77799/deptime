@@ -1,0 +1,278 @@
+diff --git a/modules/anthropic-bedrock-python-ecs-mcp/src/server.py b/modules/anthropic-bedrock-python-ecs-mcp/src/server.py
+index 1fabf51..c1c35bc 100644
+--- a/modules/anthropic-bedrock-python-ecs-mcp/src/server.py
++++ b/modules/anthropic-bedrock-python-ecs-mcp/src/server.py
+@@ -1,6 +1,6 @@
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+-mcp = FastMCP("Documentation")
++mcp = MCPServer("Documentation")
+ 
+ 
+ @mcp.tool()
+diff --git a/modules/converse-client-server-stdio-demo-local/mcp_server.py b/modules/converse-client-server-stdio-demo-local/mcp_server.py
+index 7d6b87e..c74f1a5 100644
+--- a/modules/converse-client-server-stdio-demo-local/mcp_server.py
++++ b/modules/converse-client-server-stdio-demo-local/mcp_server.py
+@@ -1,4 +1,4 @@
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from typing import Dict, Any
+ import logging
+ import sys
+@@ -14,8 +14,8 @@ logging.basicConfig(
+ )
+ logger = logging.getLogger(__name__)
+ 
+-# Create a FastMCP instance
+-mcp = FastMCP("Demo Server")
++# Create an MCPServer instance
++mcp = MCPServer("Demo Server")
+ 
+ @mcp.tool()
+ def calculator(operation: str, x: float, y: float) -> Dict[str, Any]:
+diff --git a/modules/strands-a2a-inter-agent/employee-agent/agent.py b/modules/strands-a2a-inter-agent/employee-agent/agent.py
+index cfdf33d..0842ec6 100644
+--- a/modules/strands-a2a-inter-agent/employee-agent/agent.py
++++ b/modules/strands-a2a-inter-agent/employee-agent/agent.py
+@@ -1,6 +1,6 @@
+ import os
+ 
+-from mcp.client.streamable_http import streamablehttp_client
++from mcp.client.streamable_http import streamable_http_client
+ from strands import Agent
+ from strands.models import BedrockModel
+ from strands.tools.mcp.mcp_client import MCPClient
+@@ -11,7 +11,7 @@ from urllib.parse import urlparse
+ EMPLOYEE_INFO_URL = os.environ.get("EMPLOYEE_INFO_URL", "http://localhost:8002/mcp/")
+ EMPLOYEE_AGENT_URL = os.environ.get("EMPLOYEE_AGENT_URL", "http://localhost:8001/")
+ 
+-employee_mcp_client = MCPClient(lambda: streamablehttp_client(EMPLOYEE_INFO_URL))
++employee_mcp_client = MCPClient(lambda: streamable_http_client(EMPLOYEE_INFO_URL))
+ 
+ bedrock_model = BedrockModel(
+     model_id="amazon.nova-pro-v1:0",
+diff --git a/modules/strands-a2a-inter-agent/employee-server/server.py b/modules/strands-a2a-inter-agent/employee-server/server.py
+index 9191914..7fe9bef 100644
+--- a/modules/strands-a2a-inter-agent/employee-server/server.py
++++ b/modules/strands-a2a-inter-agent/employee-server/server.py
+@@ -1,8 +1,8 @@
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ from employee_data import SKILLS, EMPLOYEES
+ 
+-mcp = FastMCP("employee-server", stateless_http=True, host="0.0.0.0", port=8002)
++mcp = MCPServer("employee-server")
+ 
+ @mcp.tool()
+ def get_skills() -> set[str]:
+@@ -21,4 +21,4 @@ def get_employees_with_skill(skill: str) -> list[dict]:
+     return employees_with_skill
+ 
+ if __name__ == "__main__":
+-    mcp.run(transport="streamable-http")
++    mcp.run(transport="streamable-http", host="0.0.0.0", port=8002, stateless_http=True)
+diff --git a/modules/strands-mcp-inter-agent-agentcore/employee_agent/agent.py b/modules/strands-mcp-inter-agent-agentcore/employee_agent/agent.py
+index 761fb5c..1c63441 100644
+--- a/modules/strands-mcp-inter-agent-agentcore/employee_agent/agent.py
++++ b/modules/strands-mcp-inter-agent-agentcore/employee_agent/agent.py
+@@ -1,10 +1,20 @@
+ import os
+-from mcp.client.streamable_http import streamablehttp_client
+-from mcp.server.fastmcp import FastMCP
++from contextlib import asynccontextmanager
++from mcp.client.streamable_http import streamable_http_client
++from mcp.server.mcpserver import MCPServer
+ from strands import Agent
+ from strands.tools.mcp.mcp_client import MCPClient
+ from strands.models import BedrockModel
+ import httpx
++import httpx2
++
++@asynccontextmanager
++async def streamable_http_client_with_headers(url, headers):
++    # mcp v2 no longer takes `headers`: they are set on the httpx2 client instead
++    # (timeouts match the v1 defaults: 30s, 300s read)
++    async with httpx2.AsyncClient(headers=headers, timeout=httpx2.Timeout(30, read=300)) as http_client:
++        async with streamable_http_client(url, http_client=http_client) as streams:
++            yield streams
+ 
+ PORT = int(os.environ.get('PORT', 8001))
+ 
+@@ -17,7 +27,7 @@ OAUTH_ENDPOINT=os.environ.get("OAUTH_ENDPOINT", None)
+ 
+ def employee_mcp_client_factory():
+     if EMPLOYEE_INFO_ARN is None or COGNITO_CLIENT_ID is None or COGNITO_CLIENT_SECRET is None or OAUTH_ENDPOINT is None:
+-        return MCPClient(lambda: streamablehttp_client("http://localhost:8002/mcp/"))
++        return MCPClient(lambda: streamable_http_client("http://localhost:8002/mcp/"))
+     else:
+         data = {
+             "grant_type": "client_credentials"
+@@ -32,14 +42,14 @@ def employee_mcp_client_factory():
+         access_token = payload["access_token"]
+         headers = {"authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+         employee_info_url = f"https://bedrock-agentcore.{REGION}.amazonaws.com/runtimes/{EMPLOYEE_INFO_ARN.replace(':', '%3A').replace('/', '%2F')}/invocations?qualifier=DEFAULT"
+-        return MCPClient(lambda: streamablehttp_client(employee_info_url, headers))
++        return MCPClient(lambda: streamable_http_client_with_headers(employee_info_url, headers))
+ 
+ bedrock_model = BedrockModel(
+     model_id="amazon.nova-micro-v1:0",
+     region_name=REGION,
+ )
+ 
+-mcp = FastMCP("employee-agent", stateless_http=True, host="0.0.0.0", port=PORT)
++mcp = MCPServer("employee-agent")
+ 
+ @mcp.tool()
+ def inquire(question: str) -> list[str]:
+@@ -56,4 +66,4 @@ def inquire(question: str) -> list[str]:
+         ]
+ 
+ if __name__ == "__main__":
+-    mcp.run(transport="streamable-http")
++    mcp.run(transport="streamable-http", host="0.0.0.0", port=PORT, stateless_http=True)
+diff --git a/modules/strands-mcp-inter-agent-agentcore/employee_server/server.py b/modules/strands-mcp-inter-agent-agentcore/employee_server/server.py
+index 2410d5a..38e1a09 100644
+--- a/modules/strands-mcp-inter-agent-agentcore/employee_server/server.py
++++ b/modules/strands-mcp-inter-agent-agentcore/employee_server/server.py
+@@ -2,10 +2,10 @@ import os
+ 
+ from employee_data import SKILLS, EMPLOYEES
+ 
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+ port = int(os.environ.get('PORT', 8002))
+-mcp = FastMCP("employee-server", stateless_http=True, host="0.0.0.0", port=port)
++mcp = MCPServer("employee-server")
+ 
+ @mcp.tool()
+ def get_skills() -> set[str]:
+@@ -21,4 +21,4 @@ def get_employees_with_skill(skill: str) -> list[dict]:
+     return [employee for employee in EMPLOYEES if any(s.lower() == skill_lower for s in employee["skills"])]
+ 
+ if __name__ == "__main__":
+-    mcp.run(transport="streamable-http")
++    mcp.run(transport="streamable-http", host="0.0.0.0", port=port, stateless_http=True)
+diff --git a/modules/strands-mcp-inter-agent-agentcore/hr_agent/agent.py b/modules/strands-mcp-inter-agent-agentcore/hr_agent/agent.py
+index ce0ef39..11d11cd 100644
+--- a/modules/strands-mcp-inter-agent-agentcore/hr_agent/agent.py
++++ b/modules/strands-mcp-inter-agent-agentcore/hr_agent/agent.py
+@@ -1,10 +1,20 @@
+ import os
+-from mcp.client.streamable_http import streamablehttp_client
++from contextlib import asynccontextmanager
++from mcp.client.streamable_http import streamable_http_client
+ from strands import Agent
+ from strands.tools.mcp.mcp_client import MCPClient
+ from strands.models import BedrockModel
+ from bedrock_agentcore.runtime import BedrockAgentCoreApp
+ import httpx
++import httpx2
++
++@asynccontextmanager
++async def streamable_http_client_with_headers(url, headers):
++    # mcp v2 no longer takes `headers`: they are set on the httpx2 client instead
++    # (timeouts match the v1 defaults: 30s, 300s read)
++    async with httpx2.AsyncClient(headers=headers, timeout=httpx2.Timeout(30, read=300)) as http_client:
++        async with streamable_http_client(url, http_client=http_client) as streams:
++            yield streams
+ 
+ REGION=os.environ.get("AWS_REGION", "us-east-1")
+ 
+@@ -15,7 +25,7 @@ OAUTH_ENDPOINT=os.environ.get("OAUTH_ENDPOINT", None)
+ 
+ def employee_mcp_client_factory():
+     if EMPLOYEE_AGENT_ARN is None or COGNITO_CLIENT_ID is None or COGNITO_CLIENT_SECRET is None or OAUTH_ENDPOINT is None:
+-        return MCPClient(lambda: streamablehttp_client("http://localhost:8002/mcp/"))
++        return MCPClient(lambda: streamable_http_client("http://localhost:8002/mcp/"))
+     else:
+         data = {
+             "grant_type": "client_credentials"
+@@ -30,7 +40,7 @@ def employee_mcp_client_factory():
+         access_token = payload["access_token"]
+         headers = {"authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+         employee_agent_url = f"https://bedrock-agentcore.{REGION}.amazonaws.com/runtimes/{EMPLOYEE_AGENT_ARN.replace(':', '%3A').replace('/', '%2F')}/invocations?qualifier=DEFAULT"
+-        return MCPClient(lambda: streamablehttp_client(employee_agent_url, headers))
++        return MCPClient(lambda: streamable_http_client_with_headers(employee_agent_url, headers))
+ 
+ bedrock_model = BedrockModel(
+     model_id="amazon.nova-micro-v1:0",
+diff --git a/modules/strands-mcp-inter-agent/employee-agent/agent.py b/modules/strands-mcp-inter-agent/employee-agent/agent.py
+index f23437e..285a1f1 100644
+--- a/modules/strands-mcp-inter-agent/employee-agent/agent.py
++++ b/modules/strands-mcp-inter-agent/employee-agent/agent.py
+@@ -1,12 +1,12 @@
+ import os
+-from mcp.client.streamable_http import streamablehttp_client
+-from mcp.server.fastmcp import FastMCP
++from mcp.client.streamable_http import streamable_http_client
++from mcp.server.mcpserver import MCPServer
+ from strands import Agent
+ from strands.tools.mcp.mcp_client import MCPClient
+ from strands.models import BedrockModel
+ 
+ EMPLOYEE_INFO_URL = os.environ.get("EMPLOYEE_INFO_URL", "http://localhost:8002/mcp/")
+-employee_mcp_client = MCPClient(lambda: streamablehttp_client(EMPLOYEE_INFO_URL))
++employee_mcp_client = MCPClient(lambda: streamable_http_client(EMPLOYEE_INFO_URL))
+ 
+ bedrock_model = BedrockModel(
+     model_id="amazon.nova-micro-v1:0",
+@@ -21,7 +21,7 @@ def employee_agent(question: str):
+ 
+         return agent(question)
+ 
+-mcp = FastMCP("employee-agent", stateless_http=True, host="0.0.0.0", port=8001)
++mcp = MCPServer("employee-agent")
+ 
+ @mcp.tool()
+ def inquire(question: str) -> list[str]:
+@@ -34,4 +34,4 @@ def inquire(question: str) -> list[str]:
+     ]
+ 
+ if __name__ == "__main__":
+-    mcp.run(transport="streamable-http")
++    mcp.run(transport="streamable-http", host="0.0.0.0", port=8001, stateless_http=True)
+diff --git a/modules/strands-mcp-inter-agent/employee-server/server.py b/modules/strands-mcp-inter-agent/employee-server/server.py
+index a473d95..b1aa5e0 100644
+--- a/modules/strands-mcp-inter-agent/employee-server/server.py
++++ b/modules/strands-mcp-inter-agent/employee-server/server.py
+@@ -1,8 +1,8 @@
+ from employee_data import SKILLS, EMPLOYEES
+ 
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+-mcp = FastMCP("employee-server", stateless_http=True, host="0.0.0.0", port=8002)
++mcp = MCPServer("employee-server")
+ 
+ @mcp.tool()
+ def get_skills() -> set[str]:
+@@ -18,4 +18,4 @@ def get_employees_with_skill(skill: str) -> list[dict]:
+     return [employee for employee in EMPLOYEES if any(s.lower() == skill_lower for s in employee["skills"])]
+ 
+ if __name__ == "__main__":
+-    mcp.run(transport="streamable-http")
++    mcp.run(transport="streamable-http", host="0.0.0.0", port=8002, stateless_http=True)
+diff --git a/modules/strands-mcp-inter-agent/hr-agent/agent.py b/modules/strands-mcp-inter-agent/hr-agent/agent.py
+index 4929d80..b7c589c 100644
+--- a/modules/strands-mcp-inter-agent/hr-agent/agent.py
++++ b/modules/strands-mcp-inter-agent/hr-agent/agent.py
+@@ -1,5 +1,5 @@
+ import os
+-from mcp.client.streamable_http import streamablehttp_client
++from mcp.client.streamable_http import streamable_http_client
+ from strands import Agent
+ from strands.tools.mcp.mcp_client import MCPClient
+ from strands.models import BedrockModel
+@@ -9,7 +9,7 @@ from pydantic import BaseModel
+ import uvicorn
+ 
+ EMPLOYEE_AGENT_URL = os.environ.get("EMPLOYEE_AGENT_URL", "http://localhost:8001/mcp/")
+-hr_mcp_client = MCPClient(lambda: streamablehttp_client(EMPLOYEE_AGENT_URL))
++hr_mcp_client = MCPClient(lambda: streamable_http_client(EMPLOYEE_AGENT_URL))
+ 
+ bedrock_model = BedrockModel(
+     model_id="amazon.nova-micro-v1:0",

@@ -1,0 +1,72 @@
+diff --git a/backend/inference/mistral_inference.py b/backend/inference/mistral_inference.py
+index 9a529eb..1f14dce 100644
+--- a/backend/inference/mistral_inference.py
++++ b/backend/inference/mistral_inference.py
+@@ -1,4 +1,4 @@
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import os
+ import base64
+ import requests
+diff --git a/backend/inference/rag_process.py b/backend/inference/rag_process.py
+index 5f2cb88..89ace1f 100644
+--- a/backend/inference/rag_process.py
++++ b/backend/inference/rag_process.py
+@@ -1,4 +1,4 @@
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import requests
+ import numpy as np
+ import faiss
+diff --git a/backend/inference/views.py b/backend/inference/views.py
+index be934c2..0e339c6 100644
+--- a/backend/inference/views.py
++++ b/backend/inference/views.py
+@@ -1,7 +1,7 @@
+ from django.http import JsonResponse
+ from rest_framework.response import Response
+ from rest_framework.views import APIView
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import os
+ import requests
+ from openai import OpenAI
+diff --git a/backend/ontogpt_requirements.txt b/backend/ontogpt_requirements.txt
+index 5acb119..b0e9e97 100644
+--- a/backend/ontogpt_requirements.txt
++++ b/backend/ontogpt_requirements.txt
+@@ -105,7 +105,7 @@ litellm==1.54.1
+ lxml==5.3.0
+ Markdown==3.7
+ MarkupSafe==3.0.2
+-mistralai==1.1.0
++mistralai==3.7.0
+ more-click==0.1.2
+ more-itertools==10.5.0
+ multidict==6.1.0
+diff --git a/backend/requirements.txt b/backend/requirements.txt
+index 830aa11..4ae6053 100644
+--- a/backend/requirements.txt
++++ b/backend/requirements.txt
+@@ -28,7 +28,7 @@ inflection==0.5.1
+ jiter==0.6.1
+ jsonpath-python==1.0.6
+ Markdown==3.7
+-mistralai==1.1.0
++mistralai==3.7.0
+ mypy-extensions==1.0.0
+ numpy==1.26.4
+ oauthlib==3.2.2
+diff --git a/backend/taxtech/views.py b/backend/taxtech/views.py
+index f61fea4..b78fe77 100644
+--- a/backend/taxtech/views.py
++++ b/backend/taxtech/views.py
+@@ -15,7 +15,7 @@ from .serializers import TaxTechAppSerializer, CompanySerializer, TaxDataSeriali
+ from django.http import JsonResponse
+ from rest_framework.response import Response
+ from rest_framework.views import APIView
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ import os
+ import requests
+ from openai import OpenAI

@@ -1,0 +1,104 @@
+diff --git a/backend/chatbot.py b/backend/chatbot.py
+index d21c97a..6797e71 100644
+--- a/backend/chatbot.py
++++ b/backend/chatbot.py
+@@ -1,15 +1,13 @@
+ from flask import current_app
+ 
+-from langchain import  PromptTemplate
+-from langchain.agents import Tool
+-from langchain.chat_models import ChatOpenAI
+-from langchain.chains.conversation.memory import ConversationBufferMemory
++from langchain_core.prompts import PromptTemplate
++from langchain_openai import ChatOpenAI
+ 
+ from llama_index import  (LLMPredictor,ServiceContext, ResponseSynthesizer, StorageContext
+                           , load_index_from_storage)
+ from llama_index.vector_stores.faiss import FaissVectorStore
+ from llama_index.indices.query.query_transform.base import DecomposeQueryTransform
+-from llama_index.langchain_helpers.agents import  LlamaToolkit, create_llama_chat_agent,IndexToolConfig
++from llama_index.langchain_helpers.agents import  LlamaToolkit, IndexToolConfig
+ from llama_index.indices.composability import ComposableGraph
+ from llama_index.retrievers import VectorIndexRetriever
+ from llama_index.query_engine import RetrieverQueryEngine
+@@ -300,22 +298,19 @@ class ChatBot():
+             # retriever = VectorIndexAutoRetriever(index, vector_store_info=vector_store_info)
+             pass
+         else:
+-            raise(NotImplementedError)
+-            memory = ConversationBufferMemory(memory_key="chat_history")
+-            llm=ChatOpenAI(temperature=0.2, max_tokens=512)
+-            agent = create_llama_chat_agent( toolkit,
+-                llm,
+-                memory=memory,
+-                verbose=True,
+-                # max_iterations=10
+-            )
++            # The llama-index/langchain chat agent (ConversationBufferMemory +
++            # create_llama_chat_agent) was unreachable and relied on APIs removed
++            # in langchain 1.x, so it has been dropped.
++            raise NotImplementedError
+         return agent, agent_no_text, agent_generate
+ 
+ def run_chatgpt_agent(query, language):
+ 
+     lan_text = language_mapping(language)
+     logging.info("continuouse generating language: lan_text")
+-    completion = openai.ChatCompletion.create(
++    # openai>=1 (required by langchain-openai) replaced openai.ChatCompletion
++    client = openai.OpenAI()
++    completion = client.chat.completions.create(
+     model="gpt-4",
+     messages=[
+             {"role": "system", "content": f"You are a Synergies developed private assistant. Generate all the response in {lan_text}."},
+@@ -323,6 +318,4 @@ def run_chatgpt_agent(query, language):
+         ]
+     )
+ 
+-    response = completion.choices[0].message
+-    response = response.to_dict()['content']
+-    return response
+\ No newline at end of file
++    return completion.choices[0].message.content
+\ No newline at end of file
+diff --git a/backend/requirement.txt b/backend/requirement.txt
+index 1527210..759477f 100644
+--- a/backend/requirement.txt
++++ b/backend/requirement.txt
+@@ -83,7 +83,9 @@ jsonschema==3.2.0
+ jupyter_client==8.1.0
+ jupyter_core==5.3.0
+ keyring==23.5.0
+-langchain==0.0.173
++langchain==1.5.0
++langchain-core>=1.8.0,<2.0.0
++langchain-openai>=1.8.0,<2.0.0
+ launchpadlib==1.10.16
+ lazr.restfulclient==0.14.4
+ lazr.uri==1.0.6
+diff --git a/backend/utils.py b/backend/utils.py
+index 059888e..5e6fa35 100644
+--- a/backend/utils.py
++++ b/backend/utils.py
+@@ -13,7 +13,7 @@ from llama_index.vector_stores.faiss import FaissVectorStore
+ from llama_index.vector_stores import PineconeVectorStore
+ from pathlib import Path
+ 
+-from langchain.chat_models import ChatOpenAI
++from langchain_openai import ChatOpenAI
+ from llama_index.indices.composability import ComposableGraph
+ from globals import upload_hashes, faiss_vectors
+ 
+@@ -203,9 +203,9 @@ class IndexUtils():
+ 
+                 if data_type == DataType.AUDIO:
+                     audio_path = file_path_str
+-                    openai.api_key = os.getenv("OPENAI_API_KEY")
+-                    audio_file = open(audio_path, "rb")
+-                    transcript = openai.Audio.transcribe("whisper-1", audio_file)
++                    with open(audio_path, "rb") as audio_file:
++                        transcript = openai.OpenAI().audio.transcriptions.create(
++                            model="whisper-1", file=audio_file)
+                     unsaved_doc_set[file_name] = reader.load_data(transcript.text.split())
+                 elif data_type == DataType.XLSX:
+                     dfs = pd.read_excel(file_path_str, sheet_name=None)

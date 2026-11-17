@@ -1,0 +1,131 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 157,
+  "duration_ms": 596482,
+  "total_cost_usd": 2.2940950000000004,
+  "usage": {
+   "input_tokens": 160,
+   "cache_creation_input_tokens": 182529,
+   "cache_read_input_tokens": 8040470,
+   "output_tokens": 71988,
+   "output_tokens_details": {
+    "thinking_tokens": 27259
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 182529,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 2624,
+     "cache_read_input_tokens": 189496,
+     "cache_creation_input_tokens": 151,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 151
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794906000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.27,
+    "resetsAt": 1794906000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.36,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 18,
+  "Read": 33,
+  "Grep": 10,
+  "WebFetch": 13,
+  "Edit": 65,
+  "mcp__plugin_deptime_deptime__symbol_history": 10,
+  "mcp__plugin_deptime_deptime__check_symbols": 7
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.3 check-upgrade . --package transformers --to 5.23.0 --from 4.51.3 --format markdown --output .deptime-report.md",
+  "symbol_history",
+  "symbol_history",
+  "symbol_history",
+  "check_symbols",
+  "symbol_history",
+  "check_symbols",
+  "symbol_history",
+  "check_symbols",
+  "symbol_history",
+  "symbol_history",
+  "symbol_history",
+  "check_symbols",
+  "check_symbols",
+  "symbol_history",
+  "symbol_history",
+  "check_symbols",
+  "check_symbols",
+  "uvx deptime==0.2.3 check-upgrade . --package transformers --to 5.23.0 --from 4.51.3 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 16,
+ "fetched": [
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/trainer.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/pytorch_utils.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/cache_utils.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/cache_utils.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/modeling_flash_attention_utils.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/models/qwen2_5_vl/processing_qwen2_5_vl.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/processing_utils.py",
+  "https://raw.githubusercontent.com/huggingface/transformers/v5.23.0/src/transformers/cache_utils.py"
+ ],
+ "denied": 3,
+ "task": "pin-hvision-nku__glimpseprune-transformers-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 599.3,
+ "service_error": false
+}

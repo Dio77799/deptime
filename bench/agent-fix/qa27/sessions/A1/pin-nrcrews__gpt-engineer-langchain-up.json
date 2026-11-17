@@ -1,0 +1,97 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 13,
+  "duration_ms": 27865,
+  "total_cost_usd": 0.0794572,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 10051,
+   "cache_read_input_tokens": 75753,
+   "output_tokens": 3052,
+   "output_tokens_details": {
+    "thinking_tokens": 721
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 10051,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 783,
+     "cache_read_input_tokens": 15472,
+     "cache_creation_input_tokens": 356,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 356
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794906000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.31,
+    "resetsAt": 1794906000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.36,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 2,
+  "Glob": 1,
+  "Read": 4,
+  "WebFetch": 1,
+  "Edit": 3,
+  "Bash": 1
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://raw.githubusercontent.com/langchain-ai/langchain/master/libs/text-splitters/langchain_text_splitters/base.py"
+ ],
+ "denied": 0,
+ "task": "pin-nrcrews__gpt-engineer-langchain-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 28.4,
+ "service_error": false
+}

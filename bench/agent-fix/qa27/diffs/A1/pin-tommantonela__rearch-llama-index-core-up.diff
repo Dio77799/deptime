@@ -1,0 +1,658 @@
+diff --git a/archmind.py b/archmind.py
+index 979d760..9f7f2f7 100644
+--- a/archmind.py
++++ b/archmind.py
+@@ -7,7 +7,6 @@ import gravis as gv
+ import networkx as nx
+ from networkx import DiGraph
+ 
+-import nest_asyncio
+ import json
+ from scipy.spatial.distance import cosine
+ from networkx.readwrite import json_graph
+@@ -19,18 +18,16 @@ from llama_index.core.query_engine import RetrieverQueryEngine
+ from llama_index.core.postprocessor import SimilarityPostprocessor
+ from llama_index.core.schema import NodeWithScore, TextNode
+ from llama_index.core.retrievers import BaseRetriever
+-from llama_index.agent.lats.types import Candidates, SearchNode, Evaluation
+ from llama_index.core.utils import print_text
+ from llama_index.core.tools import BaseTool, FunctionTool
+-from llama_index.core.agent import ReActAgent
+-from llama_index.agent.lats import LATSAgentWorker
+-from llama_index.core.agent import AgentRunner
+ from llama_index.core import PromptTemplate
+-from llama_index.core.agent import AgentChatResponse, Task
+ from llama_index.core.chat_engine import SimpleChatEngine
+ from llama_index.core import VectorStoreIndex, Document
+ from llama_index.core.schema import TextNode
+ 
++# llama-index-core >= 0.13 no longer provides AgentRunner/Task/LATS: see archmind_agents.py
++from archmind_agents import AgentTask, Evaluation, LATSAgent, ReActTaskAgent, SearchNode
++
+ class ContextRetriever(BaseRetriever):
+ 
+     additional_info = None
+@@ -510,33 +507,13 @@ class ArchmindAssistant:
+         return response.response
+ 
+ 
+-class LATSDesignAgentWorker(LATSAgentWorker):
+-
+-    # Overrides method in super class
+-    async def _get_next_candidates(self, cur_node: SearchNode, input: str) -> List[str]:
+-        """Get next candidates."""
+-        # get candidates
+-        history_str = "\n".join([s.get_content() for s in cur_node.current_reasoning])
+-
+-        candidates = await self.llm.astructured_predict(
+-            Candidates,
+-            prompt=self.candiate_expansion_prompt,
+-            query=input,
+-            conversation_history=history_str,
+-            num_candidates=self.num_expansions,
+-        )
+-        candidate_strs = candidates.candidates[: self.num_expansions]
+-        if self.verbose:
+-            print_text(f"> Got {len(candidate_strs)} candidates: {candidate_strs}\n", color="yellow")
++# Note: LATSAgent (archmind_agents.py) replaces the former LATSDesignAgentWorker, a subclass of the LATSAgentWorker
++# from llama-index-agent-lats (not available for llama-index-core >= 0.13). Like that subclass, it generates the
++# candidate thoughts without repeating them to reach the number of expansions.
+         
+         # TODO: Check the intent of the thought candidates? (e.g., using a semantic router)
+         # print("HERE")
+-        # ensure we have the right number of candidates
+-        # if len(candidate_strs) < self.num_expansions:
+-        #     return (candidate_strs * self.num_expansions)[: self.num_expansions]
+-        # else:
+-        #     return candidate_strs[: self.num_expansions]
+-        return candidate_strs
++        
+     
+ 
+ class ArchmindDesignAgent:
+@@ -691,7 +668,7 @@ class ArchmindDesignAgent:
+         else:
+             return "No assessment was possible for design decision '"+decision+"' for requirement '"+requirement+"'"
+ 
+-    def create_agent(self, mode:str = 'react', **args) -> ReActAgent|AgentRunner:
++    def create_agent(self, mode:str = 'react', **args) -> ReActTaskAgent|LATSAgent|None:
+         """Create an agent for the given mode."""
+         
+         find_patterns_tool = FunctionTool.from_defaults(fn=self.find_patterns)
+@@ -702,24 +679,22 @@ class ArchmindDesignAgent:
+         tools = [find_patterns_tool, compare_patterns_tool, make_decision_tool, assess_decision_tool]
+ 
+         if mode == 'react':
+-            self.agent = ReActAgent.from_tools(tools, llm=self.llm, # max_iterations=5,
+-                                                context=ArchmindDesignAgent.SYSTEM_PROMPT, **args)
++            self.agent = ReActTaskAgent(tools, llm=self.llm, # max_iterations=5,
++                                                system_prompt=ArchmindDesignAgent.SYSTEM_PROMPT, **args)
+             return self.agent
+         if mode == 'lats':
+-            nest_asyncio.apply()
+             expand_candidates_prompt = PromptTemplate(ArchmindDesignAgent.EXPAND_CANDIDATES_PROMPT)
+             reflection_prompt = PromptTemplate(ArchmindDesignAgent.REFLECTION_PROMPT)
+-            agent_worker = LATSDesignAgentWorker.from_tools( #LATSAgentWorker.from_tools(
++            self.agent = LATSAgent( # args can include num_expansions, max_rollouts (-1 for unlimited rollouts) and verbose
+                 tools=tools,
+                 llm=self.llm,
+                 # num_expansions=3,
+                 # max_rollouts=5,  # using -1 for unlimited rollouts
+                 # verbose=True,
+-                candiate_expansion_prompt=expand_candidates_prompt,
++                candidate_expansion_prompt=expand_candidates_prompt,
+                 reflection_prompt=reflection_prompt,
+-                context=ArchmindDesignAgent.SYSTEM_PROMPT, **args
++                system_prompt=ArchmindDesignAgent.SYSTEM_PROMPT, **args
+             )
+-            self.agent = AgentRunner(agent_worker)
+             return self.agent
+         
+         print("Warning: Mode not recognized")
+@@ -729,11 +704,11 @@ class ArchmindDesignAgent:
+     def reset_agent(self):
+         self.agent.reset()
+ 
+-    def reflect_on_task(self, task: Task) -> Evaluation:
++    def reflect_on_task(self, task: AgentTask) -> Evaluation:
+         all_reasoning = task.extra_state['current_reasoning']
+         history_str = "\n".join([s.get_content() for s in all_reasoning])
+         reflection_prompt = PromptTemplate(ArchmindDesignAgent.REFLECTION_PROMPT)
+-        evaluation = self.llm.structured_predict(Evaluation, prompt=reflection_prompt, query=input,conversation_history=history_str)
++        evaluation = self.llm.structured_predict(Evaluation, prompt=reflection_prompt, query=task.input, conversation_history=history_str)
+ 
+         return evaluation
+     
+@@ -812,7 +787,7 @@ class ArchmindDesignAgent:
+             response = self.agent.chat(question_i)
+             print_text("\nRESPONSE "+str(i)+": "+response.response, color='pink', end='\n')
+ 
+-            if isinstance(self.agent, ReActAgent):
++            if isinstance(self.agent, ReActTaskAgent):
+                 task = self.agent.list_tasks()[-1] # last task
+                 print_text("\nSelf-reflection on task "+str(task.task_id)+" ...", color='pink', end='\n')
+                 evaluation = self.reflect_on_task(task) 
+@@ -890,7 +865,7 @@ class ArchmindDesignAgent:
+             return None
+         
+         graph = nx.DiGraph()
+-        if isinstance(self.agent, ReActAgent):
++        if isinstance(self.agent, ReActTaskAgent):
+             graph = nx.DiGraph()
+             tasks = self.agent.list_tasks()
+             for task in tasks:
+@@ -899,7 +874,7 @@ class ArchmindDesignAgent:
+                             task.extra_state['current_reasoning'], task.task_id, task.extra_state['reflection'])
+             print(graph.number_of_nodes(), "nodes in the graph")
+ 
+-        if isinstance(self.agent.agent_worker, LATSDesignAgentWorker):
++        elif isinstance(self.agent, LATSAgent):
+             # If alternative is enabled, then persist only the leaves of the tree
+             graph = nx.DiGraph()
+             tasks = self.agent.list_tasks()
+diff --git a/archmind_agents.py b/archmind_agents.py
+new file mode 100644
+index 0000000..a9385cd
+--- /dev/null
++++ b/archmind_agents.py
+@@ -0,0 +1,434 @@
++"""Agents used by ``archmind.ArchmindDesignAgent`` (llama-index-core >= 0.14).
++
++llama-index-core 0.13 removed the legacy agent stack that this project used in
++0.11 (``AgentRunner``, ``Task``, ``CustomSimpleAgentWorker`` and the
++``ReActAgent.from_tools(...)`` / ``.chat(...)`` / ``.list_tasks()`` API), and the
++``llama-index-agent-lats`` package is not published for llama-index-core >= 0.13.
++This module provides replacements that keep the interface ``archmind.py`` relies on:
++
++* ``ReActTaskAgent``: a synchronous wrapper around the workflow-based ``ReActAgent``
++  that records the reasoning trajectory of every ``chat`` call as a task.
++* ``LATSAgent``: a port of ``llama_index.agent.lats.LATSAgentWorker`` (Language Agent
++  Tree Search, https://arxiv.org/abs/2310.04406) that no longer needs ``AgentRunner``.
++  ``Candidates``, ``Evaluation`` and ``SearchNode`` are ported from
++  ``llama_index.agent.lats.types``.
++* ``AgentTask``: a minimal stand-in for the removed ``Task`` (``task_id``, ``input``
++  and ``extra_state``).
++"""
++
++import asyncio
++import math
++import uuid
++from dataclasses import dataclass, field
++from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
++
++import nest_asyncio
++from pydantic import BaseModel, Field
++
++from llama_index.core import Settings
++from llama_index.core.agent.react import ReActChatFormatter, ReActOutputParser
++from llama_index.core.agent.react.types import (
++    ActionReasoningStep,
++    BaseReasoningStep,
++    ObservationReasoningStep,
++    ResponseReasoningStep,
++)
++from llama_index.core.agent.workflow import AgentOutput, ReActAgent
++from llama_index.core.chat_engine.types import AgentChatResponse
++from llama_index.core.llms import ChatMessage, MessageRole
++from llama_index.core.prompts import PromptTemplate
++from llama_index.core.tools import BaseTool, ToolSelection, acall_tool_with_selection
++from llama_index.core.utils import print_text
++from llama_index.core.workflow import Context
++
++
++def run_sync(coro):
++    """Run a coroutine from synchronous code.
++
++    Works both in plain scripts and where an event loop is already running
++    (e.g., Jupyter), in which case ``nest_asyncio`` is used to allow nesting.
++    """
++    try:
++        asyncio.get_running_loop()
++    except RuntimeError:
++        return asyncio.run(coro)
++    nest_asyncio.apply()
++    return asyncio.get_event_loop().run_until_complete(coro)
++
++
++@dataclass
++class AgentTask:
++    """Record of one ``chat`` call (replacement for the removed ``Task`` class)."""
++
++    task_id: str
++    input: str
++    extra_state: Dict[str, Any] = field(default_factory=dict)
++
++
++# ---------------------------------------------------------------------------
++# ReAct
++# ---------------------------------------------------------------------------
++
++# Key (in the workflow context store) under which the reasoning trajectory of a run is kept.
++_TRAJECTORY_KEY = "archmind_trajectory"
++
++
++class _TrajectoryReActAgent(ReActAgent):
++    """``ReActAgent`` that keeps a copy of the reasoning steps of each run.
++
++    ``ReActAgent.finalize`` clears the reasoning scratchpad once the final answer is
++    produced, so the steps are copied to the context store before that happens.
++    """
++
++    async def finalize(self, ctx: Context, output: AgentOutput, memory: Any) -> AgentOutput:
++        reasoning = await ctx.store.get(self.reasoning_key, default=[])
++        if len(reasoning) > 0:
++            await ctx.store.set(_TRAJECTORY_KEY, list(reasoning))
++        return await super().finalize(ctx, output, memory)
++
++
++class ReActTaskAgent:
++    """Synchronous, task-recording wrapper around the workflow-based ``ReActAgent``."""
++
++    def __init__(
++        self,
++        tools: Sequence[BaseTool],
++        llm=None,
++        system_prompt: Optional[str] = None,
++        max_iterations: int = 10,
++        verbose: bool = False,
++        **agent_kwargs: Any,
++    ) -> None:
++        if llm is not None:  # otherwise the agent falls back to Settings.llm
++            agent_kwargs["llm"] = llm
++        self.agent = _TrajectoryReActAgent(
++            tools=list(tools), system_prompt=system_prompt, streaming=False, **agent_kwargs
++        )
++        self.max_iterations = max_iterations
++        self.verbose = verbose
++        self.reset()
++
++    def reset(self) -> None:
++        """Forget previous conversation turns and tasks."""
++        self._chat_history: List[ChatMessage] = []
++        self._tasks: List[AgentTask] = []
++
++    def list_tasks(self) -> List[AgentTask]:
++        return list(self._tasks)
++
++    async def achat(self, message: str) -> AgentChatResponse:
++        # A fresh context per call (the agent state is not kept in it); the conversation
++        # is carried over explicitly through the chat history.
++        ctx = Context(self.agent)
++        output = await self.agent.run(
++            user_msg=message,
++            chat_history=list(self._chat_history),
++            ctx=ctx,
++            max_iterations=self.max_iterations,
++        )
++        response = output.response.content or ""
++        trajectory = await ctx.store.get(_TRAJECTORY_KEY, default=[])
++
++        if self.verbose:
++            for step in trajectory:
++                print_text(step.get_content() + "\n", color="blue")
++
++        task = AgentTask(task_id=str(uuid.uuid4()), input=message)
++        task.extra_state["current_reasoning"] = trajectory
++        self._tasks.append(task)
++        self._chat_history.append(ChatMessage(role=MessageRole.USER, content=message))
++        self._chat_history.append(ChatMessage(role=MessageRole.ASSISTANT, content=response))
++        return AgentChatResponse(response=response)
++
++    def chat(self, message: str) -> AgentChatResponse:
++        return run_sync(self.achat(message))
++
++
++# ---------------------------------------------------------------------------
++# LATS (ported from llama_index.agent.lats)
++# ---------------------------------------------------------------------------
++
++
++class Candidates(BaseModel):
++    """Candidates for the next reasoning step."""
++
++    candidates: List[str] = Field(description="Candidates for the next reasoning step.")
++
++
++class Evaluation(BaseModel):
++    """Evaluation of a reasoning trajectory."""
++
++    score: int = Field(
++        description="Score of the reflection indicating **correctness**. Integer from 1-10.",
++        ge=0,
++        le=10,
++    )
++    is_done: bool = Field(default=False, description="Whether the answer is found.")
++    reasoning: str = Field(default="", description="Reasoning for the score/correctness.")
++
++
++class SearchNode(BaseModel):
++    """Node of the LATS search tree."""
++
++    current_reasoning: List[BaseReasoningStep] = Field(
++        ..., description="Current reasoning (all the steps from the root to this node)."
++    )
++    parent: Optional["SearchNode"] = Field(default=None, description="Parent node.")
++    children: List["SearchNode"] = Field(default_factory=list, description="Child nodes.")
++    evaluation: Evaluation = Field(..., description="Evaluation of the reasoning.")
++    visits: int = Field(default=0, description="Number of visits to this node.")
++
++    @property
++    def answer(self) -> Optional[str]:
++        """Answer (or last reasoning step) of this node."""
++        if not self.current_reasoning:
++            return None
++        last_step = self.current_reasoning[-1]
++        if isinstance(last_step, ResponseReasoningStep):
++            return last_step.response
++        return last_step.get_content()
++
++    @property
++    def is_done(self) -> bool:
++        return self.evaluation.is_done
++
++    @property
++    def score(self) -> float:
++        return self.evaluation.score
++
++    @property
++    def upper_confidence_bound(self) -> float:
++        """UCT score used to pick the next node to expand."""
++        if self.parent is None:
++            raise ValueError("Cannot compute upper confidence bound for the root node.")
++        if self.visits == 0:
++            raise ValueError("Cannot compute upper confidence bound for an unvisited node.")
++        return self.score + 1.0 * math.sqrt(math.log(self.parent.visits) / self.visits)
++
++    def backpropagate(self, reward: float) -> None:
++        """Update the visits and (running average) score of this node and its ancestors."""
++        node: Optional[SearchNode] = self
++        while node is not None:
++            node.visits += 1
++            node.evaluation.score = (reward + (node.visits - 1) * node.evaluation.score) / node.visits
++            node = node.parent
++
++    def get_best_leaf(self) -> "SearchNode":
++        """Descend the tree following the best (not yet done) child by UCT."""
++        candidates = [child for child in self.children if not child.is_done]
++        if not candidates:
++            return self
++        best_child = max(candidates, key=lambda child: child.upper_confidence_bound)
++        return best_child.get_best_leaf()
++
++
++class LATSAgent:
++    """Language Agent Tree Search (https://arxiv.org/abs/2310.04406v2).
++
++    Each ``chat`` call performs up to ``max_rollouts`` tree-search iterations: select the
++    best leaf, generate ``num_expansions`` candidate next thoughts, roll each one out with a
++    ReAct step (calling tools), evaluate the resulting trajectories and backpropagate scores.
++
++    Args:
++        tools: tools the agent can use.
++        llm: LLM used for candidates, rollouts and reflection (defaults to ``Settings.llm``).
++        num_expansions: number of candidates generated per expansion.
++        max_rollouts: number of iterations per chat; -1 keeps going until the first solution is found.
++        reflection_prompt: prompt (with ``{query}`` and ``{conversation_history}``) to evaluate a trajectory.
++        candidate_expansion_prompt: prompt (with ``{num_candidates}``, ``{query}`` and
++            ``{conversation_history}``) to generate candidates.
++        system_prompt: context included in the ReAct system header.
++        verbose: print the progress of the search.
++        max_iterations: accepted for compatibility with ``ReActTaskAgent``; not used by LATS.
++    """
++
++    def __init__(
++        self,
++        tools: Sequence[BaseTool],
++        llm=None,
++        *,
++        reflection_prompt: PromptTemplate,
++        candidate_expansion_prompt: PromptTemplate,
++        num_expansions: int = 2,
++        max_rollouts: int = 5,
++        system_prompt: Optional[str] = None,
++        verbose: bool = False,
++        max_iterations: Optional[int] = None,
++    ) -> None:
++        if num_expansions < 1:
++            raise ValueError("num_expansions must be >= 1")
++        if max_rollouts == 0 or max_rollouts < -1:
++            raise ValueError("max_rollouts must be -1 (until a solution is found) or > 0")
++        self.tools = list(tools)
++        self.llm = llm if llm is not None else Settings.llm
++        self.num_expansions = num_expansions
++        self.max_rollouts = max_rollouts
++        self.reflection_prompt = reflection_prompt
++        self.candidate_expansion_prompt = candidate_expansion_prompt
++        self.verbose = verbose
++        self.chat_formatter = ReActChatFormatter.from_defaults(context=system_prompt)
++        self.output_parser = ReActOutputParser()
++        self.reset()
++
++    def reset(self) -> None:
++        """Forget previous conversation turns and tasks."""
++        self._chat_history: List[ChatMessage] = []
++        self._tasks: List[AgentTask] = []
++
++    def list_tasks(self) -> List[AgentTask]:
++        return list(self._tasks)
++
++    # -- search ------------------------------------------------------------
++
++    def _initialize_state(self, task: AgentTask) -> Dict[str, Any]:
++        root_node = SearchNode(
++            current_reasoning=[ObservationReasoningStep(observation=task.input)],
++            evaluation=Evaluation(score=1),  # evaluation of the root is not used
++        )
++        return {"count": 0, "solution_queue": [], "root_node": root_node}
++
++    async def _get_next_candidates(self, cur_node: SearchNode, query: str) -> List[str]:
++        """Get next candidates (thoughts) for expanding ``cur_node``."""
++        history_str = "\n".join([s.get_content() for s in cur_node.current_reasoning])
++        candidates = await self.llm.astructured_predict(
++            Candidates,
++            prompt=self.candidate_expansion_prompt,
++            query=query,
++            conversation_history=history_str,
++            num_candidates=self.num_expansions,
++        )
++        candidate_strs = candidates.candidates[: self.num_expansions]
++        if self.verbose:
++            print_text(f"> Got {len(candidate_strs)} candidates: {candidate_strs}\n", color="yellow")
++        return candidate_strs
++
++    async def _arun_candidate(self, node: SearchNode) -> List[BaseReasoningStep]:
++        """Roll out one ReAct step (thought/action/observation or answer) from ``node``."""
++        messages = self.chat_formatter.format(
++            self.tools,
++            chat_history=self._chat_history,
++            current_reasoning=node.current_reasoning,
++        )
++        response = await self.llm.achat(messages)
++        content = response.message.content or ""
++        try:
++            reasoning_step = self.output_parser.parse(content)
++        except ValueError as exc:
++            reasoning_step = ResponseReasoningStep(
++                thought=content,
++                response="Encountered an error parsing: " + str(exc),
++            )
++        if reasoning_step.is_done:
++            return [reasoning_step]
++
++        action_step = cast(ActionReasoningStep, reasoning_step)
++        tool_selection = ToolSelection(
++            tool_id=action_step.action,
++            tool_name=action_step.action,
++            tool_kwargs=action_step.action_input,
++        )
++        try:
++            tool_output = await acall_tool_with_selection(
++                tool_selection, self.tools, verbose=self.verbose
++            )
++        except Exception as exc:
++            tool_output = f"Encountered error: {exc!s}"
++        return [action_step, ObservationReasoningStep(observation=str(tool_output))]
++
++    async def _aevaluate(
++        self, cur_node: SearchNode, current_reasoning: List[BaseReasoningStep], query: str
++    ) -> Evaluation:
++        """Evaluate (reflect on) the trajectory formed by ``cur_node`` plus the new steps."""
++        all_reasoning = cur_node.current_reasoning + current_reasoning
++        history_str = "\n".join([s.get_content() for s in all_reasoning])
++        evaluation = await self.llm.astructured_predict(
++            Evaluation,
++            prompt=self.reflection_prompt,
++            query=query,
++            conversation_history=history_str,
++        )
++        if self.verbose:
++            print_text(f"> Evaluation for input {query}\n: {evaluation}\n", color="pink")
++        return evaluation
++
++    def _update_state(
++        self, node: SearchNode, current_reasoning: List[BaseReasoningStep], evaluation: Evaluation
++    ) -> SearchNode:
++        """Add a child of ``node`` with the extra reasoning steps and backpropagate its score."""
++        new_node = SearchNode(
++            current_reasoning=node.current_reasoning + current_reasoning,
++            parent=node,
++            evaluation=evaluation,
++        )
++        node.children.append(new_node)
++        new_node.backpropagate(evaluation.score)
++        return new_node
++
++    async def _arun_step(self, state: Dict[str, Any], task: AgentTask) -> Tuple[str, bool]:
++        """Run one iteration of the tree search. Returns (response, is_done)."""
++        root_node = state["root_node"]
++        cur_node = root_node.get_best_leaf()
++        if self.verbose:
++            print_text(f"> Selecting node to expand: {cur_node.answer}\n", color="blue")
++
++        # Expand the selected node with the candidate thoughts (placeholders, evaluated below)
++        new_candidates = await self._get_next_candidates(cur_node, task.input)
++        new_nodes = [
++            self._update_state(
++                cur_node, [ObservationReasoningStep(observation=candidate)], Evaluation(score=1)
++            )
++            for candidate in new_candidates
++        ]
++
++        # Roll out and evaluate every candidate
++        solution_queue = state["solution_queue"]
++        reasoning_steps_list = await asyncio.gather(*[self._arun_candidate(n) for n in new_nodes])
++        if self.verbose:
++            for steps in reasoning_steps_list:
++                print_text(f"> Generated steps: {[s.get_content() for s in steps]}\n", color="blue")
++        evaluations = await asyncio.gather(
++            *[self._aevaluate(n, steps, task.input) for n, steps in zip(new_nodes, reasoning_steps_list)]
++        )
++
++        # Attach the evaluated trajectories under their candidates
++        for node, steps, evaluation in zip(new_nodes, reasoning_steps_list, evaluations):
++            result_node = self._update_state(node, steps, evaluation)
++            if result_node.is_done:
++                if self.verbose:
++                    print_text(f"> Found solution node: {result_node.answer}\n", color="pink")
++                solution_queue.append(result_node)
++
++        state["count"] += 1
++        is_done = False
++        if self.max_rollouts == -1 and len(solution_queue) > 0:
++            is_done = True
++        elif self.max_rollouts > 0 and state["count"] >= self.max_rollouts:
++            is_done = True
++
++        if len(solution_queue) > 0:
++            best_node = max(solution_queue, key=lambda node: node.score)
++            response = str(best_node.answer)
++        else:
++            response = "I am still thinking."
++        if self.verbose:
++            print_text(f"> Got final response: {response}\n", color="green")
++        return response, is_done
++
++    # -- chat interface ----------------------------------------------------
++
++    async def achat(self, message: str) -> AgentChatResponse:
++        task = AgentTask(task_id=str(uuid.uuid4()), input=message)
++        task.extra_state = self._initialize_state(task)
++
++        is_done = False
++        response = ""
++        while not is_done:
++            response, is_done = await self._arun_step(task.extra_state, task)
++
++        self._tasks.append(task)
++        self._chat_history.append(ChatMessage(role=MessageRole.USER, content=message))
++        self._chat_history.append(ChatMessage(role=MessageRole.ASSISTANT, content=response))
++        return AgentChatResponse(response=response)
++
++    def chat(self, message: str) -> AgentChatResponse:
++        return run_sync(self.achat(message))
+diff --git a/llamaindex_requirements.txt b/llamaindex_requirements.txt
+index 2768619..061a116 100644
+--- a/llamaindex_requirements.txt
++++ b/llamaindex_requirements.txt
+@@ -7,28 +7,16 @@ langchain-openai==0.1.8
+ langchain-text-splitters==0.2.1
+ langgraph==0.0.69
+ langsmith==0.1.77
+-llama-cloud==0.1.2
+-llama-index==0.11.17
++llama-index==0.14.26
+ #llama-index-agent-introspective==0.3.0
+-llama-index-agent-lats==0.2.1
+-llama-index-agent-openai==0.3.4
+-llama-index-cli==0.3.1
+-llama-index-core==0.11.17
+-llama-index-embeddings-huggingface==0.3.1
+-llama-index-embeddings-langchain==0.2.1
+-llama-index-embeddings-openai==0.2.5
+-llama-index-indices-managed-llama-cloud==0.4.0
+-llama-index-legacy==0.9.48.post3
+-llama-index-llms-groq==0.2.0
+-llama-index-llms-ollama==0.3.4
+-llama-index-llms-openai==0.2.11
+-llama-index-llms-openai-like==0.2.0
+-llama-index-multi-modal-llms-openai==0.2.2
+-llama-index-program-openai==0.2.0
+-llama-index-question-gen-openai==0.2.0
+-llama-index-readers-file==0.2.2
+-llama-index-readers-llama-parse==0.3.0
+-llama-index-vector-stores-chroma==0.2.0
+-llama-parse==0.5.7
+-llamaindex-py-client==0.1.19
+-llama-index-llms-bedrock==0.2.6
+\ No newline at end of file
++llama-index-core==0.14.26
++llama-index-embeddings-huggingface==0.9.0
++llama-index-embeddings-langchain==0.7.0
++llama-index-embeddings-openai==0.8.0
++llama-index-llms-groq==0.7.0
++llama-index-llms-ollama==0.12.0
++llama-index-llms-openai==0.9.0
++llama-index-llms-openai-like==0.9.0
++llama-index-readers-file==0.8.0
++llama-index-vector-stores-chroma==0.7.0
++llama-index-llms-bedrock==0.7.0
+diff --git a/requirements.txt b/requirements.txt
+index 967db1f..4136cdb 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,13 +1,13 @@
+ # Automatically generated by https://github.com/damnever/pigar.
+ 
+-chromadb==0.5.5
++chromadb==0.5.23
+ gravis==0.1.0
+ ipython==8.25.0
+ langchain-huggingface==0.0.3
+ nest_asyncio==1.6.0
+ networkx==3.3
+ pandas==2.2.2
+-pydantic==2.9.2
++pydantic==2.11.5
+ pydot==3.0.1
+ python-dotenv==1.0.1
+ pyvis==0.3.2

@@ -1,0 +1,109 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 35,
+  "duration_ms": 104456,
+  "total_cost_usd": 0.24534300000000003,
+  "usage": {
+   "input_tokens": 30,
+   "cache_creation_input_tokens": 23527,
+   "cache_read_input_tokens": 233430,
+   "output_tokens": 8706,
+   "output_tokens_details": {
+    "thinking_tokens": 1708
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 23527,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 752,
+     "cache_read_input_tokens": 27005,
+     "cache_creation_input_tokens": 2299,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 2299
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.19,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.32,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 3,
+  "Read": 5,
+  "Bash": 1,
+  "WebFetch": 13,
+  "WebSearch": 1,
+  "Edit": 11
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://pypi.org/pypi/mcp/2.3.0/json",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/main/docs/migration.md",
+  "https://pypi.org/pypi/strands-agents/json",
+  "https://pypi.org/pypi/strands-agents/1.44.0/json",
+  "https://api.github.com/repos/strands-agents/sdk-python/releases?per_page=15",
+  "https://pypi.org/pypi/strands-agents/1.65.0/json",
+  "https://raw.githubusercontent.com/strands-agents/sdk-python/main/src/strands/tools/mcp/mcp_client.py",
+  "https://pypi.org/pypi/strands-agents/1.55.0/json",
+  "https://pypi.org/pypi/strands-agents/1.60.0/json",
+  "https://github.com/strands-agents/sdk-python/blob/main/src/strands/tools/mcp/mcp_client.py",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.3.0/src/mcp/client/streamable_http.py",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.3.0/src/mcp/shared/_httpx_utils.py",
+  "https://pypi.org/pypi/httpx2/json"
+ ],
+ "denied": 0,
+ "task": "pin-aws-samples__sample-data-residency-chatbot-with-bedrock-agentcore-mcp-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 105.0,
+ "service_error": false
+}

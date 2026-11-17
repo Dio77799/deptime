@@ -1,0 +1,17 @@
+diff --git a/pdf_qa_server.py b/pdf_qa_server.py
+index ca82670..19dd1de 100644
+--- a/pdf_qa_server.py
++++ b/pdf_qa_server.py
+@@ -289,9 +289,9 @@ async def ask_question(request: QuestionRequest):
+     question_embedding = get_embedding(request.question)
+ 
+     logger.info("🔎 Searching for relevant chunks...")
+-    results = qdrant_client.search(
+-        collection_name=request.pdf_id, query_vector=question_embedding, limit=2
+-    )
++    results = qdrant_client.query_points(
++        collection_name=request.pdf_id, query=question_embedding, limit=2
++    ).points
+     logger.info(f"📑 Found {len(results)} relevant chunks")
+ 
+     context = "\n\n".join([result.payload["text"] for result in results])

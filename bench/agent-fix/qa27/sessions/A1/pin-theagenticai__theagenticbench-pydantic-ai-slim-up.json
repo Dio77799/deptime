@@ -1,0 +1,102 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 45,
+  "duration_ms": 117340,
+  "total_cost_usd": 0.3979227000000001,
+  "usage": {
+   "input_tokens": 24,
+   "cache_creation_input_tokens": 53960,
+   "cache_read_input_tokens": 421829,
+   "output_tokens": 11940,
+   "output_tokens_details": {
+    "thinking_tokens": 1909
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 53960,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1080,
+     "cache_read_input_tokens": 55585,
+     "cache_creation_input_tokens": 4152,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4152
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.14,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.31,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 2,
+  "Read": 8,
+  "Bash": 1,
+  "WebFetch": 7,
+  "Edit": 26
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://pypi.org/pypi/pydantic-ai-slim/2.68.0/json",
+  "https://ai.pydantic.dev/changelog/",
+  "https://pydantic.dev/docs/ai/project/changelog/",
+  "https://pydantic.dev/docs/ai/models/openai/",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/messages.py",
+  "https://raw.githubusercontent.com/pydantic/pydantic-ai/v2.68.0/pydantic_ai_slim/pydantic_ai/messages.py",
+  "https://pypi.org/pypi/pydantic-ai/2.68.0/json"
+ ],
+ "denied": 0,
+ "task": "pin-theagenticai__theagenticbench-pydantic-ai-slim-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 117.9,
+ "service_error": false
+}

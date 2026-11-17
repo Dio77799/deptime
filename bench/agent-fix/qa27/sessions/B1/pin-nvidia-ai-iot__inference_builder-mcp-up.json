@@ -1,0 +1,111 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 16,
+  "duration_ms": 44983,
+  "total_cost_usd": 0.10869249999999997,
+  "usage": {
+   "input_tokens": 24,
+   "cache_creation_input_tokens": 12345,
+   "cache_read_input_tokens": 202858,
+   "output_tokens": 3583,
+   "output_tokens_details": {
+    "thinking_tokens": 665
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 12345,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 637,
+     "cache_read_input_tokens": 21271,
+     "cache_creation_input_tokens": 419,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 419
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.29,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.33,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write",
+  "mcp__plugin_deptime_deptime__check_symbols",
+  "mcp__plugin_deptime_deptime__check_upgrade",
+  "mcp__plugin_deptime_deptime__coverage",
+  "mcp__plugin_deptime_deptime__diff_versions",
+  "mcp__plugin_deptime_deptime__explain_error",
+  "mcp__plugin_deptime_deptime__symbol_history"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Bash": 5,
+  "Read": 2,
+  "mcp__plugin_deptime_deptime__check_symbols": 3,
+  "WebFetch": 2,
+  "Edit": 2,
+  "Grep": 1
+ },
+ "deptime_calls": [
+  "uvx deptime==0.2.3 check-upgrade . --package mcp --to 2.3.0 --from 1.23.0 --format markdown --output .deptime-report.md",
+  "check_symbols",
+  "check_symbols",
+  "check_symbols",
+  "uvx deptime==0.2.3 check-upgrade . --package mcp --to 2.3.0 --from 1.23.0 --format markdown --output .deptime-report.md"
+ ],
+ "other_bash": 3,
+ "fetched": [
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.3.0/src/mcp/client/streamable_http.py",
+  "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.3.0/src/mcp/shared/_httpx_utils.py"
+ ],
+ "denied": 2,
+ "task": "pin-nvidia-ai-iot__inference_builder-mcp-up",
+ "arm": "B",
+ "label": "B1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 46.6,
+ "service_error": false
+}

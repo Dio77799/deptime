@@ -1,0 +1,51 @@
+diff --git a/utils/llms_interface.py b/utils/llms_interface.py
+index 07bc733..758f520 100644
+--- a/utils/llms_interface.py
++++ b/utils/llms_interface.py
+@@ -3,11 +3,16 @@ import abc
+ from dataclasses import dataclass
+ 
+ import openai
+-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
++from anthropic import Anthropic
+ from transformers import T5Tokenizer, T5ForConditionalGeneration
+ from transformers import AutoTokenizer, AutoModelForCausalLM
+ from transformers.generation import GenerationConfig
+ 
++# anthropic.HUMAN_PROMPT / AI_PROMPT were removed in anthropic 1.0.0; they are only used here to
++# record the prompt text in the legacy format.
++HUMAN_PROMPT = "\n\nHuman:"
++AI_PROMPT = "\n\nAssistant:"
++
+ 
+ @dataclass(frozen=True)
+ class LLMResponse:
+@@ -114,11 +119,14 @@ class ClaudeModel(LanguageModels):
+         self.anthropic = Anthropic(api_key=self.CLAUDE_API_KEY)
+ 
+     def completion(self, prompt: str) -> LLMResponse:
+-        # the "Answer" is placed after AI_PROMPT to make the model's answer consistent with what we want
+-        response = self.anthropic.completions.create(
++        # the "Answer:" is placed in a prefilled assistant turn to make the model's answer consistent with what we want
++        response = self.anthropic.messages.create(
+             model=self.model_name,
+-            max_tokens_to_sample=self.max_tokens,
+-            prompt=f"{HUMAN_PROMPT} {prompt[:-7]}{AI_PROMPT} Answer:",
++            max_tokens=self.max_tokens,
++            messages=[
++                {"role": "user", "content": prompt[:-7]},
++                {"role": "assistant", "content": "Answer:"},
++            ],
+             temperature=self.temperature,
+         )
+ 
+@@ -133,7 +141,8 @@ class ClaudeModel(LanguageModels):
+             'max_tokens': max_tokens,
+             'temperature': temperature
+         }
+-        return LLMResponse(prompt_text=prompt_text, response_text=model_response.completion, prompt_info=prompt_info, logprobs=[])
++        answer = "".join(block.text for block in model_response.content if block.type == "text")
++        return LLMResponse(prompt_text=prompt_text, response_text=answer, prompt_info=prompt_info, logprobs=[])
+ 
+ 
+ class FlanT5Model(LanguageModels):

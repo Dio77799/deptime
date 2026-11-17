@@ -1,0 +1,104 @@
+diff --git a/fantasy_football_multi_league.py b/fantasy_football_multi_league.py
+index 073c0d6..4b167ab 100644
+--- a/fantasy_football_multi_league.py
++++ b/fantasy_football_multi_league.py
+@@ -9,9 +9,16 @@ import os
+ from typing import Any, Awaitable, Callable, Dict, List, Optional
+ 
+ from dotenv import load_dotenv
+-from mcp.server import Server
++from mcp.server import Server, ServerRequestContext
+ from mcp.server.stdio import stdio_server
+-from mcp.types import TextContent, Tool
++from mcp.types import (
++    CallToolRequestParams,
++    CallToolResult,
++    ListToolsResult,
++    PaginatedRequestParams,
++    TextContent,
++    Tool,
++)
+ 
+ # Import extracted modules
+ from src.api import get_access_token, refresh_yahoo_token, set_access_token, yahoo_api_call
+@@ -67,9 +74,6 @@ load_dotenv(dotenv_path=ENV_FILE_PATH)
+ if os.getenv("YAHOO_ACCESS_TOKEN"):
+     set_access_token(os.getenv("YAHOO_ACCESS_TOKEN"))
+ 
+-# Create server instance
+-server = Server("fantasy-football")
+-
+ # Cache for leagues
+ LEAGUES_CACHE = {}
+ 
+@@ -505,7 +509,6 @@ async def get_all_teams_info(league_key: str) -> list[dict]:
+         return []
+ 
+ 
+-@server.list_tools()
+ async def list_tools() -> list[Tool]:
+     """List available fantasy football tools."""
+     base_tools = [
+@@ -943,7 +946,6 @@ TOOL_HANDLERS: dict[str, Callable[[dict], Awaitable[dict]]] = {
+ }
+ 
+ 
+-@server.call_tool()
+ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+     """Execute a fantasy football tool via modular handlers."""
+     original_arguments = dict(arguments)
+@@ -995,6 +997,28 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+         return [TextContent(type="text", text=json.dumps(error_result, indent=2))]
+ 
+ 
++# mcp 2.x low-level server: handlers are passed to the constructor and must
++# take (ctx, params) and return full result types. ``list_tools`` and
++# ``call_tool`` above stay plain functions so other modules can keep using them.
++async def _on_list_tools(
++    ctx: ServerRequestContext, params: PaginatedRequestParams | None
++) -> ListToolsResult:
++    return ListToolsResult(tools=await list_tools())
++
++
++async def _on_call_tool(ctx: ServerRequestContext, params: CallToolRequestParams) -> CallToolResult:
++    content = await call_tool(params.name, params.arguments or {})
++    return CallToolResult(content=content, is_error=False)
++
++
++# Create server instance
++server = Server(
++    "fantasy-football",
++    on_list_tools=_on_list_tools,
++    on_call_tool=_on_call_tool,
++)
++
++
+ async def get_draft_recommendation_simple(
+     league_key: str, strategy: str, num_recommendations: int, current_pick: Optional[int] = None
+ ) -> dict:
+diff --git a/pyproject.toml b/pyproject.toml
+index db5c581..8fab0ec 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -33,7 +33,7 @@ classifiers = [
+ ]
+ 
+ dependencies = [
+-    "mcp>=1.2.0",
++    "mcp>=2.3.0",
+     "yfpy>=16.0.3",
+     "pydantic>=2.12.0",
+     "pydantic-settings>=2.0.0",
+diff --git a/requirements.txt b/requirements.txt
+index 4054f7a..fcdbe2e 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,6 +1,6 @@
+ # Core MCP server dependencies
+-fastmcp==2.12.3
+-mcp==1.14.0
++fastmcp==4.2.0
++mcp==2.3.0
+ yfpy==17.0.0
+ python-dotenv==1.1.1
+ pydantic==2.12.0

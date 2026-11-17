@@ -1,0 +1,83 @@
+diff --git a/Paper2Web/camel/configs/mistral_config.py b/Paper2Web/camel/configs/mistral_config.py
+index 1e528e1..581dcca 100644
+--- a/Paper2Web/camel/configs/mistral_config.py
++++ b/Paper2Web/camel/configs/mistral_config.py
+@@ -66,12 +66,12 @@ class MistralConfig(BaseConfig):
+     @classmethod
+     def fields_type_checking(cls, response_format):
+         if response_format and not isinstance(response_format, dict):
+-            from mistralai.models import ResponseFormat
++            from mistralai.client.models import ResponseFormat
+ 
+             if not isinstance(response_format, ResponseFormat):
+                 raise ValueError(
+                     f"The tool {response_format} should be an instance "
+-                    "of `mistralai.models.ResponseFormat`."
++                    "of `mistralai.client.models.ResponseFormat`."
+                 )
+         return response_format
+ 
+diff --git a/Paper2Web/camel/embeddings/mistral_embedding.py b/Paper2Web/camel/embeddings/mistral_embedding.py
+index 24c80e3..ed715b7 100644
+--- a/Paper2Web/camel/embeddings/mistral_embedding.py
++++ b/Paper2Web/camel/embeddings/mistral_embedding.py
+@@ -48,7 +48,7 @@ class MistralEmbedding(BaseEmbedding[str]):
+         api_key: str | None = None,
+         dimensions: int | None = None,
+     ) -> None:
+-        from mistralai import Mistral
++        from mistralai.client import Mistral
+ 
+         if not model_type.is_mistral:
+             raise ValueError("Invalid Mistral embedding model type.")
+diff --git a/Paper2Web/camel/models/mistral_model.py b/Paper2Web/camel/models/mistral_model.py
+index e248e09..7dedd2d 100644
+--- a/Paper2Web/camel/models/mistral_model.py
++++ b/Paper2Web/camel/models/mistral_model.py
+@@ -15,9 +15,9 @@ import os
+ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+ 
+ if TYPE_CHECKING:
+-    from mistralai.models import (
++    from mistralai.client.models import (
++        ChatCompletionRequestMessage,
+         ChatCompletionResponse,
+-        Messages,
+     )
+ 
+ from camel.configs import MISTRAL_API_PARAMS, MistralConfig
+@@ -73,7 +73,7 @@ class MistralModel(BaseModelBackend):
+         url: Optional[str] = None,
+         token_counter: Optional[BaseTokenCounter] = None,
+     ) -> None:
+-        from mistralai import Mistral
++        from mistralai.client import Mistral
+ 
+         if model_config_dict is None:
+             model_config_dict = MistralConfig().as_dict()
+@@ -132,10 +132,10 @@ class MistralModel(BaseModelBackend):
+     def _to_mistral_chatmessage(
+         self,
+         messages: List[OpenAIMessage],
+-    ) -> List["Messages"]:
++    ) -> List["ChatCompletionRequestMessage"]:
+         import uuid
+ 
+-        from mistralai.models import (
++        from mistralai.client.models import (
+             AssistantMessage,
+             FunctionCall,
+             SystemMessage,
+diff --git a/requirements.txt b/requirements.txt
+index 56a00a6..c76fb8a 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -269,7 +269,7 @@ mdurl==0.1.2
+ memray==1.15.0
+ milvus-lite==2.4.11
+ mistral_common==1.5.1
+-mistralai==1.5.0
++mistralai==3.7.0
+ mistune==3.1.0
+ modelscope==1.29.1
+ monotonic==1.6

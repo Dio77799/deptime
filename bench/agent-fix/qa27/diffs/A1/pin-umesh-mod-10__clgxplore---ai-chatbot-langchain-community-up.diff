@@ -1,0 +1,505 @@
+diff --git a/base-requirements.txt b/base-requirements.txt
+index 599658b..eda1e28 100644
+--- a/base-requirements.txt
++++ b/base-requirements.txt
+@@ -1,13 +1,15 @@
+ # Updated base-requirements.txt
+ 
+ # Core dependencies
+-langchain==0.2.11
+-langchain-core>=0.2.6,<0.3.0
+-langchain-community==0.2.10
+-langchain-experimental==0.0.60
+-langgraph==0.1.6
+-pydantic==2.7.0
+-pydantic_core==2.18.1
++langchain>=1.0.0,<2.0.0
++langchain-classic>=1.0.7,<2.0.0
++langchain-core>=1.4.0,<2.0.0
++langchain-community==0.4.2
++langchain-experimental==0.4.2
++langchain-text-splitters>=1.1.2,<2.0.0
++langgraph>=1.0.0,<2.0.0
++pydantic==2.7.4
++pydantic_core==2.18.4
+ python-dotenv==1.0.1
+ streamlit==1.37.0
+ st-pages==0.5.0
+@@ -27,7 +29,7 @@ peft==0.9.0
+ 
+ # Data processing and storage
+ pandas==2.1.4
+-numpy==1.26.0
++numpy==1.26.2
+ sqlitedict==2.1.0
+ faiss-cpu==1.7.4
+ chromadb==0.4.24
+@@ -39,7 +41,7 @@ python-docx==1.1.2
+ xlrd==2.0.1
+ 
+ # Web and API
+-requests>=2.32.2
++requests>=2.32.5
+ aiohttp==3.9.1
+ fastapi==0.110.1
+ uvicorn==0.23.2
+diff --git a/prompt_engineering/requirements.txt b/prompt_engineering/requirements.txt
+index 1f4db95..ea0a25f 100644
+--- a/prompt_engineering/requirements.txt
++++ b/prompt_engineering/requirements.txt
+@@ -1,10 +1,10 @@
+-pydantic==2.7.0
+-pydantic_core==2.18.1
+-langchain-community==0.2.10
+-langchain-core==0.2.25
+-langchain==0.2.11
++pydantic==2.7.4
++pydantic_core==2.18.4
++langchain-community==0.4.2
++langchain-core>=1.4.0,<2.0.0
++langchain>=1.0.0,<2.0.0
+ python-dotenv==1.0.0
+-Requests==2.31.0
++Requests>=2.32.5
+ sseclient-py==1.8.0
+ streamlit==1.25.0
+-streamlit-extras==0.3.6
+\ No newline at end of file
++streamlit-extras==0.3.6
+diff --git a/prompt_engineering/src/llm_management.py b/prompt_engineering/src/llm_management.py
+index cf527dc..81e54a0 100644
+--- a/prompt_engineering/src/llm_management.py
++++ b/prompt_engineering/src/llm_management.py
+@@ -8,7 +8,7 @@ import yaml  # for loading prompt example config file
+ from dataclasses import dataclass
+ from typing import Tuple  # for type hint
+ from langchain_core.language_models.llms import LLM
+-from langchain.prompts import PromptTemplate, load_prompt  # for creating and loading prompting yaml files
++from langchain_core.prompts import PromptTemplate, load_prompt  # for creating and loading prompting yaml files
+ 
+ from utils.model_wrappers.api_gateway import APIGateway
+ 
+diff --git a/utils/agents/corrective_rag.py b/utils/agents/corrective_rag.py
+index 76a20e6..a9c04ea 100644
+--- a/utils/agents/corrective_rag.py
++++ b/utils/agents/corrective_rag.py
+@@ -1,8 +1,8 @@
+ from typing import Any, Dict, List, TypedDict
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
++from langgraph.checkpoint.memory import MemorySaver
+ from langgraph.graph.state import CompiledStateGraph
+-from langgraph.graph.graph import CompiledGraph
++from langgraph.graph.state import CompiledStateGraph as CompiledGraph
+ from langchain_core.runnables.config import RunnableConfig
+ from utils.rag.rag_components import RAGComponents  # type: ignore
+ from utils.code_gen.codegen_components import CodeGenComponents  # type: ignore
+diff --git a/utils/agents/return_message.py b/utils/agents/return_message.py
+index 86956cc..c487bda 100644
+--- a/utils/agents/return_message.py
++++ b/utils/agents/return_message.py
+@@ -3,7 +3,6 @@ import sys
+ from typing import Any, Dict, Optional
+ from utils.rag.base_components import BaseComponents  # type: ignore
+ from langchain_core.output_parsers import StrOutputParser
+-from langchain.vectorstores import Chroma
+ from langchain_community.vectorstores import Chroma
+ from langchain_core.prompts import load_prompt
+ from langchain_core.embeddings import Embeddings
+diff --git a/utils/agents/static_RAG_with_coding.py b/utils/agents/static_RAG_with_coding.py
+index 63bff8f..d37ca87 100644
+--- a/utils/agents/static_RAG_with_coding.py
++++ b/utils/agents/static_RAG_with_coding.py
+@@ -4,9 +4,9 @@ from langchain_community.vectorstores import Chroma
+ from utils.rag.rag_components import RAGComponents  # type: ignore
+ from utils.code_gen.codegen_components import CodeGenComponents  # type: ignore
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
++from langgraph.checkpoint.memory import MemorySaver
+ from langgraph.graph.state import CompiledStateGraph
+-from langgraph.graph.graph import CompiledGraph
++from langgraph.graph.state import CompiledStateGraph as CompiledGraph
+ 
+ 
+ class CodeRAGGraphState(TypedDict):
+diff --git a/utils/agents/supervisor.py b/utils/agents/supervisor.py
+index 1a5a283..3015a38 100644
+--- a/utils/agents/supervisor.py
++++ b/utils/agents/supervisor.py
+@@ -3,7 +3,6 @@ import sys
+ from typing import Any, Dict, List, Optional
+ from utils.rag.base_components import BaseComponents  # type: ignore
+ from langchain_core.output_parsers import JsonOutputParser
+-from langchain.vectorstores import Chroma
+ from langchain_community.vectorstores import Chroma
+ from langchain_core.prompts import load_prompt
+ from langchain_core.embeddings import Embeddings
+diff --git a/utils/agents/teams/corrective_rag_team.py b/utils/agents/teams/corrective_rag_team.py
+index 19adbf5..a19c467 100644
+--- a/utils/agents/teams/corrective_rag_team.py
++++ b/utils/agents/teams/corrective_rag_team.py
+@@ -3,9 +3,9 @@ import sys
+ from typing import Any, Dict, List, TypedDict, Annotated
+ import operator
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
++from langgraph.checkpoint.memory import MemorySaver
+ from langgraph.graph.state import CompiledStateGraph
+-from langgraph.graph.graph import CompiledGraph
++from langgraph.graph.state import CompiledStateGraph as CompiledGraph
+ 
+ current_dir = os.getcwd()
+ kit_dir = os.path.abspath(os.path.join(current_dir, '..'))
+diff --git a/utils/agents/teams/return_message_team.py b/utils/agents/teams/return_message_team.py
+index 5fbcfa1..49c62f5 100644
+--- a/utils/agents/teams/return_message_team.py
++++ b/utils/agents/teams/return_message_team.py
+@@ -2,8 +2,8 @@ import os
+ import sys
+ from typing import TypedDict
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
+-from langgraph.graph.graph import CompiledGraph
++from langgraph.checkpoint.memory import MemorySaver
++from langgraph.graph.state import CompiledStateGraph as CompiledGraph
+ 
+ 
+ current_dir = os.getcwd()
+diff --git a/utils/agents/teams/tavily_search_team.py b/utils/agents/teams/tavily_search_team.py
+index 4d6a338..545cfea 100644
+--- a/utils/agents/teams/tavily_search_team.py
++++ b/utils/agents/teams/tavily_search_team.py
+@@ -2,8 +2,8 @@ import os
+ import sys
+ from typing import List, TypedDict
+ from langgraph.graph import END, StateGraph
+-from langgraph.checkpoint import MemorySaver
+-from langgraph.graph.graph import CompiledGraph
++from langgraph.checkpoint.memory import MemorySaver
++from langgraph.graph.state import CompiledStateGraph as CompiledGraph
+ 
+ 
+ current_dir = os.getcwd()
+diff --git a/utils/eval/eval_main.py b/utils/eval/eval_main.py
+index 1865528..fcb3851 100644
+--- a/utils/eval/eval_main.py
++++ b/utils/eval/eval_main.py
+@@ -1,4 +1,5 @@
+ import os
++import sys
+ import yaml
+ import json
+ import pandas as pd
+@@ -6,9 +7,8 @@ from typing import List, Dict, Optional, Tuple, Any
+ from datetime import datetime
+ import wandb
+ from deepeval.models.base_model import DeepEvalBaseLLM
+-from langchain_community.llms.sambanova import SambaStudio
+ from langchain_core.runnables import RunnablePassthrough
+-from langchain.prompts import PromptTemplate
++from langchain_core.prompts import PromptTemplate
+ from deepeval.metrics import (
+     AnswerRelevancyMetric,
+     FaithfulnessMetric,
+@@ -38,6 +38,12 @@ logger = logging.getLogger(__name__)
+ current_dir = os.path.dirname(os.path.abspath(__file__))
+ utils_dir = os.path.abspath(os.path.join(current_dir, ".."))
+ repo_dir = os.path.abspath(os.path.join(utils_dir, ".."))
++sys.path.append(utils_dir)
++sys.path.append(repo_dir)
++
++# langchain-community >= 0.3 changed the SambaStudio constructor arguments,
++# so use the local wrapper that keeps the sambastudio_base_url/project_id/endpoint_id/api_key interface.
++from utils.model_wrappers.langchain_llms import SambaStudio
+ 
+ 
+ class SambaStudioLLM(DeepEvalBaseLLM):
+diff --git a/utils/eval/evaluate.py b/utils/eval/evaluate.py
+index 310dcf1..33b7f4f 100644
+--- a/utils/eval/evaluate.py
++++ b/utils/eval/evaluate.py
+@@ -1,11 +1,22 @@
+ import argparse
+ import logging
++import os
++import sys
+ import pandas as pd
+ from rag_eval import RAGEvaluator, RAGEvalConfig, load_pipeline
+-from langchain_community.llms.sambanova import SambaStudio
+ from langchain_community.embeddings import HuggingFaceInstructEmbeddings
+ from langchain_openai import ChatOpenAI
+ 
++current_dir = os.path.dirname(os.path.abspath(__file__))
++utils_dir = os.path.abspath(os.path.join(current_dir, ".."))
++repo_dir = os.path.abspath(os.path.join(utils_dir, ".."))
++sys.path.append(utils_dir)
++sys.path.append(repo_dir)
++
++# langchain-community >= 0.3 changed the SambaStudio constructor arguments,
++# so use the local wrapper that keeps the sambastudio_base_url/project_id/endpoint_id/api_key interface.
++from utils.model_wrappers.langchain_llms import SambaStudio
++
+ 
+ def run_evaluation(config_path, eval_csv, use_generation):
+     config = RAGEvalConfig(config_path)
+diff --git a/utils/eval/rag_eval.py b/utils/eval/rag_eval.py
+index ccced5f..79ff3ef 100644
+--- a/utils/eval/rag_eval.py
++++ b/utils/eval/rag_eval.py
+@@ -3,8 +3,8 @@ import yaml
+ import pandas as pd
+ from typing import List, Dict, Optional, Tuple, Any
+ from datasets import Dataset, load_dataset
+-from langchain.llms.base import BaseLLM
+-from langchain.embeddings.base import Embeddings
++from langchain_core.language_models.llms import BaseLLM
++from langchain_core.embeddings import Embeddings
+ from ragas.metrics import (
+     answer_relevancy,
+     faithfulness,
+diff --git a/utils/eval/rag_pipeline.py b/utils/eval/rag_pipeline.py
+index 7bd9bbd..fb38545 100644
+--- a/utils/eval/rag_pipeline.py
++++ b/utils/eval/rag_pipeline.py
+@@ -1,9 +1,9 @@
+ from typing import Dict
+-from langchain.chains import RetrievalQA
+-from langchain.llms.base import BaseLLM
+-from langchain.embeddings.base import Embeddings
++from langchain_classic.chains import RetrievalQA
++from langchain_core.language_models.llms import BaseLLM
++from langchain_core.embeddings import Embeddings
+ from langchain_community.vectorstores import Chroma
+-from langchain.prompts import PromptTemplate
++from langchain_core.prompts import PromptTemplate
+ 
+ 
+ class RAGPipeline:
+diff --git a/utils/eval/simple_llm_answers.py b/utils/eval/simple_llm_answers.py
+index 6b81b75..2ff5443 100644
+--- a/utils/eval/simple_llm_answers.py
++++ b/utils/eval/simple_llm_answers.py
+@@ -1,6 +1,6 @@
+ from typing import Dict
+-from langchain.llms.base import BaseLLM
+-from langchain.prompts import PromptTemplate
++from langchain_core.language_models.llms import BaseLLM
++from langchain_core.prompts import PromptTemplate
+ 
+ 
+ class SimpleLLMAnswers:
+diff --git a/utils/guardrails/requirements.txt b/utils/guardrails/requirements.txt
+index c81b321..e056c9c 100644
+--- a/utils/guardrails/requirements.txt
++++ b/utils/guardrails/requirements.txt
+@@ -1,6 +1,6 @@
+-pydantic==2.7.0
+-langchain==0.2.11
+-lagchain-core==0.0.25
+-langchain-community==0.2.10
++pydantic==2.7.4
++langchain>=1.0.0,<2.0.0
++langchain-core>=1.4.0,<2.0.0
++langchain-community==0.4.2
+ sseclient-py==1.8.0
+-python-dotenv==1.0.1
+\ No newline at end of file
++python-dotenv==1.0.1
+diff --git a/utils/model_wrappers/api_gateway.py b/utils/model_wrappers/api_gateway.py
+index 497210c..ce6ee21 100644
+--- a/utils/model_wrappers/api_gateway.py
++++ b/utils/model_wrappers/api_gateway.py
+@@ -4,7 +4,6 @@ import sys
+ from typing import Optional
+ 
+ from langchain_community.embeddings import HuggingFaceInstructEmbeddings
+-from langchain_community.llms.sambanova import SambaStudio
+ from langchain_core.embeddings import Embeddings
+ from langchain_core.language_models.llms import LLM
+ 
+@@ -15,7 +14,7 @@ sys.path.append(utils_dir)
+ sys.path.append(repo_dir)
+ 
+ from utils.model_wrappers.langchain_embeddings import SambaStudioEmbeddings
+-from utils.model_wrappers.langchain_llms import SambaNovaCloud
++from utils.model_wrappers.langchain_llms import SambaNovaCloud, SambaStudio
+ 
+ EMBEDDING_MODEL = 'intfloat/e5-large-v2'
+ NORMALIZE_EMBEDDINGS = True
+diff --git a/utils/model_wrappers/langchain_embeddings.py b/utils/model_wrappers/langchain_embeddings.py
+index 9bdf5af..91e6149 100644
+--- a/utils/model_wrappers/langchain_embeddings.py
++++ b/utils/model_wrappers/langchain_embeddings.py
+@@ -5,8 +5,8 @@ from typing import Dict, Generator, List, Optional
+ 
+ import requests
+ from langchain_core.embeddings import Embeddings
+-from langchain_core.pydantic_v1 import BaseModel
+ from langchain_core.utils import get_from_dict_or_env, pre_init
++from pydantic import BaseModel
+ 
+ 
+ class SambaStudioEmbeddings(BaseModel, Embeddings):
+diff --git a/utils/model_wrappers/langchain_llms.py b/utils/model_wrappers/langchain_llms.py
+index 21e630a..bbc066f 100644
+--- a/utils/model_wrappers/langchain_llms.py
++++ b/utils/model_wrappers/langchain_llms.py
+@@ -7,8 +7,8 @@ import requests
+ from langchain_core.callbacks.manager import CallbackManagerForLLMRun
+ from langchain_core.language_models.llms import LLM
+ from langchain_core.outputs import GenerationChunk
+-from langchain_core.pydantic_v1 import Extra
+ from langchain_core.utils import get_from_dict_or_env, pre_init
++from pydantic import ConfigDict
+ 
+ 
+ class SSEndpointHandler:
+@@ -263,10 +263,7 @@ class SambaStudio(LLM):
+     streaming: Optional[bool] = False
+     """Streaming flag to get streamed response."""
+ 
+-    class Config:
+-        """Configuration for this pydantic object."""
+-
+-        extra = Extra.forbid
++    model_config = ConfigDict(extra='forbid')
+ 
+     @classmethod
+     def is_lc_serializable(cls) -> bool:
+@@ -575,10 +572,7 @@ class SambaNovaCloud(LLM):
+     stream_options: dict = {'include_usage': True}
+     """stream options, include usage to get generation metrics"""
+ 
+-    class Config:
+-        """Configuration for this pydantic object."""
+-
+-        extra = Extra.forbid
++    model_config = ConfigDict(extra='forbid')
+ 
+     @classmethod
+     def is_lc_serializable(cls) -> bool:
+diff --git a/utils/parsing/sambaparse.py b/utils/parsing/sambaparse.py
+index 8e829b4..4b0ff5a 100644
+--- a/utils/parsing/sambaparse.py
++++ b/utils/parsing/sambaparse.py
+@@ -5,7 +5,7 @@ import json
+ import logging
+ from typing import Dict, Optional, List, Tuple, Union, Any
+ from dotenv import load_dotenv
+-from langchain.docstore.document import Document
++from langchain_core.documents import Document
+ import shutil
+ from langchain_community.document_loaders import PyMuPDFLoader
+ 
+diff --git a/utils/rag/rag_components.py b/utils/rag/rag_components.py
+index 3345297..117d4f3 100644
+--- a/utils/rag/rag_components.py
++++ b/utils/rag/rag_components.py
+@@ -4,8 +4,7 @@ from typing import Any, Dict, List, Optional, Type
+ from utils.rag.base_components import BaseComponents  # type: ignore
+ from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
+ from langchain_core.documents.base import Document
+-from langchain.vectorstores import Chroma
+-from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
++from langchain_core.example_selectors import SemanticSimilarityExampleSelector
+ from langchain_community.vectorstores import Chroma
+ from langchain_core.prompts import load_prompt
+ from langchain_core.embeddings import Embeddings
+diff --git a/utils/search/search_components.py b/utils/search/search_components.py
+index 41d8c8f..89e0818 100644
+--- a/utils/search/search_components.py
++++ b/utils/search/search_components.py
+@@ -2,8 +2,8 @@ import os
+ import sys
+ from typing import Any, Dict, List, Optional
+ from langchain_community.tools.tavily_search import TavilySearchResults
+-from langchain.schema import Document
+-from langchain.vectorstores import Chroma
++from langchain_core.documents import Document
++from langchain_community.vectorstores import Chroma
+ from langchain_core.embeddings import Embeddings
+ 
+ current_dir = os.path.dirname(os.path.abspath(__file__))
+diff --git a/utils/synthetic_data_gen/requirements.txt b/utils/synthetic_data_gen/requirements.txt
+index ac1ce8d..5af9456 100644
+--- a/utils/synthetic_data_gen/requirements.txt
++++ b/utils/synthetic_data_gen/requirements.txt
+@@ -2,11 +2,11 @@ ipykernel == 6.29.5
+ ipython == 8.26.0
+ jupyter_client == 8.6.0
+ jupyter_core == 5.7.1
+-langchain  == 0.2.12
+-langchain-community == 0.2.11
+-langchain-core == 0.2.29
+-langchain-experimental == 0.0.64
+-langchain-text-splitters == 0.2.2
++langchain >= 1.0.0, < 2.0.0
++langchain-community == 0.4.2
++langchain-core >= 1.4.0, < 2.0.0
++langchain-experimental == 0.4.2
++langchain-text-splitters >= 1.1.2, < 2.0.0
+ python-dotenv == 1.0.1
+ sentence_transformers==2.2.2
+ instructorembedding==1.0.1
+\ No newline at end of file
+diff --git a/utils/synthetic_data_gen/src/synthetic_data_gen.py b/utils/synthetic_data_gen/src/synthetic_data_gen.py
+index 18066db..8151050 100644
+--- a/utils/synthetic_data_gen/src/synthetic_data_gen.py
++++ b/utils/synthetic_data_gen/src/synthetic_data_gen.py
+@@ -6,13 +6,12 @@ from typing import Dict, List, Optional, Union
+ 
+ import yaml
+ from dotenv import load_dotenv
+-from langchain.prompts import load_prompt
+ from langchain_community.embeddings import HuggingFaceInstructEmbeddings
+-from langchain_community.llms.sambanova import SambaStudio
+ from langchain_core.documents import Document
+ from langchain_core.output_parsers import JsonOutputParser
+-from langchain_core.pydantic_v1 import BaseModel, Field
++from langchain_core.prompts import load_prompt
+ from langchain_experimental.text_splitter import SemanticChunker
++from pydantic import BaseModel, Field
+ 
+ logging.basicConfig(
+     level=logging.INFO,
+@@ -28,7 +27,7 @@ sys.path.append(repo_dir)
+ 
+ from utils.model_wrappers.api_gateway import APIGateway
+ from utils.model_wrappers.langchain_embeddings import SambaStudioEmbeddings
+-from utils.model_wrappers.langchain_llms import SambaNovaCloud
++from utils.model_wrappers.langchain_llms import SambaNovaCloud, SambaStudio
+ 
+ load_dotenv(os.path.join(repo_dir, '.env'))
+ 
+diff --git a/utils/vectordb/create_vector_db.py b/utils/vectordb/create_vector_db.py
+index 962b689..676bc5b 100644
+--- a/utils/vectordb/create_vector_db.py
++++ b/utils/vectordb/create_vector_db.py
+@@ -18,10 +18,10 @@ import argparse
+ import logging
+ import os
+ 
+-from langchain.document_loaders import DirectoryLoader
+-from langchain.embeddings import HuggingFaceInstructEmbeddings
+-from langchain.text_splitter import RecursiveCharacterTextSplitter
+-from langchain.vectorstores import FAISS, Chroma, Qdrant
++from langchain_community.document_loaders import DirectoryLoader
++from langchain_community.embeddings import HuggingFaceInstructEmbeddings
++from langchain_community.vectorstores import FAISS, Chroma, Qdrant
++from langchain_text_splitters import RecursiveCharacterTextSplitter
+ 
+ # Configure the logger
+ logging.basicConfig(
+diff --git a/utils/vectordb/vector_db.py b/utils/vectordb/vector_db.py
+index 57617b1..f9e4215 100644
+--- a/utils/vectordb/vector_db.py
++++ b/utils/vectordb/vector_db.py
+@@ -21,7 +21,7 @@ import logging
+ 
+ from langchain_community.document_loaders import DirectoryLoader, UnstructuredURLLoader
+ from langchain_community.embeddings import HuggingFaceInstructEmbeddings
+-from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
++from langchain_text_splitters import RecursiveCharacterTextSplitter, CharacterTextSplitter
+ from langchain_community.vectorstores import FAISS, Chroma, Qdrant
+ 
+ vectordb_dir = os.path.dirname(os.path.abspath(__file__))

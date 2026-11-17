@@ -1,0 +1,26 @@
+diff --git a/base-requirements.txt b/base-requirements.txt
+index 599658b..18fd5d3 100644
+--- a/base-requirements.txt
++++ b/base-requirements.txt
+@@ -4,6 +4,7 @@
+ langchain==0.2.11
+ langchain-core>=0.2.6,<0.3.0
+ langchain-community==0.2.10
++langchain-qdrant
+ langchain-experimental==0.0.60
+ langgraph==0.1.6
+ pydantic==2.7.0
+diff --git a/utils/vectordb/vector_db.py b/utils/vectordb/vector_db.py
+index 57617b1..2cf269b 100644
+--- a/utils/vectordb/vector_db.py
++++ b/utils/vectordb/vector_db.py
+@@ -22,7 +22,8 @@ import logging
+ from langchain_community.document_loaders import DirectoryLoader, UnstructuredURLLoader
+ from langchain_community.embeddings import HuggingFaceInstructEmbeddings
+ from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
+-from langchain_community.vectorstores import FAISS, Chroma, Qdrant
++from langchain_community.vectorstores import FAISS, Chroma
++from langchain_qdrant import Qdrant
+ 
+ vectordb_dir = os.path.dirname(os.path.abspath(__file__))
+ utils_dir = os.path.abspath(os.path.join(vectordb_dir, ".."))

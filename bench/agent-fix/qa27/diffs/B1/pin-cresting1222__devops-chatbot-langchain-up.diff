@@ -1,0 +1,227 @@
+diff --git a/dev_opsgpt/chat/base_chat.py b/dev_opsgpt/chat/base_chat.py
+index 20bbad5..791ea13 100644
+--- a/dev_opsgpt/chat/base_chat.py
++++ b/dev_opsgpt/chat/base_chat.py
+@@ -3,10 +3,10 @@ from fastapi.responses import StreamingResponse
+ import asyncio, json
+ from typing import List, AsyncIterable
+ 
+-from langchain.chat_models import ChatOpenAI
+-from langchain import LLMChain
+-from langchain.callbacks import AsyncIteratorCallbackHandler
+-from langchain.prompts.chat import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_classic.chains import LLMChain
++from langchain_classic.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
++from langchain_core.prompts import ChatPromptTemplate
+ 
+ 
+ from dev_opsgpt.chat.utils import History, wrap_done
+diff --git a/dev_opsgpt/chat/knowledge_chat.py b/dev_opsgpt/chat/knowledge_chat.py
+index 5d725f3..f1a8c46 100644
+--- a/dev_opsgpt/chat/knowledge_chat.py
++++ b/dev_opsgpt/chat/knowledge_chat.py
+@@ -3,9 +3,9 @@ import os, asyncio
+ from urllib.parse import urlencode
+ from typing import List
+ 
+-from langchain import LLMChain
+-from langchain.callbacks import AsyncIteratorCallbackHandler
+-from langchain.prompts.chat import ChatPromptTemplate
++from langchain_classic.chains import LLMChain
++from langchain_classic.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
++from langchain_core.prompts import ChatPromptTemplate
+ 
+ 
+ from configs.model_config import (
+diff --git a/dev_opsgpt/chat/llm_chat.py b/dev_opsgpt/chat/llm_chat.py
+index 54e5a56..035bd62 100644
+--- a/dev_opsgpt/chat/llm_chat.py
++++ b/dev_opsgpt/chat/llm_chat.py
+@@ -1,9 +1,9 @@
+ import asyncio
+ from typing import List
+ 
+-from langchain import LLMChain
+-from langchain.callbacks import AsyncIteratorCallbackHandler
+-from langchain.prompts.chat import ChatPromptTemplate
++from langchain_classic.chains import LLMChain
++from langchain_classic.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
++from langchain_core.prompts import ChatPromptTemplate
+ 
+ 
+ from dev_opsgpt.chat.utils import History, wrap_done
+diff --git a/dev_opsgpt/chat/search_chat.py b/dev_opsgpt/chat/search_chat.py
+index 9e82066..0acd77e 100644
+--- a/dev_opsgpt/chat/search_chat.py
++++ b/dev_opsgpt/chat/search_chat.py
+@@ -3,11 +3,11 @@ import os, asyncio
+ from urllib.parse import urlencode
+ from typing import List
+ 
+-from langchain import LLMChain
+-from langchain.callbacks import AsyncIteratorCallbackHandler
+-from langchain.utilities import BingSearchAPIWrapper, DuckDuckGoSearchAPIWrapper
+-from langchain.prompts.chat import ChatPromptTemplate
+-from langchain.docstore.document import Document
++from langchain_classic.chains import LLMChain
++from langchain_classic.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
++from langchain_community.utilities import BingSearchAPIWrapper, DuckDuckGoSearchAPIWrapper
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_core.documents import Document
+ 
+ from configs.model_config import (
+     PROMPT_TEMPLATE, SEARCH_ENGINE_TOP_K, BING_SUBSCRIPTION_KEY, BING_SEARCH_URL,
+diff --git a/dev_opsgpt/document_loaders/json_loader.py b/dev_opsgpt/document_loaders/json_loader.py
+index e3124c3..82a073f 100644
+--- a/dev_opsgpt/document_loaders/json_loader.py
++++ b/dev_opsgpt/document_loaders/json_loader.py
+@@ -2,8 +2,8 @@ import json
+ from pathlib import Path
+ from typing import AnyStr, Callable, Dict, List, Optional, Union
+ 
+-from langchain.docstore.document import Document
+-from langchain.document_loaders.base import BaseLoader
++from langchain_core.documents import Document
++from langchain_core.document_loaders import BaseLoader
+ 
+ from dev_opsgpt.utils.common_utils import read_json_file
+ 
+diff --git a/dev_opsgpt/document_loaders/jsonl_loader.py b/dev_opsgpt/document_loaders/jsonl_loader.py
+index 79f8d2c..6d0b88a 100644
+--- a/dev_opsgpt/document_loaders/jsonl_loader.py
++++ b/dev_opsgpt/document_loaders/jsonl_loader.py
+@@ -2,8 +2,8 @@ import json
+ from pathlib import Path
+ from typing import AnyStr, Callable, Dict, List, Optional, Union
+ 
+-from langchain.docstore.document import Document
+-from langchain.document_loaders.base import BaseLoader
++from langchain_core.documents import Document
++from langchain_core.document_loaders import BaseLoader
+ 
+ from dev_opsgpt.utils.common_utils import read_jsonl_file
+ 
+diff --git a/dev_opsgpt/embeddings/utils.py b/dev_opsgpt/embeddings/utils.py
+index 5b19371..f2938c8 100644
+--- a/dev_opsgpt/embeddings/utils.py
++++ b/dev_opsgpt/embeddings/utils.py
+@@ -1,5 +1,5 @@
+ from functools import lru_cache
+-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
++from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
+ from configs.model_config import embedding_model_dict
+ from loguru import logger
+ 
+diff --git a/dev_opsgpt/service/base_service.py b/dev_opsgpt/service/base_service.py
+index 1993603..a69c9a4 100644
+--- a/dev_opsgpt/service/base_service.py
++++ b/dev_opsgpt/service/base_service.py
+@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
+ from typing import List
+ import os
+ 
+-from langchain.embeddings.base import Embeddings
+-from langchain.docstore.document import Document
++from langchain_core.embeddings import Embeddings
++from langchain_core.documents import Document
+ 
+ from configs.model_config import (
+     kbs_config, VECTOR_SEARCH_TOP_K, SCORE_THRESHOLD,
+diff --git a/dev_opsgpt/service/faiss_db_service.py b/dev_opsgpt/service/faiss_db_service.py
+index 28efd09..45dc4e2 100644
+--- a/dev_opsgpt/service/faiss_db_service.py
++++ b/dev_opsgpt/service/faiss_db_service.py
+@@ -4,10 +4,10 @@ from typing import List
+ from functools import lru_cache
+ from loguru import logger
+ 
+-from langchain.vectorstores import FAISS
+-from langchain.embeddings.base import Embeddings
+-from langchain.docstore.document import Document
+-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
++from langchain_community.vectorstores import FAISS
++from langchain_core.embeddings import Embeddings
++from langchain_core.documents import Document
++from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
+ 
+ from configs.model_config import (
+     KB_ROOT_PATH,
+@@ -51,7 +51,7 @@ def load_vector_store(
+         os.makedirs(vs_path)
+ 
+     if "index.faiss" in os.listdir(vs_path):
+-        search_index = FAISS.load_local(vs_path, embeddings, normalize_L2=True)
++        search_index = FAISS.load_local(vs_path, embeddings, normalize_L2=True, allow_dangerous_deserialization=True)
+     else:
+         # create an empty vector store
+         doc = Document(page_content="init", metadata={})
+diff --git a/dev_opsgpt/service/kb_api.py b/dev_opsgpt/service/kb_api.py
+index 1bb3caf..882e5fb 100644
+--- a/dev_opsgpt/service/kb_api.py
++++ b/dev_opsgpt/service/kb_api.py
+@@ -4,7 +4,7 @@ from loguru import logger
+ 
+ from fastapi.responses import StreamingResponse, FileResponse
+ from fastapi import Body, File, Form, Body, Query, UploadFile
+-from langchain.docstore.document import Document
++from langchain_core.documents import Document
+ 
+ from .service_factory import KBServiceFactory
+ from dev_opsgpt.utils.server_utils import BaseResponse, ListResponse
+diff --git a/dev_opsgpt/text_splitter/langchain_splitter.py b/dev_opsgpt/text_splitter/langchain_splitter.py
+index 9e4a65a..66a8e66 100644
+--- a/dev_opsgpt/text_splitter/langchain_splitter.py
++++ b/dev_opsgpt/text_splitter/langchain_splitter.py
+@@ -2,8 +2,8 @@ import os
+ import importlib
+ from loguru import logger
+ 
+-from langchain.document_loaders.base import BaseLoader
+-from langchain.text_splitter import (
++from langchain_core.document_loaders import BaseLoader
++from langchain_text_splitters import (
+     SpacyTextSplitter, RecursiveCharacterTextSplitter
+ )
+ 
+@@ -58,7 +58,7 @@ class LCTextSplitter:
+             elif self.document_loader_name in ["JSONLoader", "JSONLLoader"]:
+                 text_splitter = None
+             else:
+-                text_splitter_module = importlib.import_module('langchain.text_splitter')
++                text_splitter_module = importlib.import_module('langchain_text_splitters')
+                 TextSplitter = getattr(text_splitter_module, self.text_splitter_name)
+                 text_splitter = TextSplitter(
+                     chunk_size=CHUNK_SIZE,
+diff --git a/dev_opsgpt/utils/path_utils.py b/dev_opsgpt/utils/path_utils.py
+index 67daf6b..8faff5a 100644
+--- a/dev_opsgpt/utils/path_utils.py
++++ b/dev_opsgpt/utils/path_utils.py
+@@ -1,6 +1,6 @@
+ import os
+-from langchain.document_loaders import CSVLoader, PyPDFLoader, UnstructuredFileLoader, TextLoader, PythonLoader
+-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
++from langchain_community.document_loaders import CSVLoader, PyPDFLoader, UnstructuredFileLoader, TextLoader, PythonLoader
++from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
+ 
+ from dev_opsgpt.document_loaders import JSONLLoader, JSONLoader
+ from configs.model_config import (
+diff --git a/tests/openai_test.py b/tests/openai_test.py
+index 13ad17b..50d4e92 100644
+--- a/tests/openai_test.py
++++ b/tests/openai_test.py
+@@ -14,10 +14,10 @@ os.environ["OPENAI_API_KEY"] = ""
+ 
+ if __name__ == "__main__":
+     # print("dsadsa", os.environ.get("OPENAI_PROXY"), os.environ.get("OPENAI_API_KEY"))
+-    from langchain import PromptTemplate, LLMChain
+-    from langchain.prompts.chat import ChatPromptTemplate
+-    from langchain.chat_models import ChatOpenAI
+-    from langchain.schema import HumanMessage
++    from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
++    from langchain_classic.chains import LLMChain
++    from langchain_openai import ChatOpenAI
++    from langchain_core.messages import HumanMessage
+     
+     # chat = ChatOpenAI(temperature=0.1, model_name="gpt-3.5-turbo")
+     # print(chat.predict("hi!"))

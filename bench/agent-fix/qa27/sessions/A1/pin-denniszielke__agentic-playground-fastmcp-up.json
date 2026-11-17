@@ -1,0 +1,96 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 12,
+  "duration_ms": 39119,
+  "total_cost_usd": 0.0857019,
+  "usage": {
+   "input_tokens": 14,
+   "cache_creation_input_tokens": 9973,
+   "cache_read_input_tokens": 65332,
+   "output_tokens": 3654,
+   "output_tokens_details": {
+    "thinking_tokens": 570
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 9973,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 716,
+     "cache_read_input_tokens": 13949,
+     "cache_creation_input_tokens": 1801,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 1801
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.13,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.31,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 3,
+  "Read": 3,
+  "Bash": 1,
+  "WebFetch": 1,
+  "Edit": 3
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://gofastmcp.com/development/upgrade-guide"
+ ],
+ "denied": 0,
+ "task": "pin-denniszielke__agentic-playground-fastmcp-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 39.6,
+ "service_error": false
+}

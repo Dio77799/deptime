@@ -1,0 +1,13 @@
+diff --git a/mcpuniverse/llm/mistral.py b/mcpuniverse/llm/mistral.py
+index 99b75f8..63ed700 100644
+--- a/mcpuniverse/llm/mistral.py
++++ b/mcpuniverse/llm/mistral.py
+@@ -8,7 +8,7 @@ from dataclasses import dataclass
+ from typing import Dict, Union, Optional, Type, List
+ from dotenv import load_dotenv
+ from pydantic_core import from_json
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ from pydantic import BaseModel as PydanticBaseModel
+ 
+ from mcpuniverse.common.config import BaseConfig

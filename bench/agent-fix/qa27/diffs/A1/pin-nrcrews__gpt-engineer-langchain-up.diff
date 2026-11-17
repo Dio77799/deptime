@@ -1,0 +1,34 @@
+diff --git a/action_requirements.txt b/action_requirements.txt
+index d62831f..7871b5f 100644
+--- a/action_requirements.txt
++++ b/action_requirements.txt
+@@ -14,7 +14,8 @@ idna==3.4
+ importlib-resources==6.0.0
+ joblib==1.3.1
+ kiwisolver==1.4.4
+-langchain==0.0.245
++langchain==1.5.0
++langchain-text-splitters
+ langsmith==0.0.15
+ marshmallow==3.20.1
+ matplotlib==3.7.2
+diff --git a/engineer/code.py b/engineer/code.py
+index 6849c84..f9138a5 100644
+--- a/engineer/code.py
++++ b/engineer/code.py
+@@ -1,5 +1,5 @@
+ import os
+-from langchain.text_splitter import (
++from langchain_text_splitters import (
+     RecursiveCharacterTextSplitter,
+     Language,
+ )
+@@ -87,7 +87,7 @@ class CodeExtractor():
+     def _language(self, file_path: str) -> Language:
+         extension = file_path.split(".")[-1]
+         if extension == "cpp":
+-            return Language.cpp
++            return Language.CPP
+         elif extension == "go":
+             return Language.GO
+         elif extension == "java":

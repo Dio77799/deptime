@@ -21,11 +21,11 @@ which of a project's code a dependency update breaks. Everything done before 202
 - **Released:** 0.2.3 (2026-11-16) is on PyPI, the MCP Registry and GitHub: the upgrade check, as a command
   (`check-upgrade`), a GitHub Action, an MCP tool (`check_upgrade`) and a Claude Code plugin command. 0.2.3 reworks
   the plugin's fix command again from DT-QA-26 (DT-GTM-09).
-- **Index:** 53 packages and 6,816 releases on 2026-11-16 (`SNAPSHOT_FORMAT` 27, schema 2); `index.sqlite.xz` is
-  51.3 MB and the `.gz` 79.1 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
+- **Index:** 53 packages and 6,823 releases on 2026-11-17 (`SNAPSHOT_FORMAT` 28, schema 2); `index.sqlite.xz` is
+  51.4 MB and the `.gz` 79.2 MB. `build-index` runs at 04:17 and 16:17 UTC, replaces the rolling `index` release and
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
   build of about 3 hours (format 27's: 2 h 48 min).
-- **Checks that run without anyone:** `ci` on every push (502 offline tests), and `bench` on every code change and
+- **Checks that run without anyone:** `ci` on every push (568 offline tests), and `bench` on every code change and
   every published index. `bench` fails on a benchmark drop of more than 2 points or a false-positive rate up by more
   than 1, and on the published index itself (`tests/test_golden.py`, DT-QA-03): older than 48 h, a package's newest
   release on PyPI for more than 24 h without being indexed, or a Tier A package's newest release without the names
@@ -104,29 +104,28 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
     `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
     `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
 
-**Phase 4, the fix (the model's part, outside DepTime).** DT-QA-26 missed only its 80% line: the reworked command
-matched Claude Code alone (72.7% of sessions against 69.7%, in half the turns), and 3 of its 4 losses were breaks the
-agent found and left (`bench/agent-fix/qa26/results-2026-11-16.md`). The maintainer chose (2026-11-16) to fix what
-lost them and measure again on new broken updates; 1.0 waits for that result.
-- [x] **DT-GTM-09** (2026-11-16): `/deptime:fix-upgrade` rewrites a break with no replacement from the new version's
-  source or release notes, leaving it only when the new version can't do what the code did, and fixes any other
-  break the agent finds; the report's agent block says the same and also shows when only unsure uses are left.
-- [x] **DT-DATA-83** (2026-11-16): a name bound to a method of a module-level instance takes the method's signature
-  when the instance's annotation names the class: streamlit 1.33+'s `_main: _DeltaGenerator = ...`, so 103
-  top-level `st.<name>` calls are checked again (DT-QA-26's `st.pyplot()`). Extraction: `SNAPSHOT_FORMAT` 28.
-- [ ] **DT-QA-27**: The hand-off again, on a new set of broken updates · `P1` `M` · deps: GTM-09, DATA-83, a release
-  - Protocol committed before any run (`bench/agent-fix/qa27/`): 60 tasks, 373 confirmed breaks, from new holdout
-    set 2026-11g (collected after 0.2.3); arms A and B once each, DT-QA-26's bar.
+**Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
+seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
+fields (crewai `Task(expected_output=)`, one case), until it recurs.
 
 **Phase 5, toward 1.0.**
-- [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: QA-27 (the maintainer's call, 2026-11-16)
+- [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: none (QA-27 met its bar, 2026-11-17)
   - A review of every tool parameter, result field and CLI option (last chance to rename without a major version);
     the GUI clients checked or listed as not covered (DT-SPIKE-05, DT-SPIKE-07); the 1.0 promise in CHANGELOG.md's
     versioning section (what's frozen, how something is retired, supported Pythons, what the index promises).
-  - The hand-off (`/deptime:fix-upgrade` and the report's agent block) is frozen if DT-QA-27 meets its bar;
-    otherwise it is experimental, outside the promise, and the plugin's README leads with asking in plain words.
+  - The hand-off (`/deptime:fix-upgrade` and the report's agent block) is frozen as it is at 0.2.3: DT-QA-27 met
+    its bar.
 
 ## Done since 2026-11-13
+
+- [x] **DT-QA-27** (2026-11-17): bar met on 60 broken updates neither DepTime nor the command had seen (new holdout
+  2026-11g): `/deptime:fix-upgrade` 86.7% of sessions fixed, alone 76.7%; new breaks 1 against 3; breaks fixed 96.0%
+  against 89.3%; half the turns. B fixed 253 of the 267 breaks DepTime listed with no replacement.
+- [x] **DT-DATA-83** (2026-11-16): a name bound to a method of a module-level instance takes the method's signature
+  when the instance's annotation names the class (streamlit 1.33+'s `st.<name>`; DT-QA-26's `st.pyplot()`).
+  `SNAPSHOT_FORMAT` 28.
+- [x] **DT-GTM-09** (2026-11-16): `/deptime:fix-upgrade` rewrites a break with no replacement from the new version's
+  source or release notes, leaving it only when the new version can't do what the code did.
 
 - [x] **DT-QA-26** (2026-11-16): the reworked hand-off on 66 new broken updates: alone 69.7% of sessions fixed,
   `/deptime:fix-upgrade` 72.7%, with fewer new breaks (2 against 4) and half the turns. Bar missed on its 80% line;

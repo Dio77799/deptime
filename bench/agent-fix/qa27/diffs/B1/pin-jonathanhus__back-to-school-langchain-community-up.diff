@@ -1,0 +1,13 @@
+diff --git a/baselines/main.py b/baselines/main.py
+index c58b079..013b5d3 100644
+--- a/baselines/main.py
++++ b/baselines/main.py
+@@ -12,7 +12,7 @@ import pylcs
+ import torch
+ from langchain.callbacks.base import BaseCallbackHandler
+ from langchain.chains import LLMChain
+-from langchain_community.chat_models import ChatAnthropic, ChatOpenAI
++from langchain_anthropic import ChatAnthropic
+ from langchain_openai import ChatOpenAI, AzureChatOpenAI
+ # from langchain.chat_models import ChatAnthropic, ChatOpenAI
+ from langchain.docstore.document import Document

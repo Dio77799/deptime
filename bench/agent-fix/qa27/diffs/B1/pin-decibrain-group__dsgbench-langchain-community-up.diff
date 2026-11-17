@@ -1,0 +1,124 @@
+diff --git a/agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py b/agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py
+index 367a9a0..fc8ea9b 100644
+--- a/agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py
++++ b/agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py
+@@ -6,11 +6,11 @@ import pinecone
+ 
+ from civrealm.freeciv.utils.freeciv_logging import fc_logger
+ from .utils import num_tokens_from_messages, extract_json, TOKEN_LIMIT_TABLE
+-from langchain_community.chat_models import ChatOpenAI, AzureChatOpenAI
++from langchain_openai import ChatOpenAI, AzureChatOpenAI
+ from langchain.memory import ConversationSummaryBufferMemory
+ 
+ from langchain_community.embeddings.openai import OpenAIEmbeddings
+-from langchain_community.vectorstores import Pinecone
++from langchain_pinecone import PineconeVectorStore
+ from langchain_community.llms import OpenAI, AzureOpenAI
+ from langchain.chains.question_answering import load_qa_chain
+ from agent_manager.agents.civ_agent.prompt_handlers.base_prompt_handler import BasePromptHandler
+@@ -66,7 +66,7 @@ class GPTAgent:
+         pinecone.init(api_key=os.environ["MY_PINECONE_API_KEY"],
+                       environment=os.environ["MY_PINECONE_ENV"])
+ 
+-        self.index = Pinecone.from_existing_index(
++        self.index = PineconeVectorStore.from_existing_index(
+             index_name='langchain-demo',
+             embedding=OpenAIEmbeddings(model="text-embedding-ada-002"))
+ 
+diff --git a/agent_manager/agents/civ_agent/workers/base_worker.py b/agent_manager/agents/civ_agent/workers/base_worker.py
+index 3968410..6bacc58 100644
+--- a/agent_manager/agents/civ_agent/workers/base_worker.py
++++ b/agent_manager/agents/civ_agent/workers/base_worker.py
+@@ -21,7 +21,7 @@ from typing import Callable
+ import weave
+ from langchain.chains.combine_documents.base import BaseCombineDocumentsChain
+ from langchain.memory import ConversationSummaryBufferMemory
+-from langchain_community.vectorstores import Pinecone
++from langchain_pinecone import PineconeVectorStore
+ 
+ from civrealm.freeciv.utils.freeciv_logging import fc_logger
+ from ..civ_autogpt.utils import num_tokens_from_messages, extract_json, TOKEN_LIMIT_TABLE
+@@ -36,7 +36,7 @@ class BaseWorker(ABC):
+ 
+         self.chain: BaseCombineDocumentsChain = None
+         self.memory: ConversationSummaryBufferMemory = None
+-        self.index: Pinecone = None
++        self.index: PineconeVectorStore = None
+         self.name = f"{ctrl_type} {actor_id}"
+ 
+         self.init_prompts()
+diff --git a/agent_manager/agents/civ_agent/workers/gpt_worker.py b/agent_manager/agents/civ_agent/workers/gpt_worker.py
+index aa5adbd..94c136c 100644
+--- a/agent_manager/agents/civ_agent/workers/gpt_worker.py
++++ b/agent_manager/agents/civ_agent/workers/gpt_worker.py
+@@ -19,7 +19,7 @@ import json
+ import pinecone
+ 
+ from langchain_community.embeddings.openai import OpenAIEmbeddings
+-from langchain_community.vectorstores import Pinecone
++from langchain_pinecone import PineconeVectorStore
+ 
+ from civrealm.freeciv.utils.freeciv_logging import fc_logger
+ from agent_manager.agents.civ_agent.prompt_handlers.base_prompt_handler import BasePromptHandler
+@@ -56,7 +56,7 @@ class AzureGPTWorker(BaseWorker):
+         # self.index = Pinecone.from_existing_index(
+         #     index_name='civrealm-mastaba',
+         #     embedding=OpenAIEmbeddings(openai_api_key='sk-sufonZ4mNq9h9SDq7e311aA6C31c40A1BaB5369481D96cFf',openai_proxy='https://api.openai.com',model="text-embedding-ada-002"))
+-        self.index=Pinecone(index=pinecone.Index('civrealm-mastaba'),
++        self.index=PineconeVectorStore(index=pinecone.Index('civrealm-mastaba'),
+                             embedding=OpenAIEmbeddings(openai_api_key='sk-sufonZ4mNq9h9SDq7e311aA6C31c40A1BaB5369481D96cFf',openai_proxy='https://api.openai.com',model="text-embedding-ada-002"),
+                             text_key="text")
+ 
+diff --git a/agent_manager/agents/civ_agent/workers/mastaba_worker.py b/agent_manager/agents/civ_agent/workers/mastaba_worker.py
+index 0051493..366b726 100644
+--- a/agent_manager/agents/civ_agent/workers/mastaba_worker.py
++++ b/agent_manager/agents/civ_agent/workers/mastaba_worker.py
+@@ -16,11 +16,11 @@ import pinecone
+ import weave
+ 
+ from .gpt_worker import AzureGPTWorker
+-from langchain_community.chat_models import ChatOpenAI, AzureChatOpenAI
++from langchain_openai import ChatOpenAI, AzureChatOpenAI
+ from langchain_community.embeddings.openai import OpenAIEmbeddings
+ from langchain.memory import ConversationSummaryBufferMemory
+ from langchain.chains.question_answering import load_qa_chain
+-from langchain_community.vectorstores import Pinecone
++from langchain_pinecone import PineconeVectorStore
+ class MastabaWorker(AzureGPTWorker):
+     def __init__(self,args,llm,role="controller", **kwargs):
+         self.args=args
+@@ -51,7 +51,7 @@ class MastabaWorker(AzureGPTWorker):
+         # self.index = Pinecone.from_existing_index(
+         #     index_name='civrealm-mastaba',
+         #     embedding=OpenAIEmbeddings(openai_api_key='sk-sufonZ4mNq9h9SDq7e311aA6C31c40A1BaB5369481D96cFf',openai_proxy='https://api.openai.com',model="text-embedding-ada-002"))
+-        self.index = Pinecone(index=pinecone.Index('civrealm-mastaba'),
++        self.index = PineconeVectorStore(index=pinecone.Index('civrealm-mastaba'),
+                               embedding=OpenAIEmbeddings(
+                                   openai_api_key=self.args.agent[0].agent_embedding_api_key,
+                                   openai_proxy=self.args.agent[0].agent_embedding_api_url, model=self.args.agent[0].agent_embedding_model_name),
+diff --git a/agent_manager/llm_models/llm_model.py b/agent_manager/llm_models/llm_model.py
+index 464ccd3..ea31439 100644
+--- a/agent_manager/llm_models/llm_model.py
++++ b/agent_manager/llm_models/llm_model.py
+@@ -1,6 +1,7 @@
+ import weave
+ # from langchain.chat_models import ChatOpenAI, ChatAnyscale
+-from langchain_community.chat_models import ChatOpenAI, ChatAnyscale
++from langchain_community.chat_models import ChatAnyscale
++from langchain_openai import ChatOpenAI
+ from langchain.schema import SystemMessage, HumanMessage, AIMessage
+ import openai
+ import time
+diff --git a/pip_requirements.txt b/pip_requirements.txt
+index b231a11..fe2fb2f 100644
+--- a/pip_requirements.txt
++++ b/pip_requirements.txt
+@@ -146,7 +146,7 @@ jupyterlab_server==2.27.3
+ kiwisolver==1.4.5
+ langchain==0.3.5
+ langchain-bailian==1.0.0
+-langchain-community==0.3.3
++langchain-community==0.4.2
+ langchain-core==0.3.13
+ langchain-text-splitters==0.3.1
+ langsmith==0.1.137

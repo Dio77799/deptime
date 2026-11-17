@@ -1,0 +1,45 @@
+diff --git a/modules/anthropic-bedrock-python-ecs-mcp/pyproject.toml b/modules/anthropic-bedrock-python-ecs-mcp/pyproject.toml
+index 22744b2..e067ae2 100644
+--- a/modules/anthropic-bedrock-python-ecs-mcp/pyproject.toml
++++ b/modules/anthropic-bedrock-python-ecs-mcp/pyproject.toml
+@@ -11,5 +11,5 @@ dependencies = [
+     "botocore>=1.38.0",
+     "constructs>=10.4.2",
+     "fastapi>=0.115.12",
+-    "mcp[cli]>=1.6.0",
++    "mcp[cli]>=2.3.0",
+ ]
+diff --git a/modules/anthropic-bedrock-python-ecs-mcp/src/client.py b/modules/anthropic-bedrock-python-ecs-mcp/src/client.py
+index 2f6af7a..0cd3c99 100644
+--- a/modules/anthropic-bedrock-python-ecs-mcp/src/client.py
++++ b/modules/anthropic-bedrock-python-ecs-mcp/src/client.py
+@@ -58,7 +58,7 @@ class MCPClient:
+             {
+                 "name": tool.name,
+                 "description": tool.description,
+-                "input_schema": tool.inputSchema,
++                "input_schema": tool.input_schema,
+             }
+             for tool in response.tools
+         ]
+diff --git a/modules/anthropic-bedrock-python-ecs-mcp/src/server.py b/modules/anthropic-bedrock-python-ecs-mcp/src/server.py
+index 1fabf51..117f562 100644
+--- a/modules/anthropic-bedrock-python-ecs-mcp/src/server.py
++++ b/modules/anthropic-bedrock-python-ecs-mcp/src/server.py
+@@ -1,6 +1,6 @@
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ 
+-mcp = FastMCP("Documentation")
++mcp = MCPServer("Documentation")
+ 
+ 
+ @mcp.tool()
+@@ -18,4 +18,6 @@ def greeting(name: str) -> str:
+ 
+ 
+ if __name__ == "__main__":
+-    mcp.run(transport="sse")
++    # In mcp 2.x, host/port are arguments to run() rather than the constructor.
++    # Bind to all interfaces on 8000 so the client container can reach the server.
++    mcp.run(transport="sse", host="0.0.0.0", port=8000)

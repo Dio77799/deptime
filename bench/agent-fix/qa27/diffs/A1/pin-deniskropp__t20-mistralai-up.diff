@@ -1,0 +1,40 @@
+diff --git a/requirements.txt b/requirements.txt
+index e2f6eab..705345d 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -5,7 +5,7 @@ ollama==0.5.3
+ colorama==0.4.6
+ huggingface_hub==0.34.4
+ openai==1.107.0
+-mistralai==1.9.10
++mistralai==3.7.0
+ PyQt6==6.7.0
+ fastapi==0.111.0
+ uvicorn==0.29.0
+\ No newline at end of file
+diff --git a/setup.py b/setup.py
+index 66a8318..cd25046 100644
+--- a/setup.py
++++ b/setup.py
+@@ -14,7 +14,7 @@ setup(
+         "colorama==0.4.6",
+         "huggingface_hub==0.34.4",
+         "openai==1.107.0",
+-        "mistralai==1.9.10",
++        "mistralai==3.7.0",
+         "fastapi==0.111.0",
+         "uvicorn==0.29.0",
+         "pydantic>=2.0.0",
+diff --git a/src/t20/core/agents/llm.py b/src/t20/core/agents/llm.py
+index 9ac3eb4..bac7d8f 100644
+--- a/src/t20/core/agents/llm.py
++++ b/src/t20/core/agents/llm.py
+@@ -634,7 +634,7 @@ class Opi(LLM):
+ ##
+ 
+ 
+-from mistralai import Mistral as MistralClient
++from mistralai.client import Mistral as MistralClient
+ from mistralai.extra.utils import response_format_from_pydantic_model
+ 
+ @register_provider("mistral")

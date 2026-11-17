@@ -1,0 +1,240 @@
+diff --git a/chat.py b/chat.py
+index f140353..acba0bd 100644
+--- a/chat.py
++++ b/chat.py
+@@ -1,15 +1,11 @@
+ import os
+ from flask import request, jsonify, render_template
+-from langchain.chains.question_answering import load_qa_chain
+-from langchain.document_loaders import DirectoryLoader
+-from langchain.llms import OpenAIChat
+-from langchain.prompts import PromptTemplate
+-from langchain.memory import ConversationBufferMemory
+-from langchain.document_loaders import WebBaseLoader
+-from langchain.embeddings import OpenAIEmbeddings
+-from langchain.text_splitter import CharacterTextSplitter
+-from langchain.embeddings.openai import OpenAIEmbeddings
+-from langchain.vectorstores import Chroma
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.prompts import PromptTemplate
++from langchain_community.document_loaders import DirectoryLoader, WebBaseLoader
++from langchain_openai import ChatOpenAI, OpenAIEmbeddings
++from langchain_text_splitters import CharacterTextSplitter
++from langchain_chroma import Chroma
+ import yaml
+ import logging
+ 
+@@ -41,18 +37,22 @@ persona = config.get("persona", "default")
+ 
+ text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+ texts = text_splitter.split_documents(result)
+-embeddings = OpenAIEmbeddings(openai_api_key=config["openai_api_key"])
++embeddings = OpenAIEmbeddings(api_key=config["openai_api_key"])
+ docsearch = Chroma.from_documents(texts, embeddings)
+ 
++# Conversation memory (replaces the removed ConversationBufferMemory)
++chat_history = []
++
++
++def format_history():
++    return "\n".join(f"Human: {h}\nChatbot: {a}" for h, a in chat_history)
++
++
+ # Initialize the QA chain
+ logger.info("Initializing QA chain...")
+-chain = load_qa_chain(
+-    OpenAIChat(),
+-    chain_type="stuff",
+-    memory=ConversationBufferMemory(memory_key="chat_history", input_key="human_input"),
+-    prompt=PromptTemplate(
+-        input_variables=["chat_history", "human_input", "context", "tone", "persona"],
+-        template="""You are a chatbot who acts like {persona}, having a conversation with a human.
++prompt = PromptTemplate(
++    input_variables=["chat_history", "human_input", "context", "tone", "persona"],
++    template="""You are a chatbot who acts like {persona}, having a conversation with a human.
+ 
+ Given the following extracted parts of a long document and a question, Create a final answer with references ("SOURCES") in the tone {tone}. 
+ If you don't know the answer, just say that you don't know. Don't try to make up an answer.
+@@ -64,9 +64,9 @@ SOURCES should only be hyperlink URLs which are genuine and not made up.
+ {chat_history}
+ Human: {human_input}
+ Chatbot:""",
+-    ),
+-    verbose=False,
+ )
++llm = ChatOpenAI(model=config.get("model", "gpt-4o-mini"), api_key=config["openai_api_key"])
++chain = prompt | llm | StrOutputParser()
+ 
+ def index():
+     return render_template("index.html")
+@@ -75,19 +75,20 @@ def chat():
+     try:
+         # Get the question from the request
+         question = request.json["question"]
+-        documents = docsearch.similarity_search(question, include_metadata=True)
++        documents = docsearch.similarity_search(question)
+ 
+         # Get the bot's response
+-        response = chain(
++        response = chain.invoke(
+             {
+-                "input_documents": documents,
++                "context": "\n\n".join(d.page_content for d in documents),
++                "chat_history": format_history(),
+                 "human_input": question,
+                 "tone": tone,
+                 "persona": persona,
+-            },
+-            return_only_outputs=True,
+-        )["output_text"]
+-        
++            }
++        )
++        chat_history.append((question, response))
++
+         # Increment message counter
+         session_counter = request.cookies.get('session_counter')
+         if session_counter is None:
+@@ -97,7 +98,7 @@ def chat():
+ 
+         # Check if it's time to flush memory
+         if session_counter % 10 == 0:
+-            chain.memory.clear()
++            chat_history.clear()
+ 
+         # Set the session counter cookie
+         resp = jsonify({"response": response})
+diff --git a/chat_agent.py b/chat_agent.py
+index 09f4b05..b1c5a7d 100644
+--- a/chat_agent.py
++++ b/chat_agent.py
+@@ -1,12 +1,12 @@
+-from langchain.embeddings.openai import OpenAIEmbeddings
+-from langchain.vectorstores import Chroma
+-from langchain.text_splitter import CharacterTextSplitter
+-from langchain import OpenAI, VectorDBQA, LLMMathChain, SerpAPIWrapper
+-from langchain.document_loaders import DirectoryLoader, WebBaseLoader
+-from langchain.agents import initialize_agent, Tool
+-from langchain.tools import BaseTool
+-from langchain.llms import OpenAI
++from langchain_openai import ChatOpenAI, OpenAIEmbeddings
++from langchain_chroma import Chroma
++from langchain_text_splitters import CharacterTextSplitter
++from langchain_community.document_loaders import DirectoryLoader, WebBaseLoader
++from langchain.agents import create_agent
++from langchain.tools import tool
+ from flask import request, jsonify, render_template
++import ast
++import operator
+ import os
+ import logging
+ import yaml
+@@ -21,7 +21,7 @@ with open("config.yaml", "r") as f:
+ 
+ os.environ["OPENAI_API_KEY"] = config["openai_api_key"]
+ 
+-llm = OpenAI(temperature=0)
++llm = ChatOpenAI(model=config.get("model", "gpt-4o-mini"), temperature=0)
+ 
+ # Load the files
+ loader = DirectoryLoader(config["data_directory"], glob=config["data_files_glob"])
+@@ -45,22 +45,46 @@ ruff_texts = text_splitter.split_documents(result)
+ 
+ embeddings = OpenAIEmbeddings()
+ docsearch = Chroma.from_documents(ruff_texts, embeddings, collection_name="state-of-union")
+-state_of_union = VectorDBQA.from_chain_type(llm=llm, chain_type="stuff", vectorstore=docsearch)
+-llm_math_chain = LLMMathChain(llm=llm, verbose=True)
+-tools = [
+-    Tool(
+-        name = "State of Union QA System",
+-        func=state_of_union.run,
+-        description="useful for when you need to answer questions about the most recent state of the union address. Input should be a fully formed question."
+-    ),
+-    Tool(
+-        name="Calculator",
+-        func=llm_math_chain.run,
+-        description="useful for when you need to answer questions about math"
+-    )
+-]
+-
+-agent = initialize_agent(tools, llm, agent="zero-shot-react-description", verbose=True)
++
++
++@tool
++def state_of_union_qa(question: str) -> str:
++    """Useful for when you need to answer questions about the most recent state of the union address.
++    Input should be a fully formed question. Returns the most relevant passages from the address."""
++    return "\n\n".join(d.page_content for d in docsearch.similarity_search(question))
++
++
++_OPERATORS = {
++    ast.Add: operator.add,
++    ast.Sub: operator.sub,
++    ast.Mult: operator.mul,
++    ast.Div: operator.truediv,
++    ast.Pow: operator.pow,
++    ast.Mod: operator.mod,
++    ast.USub: operator.neg,
++}
++
++
++def _eval_node(node):
++    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
++        return node.value
++    if isinstance(node, ast.BinOp) and type(node.op) in _OPERATORS:
++        return _OPERATORS[type(node.op)](_eval_node(node.left), _eval_node(node.right))
++    if isinstance(node, ast.UnaryOp) and type(node.op) in _OPERATORS:
++        return _OPERATORS[type(node.op)](_eval_node(node.operand))
++    raise ValueError("Unsupported expression")
++
++
++@tool
++def calculator(expression: str) -> str:
++    """Useful for when you need to answer questions about math.
++    Input should be a single arithmetic expression, e.g. '37593 * 67' or '2 ** 0.5'."""
++    return str(_eval_node(ast.parse(expression.strip(), mode="eval").body))
++
++
++tools = [state_of_union_qa, calculator]
++
++agent = create_agent(llm, tools)
+ 
+ 
+ def index():
+@@ -71,7 +95,8 @@ def chat():
+         # Get the question from the request
+         question = request.json["question"]
+ 
+-        response = agent.run(question)
++        result = agent.invoke({"messages": [{"role": "user", "content": question}]})
++        response = result["messages"][-1].text
+         
+         # Increment message counter
+         session_counter = request.cookies.get('session_counter')
+diff --git a/requirements.txt b/requirements.txt
+index 5c2cd37..29fdbeb 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,15 +1,19 @@
+ Flask==2.2.3
+ Flask-Cors==3.0.10
+-langchain==0.0.107
++langchain==1.5.0
++langchain-openai
++langchain-community
++langchain-chroma
++langchain-text-splitters
+ PyYAML==6.0
+ nltk==3.7
+-openai==0.27.0
++openai>=1.0
+ layoutparser==0.3.4
+ transformers==4.26.1
+ unstructured==0.5.0
+ python-magic==0.4.27
+ pinecone-client==2.2.1
+ beautifulsoup4
+-chromadb==0.3.11
++chromadb>=1.0
+ -e git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2
+ 

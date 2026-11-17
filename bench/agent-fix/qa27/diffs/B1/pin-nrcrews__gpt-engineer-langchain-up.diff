@@ -1,0 +1,11 @@
+diff --git a/engineer/code.py b/engineer/code.py
+index 6849c84..b2889b9 100644
+--- a/engineer/code.py
++++ b/engineer/code.py
+@@ -1,5 +1,5 @@
+ import os
+-from langchain.text_splitter import (
++from langchain_text_splitters import (
+     RecursiveCharacterTextSplitter,
+     Language,
+ )

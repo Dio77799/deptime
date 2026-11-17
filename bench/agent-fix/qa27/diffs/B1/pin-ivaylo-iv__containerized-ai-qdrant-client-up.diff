@@ -1,0 +1,34 @@
+diff --git a/Advanced AI/pdf_qa_server.py b/Advanced AI/pdf_qa_server.py
+index daa6ad9..8fc161d 100644
+--- a/Advanced AI/pdf_qa_server.py	
++++ b/Advanced AI/pdf_qa_server.py	
+@@ -288,9 +288,9 @@ async def ask_question(request: QuestionRequest):
+     question_embedding = get_embedding(request.question)
+ 
+     logger.info("🔎 Searching for relevant chunks...")
+-    results = qdrant_client.search(
+-        collection_name=request.pdf_id, query_vector=question_embedding, limit=2
+-    )
++    results = qdrant_client.query_points(
++        collection_name=request.pdf_id, query=question_embedding, limit=2
++    ).points
+     logger.info(f"📑 Found {len(results)} relevant chunks")
+ 
+     context = "\n\n".join([result.payload["text"] for result in results])
+diff --git a/Complete AI/pdf_qa_server.py b/Complete AI/pdf_qa_server.py
+index 7883dec..bf262bb 100644
+--- a/Complete AI/pdf_qa_server.py	
++++ b/Complete AI/pdf_qa_server.py	
+@@ -289,9 +289,9 @@ async def ask_question(request: QuestionRequest):
+     question_embedding = get_embedding(request.question)
+ 
+     logger.info("🔎 Searching for relevant chunks...")
+-    results = qdrant_client.search(
+-        collection_name=request.pdf_id, query_vector=question_embedding, limit=2
+-    )
++    results = qdrant_client.query_points(
++        collection_name=request.pdf_id, query=question_embedding, limit=2
++    ).points
+     logger.info(f"📑 Found {len(results)} relevant chunks")
+ 
+     context = "\n\n".join([result.payload["text"] for result in results])

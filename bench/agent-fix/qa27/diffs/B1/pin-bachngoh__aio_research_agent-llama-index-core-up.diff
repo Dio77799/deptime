@@ -1,0 +1,154 @@
+diff --git a/api/controller.py b/api/controller.py
+index 36c862b..c3f0851 100644
+--- a/api/controller.py
++++ b/api/controller.py
+@@ -33,7 +33,7 @@ async def schedule_task():
+ async def complete_text(request: Request):
+     data = await request.json()
+     message = data.get("message")
+-    response = assistant.predict(message)
++    response = await assistant.predict(message)
+     return response
+ 
+ # Update the schedule time
+diff --git a/api/service.py b/api/service.py
+index 35aa8cd..78a1972 100644
+--- a/api/service.py
++++ b/api/service.py
+@@ -6,11 +6,9 @@ from llama_index.llms.groq import Groq
+ from llama_index.llms.openai import OpenAI
+ from llama_index.llms.ollama import Ollama
+ from llama_index.llms.gemini import Gemini
+-from llama_index.core.agent import AgentRunner
++from llama_index.core.agent.workflow import AgentStream, BaseWorkflowAgent, FunctionAgent, ReActAgent
+ from llama_index.core.callbacks import CallbackManager
+ # from src.agents.assistant_agent import AssistantAgent
+-from llama_index.agent.openai import OpenAIAgent
+-from llama_index.core.agent import ReActAgent
+ # from src.agents.gemini_agent import GeminiForFunctionCalling
+ from llama_index.core import Settings
+ from src.tools.paper_search_tool import load_paper_search_tool, load_daily_paper_tool, load_get_time_tool
+@@ -37,7 +35,7 @@ load_dotenv(override=True)
+ 
+ 
+ class AssistantService:
+-    query_engine: AgentRunner
++    query_engine: BaseWorkflowAgent
+     tools_dict: dict
+     
+     def __init__(self, callback_manager: Optional[CallbackManager] = None):
+@@ -66,28 +64,26 @@ class AssistantService:
+         It loads a language model, along with specific tools for tasks such as code search and paper search.
+         
+         Returns:
+-            AgentRunner: An instance of AgentRunner configured with the necessary tools and settings.
++            BaseWorkflowAgent: A FunctionAgent (OpenAI) or ReActAgent configured with the necessary tools and settings.
+         """
+         
+         llm = self.load_model(SERVICE, MODEL_ID)
+         Settings.llm = llm
++        if self.callback_manager is not None:
++            llm.callback_manager = self.callback_manager
+         self.tools = self.load_tools()
+         
+         if SERVICE != "openai":
+-            query_engine = ReActAgent.from_tools(
++            query_engine = ReActAgent(
+                 tools=self.tools,
+-                verbose=True,
+                 llm=llm,
+-                system_prompt = SYSTEM_PROMPT,
+-                callback_manager=self.callback_manager
++                system_prompt=SYSTEM_PROMPT,
+             )
+         else:
+-            query_engine = OpenAIAgent.from_tools(
++            query_engine = FunctionAgent(
+                 tools=self.tools,
+-                verbose=True,
+                 llm=llm,
+-                system_prompt = SYSTEM_PROMPT,
+-                callback_manager=self.callback_manager
++                system_prompt=SYSTEM_PROMPT,
+             )
+         
+         return query_engine
+@@ -121,7 +117,25 @@ class AssistantService:
+         else:
+             raise NotImplementedError("The implementation for other types of LLMs are not ready yet!")
+     
+-    def predict(self, prompt):
++    @staticmethod
++    async def _stream_agent(handler, agent):
++        """
++        Yield the answer text of a running workflow agent as it is produced.
++
++        FunctionAgent streams its token deltas. ReActAgent's deltas are its raw
++        Thought/Action text, so its final answer is yielded once the run finishes.
++        """
++        if isinstance(agent, FunctionAgent):
++            async for event in handler.stream_events():
++                if isinstance(event, AgentStream) and event.delta:
++                    yield event.delta
++            await handler
++        else:
++            async for _ in handler.stream_events():
++                pass
++            yield str(await handler)
++
++    async def predict(self, prompt):
+         """
+         Predicts the next sequence of text given a prompt using the loaded language model.
+ 
+@@ -133,14 +147,14 @@ class AssistantService:
+         """
+         # Assuming query_engine is already created or accessible
+         if STREAM:
+-            self.query_engine.memory.reset()
+-            streaming_response = self.query_engine.stream_chat(prompt)
+-            
+-            return StreamingResponse(streaming_response.response_gen, media_type="application/text; charset=utf-8")
+-            # return StreamingResponse(streaming_response.response_gen, media_type="application/text; charset=utf-8")
+-            
++            # Each run() starts without memory, so no reset is needed.
++            handler = self.query_engine.run(user_msg=prompt)
++
++            return StreamingResponse(self._stream_agent(handler, self.query_engine), media_type="application/text; charset=utf-8")
++
+         else:
+-            return Response(self.query_engine.chat(prompt).response, media_type="application/text; charset=utf-8")
++            response = await self.query_engine.run(user_msg=prompt)
++            return Response(str(response), media_type="application/text; charset=utf-8")
+     
+     
+     async def aon_start(self):
+@@ -166,20 +180,21 @@ class AssistantService:
+ 
+         message_history = [ChatMessage(**message) for message in history]
+         
+-        res = await cl.make_async(query_engine.stream_chat)(message.content, message_history)
+-        # res = query_engine.stream_chat(message.content)
++        handler = query_engine.run(user_msg=message.content, chat_history=message_history)
+ 
+         msg = cl.Message(content="", author="Assistant")
+ 
+-        for token in res.response_gen:
++        response_text = ""
++        async for token in self._stream_agent(handler, query_engine):
++            response_text += token
+             await msg.stream_token(token)
+-            
++
+         await msg.send()
+-        
++
+         if ENABLE_QUESTION_RECOMMENDER:
+-            history.append({"role": "assistant", "content": res.response})
+-            
+-            next_questions = handle_next_question_generation(tools=self.tools, query_str=message.content, llm_response=res.response)
++            history.append({"role": "assistant", "content": response_text})
++
++            next_questions = handle_next_question_generation(tools=self.tools, query_str=message.content, llm_response=response_text)
+             handle_generate_actions(next_questions)
+             
+             actions = [

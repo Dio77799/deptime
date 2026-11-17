@@ -1,0 +1,11 @@
+diff --git a/elt_pipeline/elt_pipeline/resources/mysql_io_manager.py b/elt_pipeline/elt_pipeline/resources/mysql_io_manager.py
+index 6ff2cf6..2b73f8f 100644
+--- a/elt_pipeline/elt_pipeline/resources/mysql_io_manager.py
++++ b/elt_pipeline/elt_pipeline/resources/mysql_io_manager.py
+@@ -28,5 +28,5 @@ class MySQLIOManager(IOManager):
+         Extract data from MySQL database as polars DataFrame
+         """
+         conn_info = connect_mysql(self._config)
+-        df_data = pl.read_database(query=sql, connection_uri=conn_info)
++        df_data = pl.read_database_uri(query=sql, uri=conn_info)
+         return df_data

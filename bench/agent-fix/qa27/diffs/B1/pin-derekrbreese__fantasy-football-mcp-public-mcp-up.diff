@@ -1,0 +1,87 @@
+diff --git a/fantasy_football_multi_league.py b/fantasy_football_multi_league.py
+index 073c0d6..b1bc363 100644
+--- a/fantasy_football_multi_league.py
++++ b/fantasy_football_multi_league.py
+@@ -9,9 +9,16 @@ import os
+ from typing import Any, Awaitable, Callable, Dict, List, Optional
+ 
+ from dotenv import load_dotenv
+-from mcp.server import Server
++from mcp.server import Server, ServerRequestContext
+ from mcp.server.stdio import stdio_server
+-from mcp.types import TextContent, Tool
++from mcp.types import (
++    CallToolRequestParams,
++    CallToolResult,
++    ListToolsResult,
++    PaginatedRequestParams,
++    TextContent,
++    Tool,
++)
+ 
+ # Import extracted modules
+ from src.api import get_access_token, refresh_yahoo_token, set_access_token, yahoo_api_call
+@@ -67,8 +74,8 @@ load_dotenv(dotenv_path=ENV_FILE_PATH)
+ if os.getenv("YAHOO_ACCESS_TOKEN"):
+     set_access_token(os.getenv("YAHOO_ACCESS_TOKEN"))
+ 
+-# Create server instance
+-server = Server("fantasy-football")
++# The MCP server instance is created below, after list_tools/call_tool are defined
++# (mcp 2.x registers handlers via Server(on_list_tools=..., on_call_tool=...)).
+ 
+ # Cache for leagues
+ LEAGUES_CACHE = {}
+@@ -505,7 +512,6 @@ async def get_all_teams_info(league_key: str) -> list[dict]:
+         return []
+ 
+ 
+-@server.list_tools()
+ async def list_tools() -> list[Tool]:
+     """List available fantasy football tools."""
+     base_tools = [
+@@ -920,6 +926,13 @@ async def list_tools() -> list[Tool]:
+     return base_tools
+ 
+ 
++async def _on_list_tools(
++    ctx: ServerRequestContext, params: PaginatedRequestParams | None
++) -> ListToolsResult:
++    """mcp 2.x tools/list handler wrapping list_tools()."""
++    return ListToolsResult(tools=await list_tools())
++
++
+ TOOL_HANDLERS: dict[str, Callable[[dict], Awaitable[dict]]] = {
+     "ff_get_leagues": handle_ff_get_leagues,
+     "ff_get_league_info": handle_ff_get_league_info,
+@@ -943,7 +956,6 @@ TOOL_HANDLERS: dict[str, Callable[[dict], Awaitable[dict]]] = {
+ }
+ 
+ 
+-@server.call_tool()
+ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+     """Execute a fantasy football tool via modular handlers."""
+     original_arguments = dict(arguments)
+@@ -995,6 +1007,22 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+         return [TextContent(type="text", text=json.dumps(error_result, indent=2))]
+ 
+ 
++async def _on_call_tool(
++    ctx: ServerRequestContext, params: CallToolRequestParams
++) -> CallToolResult:
++    """mcp 2.x tools/call handler wrapping call_tool()."""
++    content = await call_tool(params.name, params.arguments or {})
++    return CallToolResult(content=content)
++
++
++# Create server instance (mcp 2.x: handlers are passed to the constructor)
++server = Server(
++    "fantasy-football",
++    on_list_tools=_on_list_tools,
++    on_call_tool=_on_call_tool,
++)
++
++
+ async def get_draft_recommendation_simple(
+     league_key: str, strategy: str, num_recommendations: int, current_pick: Optional[int] = None
+ ) -> dict:

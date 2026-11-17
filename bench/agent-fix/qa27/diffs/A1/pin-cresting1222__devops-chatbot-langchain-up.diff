@@ -1,0 +1,567 @@
+diff --git a/dev_opsgpt/chat/base_chat.py b/dev_opsgpt/chat/base_chat.py
+index 20bbad5..71a4d20 100644
+--- a/dev_opsgpt/chat/base_chat.py
++++ b/dev_opsgpt/chat/base_chat.py
+@@ -3,13 +3,12 @@ from fastapi.responses import StreamingResponse
+ import asyncio, json
+ from typing import List, AsyncIterable
+ 
+-from langchain.chat_models import ChatOpenAI
+-from langchain import LLMChain
+-from langchain.callbacks import AsyncIteratorCallbackHandler
+-from langchain.prompts.chat import ChatPromptTemplate
++from langchain_openai import ChatOpenAI
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
+ 
+ 
+-from dev_opsgpt.chat.utils import History, wrap_done
++from dev_opsgpt.chat.utils import History, wrap_done, AsyncIteratorCallbackHandler
+ from configs.model_config import (llm_model_dict, LLM_MODEL, VECTOR_SEARCH_TOP_K, SCORE_THRESHOLD)
+ from dev_opsgpt.utils import BaseResponse
+ from loguru import logger
+@@ -24,18 +23,18 @@ def getChatModel(callBack: AsyncIteratorCallbackHandler = None):
+         model = ChatOpenAI(
+             streaming=True,
+             verbose=True,
+-            openai_api_key=llm_model_dict[LLM_MODEL]["api_key"],
+-            openai_api_base=llm_model_dict[LLM_MODEL]["api_base_url"],
+-            model_name=LLM_MODEL
++            api_key=llm_model_dict[LLM_MODEL]["api_key"],
++            base_url=llm_model_dict[LLM_MODEL]["api_base_url"],
++            model=LLM_MODEL
+         )
+     else:
+         model = ChatOpenAI(
+             streaming=True,
+             verbose=True,
+-            callBack=[callBack],
+-            openai_api_key=llm_model_dict[LLM_MODEL]["api_key"],
+-            openai_api_base=llm_model_dict[LLM_MODEL]["api_base_url"],
+-            model_name=LLM_MODEL
++            callbacks=[callBack],
++            api_key=llm_model_dict[LLM_MODEL]["api_key"],
++            base_url=llm_model_dict[LLM_MODEL]["api_base_url"],
++            model=LLM_MODEL
+         )
+     return model
+ 
+@@ -132,11 +131,11 @@ class Chat:
+ 
+             task, result = self.create_atask(query, history, model, callback)
+             if self.stream:
+-                for token in callback["text"]:
++                async for token in callback.aiter():
+                     result["answer"] = token
+                     yield json.dumps(result, ensure_ascii=False)
+             else:
+-                for token in callback["text"]:
++                async for token in callback.aiter():
+                     result["answer"] += token
+                 yield json.dumps(result, ensure_ascii=False)
+             await task
+@@ -149,16 +148,16 @@ class Chat:
+         chat_prompt = ChatPromptTemplate.from_messages(
+             [i.to_msg_tuple() for i in history] + [("human", "{input}")]
+         )
+-        chain = LLMChain(prompt=chat_prompt, llm=model)
+-        content = chain({"input": query})
++        chain = chat_prompt | model | StrOutputParser()
++        content = {"text": chain.invoke({"input": query})}
+         return {"answer": "", "docs": ""}, content
+ 
+     def create_atask(self, query, history, model, callback: AsyncIteratorCallbackHandler):
+         chat_prompt = ChatPromptTemplate.from_messages(
+             [i.to_msg_tuple() for i in history] + [("human", "{input}")]
+         )
+-        chain = LLMChain(prompt=chat_prompt, llm=model)
++        chain = chat_prompt | model | StrOutputParser()
+         task = asyncio.create_task(wrap_done(
+-            chain.acall({"input": query}), callback.done
++            chain.ainvoke({"input": query}, config={"callbacks": [callback]}), callback.done
+         ))
+         return task, {"answer": "", "docs": ""}
+\ No newline at end of file
+diff --git a/dev_opsgpt/chat/knowledge_chat.py b/dev_opsgpt/chat/knowledge_chat.py
+index 5d725f3..c4e5ed8 100644
+--- a/dev_opsgpt/chat/knowledge_chat.py
++++ b/dev_opsgpt/chat/knowledge_chat.py
+@@ -3,15 +3,14 @@ import os, asyncio
+ from urllib.parse import urlencode
+ from typing import List
+ 
+-from langchain import LLMChain
+-from langchain.callbacks import AsyncIteratorCallbackHandler
+-from langchain.prompts.chat import ChatPromptTemplate
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
+ 
+ 
+ from configs.model_config import (
+     llm_model_dict, LLM_MODEL, PROMPT_TEMPLATE, 
+     VECTOR_SEARCH_TOP_K, SCORE_THRESHOLD)
+-from dev_opsgpt.chat.utils import History, wrap_done
++from dev_opsgpt.chat.utils import History, wrap_done, AsyncIteratorCallbackHandler
+ from dev_opsgpt.utils import BaseResponse
+ from .base_chat import Chat
+ from dev_opsgpt.service.kb_api import search_docs, KBServiceFactory
+@@ -57,7 +56,7 @@ class KnowledgeChat(Chat):
+         chat_prompt = ChatPromptTemplate.from_messages(
+             [i.to_msg_tuple() for i in history] + [("human", PROMPT_TEMPLATE)]
+         )
+-        chain = LLMChain(prompt=chat_prompt, llm=model)
++        chain = chat_prompt | model | StrOutputParser()
+         result = {"answer": "", "docs": source_documents}
+         return chain, context, result
+ 
+@@ -66,7 +65,7 @@ class KnowledgeChat(Chat):
+         logger.debug(f"query: {query}, history: {history}")
+         chain, context, result = self._process(query, history, model)
+         try:
+-            content = chain({"context": context, "question": query})
++            content = {"text": chain.invoke({"context": context, "question": query})}
+         except Exception as e:
+             content = {"text": str(e)}
+         return result, content
+@@ -74,6 +73,7 @@ class KnowledgeChat(Chat):
+     def create_atask(self, query, history, model, callback: AsyncIteratorCallbackHandler):
+         chain, context, result = self._process(query, history, model)
+         task = asyncio.create_task(wrap_done(
+-            chain.acall({"context": context, "question": query}), callback.done
++            chain.ainvoke({"context": context, "question": query}, config={"callbacks": [callback]}),
++            callback.done
+         ))
+         return task, result
+diff --git a/dev_opsgpt/chat/llm_chat.py b/dev_opsgpt/chat/llm_chat.py
+index 54e5a56..db75a13 100644
+--- a/dev_opsgpt/chat/llm_chat.py
++++ b/dev_opsgpt/chat/llm_chat.py
+@@ -1,12 +1,11 @@
+ import asyncio
+ from typing import List
+ 
+-from langchain import LLMChain
+-from langchain.callbacks import AsyncIteratorCallbackHandler
+-from langchain.prompts.chat import ChatPromptTemplate
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
+ 
+ 
+-from dev_opsgpt.chat.utils import History, wrap_done
++from dev_opsgpt.chat.utils import History, wrap_done, AsyncIteratorCallbackHandler
+ from .base_chat import Chat
+ from loguru import logger
+ 
+@@ -26,16 +25,16 @@ class LLMChat(Chat):
+         chat_prompt = ChatPromptTemplate.from_messages(
+             [i.to_msg_tuple() for i in history] + [("human", "{input}")]
+         )
+-        chain = LLMChain(prompt=chat_prompt, llm=model)
+-        content = chain({"input": query})
++        chain = chat_prompt | model | StrOutputParser()
++        content = {"text": chain.invoke({"input": query})}
+         return {"answer": "", "docs": ""}, content
+ 
+     def create_atask(self, query, history, model, callback: AsyncIteratorCallbackHandler):
+         chat_prompt = ChatPromptTemplate.from_messages(
+             [i.to_msg_tuple() for i in history] + [("human", "{input}")]
+         )
+-        chain = LLMChain(prompt=chat_prompt, llm=model)
++        chain = chat_prompt | model | StrOutputParser()
+         task = asyncio.create_task(wrap_done(
+-            chain.acall({"input": query}), callback.done
++            chain.ainvoke({"input": query}, config={"callbacks": [callback]}), callback.done
+         ))
+         return task, {"answer": "", "docs": ""}
+\ No newline at end of file
+diff --git a/dev_opsgpt/chat/search_chat.py b/dev_opsgpt/chat/search_chat.py
+index 9e82066..b219f13 100644
+--- a/dev_opsgpt/chat/search_chat.py
++++ b/dev_opsgpt/chat/search_chat.py
+@@ -3,16 +3,15 @@ import os, asyncio
+ from urllib.parse import urlencode
+ from typing import List
+ 
+-from langchain import LLMChain
+-from langchain.callbacks import AsyncIteratorCallbackHandler
+-from langchain.utilities import BingSearchAPIWrapper, DuckDuckGoSearchAPIWrapper
+-from langchain.prompts.chat import ChatPromptTemplate
+-from langchain.docstore.document import Document
++from langchain_community.utilities import BingSearchAPIWrapper, DuckDuckGoSearchAPIWrapper
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.prompts import ChatPromptTemplate
++from langchain_core.documents import Document
+ 
+ from configs.model_config import (
+     PROMPT_TEMPLATE, SEARCH_ENGINE_TOP_K, BING_SUBSCRIPTION_KEY, BING_SEARCH_URL,
+     VECTOR_SEARCH_TOP_K, SCORE_THRESHOLD)
+-from dev_opsgpt.chat.utils import History, wrap_done
++from dev_opsgpt.chat.utils import History, wrap_done, AsyncIteratorCallbackHandler
+ from dev_opsgpt.utils import BaseResponse
+ from .base_chat import Chat
+ 
+@@ -89,19 +88,20 @@ class SearchChat(Chat):
+         chat_prompt = ChatPromptTemplate.from_messages(
+             [i.to_msg_tuple() for i in history] + [("human", PROMPT_TEMPLATE)]
+         )
+-        chain = LLMChain(prompt=chat_prompt, llm=model)
++        chain = chat_prompt | model | StrOutputParser()
+         result = {"answer": "", "docs": source_documents}
+         return chain, context, result
+ 
+     def create_task(self, query: str, history: List[History], model):
+         '''构建 llm 生成任务'''
+         chain, context, result = self._process(query, history, model)
+-        content = chain({"context": context, "question": query})
++        content = {"text": chain.invoke({"context": context, "question": query})}
+         return result, content
+ 
+     def create_atask(self, query, history, model, callback: AsyncIteratorCallbackHandler):
+         chain, context, result = self._process(query, history, model)
+         task = asyncio.create_task(wrap_done(
+-            chain.acall({"context": context, "question": query}), callback.done
++            chain.ainvoke({"context": context, "question": query}, config={"callbacks": [callback]}),
++            callback.done
+         ))
+         return task, result
+\ No newline at end of file
+diff --git a/dev_opsgpt/chat/utils.py b/dev_opsgpt/chat/utils.py
+index f8afb10..7237f21 100644
+--- a/dev_opsgpt/chat/utils.py
++++ b/dev_opsgpt/chat/utils.py
+@@ -1,6 +1,51 @@
+ import asyncio
+-from typing import Awaitable
++from typing import Any, AsyncIterator, Awaitable
+ from pydantic import BaseModel, Field
++from langchain_core.callbacks import AsyncCallbackHandler
++
++
++class AsyncIteratorCallbackHandler(AsyncCallbackHandler):
++    """Yield streamed LLM tokens through an async iterator.
++
++    `langchain.callbacks.AsyncIteratorCallbackHandler` no longer exists in langchain 1.x,
++    so a minimal equivalent is kept here, built on langchain-core.
++    """
++
++    def __init__(self) -> None:
++        self.queue: asyncio.Queue = asyncio.Queue()
++        self.done = asyncio.Event()
++
++    async def on_llm_start(self, serialized: Any, prompts: Any, **kwargs: Any) -> None:
++        self.done.clear()
++
++    async def on_chat_model_start(self, serialized: Any, messages: Any, **kwargs: Any) -> None:
++        self.done.clear()
++
++    async def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
++        if token is not None and token != "":
++            self.queue.put_nowait(token)
++
++    async def on_llm_end(self, response: Any, **kwargs: Any) -> None:
++        self.done.set()
++
++    async def on_llm_error(self, error: BaseException, **kwargs: Any) -> None:
++        self.done.set()
++
++    async def aiter(self) -> AsyncIterator[str]:
++        while not self.queue.empty() or not self.done.is_set():
++            done, other = await asyncio.wait(
++                [
++                    asyncio.ensure_future(self.queue.get()),
++                    asyncio.ensure_future(self.done.wait()),
++                ],
++                return_when=asyncio.FIRST_COMPLETED,
++            )
++            if other:
++                other.pop().cancel()
++            token_or_done = done.pop().result()
++            if token_or_done is True:
++                break
++            yield token_or_done
+ 
+ 
+ async def wrap_done(fn: Awaitable, event: asyncio.Event):
+diff --git a/dev_opsgpt/document_loaders/json_loader.py b/dev_opsgpt/document_loaders/json_loader.py
+index e3124c3..82a073f 100644
+--- a/dev_opsgpt/document_loaders/json_loader.py
++++ b/dev_opsgpt/document_loaders/json_loader.py
+@@ -2,8 +2,8 @@ import json
+ from pathlib import Path
+ from typing import AnyStr, Callable, Dict, List, Optional, Union
+ 
+-from langchain.docstore.document import Document
+-from langchain.document_loaders.base import BaseLoader
++from langchain_core.documents import Document
++from langchain_core.document_loaders import BaseLoader
+ 
+ from dev_opsgpt.utils.common_utils import read_json_file
+ 
+diff --git a/dev_opsgpt/document_loaders/jsonl_loader.py b/dev_opsgpt/document_loaders/jsonl_loader.py
+index 79f8d2c..6d0b88a 100644
+--- a/dev_opsgpt/document_loaders/jsonl_loader.py
++++ b/dev_opsgpt/document_loaders/jsonl_loader.py
+@@ -2,8 +2,8 @@ import json
+ from pathlib import Path
+ from typing import AnyStr, Callable, Dict, List, Optional, Union
+ 
+-from langchain.docstore.document import Document
+-from langchain.document_loaders.base import BaseLoader
++from langchain_core.documents import Document
++from langchain_core.document_loaders import BaseLoader
+ 
+ from dev_opsgpt.utils.common_utils import read_jsonl_file
+ 
+diff --git a/dev_opsgpt/embeddings/utils.py b/dev_opsgpt/embeddings/utils.py
+index 5b19371..9bf87c6 100644
+--- a/dev_opsgpt/embeddings/utils.py
++++ b/dev_opsgpt/embeddings/utils.py
+@@ -1,5 +1,5 @@
+ from functools import lru_cache
+-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
++from langchain_huggingface import HuggingFaceEmbeddings
+ from configs.model_config import embedding_model_dict
+ from loguru import logger
+ 
+diff --git a/dev_opsgpt/service/base_service.py b/dev_opsgpt/service/base_service.py
+index 1993603..a69c9a4 100644
+--- a/dev_opsgpt/service/base_service.py
++++ b/dev_opsgpt/service/base_service.py
+@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
+ from typing import List
+ import os
+ 
+-from langchain.embeddings.base import Embeddings
+-from langchain.docstore.document import Document
++from langchain_core.embeddings import Embeddings
++from langchain_core.documents import Document
+ 
+ from configs.model_config import (
+     kbs_config, VECTOR_SEARCH_TOP_K, SCORE_THRESHOLD,
+diff --git a/dev_opsgpt/service/faiss_db_service.py b/dev_opsgpt/service/faiss_db_service.py
+index 28efd09..366f395 100644
+--- a/dev_opsgpt/service/faiss_db_service.py
++++ b/dev_opsgpt/service/faiss_db_service.py
+@@ -4,10 +4,10 @@ from typing import List
+ from functools import lru_cache
+ from loguru import logger
+ 
+-from langchain.vectorstores import FAISS
+-from langchain.embeddings.base import Embeddings
+-from langchain.docstore.document import Document
+-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
++from langchain_community.vectorstores import FAISS
++from langchain_core.embeddings import Embeddings
++from langchain_core.documents import Document
++from langchain_huggingface import HuggingFaceEmbeddings
+ 
+ from configs.model_config import (
+     KB_ROOT_PATH,
+@@ -51,7 +51,9 @@ def load_vector_store(
+         os.makedirs(vs_path)
+ 
+     if "index.faiss" in os.listdir(vs_path):
+-        search_index = FAISS.load_local(vs_path, embeddings, normalize_L2=True)
++        # the index is pickled by this app itself (save_local below), so deserialization is trusted
++        search_index = FAISS.load_local(vs_path, embeddings, normalize_L2=True,
++                                        allow_dangerous_deserialization=True)
+     else:
+         # create an empty vector store
+         doc = Document(page_content="init", metadata={})
+diff --git a/dev_opsgpt/service/kb_api.py b/dev_opsgpt/service/kb_api.py
+index 1bb3caf..c8590de 100644
+--- a/dev_opsgpt/service/kb_api.py
++++ b/dev_opsgpt/service/kb_api.py
+@@ -4,7 +4,8 @@ from loguru import logger
+ 
+ from fastapi.responses import StreamingResponse, FileResponse
+ from fastapi import Body, File, Form, Body, Query, UploadFile
+-from langchain.docstore.document import Document
++from typing import Optional
++from langchain_core.documents import Document
+ 
+ from .service_factory import KBServiceFactory
+ from dev_opsgpt.utils.server_utils import BaseResponse, ListResponse
+@@ -73,7 +74,7 @@ async def delete_kb(
+ 
+ 
+ class DocumentWithScore(Document):
+-    score: float = None
++    score: Optional[float] = None
+ 
+ 
+ def search_docs(query: str = Body(..., description="用户输入", examples=["你好"]),
+@@ -85,7 +86,7 @@ def search_docs(query: str = Body(..., description="用户输入", examples=["
+     if kb is None:
+         return []
+     docs = kb.search_docs(query, top_k, score_threshold)
+-    data = [DocumentWithScore(**x[0].dict(), score=x[1]) for x in docs]
++    data = [DocumentWithScore(**x[0].model_dump(), score=x[1]) for x in docs]
+ 
+     return data
+ 
+diff --git a/dev_opsgpt/text_splitter/langchain_splitter.py b/dev_opsgpt/text_splitter/langchain_splitter.py
+index 9e4a65a..66a8e66 100644
+--- a/dev_opsgpt/text_splitter/langchain_splitter.py
++++ b/dev_opsgpt/text_splitter/langchain_splitter.py
+@@ -2,8 +2,8 @@ import os
+ import importlib
+ from loguru import logger
+ 
+-from langchain.document_loaders.base import BaseLoader
+-from langchain.text_splitter import (
++from langchain_core.document_loaders import BaseLoader
++from langchain_text_splitters import (
+     SpacyTextSplitter, RecursiveCharacterTextSplitter
+ )
+ 
+@@ -58,7 +58,7 @@ class LCTextSplitter:
+             elif self.document_loader_name in ["JSONLoader", "JSONLLoader"]:
+                 text_splitter = None
+             else:
+-                text_splitter_module = importlib.import_module('langchain.text_splitter')
++                text_splitter_module = importlib.import_module('langchain_text_splitters')
+                 TextSplitter = getattr(text_splitter_module, self.text_splitter_name)
+                 text_splitter = TextSplitter(
+                     chunk_size=CHUNK_SIZE,
+diff --git a/dev_opsgpt/utils/path_utils.py b/dev_opsgpt/utils/path_utils.py
+index 67daf6b..0c58b68 100644
+--- a/dev_opsgpt/utils/path_utils.py
++++ b/dev_opsgpt/utils/path_utils.py
+@@ -1,6 +1,6 @@
+ import os
+-from langchain.document_loaders import CSVLoader, PyPDFLoader, UnstructuredFileLoader, TextLoader, PythonLoader
+-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
++from langchain_community.document_loaders import CSVLoader, PyPDFLoader, UnstructuredFileLoader, TextLoader, PythonLoader
++from langchain_huggingface import HuggingFaceEmbeddings
+ 
+ from dev_opsgpt.document_loaders import JSONLLoader, JSONLoader
+ from configs.model_config import (
+diff --git a/dev_opsgpt/utils/server_utils.py b/dev_opsgpt/utils/server_utils.py
+index 27a133f..5bfea6b 100644
+--- a/dev_opsgpt/utils/server_utils.py
++++ b/dev_opsgpt/utils/server_utils.py
+@@ -14,7 +14,7 @@ class BaseResponse(BaseModel):
+     msg: str = pydantic.Field("success", description="API status message")
+ 
+     class Config:
+-        schema_extra = {
++        json_schema_extra = {
+             "example": {
+                 "code": 200,
+                 "msg": "success",
+@@ -25,7 +25,7 @@ class ListResponse(BaseResponse):
+     data: List[str] = pydantic.Field(..., description="List of names")
+ 
+     class Config:
+-        schema_extra = {
++        json_schema_extra = {
+             "example": {
+                 "code": 200,
+                 "msg": "success",
+@@ -43,7 +43,7 @@ class ChatMessage(BaseModel):
+     )
+ 
+     class Config:
+-        schema_extra = {
++        json_schema_extra = {
+             "example": {
+                 "question": "工伤保险如何办理？",
+                 "response": "根据已知信息，可以总结如下：\n\n1. 参保单位为员工缴纳工伤保险费，以保障员工在发生工伤时能够获得相应的待遇。\n"
+diff --git a/docker_requirements.txt b/docker_requirements.txt
+index f430067..a980be5 100644
+--- a/docker_requirements.txt
++++ b/docker_requirements.txt
+@@ -1,14 +1,19 @@
+-langchain==0.0.266
++langchain==1.5.0
++langchain-core>=1.8.0
++langchain-community
++langchain-openai
++langchain-huggingface
++langchain-text-splitters
+ openai
+ sentence_transformers
+-fschat==0.2.24
++fschat==0.2.36
+ transformers>=4.31.0
+ # torch~=2.0.0
+-fastapi~=0.99.1
++fastapi>=0.115.0
+ nltk~=3.8.1
+-uvicorn~=0.23.1
+-starlette~=0.27.0
+-pydantic~=1.10.11
++uvicorn>=0.23.1
++starlette
++pydantic>=2.7.4
+ SQLAlchemy==2.0.19
+ faiss-cpu
+ nltk
+diff --git a/requirements.txt b/requirements.txt
+index a65b386..078f5fa 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,14 +1,19 @@
+-langchain==0.0.266
++langchain==1.5.0
++langchain-core>=1.8.0
++langchain-community
++langchain-openai
++langchain-huggingface
++langchain-text-splitters
+ openai
+ sentence_transformers
+-fschat==0.2.24
++fschat==0.2.36
+ transformers>=4.31.0
+ # torch~=2.0.0
+-fastapi~=0.99.1
++fastapi>=0.115.0
+ nltk~=3.8.1
+-uvicorn~=0.23.1
+-starlette~=0.27.0
+-pydantic~=1.10.11
++uvicorn>=0.23.1
++starlette
++pydantic>=2.7.4
+ unstructured[all-docs]
+ python-magic-bin; sys_platform == 'win32'
+ SQLAlchemy==2.0.19
+diff --git a/tests/openai_test.py b/tests/openai_test.py
+index 13ad17b..3d95829 100644
+--- a/tests/openai_test.py
++++ b/tests/openai_test.py
+@@ -14,10 +14,10 @@ os.environ["OPENAI_API_KEY"] = ""
+ 
+ if __name__ == "__main__":
+     # print("dsadsa", os.environ.get("OPENAI_PROXY"), os.environ.get("OPENAI_API_KEY"))
+-    from langchain import PromptTemplate, LLMChain
+-    from langchain.prompts.chat import ChatPromptTemplate
+-    from langchain.chat_models import ChatOpenAI
+-    from langchain.schema import HumanMessage
++    from langchain_core.output_parsers import StrOutputParser
++    from langchain_core.prompts import ChatPromptTemplate
++    from langchain_openai import ChatOpenAI
++    from langchain_core.messages import HumanMessage
+     
+     # chat = ChatOpenAI(temperature=0.1, model_name="gpt-3.5-turbo")
+     # print(chat.predict("hi!"))
+@@ -26,11 +26,11 @@ if __name__ == "__main__":
+     model = ChatOpenAI(
+         streaming=True,
+         verbose=True,
+-        openai_api_key=llm_model_dict[LLM_MODEL]["api_key"],
+-        openai_api_base=llm_model_dict[LLM_MODEL]["api_base_url"],
+-        model_name=LLM_MODEL
++        api_key=llm_model_dict[LLM_MODEL]["api_key"],
++        base_url=llm_model_dict[LLM_MODEL]["api_base_url"],
++        model=LLM_MODEL
+     )
+     chat_prompt = ChatPromptTemplate.from_messages([("human", "{input}")])
+-    chain = LLMChain(prompt=chat_prompt, llm=model)
+-    content = chain({"input": "hello"})
++    chain = chat_prompt | model | StrOutputParser()
++    content = chain.invoke({"input": "hello"})
+     print(content)
+\ No newline at end of file

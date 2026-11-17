@@ -1,0 +1,32 @@
+diff --git a/mcp_server.py b/mcp_server.py
+index 4a5137e..c250032 100644
+--- a/mcp_server.py
++++ b/mcp_server.py
+@@ -7,7 +7,7 @@ import sys
+ import time
+ from pathlib import Path
+ 
+-from mcp.server.fastmcp import FastMCP
++from mcp.server.mcpserver import MCPServer
+ from services.exports import ensure_index, load_posts, resolve_safe_file as resolve_export_file
+ 
+ from analytics.export_summary import extract_channel_from_export_name
+@@ -59,7 +59,7 @@ EXPORT_PROCESS = {
+ }
+ 
+ 
+-mcp = FastMCP("telegram-parser")
++mcp = MCPServer("telegram-parser")
+ 
+ 
+ def parse_env_file(path=ENV_FILE):
+diff --git a/requirements.txt b/requirements.txt
+index 7d999cd..f7d3f22 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,4 +1,4 @@
+ telethon==1.44.0
+ psycopg2-binary==2.9.12
+ pyarrow==25.0.1
+-mcp==1.30.0
++mcp==2.3.0

@@ -1,0 +1,39 @@
+diff --git a/mcpuniverse/llm/mistral.py b/mcpuniverse/llm/mistral.py
+index 99b75f8..63ed700 100644
+--- a/mcpuniverse/llm/mistral.py
++++ b/mcpuniverse/llm/mistral.py
+@@ -8,7 +8,7 @@ from dataclasses import dataclass
+ from typing import Dict, Union, Optional, Type, List
+ from dotenv import load_dotenv
+ from pydantic_core import from_json
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ from pydantic import BaseModel as PydanticBaseModel
+ 
+ from mcpuniverse.common.config import BaseConfig
+diff --git a/pyproject.toml b/pyproject.toml
+index 78243a6..3e12d4d 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -42,7 +42,7 @@ dependencies = [
+     "anyio==4.9.0",
+     "openai==1.68.2",
+     "anthropic==0.49.0",
+-    "mistralai==1.6.0",
++    "mistralai==3.7.0",
+     "pyyaml==6.0.2",
+     "google-genai==1.16.1",
+     "redis==6.1.0",
+diff --git a/requirements.txt b/requirements.txt
+index 538870e..4457ebc 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -10,7 +10,7 @@ python-dotenv==1.0.1
+ anyio==4.9.0
+ openai==1.68.2
+ anthropic==0.49.0
+-mistralai==1.6.0
++mistralai==3.7.0
+ pyyaml==6.0.2
+ google-genai==1.16.1
+ redis==6.1.0

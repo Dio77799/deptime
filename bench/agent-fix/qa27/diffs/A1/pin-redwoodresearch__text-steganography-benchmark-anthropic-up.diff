@@ -1,0 +1,147 @@
+diff --git a/requirements.txt b/requirements.txt
+index 8e4082c..7e2c236 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,5 +1,5 @@
+ alpaca_eval @ git+https://github.com/FabienRoger/alpaca_eval@main
+-anthropic==0.5.0
++anthropic==2.8.0
+ attrs==22.2.0
+ black==23.10.0
+ cattrs==23.1.2
+diff --git a/textsteg/llm.py b/textsteg/llm.py
+index 23880ad..31f646f 100644
+--- a/textsteg/llm.py
++++ b/textsteg/llm.py
+@@ -13,8 +13,9 @@ from typing import Any, Callable, Coroutine, Literal, Optional, TypeVar
+ 
+ import attrs
+ import openai
++import anthropic
+ from anthropic import AsyncAnthropic
+-from anthropic.types.completion import Completion as AnthropicCompletion
++from anthropic.types import Message as AnthropicMessage
+ from attrs.validators import min_len
+ from openai.openai_object import OpenAIObject
+ from openai.openai_object import OpenAIObject as OpenAICompletion
+@@ -37,7 +38,7 @@ class StopReason(Enum):
+         """
+         if stop_reason in ["max_tokens", "length"]:
+             return cls.MAX_TOKENS
+-        elif stop_reason in ["stop_sequence", "stop"]:
++        elif stop_reason in ["stop_sequence", "stop", "end_turn"]:
+             return cls.STOP_SEQUENCE
+         raise ValueError(f"Invalid stop reason: {stop_reason}")
+ 
+@@ -391,10 +392,19 @@ class OpenAIChatModel(ChatModel):
+ 
+ ANTHROPIC_RATE_LIMIT = 5
+ 
++# (price per context token, price per completion token), in USD
++anthropic_prices = {
++    "claude-haiku-5-5": (0.10 / 1_000_000, 0.50 / 1_000_000),
++    "claude-sonnet-5-5": (2 / 1_000_000, 10 / 1_000_000),
++    "claude-opus-5-5": (4 / 1_000_000, 20 / 1_000_000),
++}
++
++ANTHROPIC_DEFAULT_MAX_TOKENS = 1024  # The Messages API requires max_tokens
++
+ 
+ @attrs.define()
+ class AnthropicChatModel(ChatModel):
+-    model_id: str = attrs.field(default=None, validator=attrs.validators.in_(["claude-2", "claude-instant-1"]))
++    model_id: str = attrs.field(default=None, validator=attrs.validators.in_(list(anthropic_prices)))
+     max_attempts: int = 5  # Max number of times to retry if the API fails
+ 
+     # rate limits
+@@ -412,34 +422,45 @@ class AnthropicChatModel(ChatModel):
+     client: AsyncAnthropic = attrs.field(init=False)
+ 
+     def __attrs_post_init__(self):
+-        self.cost_per_context_token = {"claude-instant-1": 1.63 / 1_000_000, "claude-2": 11.02 / 1_000_000}[
+-            self.model_id
+-        ]
+-        self.cost_per_completion_token = {"claude-instant-1": 5.51 / 1_000_000, "claude-2": 32.68 / 1000}[self.model_id]
++        self.cost_per_context_token, self.cost_per_completion_token = anthropic_prices[self.model_id]
+         self.client = AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+ 
+-    async def __call__(self, messages: str, **kwargs) -> list[ChatResponse]:
+-        def _get_color(role: str) -> str:
+-            return {"human": "cyan", "assistant": "light_green"}[role]
++    async def __call__(
++        self, messages: list[tuple[Role, str]], call_timeout: Optional[float] = None, **kwargs
++    ) -> list[ChatResponse]:
++        def _get_color(role: Role) -> str:
++            return {"user": "cyan", "system": "magenta", "assistant": "light_green"}[role]
++
++        params = dict(ChainMap(kwargs, self.defaults))
++        # Legacy completions API name
++        if "max_tokens_to_sample" in params:
++            params.setdefault("max_tokens", params.pop("max_tokens_to_sample"))
++        params.setdefault("max_tokens", ANTHROPIC_DEFAULT_MAX_TOKENS)
+ 
+-        params = ChainMap(kwargs, self.defaults)
++        # The Messages API takes the system prompt as a separate parameter
++        system = "\n\n".join(text for role, text in messages if role == "system")
++        if system:
++            params["system"] = system
++        anthropic_messages = [{"role": role, "content": text} for role, text in messages if role != "system"]
+ 
+         if self.print_msgs:
+-            pattern = r"\n\n((Human: |Assistant: ).*)"
+-            for match in re.finditer(pattern, messages):
+-                cprint(match.group(1), _get_color(match.group(2).removesuffix(": ").lower()))
++            for role, text in messages:
++                cprint(f"{role.upper()}:", "white")
++                cprint(text, _get_color(role))
+ 
+-        response: Optional[AnthropicCompletion] = None
++        response: Optional[AnthropicMessage] = None
+         for i in range(self.max_attempts):
+             try:
+                 async with self.available_requests:
+-                    response = await self.client.completions.create(prompt=messages, model=self.model_id, **params)
++                    response = await self.client.messages.create(
++                        messages=anthropic_messages, model=self.model_id, timeout=call_timeout, **params
++                    )
+ 
+-                self.num_context_tokens += await self.client.count_tokens(messages)
+-                self.num_context_tokens += await self.client.count_tokens(response.completion)  # type: ignore
++                self.num_context_tokens += response.usage.input_tokens
++                self.num_completion_tokens += response.usage.output_tokens
+             except Exception as e:
+                 logging.warn(f"{self.model_id} encountered API error: {str(e)}")
+-                if isinstance(e, openai.InvalidRequestError):
++                if isinstance(e, anthropic.BadRequestError):
+                     raise e
+ 
+                 logging.warn(f"Retrying now. (Attempt {i})")
+@@ -451,11 +472,13 @@ class AnthropicChatModel(ChatModel):
+         if response is None:
+             raise RuntimeError(f"Failed to get a response from the API after {self.max_attempts} attempts.")
+ 
++        completion = "".join(block.text for block in response.content if block.type == "text")
++
+         if self.print_msgs:
+             cprint("Response:", "white")
+-            cprint(f"{response.completion}", _get_color("assistant"), attrs=["bold"])
++            cprint(completion, _get_color("assistant"), attrs=["bold"])
+ 
+-        return [ChatResponse(self.model_id, response.completion, response.stop_reason)]
++        return [ChatResponse(self.model_id, completion, response.stop_reason)]
+ 
+     def reset_cost(self):
+         self.num_context_tokens = 0
+@@ -607,9 +630,9 @@ async def openai_demo():
+ 
+ @as_sync
+ async def anthropic_demo():
+-    anthropic_model = AnthropicChatModel(model_id="claude-instant-1")
+-    anthropic_message = "\n\nHuman: Tell me a very creative joke.\n\nAssistant:"
+-    answer = await asyncio.gather(*[anthropic_model(anthropic_message, max_tokens_to_sample=50) for _ in range(3)])
++    anthropic_model = AnthropicChatModel(model_id="claude-haiku-5-5")
++    anthropic_message = [("user", "Tell me a very creative joke.")]
++    answer = await asyncio.gather(*[anthropic_model(anthropic_message, max_tokens=50) for _ in range(3)])
+     cprint(f"Price: ${anthropic_model.get_cost():.4f}", "light_cyan")
+     return answer
+ 

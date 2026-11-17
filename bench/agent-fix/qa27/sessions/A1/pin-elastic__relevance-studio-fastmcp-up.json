@@ -1,0 +1,112 @@
+{
+ "result": {
+  "subtype": "success",
+  "is_error": false,
+  "num_turns": 42,
+  "duration_ms": 128637,
+  "total_cost_usd": 0.31796499999999994,
+  "usage": {
+   "input_tokens": 38,
+   "cache_creation_input_tokens": 34673,
+   "cache_read_input_tokens": 441831,
+   "output_tokens": 10320,
+   "output_tokens_details": {
+    "thinking_tokens": 1660
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 34673,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 1302,
+     "cache_read_input_tokens": 39821,
+     "cache_creation_input_tokens": 629,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 629
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "api_error_status": null
+ },
+ "rate_limit": {
+  "status": "allowed",
+  "resetsAt": 1794888000,
+  "rateLimitType": "five_hour",
+  "overageStatus": "rejected",
+  "overageDisabledReason": "org_level_disabled",
+  "isUsingOverage": false,
+  "unifiedWindows": {
+   "five_hour": {
+    "utilization": 0.29,
+    "resetsAt": 1794888000,
+    "status": "allowed"
+   },
+   "seven_day": {
+    "utilization": 0.33,
+    "resetsAt": 1795298400,
+    "status": "allowed"
+   }
+  }
+ },
+ "init_tools": [
+  "Edit",
+  "Glob",
+  "Grep",
+  "Read",
+  "WebFetch",
+  "WebSearch",
+  "Write"
+ ],
+ "claude_code": "2.1.326",
+ "model": "claude-sonnet-5-5",
+ "tools": {
+  "Grep": 7,
+  "Bash": 1,
+  "Glob": 1,
+  "WebSearch": 1,
+  "WebFetch": 15,
+  "Read": 5,
+  "Edit": 11
+ },
+ "deptime_calls": [],
+ "other_bash": 1,
+ "fetched": [
+  "https://gofastmcp.com/getting-started/upgrading/from-fastmcp-3",
+  "https://gofastmcp.com/development/v4-notes",
+  "https://pypi.org/pypi/fastmcp/4.2.0/json",
+  "https://pypi.org/pypi/fastmcp-slim/4.2.0/json",
+  "https://gofastmcp.com/servers/middleware",
+  "https://gofastmcp.com/getting-started/upgrading/from-low-level-sdk-v1.md",
+  "https://raw.githubusercontent.com/PrefectHQ/fastmcp/v4.2.0/src/fastmcp/server/middleware/__init__.py",
+  "https://raw.githubusercontent.com/PrefectHQ/fastmcp/v4.2.0/src/fastmcp/server/middleware/middleware.py",
+  "https://github.com/PrefectHQ/fastmcp/tree/v4.2.0",
+  "https://raw.githubusercontent.com/PrefectHQ/fastmcp/v4.2.0/fastmcp_slim/src/fastmcp/server/middleware/__init__.py",
+  "https://raw.githubusercontent.com/PrefectHQ/fastmcp/v4.2.0/fastmcp_slim/src/fastmcp/server/middleware/middleware.py",
+  "https://github.com/PrefectHQ/fastmcp/tree/v4.2.0/fastmcp_slim",
+  "https://raw.githubusercontent.com/PrefectHQ/fastmcp/v4.2.0/fastmcp_slim/fastmcp/server/middleware/__init__.py",
+  "https://raw.githubusercontent.com/PrefectHQ/fastmcp/v4.2.0/fastmcp_slim/fastmcp/server/middleware/middleware.py",
+  "https://raw.githubusercontent.com/PrefectHQ/fastmcp/v4.2.0/fastmcp_slim/fastmcp/server/dependencies.py"
+ ],
+ "denied": 0,
+ "task": "pin-elastic__relevance-studio-fastmcp-up",
+ "arm": "A",
+ "label": "A1",
+ "attempt": 0,
+ "timed_out": false,
+ "exit_code": 0,
+ "wall_s": 129.1,
+ "service_error": false
+}

@@ -1,0 +1,13 @@
+diff --git a/gmt/views/commands.py b/gmt/views/commands.py
+index c36496e..804faeb 100644
+--- a/gmt/views/commands.py
++++ b/gmt/views/commands.py
+@@ -18,7 +18,7 @@ import requests
+ from flask import Blueprint, render_template, current_app
+ from flask_mail import Message
+ from markdown import markdown
+-from mistralai import Mistral
++from mistralai.client import Mistral
+ 
+ from .. import mail, mongo, crontab
+ from ..extras import get_trending_repos, get_daily_coding_challenge, get_surprise

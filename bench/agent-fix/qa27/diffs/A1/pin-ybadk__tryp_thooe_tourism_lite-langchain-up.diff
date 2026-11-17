@@ -1,0 +1,269 @@
+diff --git a/chat_interface.py b/chat_interface.py
+index 8a76df1..d4a5ad4 100644
+--- a/chat_interface.py
++++ b/chat_interface.py
+@@ -48,21 +48,20 @@ warnings.filterwarnings('ignore')
+ # LangChain imports (if available)
+ try:
+     from langchain_core.messages import AIMessage, HumanMessage
+-    from langchain_community.document_loaders import WebBaseLoader
+-    from langchain.text_splitter import RecursiveCharacterTextSplitter
+-    from langchain_community.vectorstores import Chroma
+-    from langchain_community.embeddings import HuggingFaceEmbeddings
+-    from langchain_community.llms import HuggingFacePipeline
++    from langchain_core.output_parsers import StrOutputParser
+     from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+-    from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+-    from langchain.chains.combine_documents import create_stuff_documents_chain
++    from langchain_core.runnables import RunnableBranch, RunnablePassthrough
++    from langchain_community.document_loaders import WebBaseLoader
++    from langchain_text_splitters import RecursiveCharacterTextSplitter
++    from langchain_chroma import Chroma
++    from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
+     from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+     import torch
+     LANGCHAIN_AVAILABLE = True
+ except ImportError:
+     LANGCHAIN_AVAILABLE = False
+     st.warning(
+-        "⚠️ LangChain not available. Install with: pip install langchain langchain-community transformers torch")
++        "⚠️ LangChain not available. Install with: pip install langchain langchain-community langchain-huggingface langchain-chroma transformers torch")
+ 
+ 
+ class ChatMode(Enum):
+@@ -176,7 +175,7 @@ class TourismChatInterface:
+             # Create LangChain LLM wrapper
+             llm = HuggingFacePipeline(
+                 pipeline=st.session_state.hf_pipeline,
+-                model_kwargs={
++                pipeline_kwargs={
+                     "temperature": DEFAULT_GENERATION_CONFIG.temperature,
+                     "max_new_tokens": DEFAULT_GENERATION_CONFIG.max_new_tokens,
+                 }
+@@ -190,8 +189,14 @@ class TourismChatInterface:
+                 ("user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation")
+             ])
+ 
+-            retriever_chain = create_history_aware_retriever(
+-                llm, retriever, prompt)
++            # LCEL replacement for the removed create_history_aware_retriever:
++            # with no history, search with the raw input; otherwise let the LLM
++            # rewrite the conversation into a standalone search query first.
++            retriever_chain = RunnableBranch(
++                (lambda x: not x.get("chat_history"),
++                 (lambda x: x["input"]) | retriever),
++                prompt | llm | StrOutputParser() | retriever,
++            )
+             return retriever_chain
+ 
+         except Exception as e:
+@@ -212,7 +217,7 @@ class TourismChatInterface:
+             # Create LangChain LLM wrapper
+             llm = HuggingFacePipeline(
+                 pipeline=st.session_state.hf_pipeline,
+-                model_kwargs={"temperature": 0.7, "max_length": 512}
++                pipeline_kwargs={"temperature": 0.7, "max_length": 512}
+             )
+ 
+             prompt = ChatPromptTemplate.from_messages([
+@@ -222,8 +227,22 @@ class TourismChatInterface:
+                 ("user", "{input}"),
+             ])
+ 
+-            stuff_documents_chain = create_stuff_documents_chain(llm, prompt)
+-            return create_retrieval_chain(retriever_chain, stuff_documents_chain)
++            # LCEL replacement for create_stuff_documents_chain /
++            # create_retrieval_chain. Output keeps the "answer" key.
++            def format_docs(docs):
++                return "\n\n".join(doc.page_content for doc in docs)
++
++            stuff_documents_chain = (
++                RunnablePassthrough.assign(
++                    context=lambda x: format_docs(x["context"]))
++                | prompt
++                | llm
++                | StrOutputParser()
++            )
++            return (
++                RunnablePassthrough.assign(context=retriever_chain)
++                .assign(answer=stuff_documents_chain)
++            )
+ 
+         except Exception as e:
+             st.error(f"Error creating conversational chain: {e}")
+diff --git a/chat_requirements.txt b/chat_requirements.txt
+index 1f8a834..531487e 100644
+--- a/chat_requirements.txt
++++ b/chat_requirements.txt
+@@ -1,11 +1,14 @@
+ # Chat Interface Dependencies
+ # Core LangChain packages for RAG functionality
+-langchain==0.1.4
+-langchain_community==0.0.16
+-langchain_core==0.1.17
++langchain==1.5.0
++langchain-core>=1.8.0,<2.0.0
++langchain-community>=0.4.2,<0.5.0
++langchain-text-splitters>=1.1.3,<2.0.0
++langchain-huggingface>=1.2.3,<2.0.0
++langchain-chroma>=1.1.0,<2.0.0
+ 
+ # Hugging Face models and transformers
+-transformers>=4.35.0
++transformers>=4.45.0
+ torch>=2.0.0
+ accelerate>=0.20.0
+ sentence-transformers>=2.2.0
+@@ -15,7 +18,7 @@ beautifulsoup4==4.12.2
+ requests==2.31.0
+ 
+ # Vector database for embeddings
+-chromadb==0.3.29
++chromadb>=1.3.5,<2.0.0
+ 
+ # Environment variables
+ python-dotenv==1.0.1
+diff --git a/improved_offline_rag.py b/improved_offline_rag.py
+index c30dc31..22d0109 100644
+--- a/improved_offline_rag.py
++++ b/improved_offline_rag.py
+@@ -1,14 +1,14 @@
+ import os
+ import re
+ from typing import List, Dict, Any
+-from langchain.chains import LLMChain, RetrievalQA
+-from langchain.llms import HuggingFacePipeline
+-from langchain.chains.question_answering import load_qa_chain
+-from langchain.prompts import PromptTemplate
++from langchain_core.documents import Document
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.prompts import PromptTemplate
++from langchain_core.runnables import RunnablePassthrough
+ from transformers import pipeline
++from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
+ from langchain_community.vectorstores import FAISS
+-from langchain_community.embeddings import HuggingFaceEmbeddings, Model2vecEmbeddings
+-from langchain.schema import Document
++from langchain_community.embeddings import Model2vecEmbeddings
+ from langchain_community.document_loaders import TextLoader
+ import numpy as np
+ from sklearn.metrics.pairwise import cosine_similarity
+@@ -86,7 +86,8 @@ class ImprovedOfflineRAG:
+         )
+         
+         # Initialize chains
+-        self.llm_chain = LLMChain(llm=self.llm, prompt=self.prompt)
++        # LCEL replacement for the removed LLMChain
++        self.llm_chain = self.prompt | self.llm | StrOutputParser()
+         self.retrieval_qa = None
+         
+     def clean_text(self, text: str) -> str:
+@@ -169,12 +170,19 @@ class ImprovedOfflineRAG:
+         # Use HF embeddings as primary retriever
+         self.retriever = self.hf_vectorstore.as_retriever()
+         
+-        # Initialize retrieval QA chain
+-        self.retrieval_qa = RetrievalQA.from_chain_type(
+-            llm=self.llm,
+-            chain_type="stuff",
+-            retriever=self.retriever,
+-            verbose=True
++        # Initialize retrieval QA chain (LCEL replacement for the removed
++        # RetrievalQA "stuff" chain). Invoke with a question string.
++        def format_docs(docs):
++            return "\n\n".join(doc.page_content for doc in docs)
++
++        self.retrieval_qa = (
++            {
++                "context": self.retriever | format_docs,
++                "query": RunnablePassthrough(),
++            }
++            | self.prompt
++            | self.llm
++            | StrOutputParser()
+         )
+     
+     def truncate_to_max_tokens(self, text: str) -> str:
+@@ -223,14 +231,14 @@ class ImprovedOfflineRAG:
+                 retrieved_docs = self.hybrid_retrieval(query, k=3)
+             else:
+                 # Use standard retrieval
+-                retrieved_docs = self.retriever.get_relevant_documents(query)[:3]
++                retrieved_docs = self.retriever.invoke(query)[:3]
+             
+             # Prepare context
+             context = " ".join([doc.page_content for doc in retrieved_docs])
+             context = self.truncate_to_max_tokens(context)
+             
+             # Generate answer using the reranked context directly
+-            response = self.llm_chain.run(query=query, context=context)
++            response = self.llm_chain.invoke({"query": query, "context": context})
+             
+             return {
+                 "answer": response,
+diff --git a/requirements.txt b/requirements.txt
+index 8a94cb3..607e36b 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,12 +1,16 @@
+-langchain==0.1.0
+-langchain-community==0.0.10
+-transformers==4.35.0
++langchain==1.5.0
++langchain-core>=1.8.0,<2.0.0
++langchain-community>=0.4.2,<0.5.0
++langchain-text-splitters>=1.1.3,<2.0.0
++langchain-huggingface>=1.2.3,<2.0.0
++transformers>=4.45.0
+ torch==2.1.0
+ faiss-cpu==1.7.4
+-sentence-transformers==2.2.2
++sentence-transformers>=3.0.0
+ scikit-learn==1.3.0
+ numpy==1.24.3
+ tiktoken==0.5.1
+ accelerate==0.24.1
+ datasets==2.14.5
+-huggingface-hub==0.17.3
++huggingface-hub>=0.33.4,<2.0.0
++model2vec
+diff --git a/services/tourism_ai_service.py b/services/tourism_ai_service.py
+index ff77c34..ef18d0f 100644
+--- a/services/tourism_ai_service.py
++++ b/services/tourism_ai_service.py
+@@ -5,7 +5,7 @@ from dataclasses import dataclass
+ from typing import Any, Dict, Iterable, List, Sequence, Tuple
+ 
+ try:
+-    from langchain.text_splitter import RecursiveCharacterTextSplitter
++    from langchain_text_splitters import RecursiveCharacterTextSplitter
+ except ImportError:  # pragma: no cover - optional dependency at runtime
+     RecursiveCharacterTextSplitter = None
+ 
+diff --git a/test_hf_integration.py b/test_hf_integration.py
+index f8fee09..c8469d7 100644
+--- a/test_hf_integration.py
++++ b/test_hf_integration.py
+@@ -132,7 +132,7 @@ def test_embeddings():
+ def test_langchain_integration():
+     """Test LangChain with Hugging Face"""
+     try:
+-        from langchain_community.llms import HuggingFacePipeline
++        from langchain_huggingface import HuggingFacePipeline
+         from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+         import torch
+ 
+@@ -160,11 +160,11 @@ def test_langchain_integration():
+         # Create LangChain wrapper
+         llm = HuggingFacePipeline(
+             pipeline=hf_pipeline,
+-            model_kwargs={"temperature": 0.7, "max_length": 30}
++            pipeline_kwargs={"temperature": 0.7, "max_length": 30}
+         )
+ 
+         # Test generation
+-        result = llm("Hello")
++        result = llm.invoke("Hello")
+ 
+         if result and len(result) > 0:
+             print(f"✅ LangChain integration successful: {result[:50]}...")
