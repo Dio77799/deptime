@@ -61,10 +61,17 @@ are data: they can grow in any release.)
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-11-17
+
 ### Fixed
 - `check-upgrade`'s report and its agent block no longer hide what replaces a name that went away with its module
   or class: updating mcp 1.x to 2.x now says `mcp.server.fastmcp.FastMCP` is `mcp.server.mcpserver.MCPServer`
   instead of only that `mcp.server.fastmcp` is gone. The agent block names each line once (DT-CORE-76).
+
+### Changed
+- The README leads with checking a dependency update, with a demo drawn from a real `check-upgrade` run (DT-GTM-10).
+- The rename maps are published at https://cschmertz.github.io/deptime/, rebuilt after every index build, with a
+  landing page and a new httpx 0.27 → 0.28 map (DT-GTM-02).
 
 ## [1.0.2] - 2026-11-17
 

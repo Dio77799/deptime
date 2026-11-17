@@ -16,9 +16,9 @@ which of a project's code a dependency update breaks. Everything done before 202
 
 ---
 
-## Current state: stable, v1.0.2
+## Current state: stable, v1.0.3
 
-- **Released:** 1.0.2 (2026-11-17) is on PyPI, the MCP Registry and GitHub: the six tools, the upgrade check (a
+- **Released:** 1.0.3 (2026-11-17) is on PyPI, the MCP Registry and GitHub: the six tools, the upgrade check (a
   command, a GitHub Action, an MCP tool and a Claude Code plugin command), and the 1.x promise in CHANGELOG.md's
   versioning section: the contract only grows.
 - **Index:** 53 packages and 6,823 releases on 2026-11-17 (`SNAPSHOT_FORMAT` 29, schema 2); `index.sqlite.xz` is
@@ -40,7 +40,7 @@ which of a project's code a dependency update breaks. Everything done before 202
 |---|---|---|
 | **M0 Spikes** | S1 go/no-go (false-absent ≤ 10%); S2–S7 answered | S1 to S4 passed (S1 at 1.2%); S5 done; S6 answered by DT-QA-05 (yes, 25 of 25); S7 passed (DT-SPIKE-07) |
 | **M1 Local alpha** | Public repo; index published; `uvx deptime mcp` works from PyPI; benchmark ≥ 70% | Met: every holdout's first run is above 70% |
-| **M2 Distribution** | Registries, plugin, snippets, demo GIF, 5 rename-map pages | Registries, plugin, pages and the demo done; the hosting is below |
+| **M2 Distribution** | Registries, plugin, snippets, demo GIF, 5 rename-map pages | Met: registries, plugin, demos, and the rename maps hosted at cschmertz.github.io/deptime (DT-GTM-02) |
 | **M3 Optional hosted** | Public endpoint for web clients | Not planned |
 
 ## Why the upgrade check
@@ -243,7 +243,8 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
   - Needs auto-merge and required checks turned on for `main` (neither is set), which changes how every commit
     lands, and lets unattended updates into the environment that builds the signed index. The monthly upkeep merges
     them instead.
-- [ ] **DT-GTM-02**: Host the generated rename-map pages (GitHub Pages) · `P2` `S`
+- [x] **DT-GTM-02** (2026-11-17): the rename maps and a landing page are on GitHub Pages
+  (https://cschmertz.github.io/deptime/), rebuilt by `pages.yml` after every index build.
 - [ ] **DT-GTM-05**: Try the Cursor rule and the AGENTS.md snippet in a fresh project · `P2` `S`
 - [ ] **DT-OSS-14**: Publish the holdout sets as a benchmark · `P2` `M`
 
