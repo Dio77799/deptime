@@ -3371,3 +3371,24 @@ def test_a_field_keyword_isnt_rejected_when_the_constructor_is_inherited(coverag
     cfg, own = res.results
     assert cfg.rejected_kwargs == ["nope"] and "`size` is a field of the class" in (cfg.hint or "")
     assert own.rejected_kwargs == ["size"] and own.hint is None
+
+
+def test_check_symbols_reads_a_member_of_a_union_as_missing():
+    # DT-CORE-73: mcp 2.0's `types.ClientRequest` is `PingRequest | ...`, which has no `model_construct`.
+    app = PackageSpec(name="app", import_names=("app",), tier="B", own_members=False)
+    store = IndexStore.memory()
+    symbols = {
+        "app": SymbolRecord("app", "module", "app"),
+        "app.Request": SymbolRecord("app.Request", "union", "app._types.Request"),
+    }
+    store.rebuild_package(app, [ApiSnapshot("app", "1.0", ["app"], symbols)])
+    dt = DepTime(store, Coverage(POLICY, (app,)))
+    ask = lambda path: dt.check_symbols("app", "1.0", [SymbolQuery(path=path)]).results[0]  # noqa: E731
+    assert ask("app.Request").status == "present"
+    got = ask("app.Request.model_construct")
+    assert got.status == "missing"
+    assert got.hint.startswith("app.Request is a union of classes (`app._types.Request`), not a class")
+    assert ask("app.Request.model_construct.x").status == "missing"
+    # What the union object itself may have, depending on the Python: unknown.
+    assert ask("app.Request.__args__").status == "unknown"
+    assert ask("app.Request.copy_with").status == "unknown"

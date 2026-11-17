@@ -38,7 +38,7 @@ from deptime.ingest.replacements import (
 if TYPE_CHECKING:
     from deptime.config import ServedRule
 
-SNAPSHOT_FORMAT = 28  # bump when extraction changes: cached snapshots in another format are rebuilt
+SNAPSHOT_FORMAT = 29  # bump when extraction changes: cached snapshots in another format are rebuilt
 MAX_DEPTH = 12  # guards pathological re-export cycles
 
 DEPRECATED_DECORATOR_RE = re.compile(r"^(?:[\w.]+\.)?deprecated\b(?:\(.*\))?$", re.S)
@@ -74,7 +74,7 @@ ANNOTATION_MODULES = frozenset({"typing", "typing_extensions", "__future__"})
 @dataclass
 class SymbolRecord:
     path: str
-    kind: str  # module | class | function | attribute | type alias | alias (unresolved/external) | getattr (module __getattr__)
+    kind: str  # module | class | function | attribute | union | type alias | alias (unresolved/external) | getattr (module __getattr__)
     canonical: str | None = None
     params: list[dict[str, Any]] | None = None
     deprecated: str | None = None  # the whole symbol's deprecation
@@ -88,6 +88,8 @@ class SymbolRecord:
 # resolve, or an object that is neither function, attribute nor class. Looking the name up stops there, as griffe's
 # `all_members` does.
 HIDDEN = "hidden"
+# The kind of a module-level name bound to a union of the package's classes (DT-CORE-73): `A | B`, `Union[A, B]`.
+UNION = "union"
 
 
 @dataclass
@@ -3757,6 +3759,8 @@ class _Walker:
             rec = SymbolRecord(path, "class", cls.path, None, deprecation_message(cls))
         elif (method := _bound_method(target)) is not None:
             rec = _function_record(path, target.path, method)
+        elif target.is_attribute and _is_union(target):
+            rec = SymbolRecord(path, UNION, target.path, None, deprecation_message(target))
         else:
             rec = SymbolRecord(path, target.kind.value, target.path, None, deprecation_message(target))
         self.snap.bound[path] = rec
@@ -3923,6 +3927,8 @@ class _Walker:
             self.cls(bound, public_path)  # `masked_array = MaskedArray`: the class itself (DT-CORE-32)
         elif (method := _bound_method(target)) is not None:  # `list_models = api.list_models` (DT-DATA-66)
             self.record(_function_record(public_path, target.path, method))
+        elif target.is_attribute and _is_union(target):  # `ClientRequest = PingRequest | ...` (DT-CORE-73)
+            self.record(SymbolRecord(public_path, UNION, target.path, None, deprecation_message(target)))
         else:
             self.record(
                 SymbolRecord(public_path, target.kind.value, target.path, None, deprecation_message(target))
@@ -4202,6 +4208,74 @@ def _bound_method(attr: griffe.Object) -> griffe.Function | None:
     except Exception:  # outside the package, not loaded, or an alias griffe can't resolve
         return None
     return found if isinstance(found, griffe.Function) else None
+
+
+_UNION_FORMS = frozenset(
+    {
+        "typing.Union",
+        "typing.Optional",
+        "typing_extensions.Union",
+        "typing_extensions.Optional",
+        "Union",
+        "Optional",
+    }
+)
+
+
+def _is_union(attr: griffe.Object) -> bool:
+    """Whether a module-level attribute is bound to a union of the package's classes (DT-CORE-73): mcp 2.0's
+    `ClientRequest = PingRequest | InitializeRequest | ...`, which was a class in 1.x. The union object has none
+    of the classes' attributes, so `ClientRequest.model_construct` fails. `A | B` (with `None` too), or
+    `Union[...]` / `Optional[...]`; every other operand a class in the package, none of whose metaclasses this
+    analysis loaded defines `__or__` (that `|` might not build a union). False for anything else: `1 | 2`, a flag
+    combination, a class from outside the package (its metaclass is unread)."""
+    if attr.parent is None or not attr.parent.is_module:
+        return False
+    value = getattr(attr, "value", None)
+    operands: list[object] = []
+    if isinstance(value, griffe.ExprBinOp):
+        stack: list[object] = [value]
+        while stack:
+            node = stack.pop()
+            if isinstance(node, griffe.ExprBinOp):
+                if node.operator != "|":
+                    return False
+                stack.extend((node.right, node.left))
+            else:
+                operands.append(node)
+    elif isinstance(value, griffe.ExprSubscript):
+        form = value.left
+        if (
+            not isinstance(form, (griffe.ExprName, griffe.ExprAttribute))
+            or form.canonical_path not in _UNION_FORMS
+        ):
+            return False
+        inner = value.slice
+        operands = list(inner.elements) if isinstance(inner, griffe.ExprTuple) else [inner]
+    else:
+        return False
+    classes = 0
+    for op in operands:
+        if str(op) == "None":
+            continue
+        cls = _class_at(attr, op)
+        if cls is None or _or_metaclass(cls):
+            return False
+        classes += 1
+    return classes > 0
+
+
+def _or_metaclass(cls: griffe.Class) -> bool:
+    """Whether a metaclass the package declares for `cls` or one of its bases defines `__or__` or `__ror__`."""
+    try:
+        line = [cls, *cls.mro()]
+    except Exception:  # griffe raises several resolution errors for external bases
+        line = [cls]
+    for c in line:
+        meta = _metaclass(c)
+        if meta is not None and any(n in meta.members for n in ("__or__", "__ror__")):
+            return True
+    return False
 
 
 def _class_at(obj: griffe.Object, expr: object) -> griffe.Class | None:

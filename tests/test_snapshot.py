@@ -4110,3 +4110,37 @@ def test_a_note_about_a_way_of_passing_an_argument_deprecates_neither_it_nor_the
     snap = build_snapshot("usagey", "1.0", ["usagey"], _write(tmp_path, files))
     rec = snap.symbols["usagey.join"]
     assert (rec.deprecated, rec.deprecated_params) == (None, None)
+
+
+def test_a_name_bound_to_a_union_of_classes_is_a_union(tmp_path):
+    """DT-CORE-73: mcp 2.0's `types.ClientRequest = PingRequest | InitializeRequest | ...` was a class in 1.x; the
+    union has none of the classes' attributes, so the index records it as a union, not an attribute."""
+    files = {
+        "un/__init__.py": (
+            "import enum\n"
+            "import typing\n"
+            "from typing import Optional, TypeAlias, Union\n"
+            "from pydantic import BaseModel\n"
+            "class Ping:\n    pass\n"
+            "class Init:\n    pass\n"
+            "class _Meta(type):\n    def __or__(cls, other):\n        return cls\n"
+            "class Odd(metaclass=_Meta):\n    pass\n"
+            "class Child(Odd):\n    pass\n"
+            "class Flag(enum.IntFlag):\n    A = 1\n    B = 2\n"
+            "Request = (\n    Ping\n    | Init\n)\n"
+            "Maybe: TypeAlias = Ping | None\n"
+            "Old = Union[Ping, Init]\n"
+            "Opt = typing.Optional[Init]\n"
+            "Number = 1 | 2\n"
+            "Both = Flag.A | Flag.B\n"
+            "Outside = Ping | BaseModel\n"
+            "Custom = Init | Child\n"
+            "Nothing = None | None\n"
+        ),
+    }
+    symbols = build_snapshot("un", "1.0", ["un"], _write(tmp_path, files)).symbols
+    for name in ("Request", "Maybe", "Old", "Opt"):
+        assert (symbols[f"un.{name}"].kind, symbols[f"un.{name}"].canonical) == ("union", f"un.{name}")
+    # Not a union of the package's classes, or `|` a metaclass may define: still an attribute.
+    for name in ("Number", "Both", "Outside", "Custom", "Nothing"):
+        assert symbols[f"un.{name}"].kind == "attribute", name

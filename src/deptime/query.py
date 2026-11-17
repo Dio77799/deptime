@@ -40,6 +40,7 @@ from deptime.ingest.replacements import (
     moved_to_package,
     same_class,
 )
+from deptime.ingest.snapshot import UNION
 from deptime.models import (
     CheckSymbolsResult,
     Confidence,
@@ -102,6 +103,8 @@ OBJECT_KINDS = {
     "getattr": "served by a module `__getattr__`",
     "type alias": "a type alias",
 }
+# What a union of classes has that isn't a dunder, on some Pythons: `typing.Union[...]` before 3.14 (DT-CORE-73).
+UNION_PYTHON_MEMBERS = frozenset({"copy_with"})
 # Attributes every object, module and class has, which the index doesn't record (DT-CORE-38). Fixed lists, not
 # `dir()`, so answers don't depend on the Python running DepTime.
 _OBJECT_DUNDERS = frozenset(
@@ -389,6 +392,26 @@ def _is_internal(span: sqlite3.Row) -> bool:
 
 def _is_private(name: str) -> bool:
     return name.startswith("_") and not (name.startswith("__") and name.endswith("__"))
+
+
+def _union_member(full: str, prefix: str, canonical: str | None, rest: str) -> SymbolCheck:
+    """A name under a union of classes (DT-CORE-73): mcp 2.0's `types.ClientRequest = PingRequest | ...` has
+    none of its classes' attributes, so `ClientRequest.model_construct` is `missing`. A private or dunder name
+    (`__args__`) is `unknown`, and so is `copy_with`, which `typing.Union[...]` has before Python 3.14."""
+    first = rest.partition(".")[0]
+    obj = f" (`{canonical}`)" if canonical and canonical != prefix else ""
+    if first.startswith("_") or first in UNION_PYTHON_MEMBERS:
+        return SymbolCheck(
+            path=full,
+            status="unknown",
+            hint=f"{prefix} is a union of classes{obj}; whether it has `{first}` depends on the Python version",
+        )
+    return SymbolCheck(
+        path=full,
+        status="missing",
+        hint=f"{prefix} is a union of classes{obj}, not a class: it has none of their attributes, so `{first}` "
+        "isn't there; check each class in the union instead",
+    )
 
 
 def _is_dunder(name: str) -> bool:
@@ -897,6 +920,8 @@ class DepTime:
                 return shared
             if span["kind"] in ("module", "class"):
                 return None
+            if span["kind"] == UNION:
+                return _union_member(full, prefix, span["canonical"], rest)
             target = self._outside(name, spec, span, row["ordinal"])
             if target is not None and depth < 2:
                 return self._through(name, row, q, full, prefix, f"{target}.{rest}", depth)

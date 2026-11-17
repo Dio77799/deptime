@@ -98,11 +98,10 @@ In order. The first line of each phase is what it delivers.
 Phases 2 and 3 (the command and the GitHub Action) shipped in 0.2.0. DT-QA-22 met every bar on real update pull
 requests; its three wrong answers are fixed in the published index (DT-CORE-72, DT-DATA-82, DT-DATA-51: a second,
 in-sample run flags 0 of 3,291 working uses and fails no pull request without a confirmed break,
-`bench/upgrade-check/prs/results-2026-11-16-run2.md`). Left:
-- [ ] **DT-CORE-73**: Members of a name that became an alias read `unknown` · `P2` `S`
-  - mcp 2.0's `types.ClientRequest.model_construct`: DT-QA-22's two missed breaks (one call, one project). In 2.0
-    `ClientRequest` is `PingRequest | InitializeRequest | ...` (mcp-types' `_types.py`), a union with no
-    `model_construct`. Extraction: record an attribute bound to a union of classes; next `SNAPSHOT_FORMAT` batch.
+`bench/upgrade-check/prs/results-2026-11-16-run2.md`).
+- [x] **DT-CORE-73** (2026-11-17): a name bound to a union of the package's classes (`A | B`, `Union[A, B]`) is
+  recorded as a union, and `check_symbols` reads a member of it as missing: mcp 2.0's
+  `types.ClientRequest.model_construct`, DT-QA-22's last missed break. `SNAPSHOT_FORMAT` 29.
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
