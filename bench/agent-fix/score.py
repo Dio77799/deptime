@@ -1,5 +1,5 @@
-"""Score an agent-fix study's sessions (`study.py`: DT-QA-05, or DT-QA-26 with AGENT_FIX_STUDY=qa26), by the rules in
-its README.md ("Scoring a session", "Measures and the bar").
+"""Score an agent-fix study's sessions (`study.py`: DT-QA-05, or DT-QA-26 or DT-QA-27 with AGENT_FIX_STUDY=qa26 or
+qa27), by the rules in its README.md ("Scoring a session", "Measures and the bar").
 
     uv run python bench/agent-fix/score.py envs            # envs.json, uses.json: the probe's work for the fixed trees
     # bench/holdout/probe.py on them: .github/workflows/holdout.yml with SET=bench/agent-fix, on a spike branch

@@ -1,0 +1,5155 @@
+{
+ "tasks": [
+  {
+   "id": "pin-hanfangyuan4396__fastgpt-on-wechat-openai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/hanfangyuan4396/fastgpt-on-wechat",
+   "source": "hanfangyuan4396__fastgpt-on-wechat@2e68c946ec4c9e21e29f7c27e8668489d4241d7e",
+   "dir": "",
+   "package": "openai",
+   "from": "0.27.8",
+   "to": "3.51.0",
+   "python": "3.11",
+   "env": "openai==3.51.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "e6bfb01962177fdb",
+     "kind": "name",
+     "path": "openai.error",
+     "change": "removed",
+     "where": [
+      "bot/ali/ali_qwen_bot.py:8",
+      "bot/chatgpt/chat_gpt_bot.py:13",
+      "bot/claudeapi/claude_api_bot.py:6"
+     ]
+    },
+    {
+     "key": "b04210a650ae19ae",
+     "kind": "name",
+     "path": "openai.error.APIConnectionError",
+     "change": "removed",
+     "where": [
+      "bot/ali/ali_qwen_bot.py:145",
+      "bot/claudeapi/claude_api_bot.py:108",
+      "bot/zhipuai/zhipuai_bot.py:135"
+     ]
+    },
+    {
+     "key": "0fd58b83ba3825a2",
+     "kind": "name",
+     "path": "openai.error.APIError",
+     "change": "removed",
+     "where": [
+      "bot/ali/ali_qwen_bot.py:140",
+      "bot/zhipuai/zhipuai_bot.py:130"
+     ]
+    },
+    {
+     "key": "eb053a1d4162ec95",
+     "kind": "name",
+     "path": "openai.error.RateLimitError",
+     "change": "removed",
+     "where": [
+      "bot/ali/ali_qwen_bot.py:130",
+      "bot/claudeapi/claude_api_bot.py:98",
+      "bot/zhipuai/zhipuai_bot.py:120"
+     ]
+    },
+    {
+     "key": "fde006be1080cb48",
+     "kind": "name",
+     "path": "openai.error.Timeout",
+     "change": "removed",
+     "where": [
+      "bot/ali/ali_qwen_bot.py:135",
+      "bot/claudeapi/claude_api_bot.py:103",
+      "bot/zhipuai/zhipuai_bot.py:125"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-t0mer__wassist-openai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/t0mer/WAssist",
+   "source": "t0mer__WAssist@7d49f5bd4bcdeec63389d36e21cf452831666f56",
+   "dir": "",
+   "package": "openai",
+   "from": "0.28.1",
+   "to": "3.51.0",
+   "python": "3.11",
+   "env": "openai==3.51.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "8ea4ce517267ee40",
+     "kind": "call",
+     "path": "openai.Audio.transcribe",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "app/commandhandler.py:141"
+     ]
+    },
+    {
+     "key": "9f242a0d6067cbf3",
+     "kind": "name",
+     "path": "openai.Audio.transcribe",
+     "change": "removed",
+     "where": [
+      "app/commandhandler.py:141"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-redwoodresearch__text-steganography-benchmark-anthropic-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/redwoodresearch/Text-Steganography-Benchmark",
+   "source": "redwoodresearch__Text-Steganography-Benchmark@1dfa0c45730a28e5bf1148f081835598a3425bb3",
+   "dir": "",
+   "package": "anthropic",
+   "from": "0.5.0",
+   "to": "2.8.0",
+   "python": "3.11",
+   "env": "anthropic==2.8.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "c8e53faa834f3213",
+     "kind": "name",
+     "path": "anthropic.types.completion",
+     "change": "removed",
+     "where": [
+      "textsteg/llm.py:17"
+     ]
+    },
+    {
+     "key": "7566a088876a551b",
+     "kind": "name",
+     "path": "anthropic.types.completion.Completion",
+     "change": "removed",
+     "where": [
+      "textsteg/llm.py:17"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-3b-group__convre-anthropic-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/3B-Group/ConvRe",
+   "source": "3B-Group__ConvRe@afb9a21fd2e4216c85faf3934abf7004bbe6d48d",
+   "dir": "",
+   "package": "anthropic",
+   "from": "0.3.11",
+   "to": "2.8.0",
+   "python": "3.11",
+   "env": "anthropic==2.8.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "aaef9774a6b07941",
+     "kind": "name",
+     "path": "anthropic.AI_PROMPT",
+     "change": "removed",
+     "where": [
+      "utils/llms_interface.py:6"
+     ]
+    },
+    {
+     "key": "1a8b2b40e7f53c44",
+     "kind": "name",
+     "path": "anthropic.HUMAN_PROMPT",
+     "change": "removed",
+     "where": [
+      "utils/llms_interface.py:6"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-yuhangchen1__paper2all-mistralai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/YuhangChen1/Paper2All",
+   "source": "YuhangChen1__Paper2All@0639654f6dc023c0372de5e7f0484e03e5b25c25",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.5.0",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/embeddings/mistral_embedding.py:62"
+     ]
+    },
+    {
+     "key": "69f475f2addd4247",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key",
+      "server_url"
+     ],
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:86"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/embeddings/mistral_embedding.py:51",
+      "Paper2Web/camel/embeddings/mistral_embedding.py:62",
+      "Paper2Web/camel/models/mistral_model.py:76"
+     ]
+    },
+    {
+     "key": "9288912dd3fa335c",
+     "kind": "name",
+     "path": "mistralai.models",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/configs/mistral_config.py:69",
+      "Paper2Web/camel/models/mistral_model.py:18",
+      "Paper2Web/camel/models/mistral_model.py:138"
+     ]
+    },
+    {
+     "key": "400da794a9018944",
+     "kind": "call",
+     "path": "mistralai.models.AssistantMessage",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "tool_calls"
+     ],
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:180"
+     ]
+    },
+    {
+     "key": "77cdb432a6c6bac5",
+     "kind": "name",
+     "path": "mistralai.models.AssistantMessage",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:138",
+      "Paper2Web/camel/models/mistral_model.py:180"
+     ]
+    },
+    {
+     "key": "4a8cd23ebad6ba8c",
+     "kind": "name",
+     "path": "mistralai.models.ChatCompletionResponse",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:18"
+     ]
+    },
+    {
+     "key": "e4a6da2840c02a34",
+     "kind": "call",
+     "path": "mistralai.models.FunctionCall",
+     "npos": 0,
+     "kwargs": [
+      "arguments",
+      "name"
+     ],
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:165"
+     ]
+    },
+    {
+     "key": "22efc6b31f518cef",
+     "kind": "name",
+     "path": "mistralai.models.FunctionCall",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:138",
+      "Paper2Web/camel/models/mistral_model.py:165"
+     ]
+    },
+    {
+     "key": "5e111e5c94266da4",
+     "kind": "name",
+     "path": "mistralai.models.Messages",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:18"
+     ]
+    },
+    {
+     "key": "a58d1b44734be89a",
+     "kind": "name",
+     "path": "mistralai.models.ResponseFormat",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/configs/mistral_config.py:69"
+     ]
+    },
+    {
+     "key": "a89f64ca89cb394f",
+     "kind": "call",
+     "path": "mistralai.models.SystemMessage",
+     "npos": 0,
+     "kwargs": [
+      "content"
+     ],
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:183"
+     ]
+    },
+    {
+     "key": "2289d86014c4a609",
+     "kind": "name",
+     "path": "mistralai.models.SystemMessage",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:138",
+      "Paper2Web/camel/models/mistral_model.py:183"
+     ]
+    },
+    {
+     "key": "a73c72101353f687",
+     "kind": "call",
+     "path": "mistralai.models.ToolCall",
+     "npos": 0,
+     "kwargs": [
+      "function",
+      "id"
+     ],
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:173"
+     ]
+    },
+    {
+     "key": "6d916ab5598197d5",
+     "kind": "name",
+     "path": "mistralai.models.ToolCall",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:138",
+      "Paper2Web/camel/models/mistral_model.py:173"
+     ]
+    },
+    {
+     "key": "6ef136afa633e10d",
+     "kind": "call",
+     "path": "mistralai.models.ToolMessage",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "name",
+      "tool_call_id"
+     ],
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:186"
+     ]
+    },
+    {
+     "key": "1bf7360b2bcd6d5c",
+     "kind": "name",
+     "path": "mistralai.models.ToolMessage",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:138",
+      "Paper2Web/camel/models/mistral_model.py:186"
+     ]
+    },
+    {
+     "key": "00ff647c7d1ca4a9",
+     "kind": "call",
+     "path": "mistralai.models.UserMessage",
+     "npos": 0,
+     "kwargs": [
+      "content"
+     ],
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:177"
+     ]
+    },
+    {
+     "key": "7aa35c61d5985913",
+     "kind": "name",
+     "path": "mistralai.models.UserMessage",
+     "change": "removed",
+     "where": [
+      "Paper2Web/camel/models/mistral_model.py:138",
+      "Paper2Web/camel/models/mistral_model.py:177"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-goodmornintech__goodmorningtech-mistralai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/GoodMorninTech/GoodMorningTech",
+   "source": "GoodMorninTech__GoodMorningTech@559e3974f05ff38b4b59d2bd12cfd4adbb7c6c18",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.5.1",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "gmt/views/commands.py:35"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "gmt/views/commands.py:21",
+      "gmt/views/commands.py:35"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-xjzzzzzzzz__mcpsafety-mistralai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/xjzzzzzzzz/MCPSafety",
+   "source": "xjzzzzzzzz__MCPSafety@7872437b6369aac1150e3a19e350a981dc554f81",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.6.0",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "mcpuniverse/llm/mistral.py:100"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "mcpuniverse/llm/mistral.py:11",
+      "mcpuniverse/llm/mistral.py:100"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-slabstech__gaganyatri.in-mistralai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/slabstech/gaganyatri.in",
+   "source": "slabstech__gaganyatri.in@da3d25abd4eeb5c4747fd680d56ba8bf71cba584",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.1.0",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "backend/inference/mistral_inference.py:7",
+      "backend/inference/mistral_inference.py:33",
+      "backend/inference/mistral_inference.py:87"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "backend/inference/mistral_inference.py:1",
+      "backend/inference/mistral_inference.py:7",
+      "backend/inference/mistral_inference.py:33"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-dodo13114arch__mistralocr-pdf2md-translator-mistralai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/dodo13114arch/mistralocr-pdf2md-translator",
+   "source": "dodo13114arch__mistralocr-pdf2md-translator@773e76491f32802852d218a41cdeac22b42a25aa",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.9.3",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:1729"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:39",
+      "mistralocr_app.py:1729"
+     ]
+    },
+    {
+     "key": "9288912dd3fa335c",
+     "kind": "name",
+     "path": "mistralai.models",
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:40"
+     ]
+    },
+    {
+     "key": "248ba32f18769a5f",
+     "kind": "call",
+     "path": "mistralai.models.DocumentURLChunk",
+     "npos": 0,
+     "kwargs": [
+      "document_url"
+     ],
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:428"
+     ]
+    },
+    {
+     "key": "655d1a3f33020778",
+     "kind": "name",
+     "path": "mistralai.models.DocumentURLChunk",
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:40",
+      "mistralocr_app.py:428"
+     ]
+    },
+    {
+     "key": "069dd2c2eca3f5ae",
+     "kind": "call",
+     "path": "mistralai.models.ImageURLChunk",
+     "npos": 0,
+     "kwargs": [
+      "image_url"
+     ],
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:733",
+      "mistralocr_app.py:753",
+      "mistralocr_app.py:1049"
+     ]
+    },
+    {
+     "key": "8eabe14b4bc54247",
+     "kind": "name",
+     "path": "mistralai.models.ImageURLChunk",
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:40",
+      "mistralocr_app.py:733",
+      "mistralocr_app.py:753"
+     ]
+    },
+    {
+     "key": "0ae71ad157612268",
+     "kind": "name",
+     "path": "mistralai.models.OCRResponse",
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:40"
+     ]
+    },
+    {
+     "key": "844a4a58100cff0a",
+     "kind": "call",
+     "path": "mistralai.models.TextChunk",
+     "npos": 0,
+     "kwargs": [
+      "text"
+     ],
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:754",
+      "mistralocr_app.py:1070"
+     ]
+    },
+    {
+     "key": "8e85a79457b9d091",
+     "kind": "name",
+     "path": "mistralai.models.TextChunk",
+     "change": "removed",
+     "where": [
+      "mistralocr_app.py:40",
+      "mistralocr_app.py:754",
+      "mistralocr_app.py:1070"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-thedispatch__yamllms-mistralai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/thedispatch/yamllms",
+   "source": "thedispatch__yamllms@06db01c5e0941c64402707d1c6660c002d8a200d",
+   "dir": "",
+   "package": "mistralai",
+   "from": "0.0.9",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "b72fbbb8fc05196d",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "missions/plugins/mistral.py:24"
+     ]
+    },
+    {
+     "key": "acd5fd6020a0a1be",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient",
+     "change": "removed",
+     "where": [
+      "missions/plugins/mistral.py:2",
+      "missions/plugins/mistral.py:24"
+     ]
+    },
+    {
+     "key": "869400551c89b7c5",
+     "kind": "call",
+     "path": "mistralai.client.MistralClient.chat_stream",
+     "npos": 0,
+     "kwargs": [
+      "messages",
+      "model"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "missions/plugins/mistral.py:28"
+     ]
+    },
+    {
+     "key": "9413e45546980074",
+     "kind": "name",
+     "path": "mistralai.client.MistralClient.chat_stream",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "missions/plugins/mistral.py:28"
+     ]
+    },
+    {
+     "key": "f3e860486f994ef5",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion",
+     "change": "removed",
+     "where": [
+      "missions/plugins/mistral.py:3"
+     ]
+    },
+    {
+     "key": "62c9a6d8ca983d3b",
+     "kind": "call",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "npos": 0,
+     "kwargs": [
+      "content",
+      "role"
+     ],
+     "change": "removed",
+     "where": [
+      "missions/plugins/mistral.py:30"
+     ]
+    },
+    {
+     "key": "e9bd546defc91eaf",
+     "kind": "name",
+     "path": "mistralai.models.chat_completion.ChatMessage",
+     "change": "removed",
+     "where": [
+      "missions/plugins/mistral.py:3",
+      "missions/plugins/mistral.py:30"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-deniskropp__t20-mistralai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/deniskropp/t20",
+   "source": "deniskropp__t20@e24228806ed66e9cd40d35981da0ea137ca47ab1",
+   "dir": "",
+   "package": "mistralai",
+   "from": "1.9.10",
+   "to": "3.7.0",
+   "python": "3.11",
+   "env": "mistralai==3.7.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "fd84b151f5d15223",
+     "kind": "call",
+     "path": "mistralai.Mistral",
+     "npos": 0,
+     "kwargs": [
+      "api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "src/t20/core/agents/llm.py:719"
+     ]
+    },
+    {
+     "key": "9ee77662db20a740",
+     "kind": "name",
+     "path": "mistralai.Mistral",
+     "change": "removed",
+     "where": [
+      "src/t20/core/agents/llm.py:637",
+      "src/t20/core/agents/llm.py:719"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-jainsid24__know-my-doc-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/jainsid24/know-my-doc",
+   "source": "jainsid24__know-my-doc@43484e275797105d386b0a95c66e4dbbc6370c62",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.107",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "cb2f2814a9c83396",
+     "kind": "call",
+     "path": "langchain.LLMMathChain",
+     "npos": 0,
+     "kwargs": [
+      "llm",
+      "verbose"
+     ],
+     "change": "removed",
+     "where": [
+      "chat_agent.py:49"
+     ]
+    },
+    {
+     "key": "e672059323f50560",
+     "kind": "name",
+     "path": "langchain.OpenAI",
+     "change": "removed",
+     "where": [
+      "chat_agent.py:4"
+     ]
+    },
+    {
+     "key": "0af17273e0ab98a3",
+     "kind": "name",
+     "path": "langchain.SerpAPIWrapper",
+     "change": "removed",
+     "where": [
+      "chat_agent.py:4"
+     ]
+    },
+    {
+     "key": "d3a21aa1e37972d4",
+     "kind": "name",
+     "path": "langchain.VectorDBQA.from_chain_type",
+     "change": "removed",
+     "where": [
+      "chat_agent.py:48"
+     ]
+    },
+    {
+     "key": "aa4639873a32b93e",
+     "kind": "call",
+     "path": "langchain.agents.Tool",
+     "npos": 0,
+     "kwargs": [
+      "description",
+      "func",
+      "name"
+     ],
+     "change": "removed",
+     "where": [
+      "chat_agent.py:51",
+      "chat_agent.py:56"
+     ]
+    },
+    {
+     "key": "a1adbb988bcd5519",
+     "kind": "name",
+     "path": "langchain.chains.question_answering",
+     "change": "removed",
+     "where": [
+      "chat.py:3"
+     ]
+    },
+    {
+     "key": "0aa4d490a032e55a",
+     "kind": "name",
+     "path": "langchain.document_loaders",
+     "change": "removed",
+     "where": [
+      "chat.py:4",
+      "chat.py:8",
+      "chat_agent.py:5"
+     ]
+    },
+    {
+     "key": "eda3063dc8e3c0c7",
+     "kind": "name",
+     "path": "langchain.document_loaders.DirectoryLoader",
+     "change": "removed",
+     "where": [
+      "chat.py:4",
+      "chat.py:27",
+      "chat_agent.py:5"
+     ]
+    },
+    {
+     "key": "58a2f939250b2d5c",
+     "kind": "call",
+     "path": "langchain.document_loaders.DirectoryLoader.load",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "chat.py:28",
+      "chat_agent.py:28"
+     ]
+    },
+    {
+     "key": "60780cc03333c0dd",
+     "kind": "name",
+     "path": "langchain.document_loaders.DirectoryLoader.load",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "chat.py:28",
+      "chat_agent.py:28"
+     ]
+    },
+    {
+     "key": "0dbe0046223c717a",
+     "kind": "name",
+     "path": "langchain.document_loaders.WebBaseLoader",
+     "change": "removed",
+     "where": [
+      "chat.py:8",
+      "chat.py:34",
+      "chat_agent.py:5"
+     ]
+    },
+    {
+     "key": "7410904cc9bfe0f7",
+     "kind": "call",
+     "path": "langchain.document_loaders.WebBaseLoader.load",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "chat.py:35",
+      "chat_agent.py:35"
+     ]
+    },
+    {
+     "key": "9048e82cda8ede1c",
+     "kind": "name",
+     "path": "langchain.document_loaders.WebBaseLoader.load",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "chat.py:35",
+      "chat_agent.py:35"
+     ]
+    },
+    {
+     "key": "55bce76d6dcc9e4a",
+     "kind": "call",
+     "path": "langchain.embeddings.openai.OpenAIEmbeddings",
+     "npos": 0,
+     "kwargs": [
+      "openai_api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "chat.py:44"
+     ]
+    },
+    {
+     "key": "02f246399e788ae3",
+     "kind": "name",
+     "path": "langchain.embeddings.openai.OpenAIEmbeddings",
+     "change": "removed",
+     "where": [
+      "chat.py:11",
+      "chat.py:44",
+      "chat_agent.py:1"
+     ]
+    },
+    {
+     "key": "1d6a97724e845884",
+     "kind": "name",
+     "path": "langchain.llms",
+     "change": "removed",
+     "where": [
+      "chat.py:5",
+      "chat_agent.py:8"
+     ]
+    },
+    {
+     "key": "6c0d10d7853d6e7b",
+     "kind": "call",
+     "path": "langchain.llms.OpenAI",
+     "npos": 0,
+     "kwargs": [
+      "temperature"
+     ],
+     "change": "removed",
+     "where": [
+      "chat_agent.py:24"
+     ]
+    },
+    {
+     "key": "7066e67acd0ff44e",
+     "kind": "call",
+     "path": "langchain.llms.OpenAIChat",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "chat.py:50"
+     ]
+    },
+    {
+     "key": "eb25ef29d9891565",
+     "kind": "name",
+     "path": "langchain.llms.OpenAIChat",
+     "change": "removed",
+     "where": [
+      "chat.py:5",
+      "chat.py:50"
+     ]
+    },
+    {
+     "key": "bf5406133c4a2557",
+     "kind": "name",
+     "path": "langchain.memory",
+     "change": "removed",
+     "where": [
+      "chat.py:7"
+     ]
+    },
+    {
+     "key": "a152c05e213173bf",
+     "kind": "name",
+     "path": "langchain.prompts",
+     "change": "removed",
+     "where": [
+      "chat.py:6"
+     ]
+    },
+    {
+     "key": "3d264faec0824ec0",
+     "kind": "call",
+     "path": "langchain.prompts.PromptTemplate",
+     "npos": 0,
+     "kwargs": [
+      "input_variables",
+      "template"
+     ],
+     "change": "removed",
+     "where": [
+      "chat.py:53"
+     ]
+    },
+    {
+     "key": "e150f531e1260239",
+     "kind": "name",
+     "path": "langchain.prompts.PromptTemplate",
+     "change": "removed",
+     "where": [
+      "chat.py:6",
+      "chat.py:53"
+     ]
+    },
+    {
+     "key": "bca6a147bcef19b1",
+     "kind": "name",
+     "path": "langchain.text_splitter",
+     "change": "removed",
+     "where": [
+      "chat.py:10",
+      "chat_agent.py:3"
+     ]
+    },
+    {
+     "key": "a1e6a91349373a61",
+     "kind": "name",
+     "path": "langchain.text_splitter.CharacterTextSplitter",
+     "change": "removed",
+     "where": [
+      "chat.py:10",
+      "chat.py:42",
+      "chat_agent.py:3"
+     ]
+    },
+    {
+     "key": "45e730a86174391d",
+     "kind": "call",
+     "path": "langchain.text_splitter.CharacterTextSplitter.split_documents",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "chat.py:43",
+      "chat_agent.py:41"
+     ]
+    },
+    {
+     "key": "773db3c598f25e0d",
+     "kind": "name",
+     "path": "langchain.text_splitter.CharacterTextSplitter.split_documents",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "chat.py:43",
+      "chat_agent.py:41"
+     ]
+    },
+    {
+     "key": "7ce182a257795778",
+     "kind": "name",
+     "path": "langchain.vectorstores",
+     "change": "removed",
+     "where": [
+      "chat.py:12",
+      "chat_agent.py:2"
+     ]
+    },
+    {
+     "key": "b68a22ce45f23045",
+     "kind": "name",
+     "path": "langchain.vectorstores.Chroma",
+     "change": "removed",
+     "where": [
+      "chat.py:12",
+      "chat_agent.py:2"
+     ]
+    },
+    {
+     "key": "0a8f8039360ace34",
+     "kind": "call",
+     "path": "langchain.vectorstores.Chroma.from_documents",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "chat.py:45"
+     ]
+    },
+    {
+     "key": "33f1b47bd3c2cee8",
+     "kind": "call",
+     "path": "langchain.vectorstores.Chroma.from_documents",
+     "npos": 2,
+     "kwargs": [
+      "collection_name"
+     ],
+     "change": "removed",
+     "where": [
+      "chat_agent.py:47"
+     ]
+    },
+    {
+     "key": "7da0b23a75807b99",
+     "kind": "name",
+     "path": "langchain.vectorstores.Chroma.from_documents",
+     "change": "removed",
+     "where": [
+      "chat.py:45",
+      "chat_agent.py:47"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-ybadk__tryp_thooe_tourism_lite-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/ybadk/Tryp_Thooe_Tourism_Lite",
+   "source": "ybadk__Tryp_Thooe_Tourism_Lite@547211c22efe614f7c6889756be5748fc097d186",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.1.4",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "09739342c0573ded",
+     "kind": "name",
+     "path": "langchain.chains",
+     "change": "removed",
+     "where": [
+      "chat_interface.py:57",
+      "improved_offline_rag.py:4"
+     ]
+    },
+    {
+     "key": "8720fbab547a3cbd",
+     "kind": "call",
+     "path": "langchain.chains.LLMChain",
+     "npos": 0,
+     "kwargs": [
+      "llm",
+      "prompt"
+     ],
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:89"
+     ]
+    },
+    {
+     "key": "8c7d4c9c3e2001a4",
+     "kind": "name",
+     "path": "langchain.chains.LLMChain",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:4",
+      "improved_offline_rag.py:89"
+     ]
+    },
+    {
+     "key": "ba0920a48c9790f2",
+     "kind": "name",
+     "path": "langchain.chains.RetrievalQA",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:4"
+     ]
+    },
+    {
+     "key": "262c39710e64e72a",
+     "kind": "name",
+     "path": "langchain.chains.RetrievalQA.from_chain_type",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:173"
+     ]
+    },
+    {
+     "key": "18d6d04857af3815",
+     "kind": "name",
+     "path": "langchain.chains.combine_documents",
+     "change": "removed",
+     "where": [
+      "chat_interface.py:58"
+     ]
+    },
+    {
+     "key": "86601314a45543ac",
+     "kind": "call",
+     "path": "langchain.chains.combine_documents.create_stuff_documents_chain",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "chat_interface.py:225"
+     ]
+    },
+    {
+     "key": "04dbb8dfd07368c3",
+     "kind": "name",
+     "path": "langchain.chains.combine_documents.create_stuff_documents_chain",
+     "change": "removed",
+     "where": [
+      "chat_interface.py:58",
+      "chat_interface.py:225"
+     ]
+    },
+    {
+     "key": "1f49b6ff69626ed2",
+     "kind": "call",
+     "path": "langchain.chains.create_history_aware_retriever",
+     "npos": 3,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "chat_interface.py:193"
+     ]
+    },
+    {
+     "key": "d0da53e743a9bf5c",
+     "kind": "name",
+     "path": "langchain.chains.create_history_aware_retriever",
+     "change": "removed",
+     "where": [
+      "chat_interface.py:57",
+      "chat_interface.py:193"
+     ]
+    },
+    {
+     "key": "33418c006a4d9981",
+     "kind": "call",
+     "path": "langchain.chains.create_retrieval_chain",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "chat_interface.py:226"
+     ]
+    },
+    {
+     "key": "6c5c942caeb0cd9d",
+     "kind": "name",
+     "path": "langchain.chains.create_retrieval_chain",
+     "change": "removed",
+     "where": [
+      "chat_interface.py:57",
+      "chat_interface.py:226"
+     ]
+    },
+    {
+     "key": "a1adbb988bcd5519",
+     "kind": "name",
+     "path": "langchain.chains.question_answering",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:6"
+     ]
+    },
+    {
+     "key": "f0ce8c635fe9a429",
+     "kind": "name",
+     "path": "langchain.chains.question_answering.load_qa_chain",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:6"
+     ]
+    },
+    {
+     "key": "1d6a97724e845884",
+     "kind": "name",
+     "path": "langchain.llms",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:5"
+     ]
+    },
+    {
+     "key": "bbc8a86abbc78ad2",
+     "kind": "call",
+     "path": "langchain.llms.HuggingFacePipeline",
+     "npos": 0,
+     "kwargs": [
+      "pipeline"
+     ],
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:66"
+     ]
+    },
+    {
+     "key": "a6686a1288769aaa",
+     "kind": "name",
+     "path": "langchain.llms.HuggingFacePipeline",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:5",
+      "improved_offline_rag.py:66"
+     ]
+    },
+    {
+     "key": "a152c05e213173bf",
+     "kind": "name",
+     "path": "langchain.prompts",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:7"
+     ]
+    },
+    {
+     "key": "3d264faec0824ec0",
+     "kind": "call",
+     "path": "langchain.prompts.PromptTemplate",
+     "npos": 0,
+     "kwargs": [
+      "input_variables",
+      "template"
+     ],
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:83"
+     ]
+    },
+    {
+     "key": "e150f531e1260239",
+     "kind": "name",
+     "path": "langchain.prompts.PromptTemplate",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:7",
+      "improved_offline_rag.py:83"
+     ]
+    },
+    {
+     "key": "0ffa89f74427fa79",
+     "kind": "name",
+     "path": "langchain.schema",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:11"
+     ]
+    },
+    {
+     "key": "d94a7234e3b0c49a",
+     "kind": "call",
+     "path": "langchain.schema.Document",
+     "npos": 0,
+     "kwargs": [
+      "metadata",
+      "page_content"
+     ],
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:142"
+     ]
+    },
+    {
+     "key": "158ff419cdaf446a",
+     "kind": "name",
+     "path": "langchain.schema.Document",
+     "change": "removed",
+     "where": [
+      "improved_offline_rag.py:11",
+      "improved_offline_rag.py:142"
+     ]
+    },
+    {
+     "key": "bca6a147bcef19b1",
+     "kind": "name",
+     "path": "langchain.text_splitter",
+     "change": "removed",
+     "where": [
+      "chat_interface.py:52",
+      "services/tourism_ai_service.py:8"
+     ]
+    },
+    {
+     "key": "73416ff8155133c3",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter",
+     "change": "removed",
+     "where": [
+      "chat_interface.py:52",
+      "services/tourism_ai_service.py:8"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-nrcrews__gpt-engineer-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/nrcrews/gpt-engineer",
+   "source": "nrcrews__gpt-engineer@47f2c23eda6d3fad049811d249c71ea4161ac2da",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.245",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "bca6a147bcef19b1",
+     "kind": "name",
+     "path": "langchain.text_splitter",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:2"
+     ]
+    },
+    {
+     "key": "efda2cc948a251b3",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:2"
+     ]
+    },
+    {
+     "key": "1c7ac417b5c54872",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.GO",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:92"
+     ]
+    },
+    {
+     "key": "2b7562e2043d0990",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.HTML",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:118"
+     ]
+    },
+    {
+     "key": "7fd1d2dbcc6d54fd",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.JAVA",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:94"
+     ]
+    },
+    {
+     "key": "24638fd917105b2e",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.JS",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:96"
+     ]
+    },
+    {
+     "key": "d05071982bf3cfaa",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.LATEX",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:116"
+     ]
+    },
+    {
+     "key": "08bcc46d288fc65b",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.MARKDOWN",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:114"
+     ]
+    },
+    {
+     "key": "2d626cf7efcbe182",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.PHP",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:98"
+     ]
+    },
+    {
+     "key": "9aa4724b1597b8f4",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.PROTO",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:100"
+     ]
+    },
+    {
+     "key": "263d427ffa797075",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.PYTHON",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:102"
+     ]
+    },
+    {
+     "key": "a613643368627af5",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.RST",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:104"
+     ]
+    },
+    {
+     "key": "82b03b323b8bd873",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.RUBY",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:106"
+     ]
+    },
+    {
+     "key": "7baecd78be76a0f3",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.RUST",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:108"
+     ]
+    },
+    {
+     "key": "31d0282c76533255",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.SCALA",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:110"
+     ]
+    },
+    {
+     "key": "cb0062258651da98",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.SOL",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:120"
+     ]
+    },
+    {
+     "key": "60e496131649ae8d",
+     "kind": "name",
+     "path": "langchain.text_splitter.Language.SWIFT",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:112"
+     ]
+    },
+    {
+     "key": "73416ff8155133c3",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:2"
+     ]
+    },
+    {
+     "key": "e6aa74e60dc14aba",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter.from_language",
+     "change": "removed",
+     "where": [
+      "engineer/code.py:83"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-jay4codes__googlevertexai-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/Jay4Codes/GoogleVertexAI",
+   "source": "Jay4Codes__GoogleVertexAI@5c9b832125244ba2c20cf8cadfd03feb79fbe8cf",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.228",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "729089cb973c916d",
+     "kind": "call",
+     "path": "langchain.LLMChain",
+     "npos": 0,
+     "kwargs": [
+      "llm",
+      "prompt"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_chat.py:209"
+     ]
+    },
+    {
+     "key": "b725a8ab3c188566",
+     "kind": "name",
+     "path": "langchain.LLMChain",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:17",
+      "agent_chat.py:209"
+     ]
+    },
+    {
+     "key": "6f405891b5d27233",
+     "kind": "name",
+     "path": "langchain.agents.AgentExecutor",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:13"
+     ]
+    },
+    {
+     "key": "527546e7f9c58687",
+     "kind": "name",
+     "path": "langchain.agents.AgentExecutor.from_agent_and_tools",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:222"
+     ]
+    },
+    {
+     "key": "e1d154bdafb8dd43",
+     "kind": "name",
+     "path": "langchain.agents.AgentOutputParser",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:13"
+     ]
+    },
+    {
+     "key": "1dc3584fd75c52d9",
+     "kind": "name",
+     "path": "langchain.agents.LLMSingleActionAgent",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:13",
+      "agent_chat.py:14",
+      "agent_chat.py:213"
+     ]
+    },
+    {
+     "key": "aa4639873a32b93e",
+     "kind": "call",
+     "path": "langchain.agents.Tool",
+     "npos": 0,
+     "kwargs": [
+      "description",
+      "func",
+      "name"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_chat.py:103",
+      "agent_chat.py:108",
+      "agent_chat.py:113"
+     ]
+    },
+    {
+     "key": "163a51d81fef7022",
+     "kind": "name",
+     "path": "langchain.agents.Tool",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:13",
+      "agent_chat.py:103",
+      "agent_chat.py:108"
+     ]
+    },
+    {
+     "key": "a0eeeaee69953e03",
+     "kind": "name",
+     "path": "langchain.chat_models.ChatOpenAI",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:5"
+     ]
+    },
+    {
+     "key": "1d6a97724e845884",
+     "kind": "name",
+     "path": "langchain.llms",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:6"
+     ]
+    },
+    {
+     "key": "8873917740cecb86",
+     "kind": "call",
+     "path": "langchain.llms.VertexAI",
+     "npos": 0,
+     "kwargs": [
+      "max_output_tokens"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_chat.py:37"
+     ]
+    },
+    {
+     "key": "d531c21823efb271",
+     "kind": "name",
+     "path": "langchain.llms.VertexAI",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:6",
+      "agent_chat.py:37"
+     ]
+    },
+    {
+     "key": "bf5406133c4a2557",
+     "kind": "name",
+     "path": "langchain.memory",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:16"
+     ]
+    },
+    {
+     "key": "3f94f8b9fd1bb94f",
+     "kind": "call",
+     "path": "langchain.memory.ConversationBufferWindowMemory",
+     "npos": 0,
+     "kwargs": [
+      "k"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_chat.py:220"
+     ]
+    },
+    {
+     "key": "0b8ebc51379ca626",
+     "kind": "name",
+     "path": "langchain.memory.ConversationBufferWindowMemory",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:16",
+      "agent_chat.py:220"
+     ]
+    },
+    {
+     "key": "a152c05e213173bf",
+     "kind": "name",
+     "path": "langchain.prompts",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:15"
+     ]
+    },
+    {
+     "key": "176cfeff65c1e3a2",
+     "kind": "name",
+     "path": "langchain.prompts.StringPromptTemplate",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:15"
+     ]
+    },
+    {
+     "key": "0ffa89f74427fa79",
+     "kind": "name",
+     "path": "langchain.schema",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:20"
+     ]
+    },
+    {
+     "key": "4ebf99b6cf97f158",
+     "kind": "call",
+     "path": "langchain.schema.AgentAction",
+     "npos": 0,
+     "kwargs": [
+      "log",
+      "tool",
+      "tool_input"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_chat.py:205"
+     ]
+    },
+    {
+     "key": "5511b771d4b3ed02",
+     "kind": "name",
+     "path": "langchain.schema.AgentAction",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:20",
+      "agent_chat.py:205"
+     ]
+    },
+    {
+     "key": "00a0248acb5c6ec4",
+     "kind": "call",
+     "path": "langchain.schema.AgentFinish",
+     "npos": 0,
+     "kwargs": [
+      "log",
+      "return_values"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_chat.py:189"
+     ]
+    },
+    {
+     "key": "a4dafef1cd61b0ee",
+     "kind": "name",
+     "path": "langchain.schema.AgentFinish",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:20",
+      "agent_chat.py:189"
+     ]
+    },
+    {
+     "key": "d29f067de8ea247e",
+     "kind": "name",
+     "path": "langchain.tools.Tool",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:7"
+     ]
+    },
+    {
+     "key": "8b7b956672ec4744",
+     "kind": "name",
+     "path": "langchain.utilities",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:18"
+     ]
+    },
+    {
+     "key": "4db7be879c93f87a",
+     "kind": "call",
+     "path": "langchain.utilities.SerpAPIWrapper",
+     "npos": 0,
+     "kwargs": [
+      "params",
+      "serpapi_api_key"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_chat.py:39"
+     ]
+    },
+    {
+     "key": "1af3a25661d73bfc",
+     "kind": "name",
+     "path": "langchain.utilities.SerpAPIWrapper",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:18",
+      "agent_chat.py:39"
+     ]
+    },
+    {
+     "key": "9f9c5099ec5c969c",
+     "kind": "name",
+     "path": "langchain.utilities.SerpAPIWrapper.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "agent_chat.py:111"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-daudxu__learn-langchain-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/Daudxu/Learn-Langchain",
+   "source": "Daudxu__Learn-Langchain@404e026adca3654bf79acd722b23d701909be5a4",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.2.16",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "92655670595a7037",
+     "kind": "call",
+     "path": "langchain.agents.AgentExecutor",
+     "npos": 0,
+     "kwargs": [
+      "agent",
+      "handle_parsing_errors",
+      "max_iterations",
+      "tools",
+      "verbose"
+     ],
+     "change": "removed",
+     "where": [
+      "08_example/langchain_agent/agent.py:107",
+      "08_example/langchain_agent/agent_01.py:69",
+      "08_example/langchain_agent/agent_02.py:107"
+     ]
+    },
+    {
+     "key": "6f405891b5d27233",
+     "kind": "name",
+     "path": "langchain.agents.AgentExecutor",
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Agents.py:1",
+      "08_example/english/agents_01/src/Agents.py:40",
+      "08_example/english/maion.py:4"
+     ]
+    },
+    {
+     "key": "6430ab49bf878e64",
+     "kind": "name",
+     "path": "langchain.agents.AgentExecutor.configurable_fields",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Agents.py:40"
+     ]
+    },
+    {
+     "key": "65029f9897ede65e",
+     "kind": "call",
+     "path": "langchain.agents.AgentExecutor.invoke",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "08_example/english/maion.py:121",
+      "08_example/english/maion.py:127"
+     ]
+    },
+    {
+     "key": "a719c583feec116a",
+     "kind": "name",
+     "path": "langchain.agents.AgentType",
+     "change": "removed",
+     "where": [
+      "06_Agent/agent.py:1",
+      "08_example/langchain_agent/agent.py:13",
+      "08_example/langchain_agent/agent_02.py:13"
+     ]
+    },
+    {
+     "key": "163a51d81fef7022",
+     "kind": "name",
+     "path": "langchain.agents.Tool",
+     "change": "removed",
+     "where": [
+      "08_example/langchain_agent/agent.py:13",
+      "08_example/langchain_agent/agent.py:120",
+      "08_example/langchain_agent/agent.py:125"
+     ]
+    },
+    {
+     "key": "b77821a6c0b19cb7",
+     "kind": "call",
+     "path": "langchain.agents.create_openai_functions_agent",
+     "npos": 0,
+     "kwargs": [
+      "llm",
+      "prompt",
+      "tools"
+     ],
+     "change": "removed",
+     "where": [
+      "08_example/langchain_agent/agent.py:100",
+      "08_example/langchain_agent/agent_01.py:62",
+      "08_example/langchain_agent/agent_02.py:100"
+     ]
+    },
+    {
+     "key": "b17fe7454b53c059",
+     "kind": "name",
+     "path": "langchain.agents.create_openai_functions_agent",
+     "change": "removed",
+     "where": [
+      "08_example/langchain_agent/agent.py:12",
+      "08_example/langchain_agent/agent.py:100",
+      "08_example/langchain_agent/agent_01.py:3"
+     ]
+    },
+    {
+     "key": "50aa67a57d98fa9c",
+     "kind": "name",
+     "path": "langchain.agents.create_structured_chat_agent",
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Agents.py:1",
+      "08_example/english/maion.py:4",
+      "08_example/english/maion.py:104"
+     ]
+    },
+    {
+     "key": "bee083c7f8576ff0",
+     "kind": "call",
+     "path": "langchain.agents.create_tool_calling_agent",
+     "npos": 3,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Agents.py:35"
+     ]
+    },
+    {
+     "key": "40f2a8ed2b6f502d",
+     "kind": "name",
+     "path": "langchain.chains.ConversationChain.predict",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "08_example/llm_agent/main.py:55"
+     ]
+    },
+    {
+     "key": "8720fbab547a3cbd",
+     "kind": "call",
+     "path": "langchain.chains.LLMChain",
+     "npos": 0,
+     "kwargs": [
+      "llm",
+      "prompt"
+     ],
+     "change": "removed",
+     "where": [
+      "demo/autogen_langchain_demo.py:20",
+      "demo/langchain_multi_agent_demo.py:34",
+      "demo/langchain_multi_agent_demo.py:49"
+     ]
+    },
+    {
+     "key": "ba0920a48c9790f2",
+     "kind": "name",
+     "path": "langchain.chains.RetrievalQA",
+     "change": "removed",
+     "where": [
+      "05_RAG/demo3.py:3"
+     ]
+    },
+    {
+     "key": "262c39710e64e72a",
+     "kind": "name",
+     "path": "langchain.chains.RetrievalQA.from_chain_type",
+     "change": "removed",
+     "where": [
+      "05_RAG/demo3.py:38"
+     ]
+    },
+    {
+     "key": "18d6d04857af3815",
+     "kind": "name",
+     "path": "langchain.chains.combine_documents",
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Tools.py:14"
+     ]
+    },
+    {
+     "key": "86601314a45543ac",
+     "kind": "call",
+     "path": "langchain.chains.combine_documents.create_stuff_documents_chain",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Tools.py:173"
+     ]
+    },
+    {
+     "key": "d0da53e743a9bf5c",
+     "kind": "name",
+     "path": "langchain.chains.create_history_aware_retriever",
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Tools.py:13",
+      "08_example/english/agents_01/src/Tools.py:172"
+     ]
+    },
+    {
+     "key": "33418c006a4d9981",
+     "kind": "call",
+     "path": "langchain.chains.create_retrieval_chain",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Tools.py:171"
+     ]
+    },
+    {
+     "key": "6c5c942caeb0cd9d",
+     "kind": "name",
+     "path": "langchain.chains.create_retrieval_chain",
+     "change": "removed",
+     "where": [
+      "08_example/english/agents_01/src/Tools.py:13",
+      "08_example/english/agents_01/src/Tools.py:171"
+     ]
+    },
+    {
+     "key": "1d6a97724e845884",
+     "kind": "name",
+     "path": "langchain.llms",
+     "change": "removed",
+     "where": [
+      "05_RAG/demo3.py:4",
+      "06_Agent/agent.py:2",
+      "demo.py:3"
+     ]
+    },
+    {
+     "key": "a152c05e213173bf",
+     "kind": "name",
+     "path": "langchain.prompts",
+     "change": "removed",
+     "where": [
+      "02_PromptTemple/1_prompt.py:2",
+      "02_PromptTemple/2_chat_template.py:2",
+      "02_PromptTemple/3_messagesPlaceholder.py:3"
+     ]
+    },
+    {
+     "key": "0839aa0505002e0c",
+     "kind": "name",
+     "path": "langchain.prompts.ChatPromptTemplate",
+     "change": "removed",
+     "where": [
+      "02_PromptTemple/2_chat_template.py:2",
+      "02_PromptTemple/3_messagesPlaceholder.py:3",
+      "02_PromptTemple/3_messagesPlaceholder.py:6"
+     ]
+    },
+    {
+     "key": "fceb6a704f057f20",
+     "kind": "call",
+     "path": "langchain.prompts.ChatPromptTemplate.from_messages",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "02_PromptTemple/2_chat_template.py:3"
+     ]
+    },
+    {
+     "key": "75de2322dbbf6edf",
+     "kind": "call",
+     "path": "langchain.prompts.MessagesPlaceholder",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "02_PromptTemple/3_messagesPlaceholder.py:8"
+     ]
+    },
+    {
+     "key": "d40778880fee2abc",
+     "kind": "name",
+     "path": "langchain.prompts.prompt",
+     "change": "removed",
+     "where": [
+      "02_PromptTemple/3_messagesPlaceholder.py:3"
+     ]
+    },
+    {
+     "key": "a1e6a91349373a61",
+     "kind": "name",
+     "path": "langchain.text_splitter.CharacterTextSplitter",
+     "change": "removed",
+     "where": [
+      "05_RAG/chatDocHelper.py:6",
+      "05_RAG/chatDocHelper.py:81"
+     ]
+    },
+    {
+     "key": "fdd5459a4d03cef4",
+     "kind": "name",
+     "path": "langchain.vectorstores.utils",
+     "change": "removed",
+     "where": [
+      "08_example/rag_demo_01.py:9"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-supportfulp__ai-resume-formatter-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/supportfulp/ai-resume-formatter",
+   "source": "supportfulp__ai-resume-formatter@c50c6d3048b6456daf507afa2103e1f622011316",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.335",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "d86fc83fe3cc8b24",
+     "kind": "name",
+     "path": "langchain.output_parsers",
+     "change": "removed",
+     "where": [
+      "src/chains/resume_formatter.py:7"
+     ]
+    },
+    {
+     "key": "6b1fe918e7490c0e",
+     "kind": "call",
+     "path": "langchain.output_parsers.PydanticOutputParser",
+     "npos": 0,
+     "kwargs": [
+      "pydantic_object"
+     ],
+     "change": "removed",
+     "where": [
+      "src/chains/resume_formatter.py:45"
+     ]
+    },
+    {
+     "key": "e8472a4598c77234",
+     "kind": "name",
+     "path": "langchain.output_parsers.PydanticOutputParser",
+     "change": "removed",
+     "where": [
+      "src/chains/resume_formatter.py:7",
+      "src/chains/resume_formatter.py:45"
+     ]
+    },
+    {
+     "key": "a152c05e213173bf",
+     "kind": "name",
+     "path": "langchain.prompts",
+     "change": "removed",
+     "where": [
+      "src/chains/resume_restructure_chain.py:14",
+      "src/prompts/resume_prompts.py:3",
+      "src/prompts/resume_restructure_prompts.py:3"
+     ]
+    },
+    {
+     "key": "3d264faec0824ec0",
+     "kind": "call",
+     "path": "langchain.prompts.PromptTemplate",
+     "npos": 0,
+     "kwargs": [
+      "input_variables",
+      "template"
+     ],
+     "change": "removed",
+     "where": [
+      "src/chains/resume_restructure_chain.py:29",
+      "src/prompts/resume_prompts.py:7",
+      "src/prompts/resume_prompts.py:61"
+     ]
+    },
+    {
+     "key": "e150f531e1260239",
+     "kind": "name",
+     "path": "langchain.prompts.PromptTemplate",
+     "change": "removed",
+     "where": [
+      "src/chains/resume_restructure_chain.py:14",
+      "src/chains/resume_restructure_chain.py:29",
+      "src/prompts/resume_prompts.py:3"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-jjuuliak__g15-slt-steer-2-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/jjuuliak/G15-SLT-STEER-2",
+   "source": "jjuuliak__G15-SLT-STEER-2@1944c88549986316a09619558ff242b1831201d3",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.3.22",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "bca6a147bcef19b1",
+     "kind": "name",
+     "path": "langchain.text_splitter",
+     "change": "removed",
+     "where": [
+      "doc_embedding/embed_documents.py:1"
+     ]
+    },
+    {
+     "key": "73416ff8155133c3",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter",
+     "change": "removed",
+     "where": [
+      "doc_embedding/embed_documents.py:1",
+      "doc_embedding/embed_documents.py:83"
+     ]
+    },
+    {
+     "key": "384f5e27c33a42ff",
+     "kind": "call",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter.split_text",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "doc_embedding/embed_documents.py:91"
+     ]
+    },
+    {
+     "key": "ebb95d9b24c83049",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter.split_text",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "doc_embedding/embed_documents.py:91"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-jonathanhus__back-to-school-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/jonathanhus/back-to-school",
+   "source": "jonathanhus__back-to-school@6c2d1660ee2dabb489a37000d6aaf29a7fe81cb5",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.1.4",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "60ebb05bd92a7cdb",
+     "kind": "name",
+     "path": "langchain.callbacks.base",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:13"
+     ]
+    },
+    {
+     "key": "2ba271a9336ec69d",
+     "kind": "name",
+     "path": "langchain.callbacks.base.BaseCallbackHandler",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:13"
+     ]
+    },
+    {
+     "key": "09739342c0573ded",
+     "kind": "name",
+     "path": "langchain.chains",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:14"
+     ]
+    },
+    {
+     "key": "03671ad2786f1380",
+     "kind": "call",
+     "path": "langchain.chains.LLMChain",
+     "npos": 0,
+     "kwargs": [
+      "llm",
+      "prompt",
+      "verbose"
+     ],
+     "change": "removed",
+     "where": [
+      "baselines/main.py:546"
+     ]
+    },
+    {
+     "key": "8c7d4c9c3e2001a4",
+     "kind": "name",
+     "path": "langchain.chains.LLMChain",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:14",
+      "baselines/main.py:546"
+     ]
+    },
+    {
+     "key": "4c57b924e93d066c",
+     "kind": "name",
+     "path": "langchain.docstore.document",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:18"
+     ]
+    },
+    {
+     "key": "471d304160af4d04",
+     "kind": "name",
+     "path": "langchain.docstore.document.Document",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:18"
+     ]
+    },
+    {
+     "key": "d80e2a6125bdaab3",
+     "kind": "name",
+     "path": "langchain.llms.fake",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:25"
+     ]
+    },
+    {
+     "key": "1706902e247215cb",
+     "kind": "call",
+     "path": "langchain.llms.fake.FakeListLLM",
+     "npos": 0,
+     "kwargs": [
+      "callbacks",
+      "responses"
+     ],
+     "change": "removed",
+     "where": [
+      "baselines/main.py:259"
+     ]
+    },
+    {
+     "key": "96dd958ac403a1ec",
+     "kind": "name",
+     "path": "langchain.llms.fake.FakeListLLM",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:25",
+      "baselines/main.py:259"
+     ]
+    },
+    {
+     "key": "41760096b477076f",
+     "kind": "name",
+     "path": "langchain.prompts.example_selector.ngram_overlap",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:31"
+     ]
+    },
+    {
+     "key": "9452924aebd854ef",
+     "kind": "name",
+     "path": "langchain.prompts.example_selector.ngram_overlap.BaseExampleSelector",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:31"
+     ]
+    },
+    {
+     "key": "c61f8067518f2dcd",
+     "kind": "name",
+     "path": "langchain.prompts.example_selector.ngram_overlap.BaseModel",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:31"
+     ]
+    },
+    {
+     "key": "f969f89cc8ed9fb5",
+     "kind": "name",
+     "path": "langchain.prompts.few_shot",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:27"
+     ]
+    },
+    {
+     "key": "958c5db2d0ff3672",
+     "kind": "name",
+     "path": "langchain.prompts.few_shot.FewShotPromptTemplate",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:27"
+     ]
+    },
+    {
+     "key": "d40778880fee2abc",
+     "kind": "name",
+     "path": "langchain.prompts.prompt",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:28"
+     ]
+    },
+    {
+     "key": "c997fe833ac976d2",
+     "kind": "call",
+     "path": "langchain.prompts.prompt.PromptTemplate",
+     "npos": 0,
+     "kwargs": [
+      "input_variables",
+      "template"
+     ],
+     "change": "removed",
+     "where": [
+      "baselines/main.py:426",
+      "baselines/main.py:458",
+      "baselines/main.py:478"
+     ]
+    },
+    {
+     "key": "d532a0049158cfab",
+     "kind": "name",
+     "path": "langchain.prompts.prompt.PromptTemplate",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:28",
+      "baselines/main.py:426",
+      "baselines/main.py:458"
+     ]
+    },
+    {
+     "key": "bca6a147bcef19b1",
+     "kind": "name",
+     "path": "langchain.text_splitter",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:32"
+     ]
+    },
+    {
+     "key": "9d78f400874e8622",
+     "kind": "call",
+     "path": "langchain.text_splitter.LatexTextSplitter",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "baselines/main.py:144"
+     ]
+    },
+    {
+     "key": "13488551d4729d9b",
+     "kind": "name",
+     "path": "langchain.text_splitter.LatexTextSplitter",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:32",
+      "baselines/main.py:144"
+     ]
+    },
+    {
+     "key": "076545a6cc13d0f5",
+     "kind": "name",
+     "path": "langchain.text_splitter.TokenTextSplitter",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:32",
+      "baselines/main.py:150"
+     ]
+    },
+    {
+     "key": "3ef61f5e4c7d67fd",
+     "kind": "name",
+     "path": "langchain.vectorstores.base",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:34"
+     ]
+    },
+    {
+     "key": "eaab1224ff125264",
+     "kind": "name",
+     "path": "langchain.vectorstores.base.VectorStore",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:34"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-cresting1222__devops-chatbot-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/cresting1222/DevOps-ChatBot",
+   "source": "cresting1222__DevOps-ChatBot@0ec63a4c058717fa9d966f76daafe915b62f424b",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.266",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "918a403c881ba1b3",
+     "kind": "call",
+     "path": "langchain.LLMChain.acall",
+     "npos": 1,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/base_chat.py:162",
+      "dev_opsgpt/chat/llm_chat.py:39"
+     ]
+    },
+    {
+     "key": "72b1f0f51539ce53",
+     "kind": "name",
+     "path": "langchain.LLMChain.acall",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/base_chat.py:162",
+      "dev_opsgpt/chat/llm_chat.py:39"
+     ]
+    },
+    {
+     "key": "0860b54a5c5f01d3",
+     "kind": "name",
+     "path": "langchain.callbacks",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/base_chat.py:8",
+      "dev_opsgpt/chat/knowledge_chat.py:7",
+      "dev_opsgpt/chat/llm_chat.py:5"
+     ]
+    },
+    {
+     "key": "29b193f5604e4601",
+     "kind": "call",
+     "path": "langchain.callbacks.AsyncIteratorCallbackHandler",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/base_chat.py:130"
+     ]
+    },
+    {
+     "key": "b8eabaed47f899a4",
+     "kind": "name",
+     "path": "langchain.callbacks.AsyncIteratorCallbackHandler",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/base_chat.py:8",
+      "dev_opsgpt/chat/base_chat.py:130",
+      "dev_opsgpt/chat/knowledge_chat.py:7"
+     ]
+    },
+    {
+     "key": "a0eeeaee69953e03",
+     "kind": "name",
+     "path": "langchain.chat_models.ChatOpenAI",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/base_chat.py:6",
+      "dev_opsgpt/chat/base_chat.py:24",
+      "dev_opsgpt/chat/base_chat.py:32"
+     ]
+    },
+    {
+     "key": "4c57b924e93d066c",
+     "kind": "name",
+     "path": "langchain.docstore.document",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/search_chat.py:10",
+      "dev_opsgpt/document_loaders/json_loader.py:5",
+      "dev_opsgpt/document_loaders/jsonl_loader.py:5"
+     ]
+    },
+    {
+     "key": "471d304160af4d04",
+     "kind": "name",
+     "path": "langchain.docstore.document.Document",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/search_chat.py:10",
+      "dev_opsgpt/chat/search_chat.py:46",
+      "dev_opsgpt/document_loaders/json_loader.py:5"
+     ]
+    },
+    {
+     "key": "0aa4d490a032e55a",
+     "kind": "name",
+     "path": "langchain.document_loaders",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/utils/path_utils.py:2"
+     ]
+    },
+    {
+     "key": "95b41abc4ca4162e",
+     "kind": "name",
+     "path": "langchain.document_loaders.base",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/document_loaders/json_loader.py:6",
+      "dev_opsgpt/document_loaders/jsonl_loader.py:6",
+      "dev_opsgpt/text_splitter/langchain_splitter.py:5"
+     ]
+    },
+    {
+     "key": "2162c6cfff6959ae",
+     "kind": "name",
+     "path": "langchain.document_loaders.base.BaseLoader",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/document_loaders/json_loader.py:6",
+      "dev_opsgpt/document_loaders/jsonl_loader.py:6",
+      "dev_opsgpt/text_splitter/langchain_splitter.py:5"
+     ]
+    },
+    {
+     "key": "b29ee3e790113be8",
+     "kind": "name",
+     "path": "langchain.embeddings.huggingface",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/embeddings/utils.py:2",
+      "dev_opsgpt/service/faiss_db_service.py:10",
+      "dev_opsgpt/utils/path_utils.py:3"
+     ]
+    },
+    {
+     "key": "73e391a6b84b3ea6",
+     "kind": "call",
+     "path": "langchain.embeddings.huggingface.HuggingFaceEmbeddings",
+     "npos": 0,
+     "kwargs": [
+      "model_kwargs",
+      "model_name"
+     ],
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/embeddings/utils.py:10"
+     ]
+    },
+    {
+     "key": "7769a687f59c5567",
+     "kind": "name",
+     "path": "langchain.embeddings.huggingface.HuggingFaceEmbeddings",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/embeddings/utils.py:2",
+      "dev_opsgpt/embeddings/utils.py:10",
+      "dev_opsgpt/service/faiss_db_service.py:10"
+     ]
+    },
+    {
+     "key": "6f50281533d40b8e",
+     "kind": "name",
+     "path": "langchain.prompts.chat",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/base_chat.py:9",
+      "dev_opsgpt/chat/knowledge_chat.py:8",
+      "dev_opsgpt/chat/llm_chat.py:6"
+     ]
+    },
+    {
+     "key": "ba43983f91dfa8ef",
+     "kind": "name",
+     "path": "langchain.prompts.chat.ChatPromptTemplate.from_messages",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/base_chat.py:149",
+      "dev_opsgpt/chat/base_chat.py:157",
+      "dev_opsgpt/chat/knowledge_chat.py:57"
+     ]
+    },
+    {
+     "key": "0ffa89f74427fa79",
+     "kind": "name",
+     "path": "langchain.schema",
+     "change": "removed",
+     "where": [
+      "tests/openai_test.py:20"
+     ]
+    },
+    {
+     "key": "2f394f48fb4d394b",
+     "kind": "name",
+     "path": "langchain.schema.HumanMessage",
+     "change": "removed",
+     "where": [
+      "tests/openai_test.py:20"
+     ]
+    },
+    {
+     "key": "bca6a147bcef19b1",
+     "kind": "name",
+     "path": "langchain.text_splitter",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/text_splitter/langchain_splitter.py:6"
+     ]
+    },
+    {
+     "key": "73416ff8155133c3",
+     "kind": "name",
+     "path": "langchain.text_splitter.RecursiveCharacterTextSplitter",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/text_splitter/langchain_splitter.py:6",
+      "dev_opsgpt/text_splitter/langchain_splitter.py:67"
+     ]
+    },
+    {
+     "key": "e0daf49181578f93",
+     "kind": "name",
+     "path": "langchain.text_splitter.SpacyTextSplitter",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/text_splitter/langchain_splitter.py:6",
+      "dev_opsgpt/text_splitter/langchain_splitter.py:52"
+     ]
+    },
+    {
+     "key": "5a9ba04171ad2d87",
+     "kind": "call",
+     "path": "langchain.utilities.BingSearchAPIWrapper",
+     "npos": 0,
+     "kwargs": [
+      "bing_search_url",
+      "bing_subscription_key"
+     ],
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/search_chat.py:28"
+     ]
+    },
+    {
+     "key": "8437ec453eb852a9",
+     "kind": "name",
+     "path": "langchain.utilities.BingSearchAPIWrapper",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/search_chat.py:8",
+      "dev_opsgpt/chat/search_chat.py:28"
+     ]
+    },
+    {
+     "key": "0465143d52022fc0",
+     "kind": "call",
+     "path": "langchain.utilities.BingSearchAPIWrapper.results",
+     "npos": 2,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/search_chat.py:30"
+     ]
+    },
+    {
+     "key": "123c7785ce3a3085",
+     "kind": "call",
+     "path": "langchain.utilities.DuckDuckGoSearchAPIWrapper",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/search_chat.py:34"
+     ]
+    },
+    {
+     "key": "b1e7c69ba0f5f246",
+     "kind": "name",
+     "path": "langchain.utilities.DuckDuckGoSearchAPIWrapper",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/search_chat.py:8",
+      "dev_opsgpt/chat/search_chat.py:34"
+     ]
+    },
+    {
+     "key": "6e6f9919f8f77d2d",
+     "kind": "name",
+     "path": "langchain.utilities.DuckDuckGoSearchAPIWrapper.results",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/chat/search_chat.py:35"
+     ]
+    },
+    {
+     "key": "7ce182a257795778",
+     "kind": "name",
+     "path": "langchain.vectorstores",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/service/faiss_db_service.py:7"
+     ]
+    },
+    {
+     "key": "6d1d01ddd3361367",
+     "kind": "name",
+     "path": "langchain.vectorstores.FAISS.from_documents",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/service/faiss_db_service.py:58"
+     ]
+    },
+    {
+     "key": "c8b3ec28be100a46",
+     "kind": "name",
+     "path": "langchain.vectorstores.FAISS.load_local",
+     "change": "removed",
+     "where": [
+      "dev_opsgpt/service/faiss_db_service.py:54"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-shangqingliu__jarvix_qa-langchain-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/ShangQingLiu/jarvix_qa",
+   "source": "ShangQingLiu__jarvix_qa@e7ba04c60978ad9827e58ce2ec44e9b12af5d51d",
+   "dir": "",
+   "package": "langchain",
+   "from": "0.0.194",
+   "to": "1.5.0",
+   "python": "3.11",
+   "env": "langchain==1.5.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "4c0c381aa6a5abd7",
+     "kind": "call",
+     "path": "langchain.PromptTemplate",
+     "npos": 0,
+     "kwargs": [
+      "input_variables",
+      "template"
+     ],
+     "change": "removed",
+     "where": [
+      "backend/chatbot.py:43",
+      "backend/chatbot.py:47"
+     ]
+    },
+    {
+     "key": "d7b9fb5545e751ac",
+     "kind": "name",
+     "path": "langchain.PromptTemplate",
+     "change": "removed",
+     "where": [
+      "backend/chatbot.py:3",
+      "backend/chatbot.py:43",
+      "backend/chatbot.py:47"
+     ]
+    },
+    {
+     "key": "163a51d81fef7022",
+     "kind": "name",
+     "path": "langchain.agents.Tool",
+     "change": "removed",
+     "where": [
+      "backend/chatbot.py:4"
+     ]
+    },
+    {
+     "key": "5f4f950d3dc6df30",
+     "kind": "name",
+     "path": "langchain.chains.conversation.memory",
+     "change": "removed",
+     "where": [
+      "backend/chatbot.py:6"
+     ]
+    },
+    {
+     "key": "4eaf916f1287ea48",
+     "kind": "call",
+     "path": "langchain.chains.conversation.memory.ConversationBufferMemory",
+     "npos": 0,
+     "kwargs": [
+      "memory_key"
+     ],
+     "change": "removed",
+     "where": [
+      "backend/chatbot.py:304"
+     ]
+    },
+    {
+     "key": "53b54d79c676d27b",
+     "kind": "name",
+     "path": "langchain.chains.conversation.memory.ConversationBufferMemory",
+     "change": "removed",
+     "where": [
+      "backend/chatbot.py:6",
+      "backend/chatbot.py:304"
+     ]
+    },
+    {
+     "key": "80365ef5649d1a5f",
+     "kind": "call",
+     "path": "langchain.chat_models.ChatOpenAI",
+     "npos": 0,
+     "kwargs": [
+      "max_tokens",
+      "temperature"
+     ],
+     "change": "removed",
+     "where": [
+      "backend/chatbot.py:305"
+     ]
+    },
+    {
+     "key": "a0eeeaee69953e03",
+     "kind": "name",
+     "path": "langchain.chat_models.ChatOpenAI",
+     "change": "removed",
+     "where": [
+      "backend/chatbot.py:5",
+      "backend/chatbot.py:130",
+      "backend/chatbot.py:229"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-jonathanhus__back-to-school-langchain-community-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/jonathanhus/back-to-school",
+   "source": "jonathanhus__back-to-school@6c2d1660ee2dabb489a37000d6aaf29a7fe81cb5",
+   "dir": "",
+   "package": "langchain-community",
+   "from": "0.0.20",
+   "to": "0.4.2",
+   "python": "3.11",
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "breaks": [
+    {
+     "key": "0cf7d1bff2a6ba00",
+     "kind": "name",
+     "path": "langchain_community.chat_models.ChatAnthropic",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:15",
+      "baselines/main.py:281"
+     ]
+    },
+    {
+     "key": "fd6a4699b40de3b3",
+     "kind": "name",
+     "path": "langchain_community.chat_models.ChatOpenAI",
+     "change": "removed",
+     "where": [
+      "baselines/main.py:15"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-decibrain-group__dsgbench-langchain-community-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/DeciBrain-Group/DSGBench",
+   "source": "DeciBrain-Group__DSGBench@126aa9aa54324d8a421783dd24d4dd32532fc2d5",
+   "dir": "",
+   "package": "langchain-community",
+   "from": "0.3.3",
+   "to": "0.4.2",
+   "python": "3.11",
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "breaks": [
+    {
+     "key": "23b647bd8299fbee",
+     "kind": "name",
+     "path": "langchain_community.chat_models.AzureChatOpenAI",
+     "change": "removed",
+     "where": [
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:9",
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:48",
+      "agent_manager/agents/civ_agent/workers/mastaba_worker.py:19"
+     ]
+    },
+    {
+     "key": "fd6a4699b40de3b3",
+     "kind": "name",
+     "path": "langchain_community.chat_models.ChatOpenAI",
+     "change": "removed",
+     "where": [
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:9",
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:59",
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:298"
+     ]
+    },
+    {
+     "key": "d5fdc636d6c3951e",
+     "kind": "call",
+     "path": "langchain_community.chat_models.ChatOpenAI.generate",
+     "npos": 1,
+     "kwargs": [
+      "stop"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:306",
+      "agent_manager/llm_models/llm_model.py:129",
+      "agent_manager/llm_models/llm_model.py:191"
+     ]
+    },
+    {
+     "key": "2515f40f8067470b",
+     "kind": "name",
+     "path": "langchain_community.chat_models.ChatOpenAI.generate",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:306",
+      "agent_manager/llm_models/llm_model.py:129",
+      "agent_manager/llm_models/llm_model.py:191"
+     ]
+    },
+    {
+     "key": "25575a9100425d13",
+     "kind": "call",
+     "path": "langchain_community.vectorstores.Pinecone",
+     "npos": 0,
+     "kwargs": [
+      "embedding",
+      "index",
+      "text_key"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_manager/agents/civ_agent/workers/gpt_worker.py:59",
+      "agent_manager/agents/civ_agent/workers/mastaba_worker.py:54"
+     ]
+    },
+    {
+     "key": "9e3be08d5dd7043e",
+     "kind": "name",
+     "path": "langchain_community.vectorstores.Pinecone",
+     "change": "removed",
+     "where": [
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:13",
+      "agent_manager/agents/civ_agent/workers/base_worker.py:24",
+      "agent_manager/agents/civ_agent/workers/gpt_worker.py:22"
+     ]
+    },
+    {
+     "key": "2294b8338dea7346",
+     "kind": "call",
+     "path": "langchain_community.vectorstores.Pinecone.from_existing_index",
+     "npos": 0,
+     "kwargs": [
+      "embedding",
+      "index_name"
+     ],
+     "change": "removed",
+     "where": [
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:69"
+     ]
+    },
+    {
+     "key": "ca86808d0015cd62",
+     "kind": "name",
+     "path": "langchain_community.vectorstores.Pinecone.from_existing_index",
+     "change": "removed",
+     "where": [
+      "agent_manager/agents/civ_agent/civ_autogpt/GPTAgent.py:69"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-umesh-mod-10__clgxplore---ai-chatbot-langchain-community-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/Umesh-Mod-10/ClgXplore---AI-Chatbot",
+   "source": "Umesh-Mod-10__ClgXplore---AI-Chatbot@f24d1ceed861c7593ad3c058d78c63b4c907cf51",
+   "dir": "",
+   "package": "langchain-community",
+   "from": "0.2.10",
+   "to": "0.4.2",
+   "python": "3.11",
+   "env": "langchain-community==0.4.2@2026-06-21",
+   "breaks": [
+    {
+     "key": "a38511a764dcf15d",
+     "kind": "name",
+     "path": "langchain_community.vectorstores.Qdrant.from_documents",
+     "change": "removed",
+     "where": [
+      "utils/vectordb/vector_db.py:209",
+      "utils/vectordb/vector_db.py:216"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-umesh-mod-10__clgxplore---ai-chatbot-langgraph-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/Umesh-Mod-10/ClgXplore---AI-Chatbot",
+   "source": "Umesh-Mod-10__ClgXplore---AI-Chatbot@f24d1ceed861c7593ad3c058d78c63b4c907cf51",
+   "dir": "",
+   "package": "langgraph",
+   "from": "0.1.6",
+   "to": "1.2.22",
+   "python": "3.11",
+   "env": "langgraph==1.2.22@2026-11-16",
+   "breaks": [
+    {
+     "key": "518cbd62322e9e77",
+     "kind": "call",
+     "path": "langgraph.checkpoint.MemorySaver",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "utils/agents/corrective_rag.py:69",
+      "utils/agents/static_RAG_with_coding.py:133",
+      "utils/agents/teams/corrective_rag_team.py:51"
+     ]
+    },
+    {
+     "key": "f437dceb48fda962",
+     "kind": "name",
+     "path": "langgraph.checkpoint.MemorySaver",
+     "change": "removed",
+     "where": [
+      "utils/agents/corrective_rag.py:3",
+      "utils/agents/corrective_rag.py:69",
+      "utils/agents/static_RAG_with_coding.py:7"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-bachngoh__aio_research_agent-llama-index-core-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/BachNgoH/AIO_Research_Agent",
+   "source": "BachNgoH__AIO_Research_Agent@31e2e90d74a43ece2eb6a3bedd60bf3d962006bb",
+   "dir": "",
+   "package": "llama-index-core",
+   "from": "0.10.26",
+   "to": "0.14.26",
+   "python": "3.11",
+   "env": "llama-index-core==0.14.26@2026-11-16",
+   "breaks": [
+    {
+     "key": "d09af93797bef9fc",
+     "kind": "name",
+     "path": "llama_index.core.agent.runner.base.AgentRunner",
+     "change": "removed",
+     "where": [
+      "src/agents/assistant_agent.py:20"
+     ]
+    },
+    {
+     "key": "46535bcd055eb726",
+     "kind": "name",
+     "path": "llama_index.core.agent.types.Task",
+     "change": "removed",
+     "where": [
+      "src/agents/assistant_step.py:13"
+     ]
+    },
+    {
+     "key": "6b296eec663161cb",
+     "kind": "call",
+     "path": "llama_index.core.agent.types.TaskStepOutput",
+     "npos": 0,
+     "kwargs": [
+      "is_last",
+      "next_steps",
+      "output",
+      "task_step"
+     ],
+     "change": "removed",
+     "where": [
+      "src/agents/assistant_step.py:598",
+      "src/agents/assistant_step.py:669"
+     ]
+    },
+    {
+     "key": "c001e8de25b9e775",
+     "kind": "name",
+     "path": "llama_index.core.agent.types.TaskStepOutput",
+     "change": "removed",
+     "where": [
+      "src/agents/assistant_step.py:13",
+      "src/agents/assistant_step.py:598",
+      "src/agents/assistant_step.py:669"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-memaryai__memaryai-llama-index-core-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/MemaryAI/MemaryAI",
+   "source": "MemaryAI__MemaryAI@ac1466b659fffac1ec00ed2e1b5036ecb4c9b685",
+   "dir": "",
+   "package": "llama-index-core",
+   "from": "0.10.12",
+   "to": "0.14.26",
+   "python": "3.11",
+   "env": "llama-index-core==0.14.26@2026-11-16",
+   "breaks": [
+    {
+     "key": "20b8f9d253dd0c7c",
+     "kind": "call",
+     "path": "llama_index.core.agent.ReActAgent.from_tools",
+     "npos": 1,
+     "kwargs": [
+      "llm",
+      "verbose"
+     ],
+     "change": "removed",
+     "where": [
+      "src/memary/agent/base_agent.py:429"
+     ]
+    },
+    {
+     "key": "b2d675d679959252",
+     "kind": "name",
+     "path": "llama_index.core.agent.ReActAgent.from_tools",
+     "change": "removed",
+     "where": [
+      "src/memary/agent/base_agent.py:429"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-tommantonela__rearch-llama-index-core-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/tommantonela/ReArch",
+   "source": "tommantonela__ReArch@6fd8801783f75c5a831097e9bcfc65afd8acda63",
+   "dir": "",
+   "package": "llama-index-core",
+   "from": "0.11.17",
+   "to": "0.14.26",
+   "python": "3.11",
+   "env": "llama-index-core==0.14.26@2026-11-16",
+   "breaks": [
+    {
+     "key": "dd6d324abe8336a1",
+     "kind": "call",
+     "path": "llama_index.core.agent.AgentRunner",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "archmind.py:722"
+     ]
+    },
+    {
+     "key": "f9adba6ef55108db",
+     "kind": "name",
+     "path": "llama_index.core.agent.Task",
+     "change": "removed",
+     "where": [
+      "archmind.py:29"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-epuerta9__kitchenai-llama-index-core-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/epuerta9/kitchenai",
+   "source": "epuerta9__kitchenai@058715622daf376ee69de9395bfa3d080439539f",
+   "dir": "",
+   "package": "llama-index-core",
+   "from": "0.12.10.post1",
+   "to": "0.14.26",
+   "python": "3.11",
+   "env": "llama-index-core==0.14.26@2026-11-16",
+   "breaks": [
+    {
+     "key": "20b8f9d253dd0c7c",
+     "kind": "call",
+     "path": "llama_index.core.agent.ReActAgent.from_tools",
+     "npos": 1,
+     "kwargs": [
+      "llm",
+      "verbose"
+     ],
+     "change": "removed",
+     "where": [
+      "kitchenai/core/agents.py:17"
+     ]
+    },
+    {
+     "key": "b2d675d679959252",
+     "kind": "name",
+     "path": "llama_index.core.agent.ReActAgent.from_tools",
+     "change": "removed",
+     "where": [
+      "kitchenai/core/agents.py:17"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-themyxa__telegram-parser-mcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/TheMyxa/telegram-parser",
+   "source": "TheMyxa__telegram-parser@0c820f59d4d3cdebcf8c026ccb65407c1e1d6307",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.30.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "mcp_server.py:10"
+     ]
+    },
+    {
+     "key": "0fccac83061b270f",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "mcp_server.py:62"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "mcp_server.py:10",
+      "mcp_server.py:62"
+     ]
+    },
+    {
+     "key": "6da8d336eebd1ff4",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp_server.py:508"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp_server.py:508"
+     ]
+    },
+    {
+     "key": "cb66c0d4c256a6ab",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp_server.py:188",
+      "mcp_server.py:202",
+      "mcp_server.py:250"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "mcp_server.py:188",
+      "mcp_server.py:202",
+      "mcp_server.py:250"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-aws-samples__sample-agentic-ai-demos-mcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/aws-samples/sample-agentic-ai-demos",
+   "source": "aws-samples__sample-agentic-ai-demos@148ac941494958c35a85ceae416568c16947aafb",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.10.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "f4f644cbad57d1eb",
+     "kind": "call",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "modules/strands-a2a-inter-agent/employee-agent/agent.py:14",
+      "modules/strands-mcp-inter-agent/employee-agent/agent.py:9",
+      "modules/strands-mcp-inter-agent/hr-agent/agent.py:12"
+     ]
+    },
+    {
+     "key": "656b4cb5e6b6e4e8",
+     "kind": "call",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "npos": 2,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "modules/strands-mcp-inter-agent-agentcore/employee_agent/agent.py:35",
+      "modules/strands-mcp-inter-agent-agentcore/hr_agent/agent.py:33"
+     ]
+    },
+    {
+     "key": "803f670a24bea217",
+     "kind": "name",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "change": "removed",
+     "where": [
+      "modules/strands-a2a-inter-agent/employee-agent/agent.py:3",
+      "modules/strands-a2a-inter-agent/employee-agent/agent.py:14",
+      "modules/strands-mcp-inter-agent/employee-agent/agent.py:2"
+     ]
+    },
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "modules/anthropic-bedrock-python-ecs-mcp/src/server.py:1",
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:1",
+      "modules/strands-a2a-inter-agent/employee-server/server.py:1"
+     ]
+    },
+    {
+     "key": "0fccac83061b270f",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "modules/anthropic-bedrock-python-ecs-mcp/src/server.py:3",
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:18"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "modules/anthropic-bedrock-python-ecs-mcp/src/server.py:1",
+      "modules/anthropic-bedrock-python-ecs-mcp/src/server.py:3",
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:1"
+     ]
+    },
+    {
+     "key": "6da8d336eebd1ff4",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:59"
+     ]
+    },
+    {
+     "key": "c80ba6ed6e1a4efe",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [
+      "transport"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "modules/anthropic-bedrock-python-ecs-mcp/src/server.py:21",
+      "modules/strands-a2a-inter-agent/employee-server/server.py:24",
+      "modules/strands-mcp-inter-agent/employee-agent/agent.py:37"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "modules/anthropic-bedrock-python-ecs-mcp/src/server.py:21",
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:59",
+      "modules/strands-a2a-inter-agent/employee-server/server.py:24"
+     ]
+    },
+    {
+     "key": "cb66c0d4c256a6ab",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "modules/anthropic-bedrock-python-ecs-mcp/src/server.py:6",
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:20",
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:41"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "modules/anthropic-bedrock-python-ecs-mcp/src/server.py:6",
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:20",
+      "modules/converse-client-server-stdio-demo-local/mcp_server.py:41"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-danspk__kali-mcp-server-mcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/DansPK/kali-mcp-server",
+   "source": "DansPK__kali-mcp-server@2e2904a934ad76f0a20bdcc863081281362374e3",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.30.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "f4f644cbad57d1eb",
+     "kind": "call",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "client/kali_mcp_client.py:129"
+     ]
+    },
+    {
+     "key": "803f670a24bea217",
+     "kind": "name",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "change": "removed",
+     "where": [
+      "client/kali_mcp_client.py:128",
+      "client/kali_mcp_client.py:129"
+     ]
+    },
+    {
+     "key": "9481e96d81390a3f",
+     "kind": "call",
+     "path": "mcp.server.Server.call_tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/kali_mcp/server.py:99"
+     ]
+    },
+    {
+     "key": "aa55c7f77a74b370",
+     "kind": "name",
+     "path": "mcp.server.Server.list_tools",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/kali_mcp/server.py:95"
+     ]
+    },
+    {
+     "key": "53fc8474f9a440c5",
+     "kind": "name",
+     "path": "mcp.shared.exceptions.McpError",
+     "change": "removed",
+     "where": [
+      "src/kali_mcp/server.py:12",
+      "src/kali_mcp/server.py:143"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-derekrbreese__fantasy-football-mcp-public-mcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/derekrbreese/fantasy-football-mcp-public",
+   "source": "derekrbreese__fantasy-football-mcp-public@a56d31d56f59359e1f9ce62d58e5c4825a5b6120",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.14.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "9481e96d81390a3f",
+     "kind": "call",
+     "path": "mcp.server.Server.call_tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "fantasy_football_multi_league.py:946"
+     ]
+    },
+    {
+     "key": "a4aa3840e5e69933",
+     "kind": "name",
+     "path": "mcp.server.Server.call_tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "fantasy_football_multi_league.py:946"
+     ]
+    },
+    {
+     "key": "83bc72506510d3d7",
+     "kind": "call",
+     "path": "mcp.server.Server.list_tools",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "fantasy_football_multi_league.py:508"
+     ]
+    },
+    {
+     "key": "aa55c7f77a74b370",
+     "kind": "name",
+     "path": "mcp.server.Server.list_tools",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "fantasy_football_multi_league.py:508"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-nvidia-ai-iot__inference_builder-mcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/NVIDIA-AI-IOT/inference_builder",
+   "source": "NVIDIA-AI-IOT__inference_builder@3f0c09f2e3da076cbbb75e17bdebd565b03d1a18",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.23.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "803f670a24bea217",
+     "kind": "name",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "change": "removed",
+     "where": [
+      "mcp/test_mcp_client.py:37",
+      "mcp/test_mcp_client.py:47"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-roji-val__a2a_adk_mcp-mcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/Roji-val/A2A_ADK_MCP",
+   "source": "Roji-val__A2A_ADK_MCP@d32c623cd17c22f07b5614e3b2891b750ec8598e",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.6.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "373c8a1a7c65e589",
+     "kind": "name",
+     "path": "mcp.server.fastmcp",
+     "change": "removed",
+     "where": [
+      "servers/server_mcp.py:1"
+     ]
+    },
+    {
+     "key": "0fccac83061b270f",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "servers/server_mcp.py:27",
+      "servers/server_mcp.py:82"
+     ]
+    },
+    {
+     "key": "9094213a6000a888",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP",
+     "change": "removed",
+     "where": [
+      "servers/server_mcp.py:1",
+      "servers/server_mcp.py:27",
+      "servers/server_mcp.py:82"
+     ]
+    },
+    {
+     "key": "c80ba6ed6e1a4efe",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "npos": 0,
+     "kwargs": [
+      "transport"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "servers/server_mcp.py:148"
+     ]
+    },
+    {
+     "key": "e6082428379dc615",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.run",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "servers/server_mcp.py:148"
+     ]
+    },
+    {
+     "key": "cb66c0d4c256a6ab",
+     "kind": "call",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "servers/server_mcp.py:91",
+      "servers/server_mcp.py:105",
+      "servers/server_mcp.py:116"
+     ]
+    },
+    {
+     "key": "927348a648c9e8d0",
+     "kind": "name",
+     "path": "mcp.server.fastmcp.FastMCP.tool",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "servers/server_mcp.py:91",
+      "servers/server_mcp.py:105",
+      "servers/server_mcp.py:116"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-aws-samples__sample-data-residency-chatbot-with-bedrock-agentcore-mcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/aws-samples/sample-data-residency-chatbot-with-bedrock-agentcore",
+   "source": "aws-samples__sample-data-residency-chatbot-with-bedrock-agentcore@41f7ce4e70315aead65f9ffc63c5f262d7ccec5f",
+   "dir": "",
+   "package": "mcp",
+   "from": "1.30.0",
+   "to": "2.3.0",
+   "python": "3.11",
+   "env": "mcp==2.3.0@2026-11-01",
+   "breaks": [
+    {
+     "key": "8fc376aed361eedf",
+     "kind": "call",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "npos": 0,
+     "kwargs": [
+      "auth",
+      "url"
+     ],
+     "change": "removed",
+     "where": [
+      "src/agent/handler.py:108"
+     ]
+    },
+    {
+     "key": "803f670a24bea217",
+     "kind": "name",
+     "path": "mcp.client.streamable_http.streamablehttp_client",
+     "change": "removed",
+     "where": [
+      "src/agent/handler.py:91",
+      "src/agent/handler.py:108"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-elastic__relevance-studio-fastmcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/elastic/relevance-studio",
+   "source": "elastic__relevance-studio@7851141af69da8a2bad859978527141446bb5846",
+   "dir": "",
+   "package": "fastmcp",
+   "from": "3.2.0",
+   "to": "4.2.0",
+   "python": "3.11",
+   "env": "fastmcp==4.2.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "faaaf1fd4e5eb712",
+     "kind": "name",
+     "path": "fastmcp.FastMCP.as_proxy",
+     "change": "removed",
+     "where": [
+      "src/server/fastmcp_proxy.py:136"
+     ]
+    },
+    {
+     "key": "aacb3d41d4d6f1d5",
+     "kind": "name",
+     "path": "fastmcp.server.proxy",
+     "change": "removed",
+     "where": [
+      "src/server/fastmcp_proxy.py:46"
+     ]
+    },
+    {
+     "key": "90f0bff17b555fde",
+     "kind": "call",
+     "path": "fastmcp.server.proxy.ProxyClient",
+     "npos": 1,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "src/server/fastmcp_proxy.py:136"
+     ]
+    },
+    {
+     "key": "f3e7346581dc27b7",
+     "kind": "name",
+     "path": "fastmcp.server.proxy.ProxyClient",
+     "change": "removed",
+     "where": [
+      "src/server/fastmcp_proxy.py:46",
+      "src/server/fastmcp_proxy.py:136"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-denniszielke__agentic-playground-fastmcp-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/denniszielke/agentic-playground",
+   "source": "denniszielke__agentic-playground@a99a84fb94d26bb8f4f6cf29c357a1c3e45d41d2",
+   "dir": "",
+   "package": "fastmcp",
+   "from": "2.10.2",
+   "to": "4.2.0",
+   "python": "3.11",
+   "env": "fastmcp==4.2.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "4a194d39f739acb7",
+     "kind": "call",
+     "path": "fastmcp.FastMCP.get_resource_templates",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/10-mcp/server-mcp-sse.py:100"
+     ]
+    },
+    {
+     "key": "0178717cf6e3f57c",
+     "kind": "name",
+     "path": "fastmcp.FastMCP.get_resource_templates",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/10-mcp/server-mcp-sse.py:100"
+     ]
+    },
+    {
+     "key": "6ba73f511e893ea7",
+     "kind": "call",
+     "path": "fastmcp.FastMCP.get_resources",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/10-mcp/server-mcp-sse.py:99"
+     ]
+    },
+    {
+     "key": "0bc515b8994528e9",
+     "kind": "name",
+     "path": "fastmcp.FastMCP.get_resources",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/10-mcp/server-mcp-sse.py:99"
+     ]
+    },
+    {
+     "key": "a6d577c3189ff12a",
+     "kind": "call",
+     "path": "fastmcp.FastMCP.get_tools",
+     "npos": 0,
+     "kwargs": [],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/10-mcp/server-mcp-sse.py:98"
+     ]
+    },
+    {
+     "key": "70caeef4220782eb",
+     "kind": "name",
+     "path": "fastmcp.FastMCP.get_tools",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "src/10-mcp/server-mcp-sse.py:98"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-zackriya-solutions__diagram2graph-pydantic-ai-slim-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/Zackriya-Solutions/diagram2graph",
+   "source": "Zackriya-Solutions__diagram2graph@fae9997084003dbb2d47c4e16b43ef84a5d6869f",
+   "dir": "",
+   "package": "pydantic-ai-slim",
+   "from": "0.0.23",
+   "to": "2.68.0",
+   "python": "3.11",
+   "env": "pydantic-ai-slim==2.68.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "c90f4847ff7777ec",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 1,
+     "kwargs": [
+      "deps_type",
+      "result_type",
+      "retries",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "phase1/main.py:25"
+     ]
+    },
+    {
+     "key": "a1e0189b9dc8278f",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 1,
+     "kwargs": [
+      "deps_type",
+      "result_type",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "experiments/pydantic_demo.py:89"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-codematrix__agentic-ai-design-patterns-pydantic-ai-slim-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/codematrix/agentic-ai-design-patterns",
+   "source": "codematrix__agentic-ai-design-patterns@b50bf7e58cf114c52f247ad9de41ae151c8145ae",
+   "dir": "",
+   "package": "pydantic-ai-slim",
+   "from": "0.0.20",
+   "to": "2.68.0",
+   "python": "3.11",
+   "env": "pydantic-ai-slim==2.68.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "714094c37732bafb",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "model",
+      "result_retries",
+      "system_prompt",
+      "tools"
+     ],
+     "change": "param_removed",
+     "where": [
+      "design_patterns/supervisor/call_centre_multi_agent_as_tools.py:52"
+     ]
+    },
+    {
+     "key": "caf0200266e232d3",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "model",
+      "result_type",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "design_patterns/prompt_chaining/city_insights.py:46",
+      "design_patterns/supervisor/call_centre_multi_agent.py:78"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-theagenticai__theagenticbench-pydantic-ai-slim-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/TheAgenticAI/TheAgenticBench",
+   "source": "TheAgenticAI__TheAgenticBench@5b5e3f9fcbe3b2a75245ae81c5cdc163606581b6",
+   "dir": "",
+   "package": "pydantic-ai-slim",
+   "from": "0.0.17",
+   "to": "2.68.0",
+   "python": "3.11",
+   "env": "pydantic-ai-slim==2.68.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "a2261dfaeaaedd76",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "deps_type",
+      "model",
+      "name",
+      "result_type"
+     ],
+     "change": "param_removed",
+     "where": [
+      "agentic_bench/orchestrator.py:154"
+     ]
+    },
+    {
+     "key": "57899b18e9a27a91",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "deps_type",
+      "model",
+      "result_type",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "agentic_bench/agents/coder_agent.py:321"
+     ]
+    },
+    {
+     "key": "63e8c4c9aad61f9c",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 0,
+     "kwargs": [
+      "model",
+      "name",
+      "result_type",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "agentic_bench/orchestrator.py:311",
+      "agentic_bench/orchestrator.py:494"
+     ]
+    },
+    {
+     "key": "a1e0189b9dc8278f",
+     "kind": "call",
+     "path": "pydantic_ai.Agent",
+     "npos": 1,
+     "kwargs": [
+      "deps_type",
+      "result_type",
+      "system_prompt"
+     ],
+     "change": "param_removed",
+     "where": [
+      "agentic_bench/agents/coder_agent.py:294"
+     ]
+    },
+    {
+     "key": "b05a1bb3a929acdd",
+     "kind": "call",
+     "path": "pydantic_ai.messages.ArgsJson",
+     "npos": 0,
+     "kwargs": [
+      "args_json"
+     ],
+     "change": "removed",
+     "where": [
+      "agentic_bench/agents/web_surfer.py:111",
+      "agentic_bench/agents/web_surfer.py:140"
+     ]
+    },
+    {
+     "key": "3f21f6daa42f12eb",
+     "kind": "name",
+     "path": "pydantic_ai.messages.ArgsJson",
+     "change": "removed",
+     "where": [
+      "agentic_bench/agents/web_surfer.py:6",
+      "agentic_bench/agents/web_surfer.py:111",
+      "agentic_bench/agents/web_surfer.py:140"
+     ]
+    },
+    {
+     "key": "3a982b383b532b86",
+     "kind": "name",
+     "path": "pydantic_ai.tools.AgentDeps",
+     "change": "removed",
+     "where": [
+      "agentic_bench/agents/coder_agent.py:14"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-digitranslab__allama-pydantic-ai-slim-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/digitranslab/allama",
+   "source": "digitranslab__allama@77a70eff2a9daf59828776b91ca83abc50aba80c",
+   "dir": "",
+   "package": "pydantic-ai-slim",
+   "from": "1.29.0",
+   "to": "2.68.0",
+   "python": "3.11",
+   "env": "pydantic-ai-slim==2.68.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "aca24a24fe651c25",
+     "kind": "name",
+     "path": "pydantic_ai.messages.BuiltinToolCallPart",
+     "change": "removed",
+     "where": [
+      "allama/agent/adapter/vercel.py:34"
+     ]
+    },
+    {
+     "key": "cea597519a9d38a8",
+     "kind": "call",
+     "path": "pydantic_ai.messages.FunctionToolResultEvent",
+     "npos": 0,
+     "kwargs": [
+      "result"
+     ],
+     "change": "param_now_required",
+     "where": [
+      "tests/unit/test_pydantic_ai_adapter.py:220",
+      "tests/unit/test_pydantic_ai_adapter.py:239",
+      "tests/unit/test_pydantic_ai_adapter.py:255"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-business24ai__crewai-obsidian-crewai-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/business24ai/crewai-obsidian",
+   "source": "business24ai__crewai-obsidian@5fc3d54a766bb95757ae01d4284e809077d726b6",
+   "dir": "",
+   "package": "crewai",
+   "from": "0.1.32",
+   "to": "1.15.41",
+   "python": "3.11",
+   "env": "crewai==1.15.41@2026-11-16",
+   "breaks": [
+    {
+     "key": "cdfd78fb86d53478",
+     "kind": "call",
+     "path": "crewai.Task",
+     "npos": 0,
+     "kwargs": [
+      "agent",
+      "description"
+     ],
+     "change": "param_now_required",
+     "where": [
+      "gpt-3-5-turbo-1106.py:52",
+      "gpt-3-5-turbo-1106.py:59",
+      "gpt-3-5-turbo-1106.py:66"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-hadi-abdine__prot2text-transformers-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/hadi-abdine/Prot2Text",
+   "source": "hadi-abdine__Prot2Text@1bc9fcf7236cd7297974ed8d201545fa0491c93c",
+   "dir": "",
+   "package": "transformers",
+   "from": "4.40.2",
+   "to": "5.23.0",
+   "python": "3.11",
+   "env": "transformers==5.23.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "ed2732386d8411c0",
+     "kind": "name",
+     "path": "transformers.deepspeed.is_deepspeed_zero3_enabled",
+     "change": "removed",
+     "where": [
+      "prot2text_model/utils.py:11",
+      "prot2text_model/utils.py:688"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-hvision-nku__glimpseprune-transformers-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/HVision-NKU/GlimpsePrune",
+   "source": "HVision-NKU__GlimpsePrune@e051559c75a82eff18e8c5f17efca04162efb913",
+   "dir": "",
+   "package": "transformers",
+   "from": "4.51.3",
+   "to": "5.23.0",
+   "python": "3.11",
+   "env": "transformers==5.23.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "6e816cfa07b9f361",
+     "kind": "call",
+     "path": "transformers.utils.import_utils.is_torch_fx_available",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "llava_pdrop/model/modeling_llama_pdrop.py:62",
+      "llava_vscan/model/modeling_llama_x.py:64"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-xiongsiheng__tg-llm-transformers-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/xiongsiheng/TG-LLM",
+   "source": "xiongsiheng__TG-LLM@e8e2829649a744488bc725c91cb80b87661975d2",
+   "dir": "",
+   "package": "transformers",
+   "from": "4.34.1",
+   "to": "5.23.0",
+   "python": "3.11",
+   "env": "transformers==5.23.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "244f17f03cd8f5f1",
+     "kind": "call",
+     "path": "transformers.TrainingArguments",
+     "npos": 0,
+     "kwargs": [
+      "ddp_find_unused_parameters",
+      "eval_accumulation_steps",
+      "evaluation_strategy",
+      "gradient_accumulation_steps",
+      "group_by_length",
+      "learning_rate",
+      "logging_steps",
+      "lr_scheduler_type",
+      "max_grad_norm",
+      "max_steps",
+      "optim",
+      "output_dir",
+      "per_device_eval_batch_size",
+      "per_device_train_batch_size",
+      "resume_from_checkpoint",
+      "save_steps",
+      "warmup_ratio"
+     ],
+     "change": "param_removed",
+     "where": [
+      "src/Models.py:305"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-ahmedheakl__mobile-o-v2-huggingface-hub-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/ahmedheakl/Mobile-O-v2",
+   "source": "ahmedheakl__Mobile-O-v2@4a399a3292b957efabaa50cad1e47f9bdddeb3c4",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.33.0",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "acc42ed33a022956",
+     "kind": "call",
+     "path": "huggingface_hub.snapshot_download",
+     "npos": 0,
+     "kwargs": [
+      "cache_dir",
+      "local_dir",
+      "local_dir_use_symlinks",
+      "repo_id"
+     ],
+     "change": "param_removed",
+     "where": [
+      "eval/lmms-eval/lmms_eval/models/internvl.py:160",
+      "eval/lmms-eval/lmms_eval/models/internvl.py:164"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-ylong52__aliyun-indextts2-huggingface-hub-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/ylong52/aliyun-indextts2",
+   "source": "ylong52__aliyun-indextts2@c84d41ed3de698e78a056ecb1da6bb825baa3ea6",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.36.0",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "3543960d6ee69f82",
+     "kind": "call",
+     "path": "huggingface_hub.hf_hub_download",
+     "npos": 0,
+     "kwargs": [
+      "cache_dir",
+      "filename",
+      "force_download",
+      "local_files_only",
+      "proxies",
+      "repo_id",
+      "resume_download",
+      "revision",
+      "token"
+     ],
+     "change": "param_removed",
+     "where": [
+      "python_indextts_code/indextts/BigVGAN/bigvgan.py:479",
+      "python_indextts_code/indextts/BigVGAN/bigvgan.py:511",
+      "python_indextts_code/indextts/s2mel/modules/bigvgan/bigvgan.py:437"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-nyamuda__omnisummarizer-huggingface-hub-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/nyamuda/omnisummarizer",
+   "source": "nyamuda__omnisummarizer@0c95e8f6a3b8e30791893da0c98f98c9d121d834",
+   "dir": "",
+   "package": "huggingface-hub",
+   "from": "0.26.2",
+   "to": "2.4.0",
+   "python": "3.11",
+   "env": "huggingface-hub==2.4.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "6392430e7aebdd05",
+     "kind": "name",
+     "path": "huggingface_hub.inference_api",
+     "change": "removed",
+     "where": [
+      "server_code/ServerModule1.py:4"
+     ]
+    },
+    {
+     "key": "b8b95c25e196bddb",
+     "kind": "call",
+     "path": "huggingface_hub.inference_api.InferenceApi",
+     "npos": 0,
+     "kwargs": [
+      "repo_id",
+      "task",
+      "token"
+     ],
+     "change": "removed",
+     "where": [
+      "server_code/ServerModule1.py:11"
+     ]
+    },
+    {
+     "key": "dd978c4962be8069",
+     "kind": "name",
+     "path": "huggingface_hub.inference_api.InferenceApi",
+     "change": "removed",
+     "where": [
+      "server_code/ServerModule1.py:4",
+      "server_code/ServerModule1.py:11"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-ivaylo-iv__containerized-ai-qdrant-client-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/Ivaylo-Iv/Containerized-AI",
+   "source": "Ivaylo-Iv__Containerized-AI@0eeea24af2878e31373835505d17e79fab194374",
+   "dir": "",
+   "package": "qdrant-client",
+   "from": "1.13.0",
+   "to": "1.20.0",
+   "python": "3.11",
+   "env": "qdrant-client==1.20.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "c9bd2449b841a872",
+     "kind": "call",
+     "path": "qdrant_client.QdrantClient.search",
+     "npos": 0,
+     "kwargs": [
+      "collection_name",
+      "limit",
+      "query_vector"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "Advanced AI/pdf_qa_server.py:291",
+      "Complete AI/pdf_qa_server.py:292"
+     ]
+    },
+    {
+     "key": "d506443809e28df6",
+     "kind": "name",
+     "path": "qdrant_client.QdrantClient.search",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "Advanced AI/pdf_qa_server.py:291",
+      "Complete AI/pdf_qa_server.py:292"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-eccentricnode__qa-chatbot-qdrant-client-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/eccentricnode/qa-chatbot",
+   "source": "eccentricnode__qa-chatbot@e80182f6144bda41803789851c07fba1c2b738e7",
+   "dir": "",
+   "package": "qdrant-client",
+   "from": "1.13.0",
+   "to": "1.20.0",
+   "python": "3.11",
+   "env": "qdrant-client==1.20.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "c9bd2449b841a872",
+     "kind": "call",
+     "path": "qdrant_client.QdrantClient.search",
+     "npos": 0,
+     "kwargs": [
+      "collection_name",
+      "limit",
+      "query_vector"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "pdf_qa_server.py:292"
+     ]
+    },
+    {
+     "key": "d506443809e28df6",
+     "kind": "name",
+     "path": "qdrant_client.QdrantClient.search",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "pdf_qa_server.py:292"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-elakhatibi__cdf-rag-pinecone-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/elakhatibi/CDF-RAG",
+   "source": "elakhatibi__CDF-RAG@9a1d3dc95a2b178562f1e2c24a47c2755d274410",
+   "dir": "",
+   "package": "pinecone",
+   "from": "7.0.1",
+   "to": "10.3.0",
+   "python": "3.11",
+   "env": "pinecone==10.3.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "d32279a20da4869e",
+     "kind": "call",
+     "path": "pinecone.Index",
+     "npos": 1,
+     "kwargs": [],
+     "change": "positional",
+     "where": [
+      "retrieval/document_causal_retriever_rl.py:17"
+     ]
+    },
+    {
+     "key": "127d3e5c27f2b989",
+     "kind": "name",
+     "path": "pinecone.init",
+     "change": "removed",
+     "where": [
+      "retrieval/document_causal_retriever_rl.py:16"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-aabine__flow-backend-httpx-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/aabine/Flow-Backend",
+   "source": "aabine__Flow-Backend@f1a7c744c3004b0f6990727c65416d5b4733510e",
+   "dir": "",
+   "package": "httpx",
+   "from": "0.25.2",
+   "to": "0.28.1",
+   "python": "3.11",
+   "env": "httpx==0.28.1@2025-01-05",
+   "breaks": [
+    {
+     "key": "22b7357cd8a07726",
+     "kind": "call",
+     "path": "httpx.AsyncClient",
+     "npos": 0,
+     "kwargs": [
+      "app",
+      "base_url"
+     ],
+     "change": "param_removed",
+     "where": [
+      "pricing-service/tests/conftest.py:65",
+      "review-service/tests/conftest.py:51"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-lelouvincx__goodreads-elt-pipeline-polars-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/lelouvincx/goodreads-elt-pipeline",
+   "source": "lelouvincx__goodreads-elt-pipeline@57a0d0b1dad220594a122e1eaa531e36af38a613",
+   "dir": "",
+   "package": "polars",
+   "from": "0.16.16",
+   "to": "2.1.0",
+   "python": "3.11",
+   "env": "polars==2.1.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "3da5bb2ca66efcdb",
+     "kind": "call",
+     "path": "polars.read_database",
+     "npos": 0,
+     "kwargs": [
+      "connection_uri",
+      "query"
+     ],
+     "change": "param_now_required",
+     "where": [
+      "elt_pipeline/elt_pipeline/resources/mysql_io_manager.py:31"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-lauratriglia__chefshatgym_metricagents-matplotlib-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/lauratriglia/ChefsHatGYM_MetricAgents",
+   "source": "lauratriglia__ChefsHatGYM_MetricAgents@29bb12c7ec16fa773db3db3f1346ac62a91810db",
+   "dir": "",
+   "package": "matplotlib",
+   "from": "3.8.0",
+   "to": "3.11.2",
+   "python": "3.11",
+   "env": "matplotlib==3.11.2@2026-10-11",
+   "breaks": [
+    {
+     "key": "61276502fad95794",
+     "kind": "call",
+     "path": "matplotlib.pyplot.boxplot",
+     "npos": 1,
+     "kwargs": [
+      "labels"
+     ],
+     "change": "param_removed",
+     "where": [
+      "src/test_room_dqlvsAll.py:199",
+      "src/test_room_dqlvsOthers.py:199"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-irvingao__takway_base-streamlit-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/Irvingao/takway_base",
+   "source": "Irvingao__takway_base@bb036485272c6b38e944f35e087fbced896a8224",
+   "dir": "",
+   "package": "streamlit",
+   "from": "1.25.0",
+   "to": "1.67.0",
+   "python": "3.11",
+   "env": "streamlit==1.67.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "9001e72515a42eb0",
+     "kind": "call",
+     "path": "streamlit.experimental_get_query_params",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "bida/playground/pages/conversation.py:16"
+     ]
+    },
+    {
+     "key": "df3a1c6d74b3e6f8",
+     "kind": "name",
+     "path": "streamlit.experimental_get_query_params",
+     "change": "removed",
+     "where": [
+      "bida/playground/pages/conversation.py:16"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-optimalscale__detgpt-gradio-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/OptimalScale/DetGPT",
+   "source": "OptimalScale__DetGPT@633b1fc593c9fa9ed76726be96bf7676367caf6c",
+   "dir": "",
+   "package": "gradio",
+   "from": "3.24.1",
+   "to": "6.32.0",
+   "python": "3.11",
+   "env": "gradio==6.32.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "490530b21d385957",
+     "kind": "call",
+     "path": "gradio.Blocks.launch",
+     "npos": 0,
+     "kwargs": [
+      "enable_queue",
+      "share"
+     ],
+     "via": "instance",
+     "change": "param_removed",
+     "where": [
+      "demo_detgpt.py:394"
+     ]
+    },
+    {
+     "key": "bceb08b49da2f7ac",
+     "kind": "call",
+     "path": "gradio.Image",
+     "npos": 0,
+     "kwargs": [
+      "source",
+      "type"
+     ],
+     "change": "param_removed",
+     "where": [
+      "GroundingDINO/demo/gradio_app.py:101"
+     ]
+    },
+    {
+     "key": "a380b94acfa03859",
+     "kind": "name",
+     "path": "gradio.outputs.Image",
+     "change": "removed",
+     "where": [
+      "GroundingDINO/demo/gradio_app.py:113",
+      "demo_detgpt.py:351"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-hustvl__matte-anything-gradio-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/hustvl/Matte-Anything",
+   "source": "hustvl__Matte-Anything@874951ac0b8d324ad9f885baf1c7de711b8dc1b0",
+   "dir": "",
+   "package": "gradio",
+   "from": "3.34.0",
+   "to": "6.32.0",
+   "python": "3.11",
+   "env": "gradio==6.32.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "bbfc9237b97bab9a",
+     "kind": "call",
+     "path": "gradio.Box",
+     "npos": 0,
+     "kwargs": [],
+     "change": "removed",
+     "where": [
+      "matte_anything.py:325",
+      "matte_anything.py:331"
+     ]
+    },
+    {
+     "key": "4090c29216c64872",
+     "kind": "name",
+     "path": "gradio.Box",
+     "change": "removed",
+     "where": [
+      "matte_anything.py:325",
+      "matte_anything.py:331"
+     ]
+    },
+    {
+     "key": "eeed769a02242b60",
+     "kind": "call",
+     "path": "gradio.Row.style",
+     "npos": 0,
+     "kwargs": [
+      "equal_height"
+     ],
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "matte_anything.py:309"
+     ]
+    },
+    {
+     "key": "bee40db42b6af7ac",
+     "kind": "name",
+     "path": "gradio.Row.style",
+     "via": "instance",
+     "change": "removed",
+     "where": [
+      "matte_anything.py:309"
+     ]
+    },
+    {
+     "key": "a717b9ed146724d9",
+     "kind": "call",
+     "path": "gradio.inputs.Slider",
+     "npos": 0,
+     "kwargs": [
+      "default",
+      "label",
+      "maximum",
+      "minimum",
+      "step"
+     ],
+     "change": "removed",
+     "where": [
+      "matte_anything.py:342",
+      "matte_anything.py:343",
+      "matte_anything.py:348"
+     ]
+    },
+    {
+     "key": "c3f3a9d76593c9f3",
+     "kind": "name",
+     "path": "gradio.inputs.Slider",
+     "change": "removed",
+     "where": [
+      "matte_anything.py:342",
+      "matte_anything.py:343",
+      "matte_anything.py:348"
+     ]
+    },
+    {
+     "key": "384dfae856cc54d7",
+     "kind": "call",
+     "path": "gradio.inputs.Textbox",
+     "npos": 0,
+     "kwargs": [
+      "default",
+      "label",
+      "lines"
+     ],
+     "change": "removed",
+     "where": [
+      "matte_anything.py:327",
+      "matte_anything.py:333",
+      "matte_anything.py:354"
+     ]
+    },
+    {
+     "key": "e266c67fe5888cf1",
+     "kind": "name",
+     "path": "gradio.inputs.Textbox",
+     "change": "removed",
+     "where": [
+      "matte_anything.py:327",
+      "matte_anything.py:333",
+      "matte_anything.py:354"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-baichuan-inc__baichuan-omni-1.5-gradio-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/baichuan-inc/Baichuan-Omni-1.5",
+   "source": "baichuan-inc__Baichuan-Omni-1.5@51f55ffe9c0c8538f7633e57343579462d3b7f99",
+   "dir": "",
+   "package": "gradio",
+   "from": "5.11.0",
+   "to": "6.32.0",
+   "python": "3.11",
+   "env": "gradio==6.32.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "d084b7044cc5c948",
+     "kind": "call",
+     "path": "gradio.Chatbot",
+     "npos": 0,
+     "kwargs": [
+      "label",
+      "type"
+     ],
+     "change": "param_removed",
+     "where": [
+      "web_demo/s2s_gradio_demo_cosy_multiturn.py:313",
+      "web_demo/vision_s2s_gradio_demo_cosy_multiturn.py:523"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-nvidia__nim-anywhere-gradio-up",
+   "set": "2026-11g",
+   "repo": "https://github.com/NVIDIA/nim-anywhere",
+   "source": "NVIDIA__nim-anywhere@8d614e1cf3af86f82243ee73a7f25ab390337ee7",
+   "dir": "",
+   "package": "gradio",
+   "from": "5.9.1",
+   "to": "6.32.0",
+   "python": "3.11",
+   "env": "gradio==6.32.0@2026-11-16",
+   "breaks": [
+    {
+     "key": "05a1f06739dfc057",
+     "kind": "call",
+     "path": "gradio.Chatbot",
+     "npos": 0,
+     "kwargs": [
+      "avatar_images",
+      "bubble_full_width",
+      "container",
+      "elem_id",
+      "sanitize_html",
+      "show_copy_button"
+     ],
+     "change": "param_removed",
+     "where": [
+      "code/frontend/pages/chat/__init__.py:51"
+     ]
+    }
+   ]
+  }
+ ],
+ "trial": [
+  {
+   "id": "pin-wayveai__driving-with-llms-openai-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/wayveai/Driving-with-LLMs",
+   "source": "wayveai__Driving-with-LLMs@fb323d6d11dd6b7fbd220f13238a8430ddc6b69c",
+   "dir": "",
+   "package": "openai",
+   "from": "0.27.0",
+   "to": "3.48.0",
+   "python": "3.11",
+   "env": "openai==3.48.0@2026-11-10",
+   "breaks": [
+    {
+     "key": "963cb843fd2abcd1",
+     "kind": "name",
+     "path": "openai.ChatCompletion.create",
+     "change": "removed",
+     "where": [
+      "scripts/collect_vqa.py:55",
+      "scripts/grade_vqa.py:134"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pin-vivekkeshore__flask-dantic-pydantic-up",
+   "set": "2026-11e",
+   "repo": "https://github.com/vivekkeshore/flask-dantic",
+   "source": "vivekkeshore__flask-dantic@35c6a27b59b2c5b8e62584ddfde025adb00e2de1",
+   "dir": "",
+   "package": "pydantic",
+   "from": "1.10.9",
+   "to": "2.14.3",
+   "python": "3.11",
+   "env": "pydantic==2.14.3@2026-11-10",
+   "breaks": [
+    {
+     "key": "6c767a7525d7be5e",
+     "kind": "name",
+     "path": "pydantic.class_validators.Validator",
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:5"
+     ]
+    },
+    {
+     "key": "294002e30ee983e3",
+     "kind": "call",
+     "path": "pydantic.fields.FieldInfo",
+     "npos": 1,
+     "kwargs": [],
+     "change": "positional",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:24"
+     ]
+    },
+    {
+     "key": "81b50b6a2d8b3e62",
+     "kind": "call",
+     "path": "pydantic.fields.ModelField",
+     "npos": 0,
+     "kwargs": [
+      "alias",
+      "class_validators",
+      "default",
+      "field_info",
+      "model_config",
+      "name",
+      "required",
+      "type_"
+     ],
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:28"
+     ]
+    },
+    {
+     "key": "a87d318dba491f77",
+     "kind": "name",
+     "path": "pydantic.fields.ModelField",
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:6",
+      "flask_dantic/pydantic_serializer/serializer.py:28",
+      "tests/test_serializer.py:7"
+     ]
+    },
+    {
+     "key": "36d071c8ead15d6f",
+     "kind": "name",
+     "path": "pydantic.fields.UndefinedType",
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/serializer.py:6"
+     ]
+    },
+    {
+     "key": "982ae68dd961b2a6",
+     "kind": "name",
+     "path": "pydantic.json.ENCODERS_BY_TYPE",
+     "change": "removed",
+     "where": [
+      "flask_dantic/pydantic_serializer/encoders.py:13"
+     ]
+    }
+   ]
+  }
+ ]
+}

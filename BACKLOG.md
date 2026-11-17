@@ -115,8 +115,8 @@ lost them and measure again on new broken updates; 1.0 waits for that result.
   when the instance's annotation names the class: streamlit 1.33+'s `_main: _DeltaGenerator = ...`, so 103
   top-level `st.<name>` calls are checked again (DT-QA-26's `st.pyplot()`). Extraction: `SNAPSHOT_FORMAT` 28.
 - [ ] **DT-QA-27**: The hand-off again, on a new set of broken updates · `P1` `M` · deps: GTM-09, DATA-83, a release
-  - Collect real upgrades to a newer version with a labelled break that no earlier study used, as the holdouts
-    were collected; then a protocol committed before the first run: arms A and B once each, DT-QA-26's bar.
+  - Protocol committed before any run (`bench/agent-fix/qa27/`): 60 tasks, 373 confirmed breaks, from new holdout
+    set 2026-11g (collected after 0.2.3); arms A and B once each, DT-QA-26's bar.
 
 **Phase 5, toward 1.0.**
 - [ ] **DT-OSS-17**: The path to 1.0 · `P2` `M` · deps: QA-27 (the maintainer's call, 2026-11-16)

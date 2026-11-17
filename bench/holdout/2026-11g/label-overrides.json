@@ -1,0 +1,65 @@
+{
+ "about": "Labels changed by hand, each with the library source that shows it (bench/holdout/README.md: call breaks found by binding are checked against the source at `to`, read from the release's wheel or sdist). A use overridden here is excluded; `kept` lists the call breaks checked and left as breaks.",
+ "overrides": [
+  {
+   "upgrade": "pin-nvidia-ai-iot__inference_builder-mcp-up",
+   "key": "b877d308ff45e2e4",
+   "use": "mcp.types.CallToolRequest(params=)",
+   "probe": "breaks (param_now_required): missing a required argument: 'method'",
+   "why": "at 2.3.0 mcp.types re-exports mcp_types.CallToolRequest, which declares `method: Literal[\"tools/call\"] = \"tools/call\"` on top of the generic Request[...] base; the signature the probe read lists the base's `method` without its default, and mcp's own client builds `types.CallToolRequest(params=...)` with no `method`",
+   "evidence": "mcp_types-2.3.0 wheel (the probe environment's mcp-types), mcp_types/_types.py line 1456-1460; mcp-2.3.0 wheel, mcp/types/__init__.py line 23 (`from mcp_types import *`), mcp/client/session.py line 1087"
+  }
+ ],
+ "kept": [
+  {
+   "use": "pydantic_ai.Agent(result_type=, result_retries=)",
+   "to": "pydantic-ai-slim 2.68.0",
+   "evidence": "no `result_type` or `result_retries` anywhere in pydantic_ai/agent/ (renamed output_type, output_retries)"
+  },
+  {
+   "use": "pydantic_ai.messages.FunctionToolResultEvent(result=)",
+   "to": "pydantic-ai-slim 2.68.0",
+   "evidence": "pydantic_ai/messages.py line 7302-7329: a dataclass with required `part: ToolReturnPart` and no `result` field"
+  },
+  {
+   "use": "crewai.Task(agent=, description=)",
+   "to": "crewai 1.15.41",
+   "evidence": "crewai/task.py line 163: `expected_output: str = Field(description=...)`, no default"
+  },
+  {
+   "use": "transformers.TrainingArguments(evaluation_strategy=, ...)",
+   "to": "transformers 5.23.0",
+   "evidence": "no `evaluation_strategy` in transformers/training_args.py (eval_strategy)"
+  },
+  {
+   "use": "huggingface_hub.snapshot_download(local_dir_use_symlinks=), hf_hub_download(proxies=, resume_download=)",
+   "to": "huggingface-hub 2.4.0",
+   "evidence": "neither name appears in huggingface_hub/file_download.py or _snapshot_download.py"
+  },
+  {
+   "use": "pinecone.Index(<name>)",
+   "to": "pinecone 10.3.0",
+   "evidence": "pinecone/index/__init__.py line 146: `def __init__(self, *, host: str, ...)`, keyword-only"
+  },
+  {
+   "use": "httpx.AsyncClient(app=, base_url=)",
+   "to": "httpx 0.28.1",
+   "evidence": "no `app` parameter in httpx/_client.py's AsyncClient.__init__ (removed in 0.28; transport=ASGITransport(app))"
+  },
+  {
+   "use": "polars.read_database(connection_uri=, query=)",
+   "to": "polars 2.1.0",
+   "evidence": "polars/io/database/functions.py line 25-53: every overload takes `connection`, no **kwargs"
+  },
+  {
+   "use": "matplotlib.pyplot.boxplot(<x>, labels=)",
+   "to": "matplotlib 3.11.2",
+   "evidence": "lib/matplotlib/pyplot.py line 3201-3232: `tick_labels`, no `labels`"
+  },
+  {
+   "use": "gradio.Blocks.launch(enable_queue=), gradio.Image(source=), gradio.Chatbot(type=, bubble_full_width=)",
+   "to": "gradio 6.32.0",
+   "evidence": "none of these parameters in blocks.py's launch, components/image.py's or components/chatbot.py's __init__ (Image takes `sources`), and none takes **kwargs"
+  }
+ ]
+}

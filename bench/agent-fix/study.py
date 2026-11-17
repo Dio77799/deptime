@@ -1,9 +1,10 @@
-"""Which agent-fix study `run.py` and `score.py` work on: DT-QA-05 (the default) or DT-QA-26.
+"""Which agent-fix study `run.py` and `score.py` work on: DT-QA-05 (the default), DT-QA-26 or DT-QA-27.
 
     AGENT_FIX_STUDY=qa26 uv run python bench/agent-fix/run.py tasks
 
 Each study keeps its own protocol, tasks, sessions, diffs, probe environments and hand checks: DT-QA-05's in this
-directory (frozen with its results), DT-QA-26's in `qa26/`. Only what differs between them is here.
+directory (frozen with its results), DT-QA-26's in `qa26/`, DT-QA-27's in `qa27/`. Only what differs between them is
+here.
 """
 
 from __future__ import annotations
@@ -77,6 +78,21 @@ STUDIES = {
         bash_rules=("Bash(uvx deptime==0.2.2 check-upgrade:*)", "Bash(rm .deptime-report.md)"),
         arms_by_run={1: ["A", "B"]},
         seed=26,
+        scored=("A1", "B1"),
+    ),
+    "qa27": Study(
+        name="DT-QA-27",
+        out=HERE / "qa27",
+        work=Path(os.environ.get("QA27_WORK", "~/.cache/deptime-work/qa27")).expanduser(),
+        holdout_sets=("2026-11g",),
+        holdout_only=None,  # qa27/README.md: every one
+        prs=False,
+        trial_set="2026-11e",
+        trial_tasks=_TRIAL,
+        deptime_pin="deptime==0.2.3",
+        bash_rules=("Bash(uvx deptime==0.2.3 check-upgrade:*)", "Bash(rm .deptime-report.md)"),
+        arms_by_run={1: ["A", "B"]},
+        seed=27,
         scored=("A1", "B1"),
     ),
 }

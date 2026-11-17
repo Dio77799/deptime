@@ -1,16 +1,16 @@
 """Run the agent on an agent-fix study's tasks, by the rules in that study's README.md (`study.py`: DT-QA-05 here by
-default, DT-QA-26 in `qa26/` with AGENT_FIX_STUDY=qa26).
+default, DT-QA-26 and DT-QA-27 in `qa26/` and `qa27/` with AGENT_FIX_STUDY).
 
     uv run python bench/agent-fix/run.py tasks            # task repositories under the work dir, and the study's tasks.json
     uv run python bench/agent-fix/run.py trial            # the two trial tasks, every arm, not scored
-    uv run python bench/agent-fix/run.py run --run 1      # DT-QA-05: run 1 is arms A, B and C, run 2 A and B; DT-QA-26: A, B
+    uv run python bench/agent-fix/run.py run --run 1      # DT-QA-05: run 1 is arms A, B and C, run 2 A and B; DT-QA-26, 27: A, B
 
-The work dir is ~/.cache/deptime-work/qa05 (QA05_WORK overrides), or qa26 (QA26_WORK). Sources are the GitHub tarballs
-DT-QA-21 and DT-QA-22 already hold (read as data). Each session gets a fresh copy of its task and runs `claude -p`
-confined to it (`--restricted`): file tools only inside the copy, no Bash but the study's pinned `uvx deptime==<pin>
-check-upgrade` (and, for DT-QA-26, `rm .deptime-report.md`), so nothing runs the project's code. Transcripts stay in the
-work dir; `sessions/<run>/<task>.json` (counts and tool names, no transcript text) and `diffs/<run>/<task>.diff` are
-written to the study's directory. A finished session is never run again.
+The work dir is ~/.cache/deptime-work/qa05 (QA05_WORK overrides), qa26 (QA26_WORK) or qa27 (QA27_WORK). Sources are the
+GitHub tarballs DT-QA-21, DT-QA-22 and 2026-11g's collection already hold (read as data). Each session gets a fresh copy
+of its task and runs `claude -p` confined to it (`--restricted`): file tools only inside the copy, no Bash but the
+study's pinned `uvx deptime==<pin> check-upgrade` (and, from DT-QA-26, `rm .deptime-report.md`), so nothing runs the
+project's code. Transcripts stay in the work dir; `sessions/<run>/<task>.json` (counts and tool names, no transcript
+text) and `diffs/<run>/<task>.diff` are written to the study's directory. A finished session is never run again.
 """
 
 from __future__ import annotations
@@ -43,6 +43,7 @@ WORK = STUDY.work
 SOURCES = [
     Path("~/.cache/deptime-work/qa21/sources").expanduser(),
     Path("~/.cache/deptime-work/qa22/sources").expanduser(),
+    Path("~/.cache/deptime-work/qa27/sources").expanduser(),  # 2026-11g, downloaded by find_pinned.py
 ]
 
 DEPTIME_PIN = STUDY.deptime_pin
@@ -135,9 +136,11 @@ def all_tasks(trial: bool = False) -> list[dict]:
 
 
 def _source(name: str) -> Path:
+    # find_pinned.py names a source <owner>__<repo>, downloaded at the commit its pinned.json (and the set) records
     for root in SOURCES:
-        if (root / name).is_dir():
-            return root / name
+        for cand in (name, name.split("@")[0]):
+            if (root / cand).is_dir():
+                return root / cand
     raise SystemExit(f"no cached source {name} under {', '.join(map(str, SOURCES))}")
 
 
