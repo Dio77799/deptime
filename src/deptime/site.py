@@ -343,7 +343,7 @@ def _page(
     if image:
         head += (
             f'<meta property="og:image" content="{html.escape(image)}"><meta property="og:image:width" '
-            'content="1280"><meta property="og:image:height" content="640">'
+            'content="2560"><meta property="og:image:height" content="1280">'
             '<meta name="twitter:card" content="summary_large_image">'
         )
     t = html.escape(title)
