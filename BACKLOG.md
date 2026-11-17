@@ -250,6 +250,8 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
 - [x] **DT-OSS-14** (2026-11-17): the holdout sets, the update pull requests and the tracebacks are published as one
   benchmark with a standard-library scorer (`bench/dataset/`, release `benchmark-v1`); its scorer matches the
   repository's own, answer for answer.
+- [ ] **DT-OSS-18**: A copy of the benchmark on Hugging Face Datasets, where people look for benchmarks · `P3` `S`
+  - The same `benchmark-v1` files and README, linked from the release. Needs a Hugging Face account to publish from.
 
 ## Held
 
