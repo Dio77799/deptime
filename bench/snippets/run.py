@@ -125,6 +125,10 @@ def make_project(session: Path, client: str, arm: str, task: str) -> Path:
 def clean_env() -> dict[str, str]:
     keep = ("HOME", "PATH", "USER", "LOGNAME", "LANG", "TMPDIR", "SHELL")
     env = {k: os.environ[k] for k in keep if k in os.environ}
+    # Not this repo's .venv (`uv run` puts it first), or its development `deptime` is on the agent's PATH.
+    env["PATH"] = os.pathsep.join(
+        p for p in env.get("PATH", "").split(os.pathsep) if not p.startswith(str(REPO))
+    )
     env["TERM"] = "dumb"
     return env
 
@@ -142,12 +146,16 @@ def command(client: str, project: Path) -> tuple[list[str], dict[str, str]]:
             "workspace-write",
             "-c",
             "sandbox_workspace_write.network_access=true",
+            "-m",
+            "gpt-6-luna",
             "-c",
             'model_reasoning_effort="medium"',
             "-c",
             "mcp_servers.chrome-devtools.enabled=false",
             "-c",
             "mcp_servers.node_repl.enabled=false",
+            "-c",
+            "mcp_servers.blender.enabled=false",
             "-c",
             'mcp_servers.deptime.command="uvx"',
             "-c",
@@ -165,7 +173,6 @@ def command(client: str, project: Path) -> tuple[list[str], dict[str, str]]:
         "sonnet",
         "--effort",
         "high",
-        "--restricted",
         "--strict-mcp-config",
         "--mcp-config",
         str(config),

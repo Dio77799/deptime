@@ -14,11 +14,13 @@ about the snippets, nothing in the README's numbers.
   maintainer's setup: no other instruction files, and DepTime (`uvx deptime==1.0.3 mcp`) is the only MCP server
   the session has.
 - **Clients:**
-  - Codex CLI 0.166.0 (`codex exec --json`, sandbox `workspace-write` with network, the account's default model
-    at reasoning effort `medium`; its other MCP servers turned off). Codex reads `AGENTS.md`.
+  - Codex CLI 0.166.0 (`codex exec --json`, sandbox `workspace-write` with network, `gpt-6-luna` at reasoning
+    effort `medium`; the account's other MCP servers turned off, except the built-in
+    `codex_apps` and a plugin's, which can't be). Codex reads `AGENTS.md`.
   - Claude Code 2.1.327 (`claude -p`, Sonnet at effort `high`, `--strict-mcp-config`, tools Bash, Read, Edit,
     Write, Glob, Grep and DepTime's, child environment stripped of `ANTHROPIC_*` and `CLAUDE*`). Claude Code reads
-    `AGENTS.md` when a project has no `CLAUDE.md`.
+    `AGENTS.md` when a project has no `CLAUDE.md`; not with `--restricted`, which turns instruction files off, so
+    the sessions run without it.
   - Cursor, with the rule as `.cursor/rules/deptime.mdc`, only if it is installed when the run happens; it is
     not installed on the test machine as this is written.
 - **Arms:** `snippet`: the project's `AGENTS.md` is the snippet (its `##` section, without the "Paste into"
@@ -35,6 +37,20 @@ about the snippets, nothing in the README's numbers.
     snippet names `check_upgrade`.
 
 2 clients × 2 arms × 3 tasks = 12 sessions, plus 6 if Cursor is run.
+
+## Trial (before the scored sessions)
+
+Two trial sessions on `error` (one per client, `snippet` arm) found three setup faults, fixed before any scored
+session; the trials are discarded:
+
+- the account's default Codex model, `gpt-6.1-sol`, is refused to the Codex CLI on a ChatGPT login, so Codex runs
+  `gpt-6-luna`, the CLI's first listed model;
+- `run.py`, started with `uv run`, put this repo's `.venv/bin` on the agent's PATH, and Codex found and ran the
+  development `deptime` command instead of the MCP tools it reported missing (with a clean PATH and the account's
+  Blender server off it lists and calls all six); the PATH is now cleaned;
+- `claude --restricted` loads no `AGENTS.md` or `CLAUDE.md` (checked with a test instruction); Claude Code's trial
+  read the snippet only because it ran `cat AGENTS.md` itself. Instruction files also don't load from the system
+  temp folder, so the projects stay under `~/.cache`.
 
 ## What is recorded
 
