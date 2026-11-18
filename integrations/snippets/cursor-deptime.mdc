@@ -1,7 +1,6 @@
 ---
 description: Use DepTime when a Python library import or call fails, when updating a dependency, or before using a library API from memory
-globs: ["**/*.py", "**/pyproject.toml", "**/requirements*.txt", "**/*.lock"]
-alwaysApply: false
+alwaysApply: true
 ---
 
 When a third-party Python import or call fails with ImportError ("cannot import name"), ModuleNotFoundError for a

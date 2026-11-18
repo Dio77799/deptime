@@ -66,3 +66,27 @@ installed, `GET /?name=<b>` returns the escaped name). Transcripts stay in the w
 - A client that calls DepTime as often in the `none` arm doesn't need the snippet: the docs say so.
 - The `memory` task is reported but decides nothing: calling a checker for code that already works is a judgment
   call, and the snippet asks for it only "from memory".
+
+## Results (2026-11-18, one session each, DepTime 1.0.3)
+
+| Client | Arm | `error` | `memory` | `upgrade` |
+|---|---|---|---|---|
+| Codex (`gpt-6-luna`) | snippet | `explain_error` first, works | `check_symbols` first, works | `check_upgrade` first, works |
+| Codex | none | no DepTime call, works | no DepTime call, **fails**: wrote pydantic v1's deprecated `@validator` | no DepTime call, works |
+| Claude Code (Sonnet) | snippet | `explain_error` first, works | `check_symbols` first, works | `check_upgrade` first, works |
+| Claude Code | none | `check_symbols` first, works | no DepTime call, works | `check_upgrade` first, works |
+
+"First" means before the agent's first edit. Every DepTime call in the table came before the first edit.
+
+- **With the snippet, both clients called the tool it names, before editing, in all three tasks.** Both keep the
+  snippet as written.
+- **Without it, Codex never called DepTime,** although it had the six tools and DepTime's server instructions. On
+  `memory` it wrote pydantic v1's `@validator`, which pydantic 2.12 still runs with a deprecation warning (the
+  check counts that as a fail); with the snippet it called `check_symbols` and wrote `@field_validator`.
+- **Claude Code without it called DepTime on `error` (`check_symbols`, not `explain_error`) and `upgrade`,** but
+  not on `memory`. The snippet changes less for Claude Code, whose plugin also carries the same guidance.
+- The two `upgrade` sessions without the snippet took about 250 s against 14 and 39 s with it; most of that time
+  was the agent building a new virtual environment and installing Flask to test its change, not DepTime.
+- Cursor wasn't run (not installed). Its docs (read 2026-11-18) give `globs` as a comma-separated string, not the
+  list the rule had, and say Cursor also reads a root `AGENTS.md`. The rule now applies always, with no globs, as
+  `AGENTS.md` does; it is still untried in Cursor.

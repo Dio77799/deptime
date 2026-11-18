@@ -196,6 +196,13 @@ Paired by task, the command won 8 and lost 2 (McNemar's exact p = 0.109). Its tw
 field DepTime doesn't check (crewai, held until it recurs), and a bug the project already had, which the command
 leaves by design. DT-OSS-17 freezes the hand-off as it is.
 
+## The paste-in agent instructions (DT-GTM-05)
+
+A try, not a score (`bench/snippets/`): fresh projects, Codex and Claude Code, with and without the `AGENTS.md`
+block, one session per task (a failing call, code written from memory, a Flask update). With the block, both
+called the DepTime tool it names before their first edit in all three tasks. Without it, Codex called DepTime in
+none, and Claude Code in two of three.
+
 ## Per-release holdout (DT-QA-07 to DT-QA-11)
 
 `holdout/` holds a new set before each minor release, committed before DepTime runs on it and scored once: tracebacks
