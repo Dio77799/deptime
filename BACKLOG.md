@@ -246,9 +246,8 @@ One-off measurements and finishing touches. None is needed for upkeep, and none 
 - [x] **DT-GTM-02** (2026-11-17): the rename maps and a landing page are on GitHub Pages
   (https://cschmertz.github.io/deptime/), rebuilt by `pages.yml` after every index build. Designed the same day:
   brand header, landing page with the upgrade demo, a filter on each map, link previews, no row cap.
-- [x] **DT-GTM-05** (2026-11-18): the AGENTS.md block, tried in fresh projects with Codex and Claude Code, made
-  both call DepTime before editing in all three tasks; Codex without it never did (`bench/snippets/`). The
-  Cursor rule is fixed from Cursor's docs but untried.
+- [x] **DT-GTM-05** (2026-11-18): the `AGENTS.md` block now covers dependency updates and was tried in Claude Code
+  in a fresh project; Cursor reads `AGENTS.md`, so the separate Cursor rule is gone.
 - [x] **DT-OSS-14** (2026-11-17): the holdout sets, the update pull requests and the tracebacks are published as one
   benchmark with a standard-library scorer (`bench/dataset/`, release `benchmark-v1`); its scorer matches the
   repository's own, answer for answer.
