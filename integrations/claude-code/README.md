@@ -14,7 +14,8 @@ running the library. No AI model is involved, and your code and errors never lea
 
 - `/deptime:fix-upgrade` after updating your lockfile: checks every package whose pinned version changed.
 - `/deptime:fix-upgrade httpx 0.28.1`: checks one update before you make it.
-- "Why does `from openai import ChatCompletion` fail?": Claude asks DepTime's `explain_error` tool.
+- "Why does `httpx.Client(proxies=...)` fail with an unexpected keyword argument?": Claude asks DepTime's
+  `explain_error` tool, which says the keyword went in httpx 0.28.0 and to pass `proxy` instead.
 
 ## What it runs, fetches and stores
 
