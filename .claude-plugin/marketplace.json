@@ -1,6 +1,6 @@
 {
   "name": "deptime",
-  "description": "DepTime for Claude Code: tells your agent what changed in a Python library, in which release, and what to use instead.",
+  "description": "DepTime for Claude Code: finds what a Python dependency update breaks and tells your agent what changed, in which release, and what to use instead.",
   "owner": {
     "name": "cschmertz",
     "url": "https://github.com/cschmertz"
@@ -9,7 +9,7 @@
     {
       "name": "deptime",
       "source": "./integrations/claude-code",
-      "description": "Explains Python ImportError / AttributeError / TypeError caused by library API changes: what changed, in which release, and what to use instead. Runs locally; your code and errors never leave your machine."
+      "description": "Finds what a Python dependency update breaks in your code, with the release that changed it and what replaces it, and has Claude fix those lines. Also explains version errors. Runs locally; your code never leaves your machine."
     }
   ]
 }

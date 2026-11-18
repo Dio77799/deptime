@@ -108,6 +108,8 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-GTM-10** (2026-11-17): the README leads with the upgrade check: its tagline, a second demo drawn by
   `tools/demo_svg.py` from a real `check-upgrade` run (`docs/assets/upgrade-*.svg`), and "Get started" with
   `uvx deptime check-upgrade` before the MCP setup. The error demo moves to its own section.
+- [x] **DT-GTM-11** (2026-11-18): the plugin's README and manifest lead with the upgrade fix, as the plugin
+  directory now shows them as the listing; the README says the command runs `git`.
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
