@@ -55,7 +55,7 @@ claude mcp add deptime -- uvx deptime mcp
 ```
 
 Other AI coding tools (Cursor, Codex, VS Code, Claude Desktop and more) use the same command, `uvx deptime mcp`, in their MCP settings.
-To make sure the agent uses it, paste [this short block](integrations/snippets/agents-md-deptime.md) into your project's `AGENTS.md` (Codex and Cursor read it). In a small test, Codex with DepTime connected but without the block never called it.
+To make sure the agent uses it, paste [this short block](integrations/snippets/agents-md-deptime.md) into your project's `AGENTS.md` (Codex and Cursor read it).
 
 That's it. The first time it starts, DepTime downloads its data file (about 50 MB) and keeps it up to date on its own. To keep it fully offline, set `DEPTIME_OFFLINE=1`.
 
