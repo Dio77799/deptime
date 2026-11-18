@@ -74,10 +74,10 @@ MIGRATIONS = (
 
 STYLE = """
 :root{--bg:#fff;--surface:#f6f8fa;--raised:#fff;--fg:#1f2328;--muted:#59636e;--line:#d1d9e0;--soft:#e6eaef;
---brand:#3776ab;--brand-soft:#eaf2fa;--new:#1a7f37;--new-bg:#dafbe1;--code:#eff2f5;--ink:#1f2328;--on-ink:#fff;
+--brand:#3776ab;--py:#ffd43b;--brand-soft:#eaf2fa;--new:#1a7f37;--new-bg:#dafbe1;--code:#eff2f5;--ink:#1f2328;--on-ink:#fff;
 --shadow:0 1px 2px rgba(31,35,40,.06),0 12px 32px rgba(31,35,40,.08);color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#0d1117;--surface:#151b23;--raised:#151b23;--fg:#e6edf3;--muted:#9198a1;
---line:#30363d;--soft:#21262d;--brand:#79a8d4;--brand-soft:#16263a;--new:#3fb950;--new-bg:#12261a;--code:#1f252d;
+--line:#30363d;--soft:#21262d;--brand:#79a8d4;--py:#d9b42c;--brand-soft:#16263a;--new:#3fb950;--new-bg:#12261a;--code:#1f252d;
 --ink:#e6edf3;--on-ink:#0d1117;--shadow:0 0 0 1px #21262d,0 12px 32px rgba(0,0,0,.35);color-scheme:dark}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
@@ -85,11 +85,12 @@ a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
 code,.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace}
 code{font-size:.86em}
 .wrap{max-width:72rem;margin:0 auto;padding:0 1.25rem}
-.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:saturate(180%) blur(10px);border-bottom:1px solid var(--soft)}
+.top{position:sticky;top:0;z-index:20;border-bottom:1px solid transparent;transition:background-color .2s,border-color .2s}.top.scrolled{background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom-color:var(--soft)}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;height:3.5rem}
 .brand{display:flex;align-items:center}.brand img{height:22px;width:auto;display:block}
 .top nav a{color:var(--muted);margin-left:1.5rem;font-size:.92rem;font-weight:500}.top nav a:hover{color:var(--fg);text-decoration:none}
 .hero{text-align:center;padding:5rem 0 1rem}
+.halo{position:absolute;top:0;left:0;right:0;height:48rem;z-index:-1;pointer-events:none;background:radial-gradient(42% 46% at 26% 0,color-mix(in srgb,var(--brand) 22%,transparent),transparent),radial-gradient(36% 42% at 76% 8%,color-mix(in srgb,var(--py) 20%,transparent),transparent)}
 .pill{display:inline-block;font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--brand);background:var(--brand-soft);padding:.3rem .8rem;border-radius:999px}
 .hero h1{font-size:clamp(2.1rem,5.2vw,3.5rem);line-height:1.08;letter-spacing:-.03em;margin:1.1rem auto 1rem;max-width:18ch;font-weight:750}
 .lede{font-size:1.18rem;color:var(--muted);max-width:40rem;margin:0 auto}
@@ -153,6 +154,8 @@ td.ev{color:var(--muted);font-size:.82rem;min-width:16rem;max-width:30rem}td.ev 
 """
 
 SCRIPT = """
+const bar=document.querySelector('.top'),edge=()=>bar.classList.toggle('scrolled',scrollY>4);
+addEventListener('scroll',edge,{passive:true});edge();
 document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
 try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='Copied';setTimeout(()=>{b.textContent='Copy'},1600)}catch(e){}}));
 const f=document.getElementById('filter');
@@ -405,7 +408,7 @@ def _landing(links: list[tuple[Migration, str, int, int]], packages: int) -> str
         for icon, title, text in features
     )
     return (
-        '<div class="wrap"><section class="hero"><span class="pill">Open source · Python · Offline</span>'
+        '<div class="halo" aria-hidden="true"></div><div class="wrap"><section class="hero"><span class="pill">Open source · Python · Offline</span>'
         "<h1>Know what a Python dependency update breaks before you merge it.</h1>"
         '<p class="lede">DepTime points to each line of your code an update breaks, the release that changed it, '
         "and what to use instead. No AI model in the loop: it runs on your machine, costs nothing, and gives the "

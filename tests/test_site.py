@@ -109,3 +109,28 @@ def test_the_footer_gives_a_plain_date_and_no_claim_about_hand_writing(dt, tmp_p
         assert "UTC" not in page
         assert re.search(r"Last updated [A-Z][a-z]+ \d{1,2}, \d{4}</span>", page)
     assert "read from each release's own code" in _read(tmp_path / "httpx-0.26-to-0.28.html")
+
+
+def test_the_page_script_declares_no_name_the_browser_already_owns():
+    """A top-level `const top` (or `name`, `status`, ...) is a SyntaxError in a browser, which stops the whole
+    script: copy buttons, the map filter and the header. Node accepts it, so only this check catches it."""
+    import re
+
+    from deptime.site import SCRIPT
+
+    owned = {
+        "top",
+        "name",
+        "status",
+        "parent",
+        "self",
+        "length",
+        "origin",
+        "frames",
+        "opener",
+        "closed",
+        "event",
+    }
+    declared = set(re.findall(r"(?:^|[;{(\s])(?:const|let|var)\s+(\w+)", SCRIPT))
+    declared |= set(re.findall(r",\s*(\w+)\s*=", SCRIPT))
+    assert not declared & owned
