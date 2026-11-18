@@ -110,6 +110,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
   `uvx deptime check-upgrade` before the MCP setup. The error demo moves to its own section.
 - [x] **DT-GTM-11** (2026-11-18): the plugin's README and manifest lead with the upgrade fix, as the plugin
   directory now shows them as the listing; the README says the command runs `git`.
+- [x] **DT-DATA-78** (2026-11-18): openai 1.0's removed `ChatCompletion`, `Embedding`, `Image` and the rest of the
+  family point to the client resource that replaces them (curated, from the migration guide), and a removed class
+  is never paired with a same-name class in a `types` module that has none of its methods (64 openai pairings).
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
@@ -269,7 +272,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 | DT-DATA-51 | Names computed at import time read `missing`: instructor's provider factories, chromadb's `globals()` writes | extraction |
 | DT-DATA-75 | Names in compiled extension modules read `missing` (scikit-learn's `tree._tree`) | extraction |
 | DT-DATA-77 | A keyword only a decorator takes reads `never_existed` (huggingface_hub's `use_auth_token`) | extraction |
-| DT-DATA-78 | openai 1.0's removed resources point to response types of the same name; `ChatCompletion.create` reads missing where a proxy raises | curated hints, pairing rule |
 | DT-DATA-73 | matplotlib 3.10's `cm.ScalarMappable` reads private, so its members read missing | extraction |
 | DT-DATA-71 | Names a module only imports read public through a membership-test shim (instructor's `hooks`) | extraction |
 | DT-DATA-72 | A name only a stub binds reads present where the runtime raises (numpy 2.0's `cast`) | extraction |

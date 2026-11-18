@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from deptime.ingest.replacements import Hint, param_alternatives, param_deprecations
-from deptime.ingest.snapshot import HIDDEN, ApiSnapshot, SymbolRecord, resolve_member
+from deptime.ingest.snapshot import HIDDEN, ApiSnapshot, SymbolRecord, member_names, resolve_member
 
 MAX_MOVED_CANDIDATES = 3
 REQUIRED_KINDS = {"positional-only", "positional or keyword", "keyword-only"}
@@ -140,6 +140,40 @@ def _module_level(snap: ApiSnapshot, path: str) -> bool:
     return parent is not None and parent.kind == "module"
 
 
+def _class_names(snap: ApiSnapshot, path: str) -> dict[str, str]:
+    """The public names the class at `path` has, own or inherited, with each one's kind."""
+    rec = snap.symbols.get(path)
+    if rec is None:
+        return {}
+    if rec.canonical in snap.classes:
+        found = (
+            (name, resolve_member(snap.classes, rec.canonical, name))
+            for name in member_names(snap.classes, rec.canonical)
+        )
+        return {name: m.kind for name, m in found if m is not None and not name.startswith("_")}
+    prefix = path + "."
+    return {
+        p[len(prefix) :]: r.kind
+        for p, r in snap.symbols.items()
+        if p.startswith(prefix) and "." not in p[len(prefix) :] and not p[len(prefix)].startswith("_")
+    }
+
+
+def _in_types(path: str) -> bool:
+    return "types" in path.split(".")[:-1]
+
+
+def _a_type_of_the_same_name(old: ApiSnapshot, path: str, new: ApiSnapshot, target: str) -> bool:
+    """A removed class paired by name with a class in a `types` module that has none of its methods: a data type
+    that shares the name, not its new home (DT-DATA-78). openai 1.0 removed `openai.ChatCompletion`, whose
+    `create` sent the request, and added `openai.types.chat.ChatCompletion`, the response it returns. Across the
+    index on 2026-11-18 this drops 64 pairings, all openai resource and command-line classes."""
+    if not _in_types(target) or _in_types(path):
+        return False
+    methods = [n for n, kind in _class_names(old, path).items() if kind == "function"]
+    return bool(methods) and not (set(methods) & set(_class_names(new, target)))
+
+
 def initial_path_events(path: str, rec: SymbolRecord) -> list[ChangeEvent]:
     """The events of a path in the first indexed release: its deprecations, as `initial_events` reports them."""
     return _deprecation_events(path, rec)
@@ -246,7 +280,11 @@ def diff_snapshots(old: ApiSnapshot, new: ApiSnapshot) -> list[ChangeEvent]:
         leaf = path.rsplit(".", 1)[-1]
         same_kind = [q for q in added_by_leaf.get(leaf, []) if new.symbols[q].kind == rec.kind]
         if len(same_kind) <= MAX_MOVED_CANDIDATES:
-            events.extend(ChangeEvent(path, "moved", {"to": target}) for target in same_kind)
+            events.extend(
+                ChangeEvent(path, "moved", {"to": target})
+                for target in same_kind
+                if rec.kind != "class" or not _a_type_of_the_same_name(old, path, new, target)
+            )
 
     for path in sorted(old_paths & new_paths):
         events.extend(_changed(path, old.symbols[path], new.symbols[path]))

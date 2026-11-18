@@ -52,8 +52,9 @@ def _last_name(path: str) -> str:
 
 # Names a source spells differently from the code, and how the quote spells them.
 SPELLED = {
-    "completion_stream": "completions_stream"
-}  # mistralai's MIGRATION.md, for `MistralClient.completion_stream`
+    "completion_stream": "completions_stream",  # mistralai's MIGRATION.md, for `MistralClient.completion_stream`
+    "FineTunes": "fine_tunes",  # openai's migration guide: `client.fine_tunes` is `openai.resources.FineTunes`
+}
 
 
 def test_every_curated_quote_names_the_old_name_and_its_replacement():

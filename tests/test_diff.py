@@ -107,6 +107,56 @@ def test_moved_module_level_symbol_to_new_module():
     assert _moves(old, new) == {("p.old.Thing", "p.new.Thing")}
 
 
+def test_moved_never_pairs_a_removed_class_with_a_data_type_of_the_same_name():
+    # DT-DATA-78: openai 1.0 removed `openai.ChatCompletion` (its `create` sent the request) and added the response
+    # model `openai.types.chat.ChatCompletion`, which has none of its methods.
+    old = _snap(
+        "1",
+        ("p", "module"),
+        ("p.ChatCompletion", "class"),
+        ("p.ChatCompletion.create", "function"),
+        ("p.Error", "class"),
+        ("p.Error.create", "function"),
+    )
+    new = _snap(
+        "2",
+        ("p", "module"),
+        ("p.types", "module"),
+        ("p.types.ChatCompletion", "class"),
+        ("p.types.ChatCompletion.choices", "attribute"),
+        ("p.types.Error", "class"),
+        ("p.types.Error.create", "function"),
+    )
+    assert _moves(old, new) == {("p.Error", "p.types.Error")}
+
+
+def test_a_data_type_of_the_same_name_is_read_through_stored_members():
+    def snap(version: str, path: str, members: dict[str, str]) -> ApiSnapshot:
+        own = {n: SymbolRecord(f"{path}.{n}", k, f"{path}.{n}") for n, k in members.items()}
+        module = path.rpartition(".")[0]
+        return ApiSnapshot(
+            "p",
+            version,
+            ["p"],
+            {
+                "p": SymbolRecord("p", "module", "p"),
+                module: SymbolRecord(module, "module", module),
+                path: SymbolRecord(path, "class", path),
+            },
+            own_members=True,
+            classes={path: ClassRecord(path, [], own)},
+        )
+
+    old = snap("1", "p.api.Embedding", {"create": "function", "_url": "function"})
+    assert _moves(old, snap("2", "p.types.Embedding", {"embedding": "attribute"})) == set()
+    assert _moves(old, snap("2", "p.types.Embedding", {"create": "function"})) == {
+        ("p.api.Embedding", "p.types.Embedding")
+    }
+    assert _moves(old, snap("2", "p.resources.Embedding", {"embedding": "attribute"})) == {
+        ("p.api.Embedding", "p.resources.Embedding")
+    }
+
+
 def test_moved_too_many_candidates_is_no_evidence():
     mods = [(f"p.m{i}", "module") for i in range(4)] + [(f"p.m{i}.run", "function") for i in range(4)]
     old = _snap("1", ("p", "module"), ("p.run", "function"))

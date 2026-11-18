@@ -19,6 +19,85 @@
 
 
 # openai-v1
+# The removed resource classes themselves (DT-DATA-78): `from openai import ChatCompletion` fails, and the guide's
+# line for each class's main method names the client resource that replaces it.
+[[hint]]
+package = "openai"
+path = "openai.Audio"
+target = "openai.resources.audio.Audio"
+quote = "openai.Audio.transcribe() -> client.audio.transcriptions.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.ChatCompletion"
+target = "openai.resources.chat.completions.Completions"
+quote = "openai.ChatCompletion.create() -> client.chat.completions.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.Completion"
+target = "openai.resources.completions.Completions"
+quote = "openai.Completion.create() -> client.completions.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.Edit"
+target = "openai.resources.edits.Edits"
+quote = "openai.Edit.create() -> client.edits.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.Embedding"
+target = "openai.resources.embeddings.Embeddings"
+quote = "openai.Embedding.create() -> client.embeddings.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.File"
+target = "openai.resources.files.Files"
+quote = "openai.File.create() -> client.files.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.FineTune"
+target = "openai.resources.fine_tunes.FineTunes"
+quote = "openai.FineTune.create() -> client.fine_tunes.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.FineTuningJob"
+target = "openai.resources.fine_tuning.jobs.Jobs"
+quote = "openai.FineTuningJob.create() -> client.fine_tuning.jobs.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.Image"
+target = "openai.resources.images.Images"
+quote = "openai.Image.create() -> client.images.generate()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.Model"
+target = "openai.resources.models.Models"
+quote = "openai.Model.list() -> client.models.list()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
+[[hint]]
+package = "openai"
+path = "openai.Moderation"
+target = "openai.resources.moderations.Moderations"
+quote = "openai.Moderation.create() -> client.moderations.create()"
+url = "https://github.com/openai/openai-python/discussions/742"
+
 [[hint]]
 package = "openai"
 path = "openai.ChatCompletion.create"
