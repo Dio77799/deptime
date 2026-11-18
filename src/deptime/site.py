@@ -85,7 +85,7 @@ a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
 code,.mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace}
 code{font-size:.86em}
 .wrap{max-width:72rem;margin:0 auto;padding:0 1.25rem}
-.top{position:sticky;top:0;z-index:20;border-bottom:1px solid transparent;transition:background-color .2s,border-color .2s}.top.scrolled{background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom-color:var(--soft)}
+.top{--shade:0;position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) calc(var(--shade) * 85%),transparent);backdrop-filter:saturate(calc(100% + var(--shade) * 80%)) blur(calc(var(--shade) * 16px));-webkit-backdrop-filter:saturate(calc(100% + var(--shade) * 80%)) blur(calc(var(--shade) * 16px));border-bottom:1px solid color-mix(in srgb,var(--soft) calc(var(--shade) * 100%),transparent)}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;height:3.5rem}
 .brand{display:flex;align-items:center}.brand img{height:22px;width:auto;display:block}
 .top nav a{color:var(--muted);margin-left:1.5rem;font-size:.92rem;font-weight:500}.top nav a:hover{color:var(--fg);text-decoration:none}
@@ -154,7 +154,8 @@ td.ev{color:var(--muted);font-size:.82rem;min-width:16rem;max-width:30rem}td.ev 
 """
 
 SCRIPT = """
-const bar=document.querySelector('.top'),edge=()=>bar.classList.toggle('scrolled',scrollY>4);
+// The header turns from clear to frosted over the first 320px of scrolling, in step with the page.
+const bar=document.querySelector('.top'),edge=()=>bar.style.setProperty('--shade',Math.min(scrollY/320,1).toFixed(3));
 addEventListener('scroll',edge,{passive:true});edge();
 document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
 try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='Copied';setTimeout(()=>{b.textContent='Copy'},1600)}catch(e){}}));
