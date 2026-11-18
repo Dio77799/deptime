@@ -62,6 +62,8 @@ are data: they can grow in any release.)
 ## [Unreleased]
 
 ### Added
+- `diff_versions` says which used names it can't check, and why, in a new `unchecked_uses` field, and its note
+  points to it, instead of an empty answer that reads as "nothing changed" (DT-CORE-61).
 - Migration hints for gradio 4.0: `gradio.inputs` and `gradio.outputs` → `gradio.components` (quoting the 3.x
   warnings in gradio's own `inputs.py` / `outputs.py`), `gradio.Variable` → `gradio.State`, and the `source` argument
   of `gr.Audio` / `gr.Video` → `sources`, the last three from the 4.0.0 entry of gradio's CHANGELOG.

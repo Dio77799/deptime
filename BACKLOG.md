@@ -113,6 +113,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-DATA-78** (2026-11-18): openai 1.0's removed `ChatCompletion`, `Embedding`, `Image` and the rest of the
   family point to the client resource that replaces them (curated, from the migration guide), and a removed class
   is never paired with a same-name class in a `types` module that has none of its methods (64 openai pairings).
+- [x] **DT-CORE-61** (2026-11-18, PR #22 by rise11hx-cmyk): `diff_versions` lists each used name `check_symbols`
+  reads `unknown` at an end of the range in a new `unchecked_uses` field, with its reason, and the note points to it.
+  Still to do: count such an answer as an abstention in the bench.
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
@@ -284,7 +287,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 | DT-CORE-34 | Constructor keywords of dataclasses and pydantic models; required arguments | query, extraction |
 | DT-DATA-09 | Pydantic model fields as `__init__` keywords | extraction |
 | DT-CORE-62 | `diff_versions` on a deprecation in force at both ends, or dropped before `to` | query |
-| DT-CORE-61 | `diff_versions` is silent where `check_symbols` answers `unknown` | query |
 | DT-DATA-76 | A name a lazy table serves doesn't carry its target's deprecation (langchain-community's `llms.OpenAI`) | extraction |
 
 **Tracebacks with no finding**
