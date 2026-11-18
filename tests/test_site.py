@@ -96,3 +96,16 @@ def test_backticked_names_in_library_text_show_as_code_and_stay_escaped():
     out = _evidence(r)
     assert "<code>New</code>" in out and "<code>Old</code>" in out
     assert "<script>" not in out and "&lt;script&gt;" in out
+
+
+def test_the_footer_gives_a_plain_date_and_no_claim_about_hand_writing(dt, tmp_path):
+    import re
+
+    migration = Migration("httpx-0.26-to-0.28", "httpx 0.26 → 0.28", (Range("httpx", "0.26."),))
+    build(dt, tmp_path, (migration,))
+    for name in ("index.html", "httpx-0.26-to-0.28.html"):
+        page = _read(tmp_path / name)
+        assert "by hand" not in page
+        assert "UTC" not in page
+        assert re.search(r"Last updated [A-Z][a-z]+ \d{1,2}, \d{4}</span>", page)
+    assert "read from each release's own code" in _read(tmp_path / "httpx-0.26-to-0.28.html")

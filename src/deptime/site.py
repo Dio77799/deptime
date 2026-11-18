@@ -1,5 +1,5 @@
 """Rename-map pages generated from the index (DT-GTM-01): one static page per well-known migration, every row from
-the same data the MCP tools serve, never written by hand.
+the same data the MCP tools serve (the index, or a curated hint that passed its checks).
 
   uv run python -m deptime.site build --out site/dist [--index PATH] [--base-url https://example.org]
 
@@ -311,11 +311,13 @@ def _curated_rows(package: str) -> list[str]:
     ]
 
 
-def _built(built: str | None) -> str:
+def _updated(built: str | None) -> str:
+    """The index's build date as a reader writes it: "November 18, 2026" (UTC)."""
     try:
-        return datetime.fromisoformat(built or "").astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
+        d = datetime.fromisoformat(built or "").astimezone(UTC)
     except ValueError:
         return built or "?"
+    return f"{d:%B} {d.day}, {d.year}"
 
 
 def _wordmark(height: int = 22) -> str:
@@ -362,8 +364,8 @@ def _page(
         f"<main>{body}</main>"
         f'<footer class="foot"><div class="wrap"><nav><a href="{REPO}">GitHub</a><a href="{PYPI}">PyPI</a>'
         f'<a href="{ACTION}">GitHub Action</a><a href="{BENCHMARK}">Benchmark</a></nav>'
-        f"<span>Open source (MIT). Generated from DepTime's index, built {html.escape(_built(built))}; "
-        "nothing on these pages is written by hand.</span></div></footer>"
+        "<span>Open source (MIT) · Updated twice a day from each library's releases · Last updated "
+        f"{html.escape(_updated(built))}</span></div></footer>"
         f"<script>{SCRIPT}</script></body></html>\n"
     )
 
@@ -484,14 +486,23 @@ def build(
                 f"<tbody>{''.join(gone)}</tbody></table></div></section>"
             )
         span = "; ".join(spans)
+        about = []
+        if m.ranges:
+            about.append(
+                "Every name and argument that went away in this migration, read from each release's own code, with "
+                "what the library itself, its migration guide, or a move to another path says to use instead."
+            )
+        if m.curated_from:
+            about.append(
+                f"The names {html.escape(m.curated_from)}'s migration guide says to replace, with what to use "
+                "instead, each quoted from the guide with a link to it."
+            )
         intro = (
             f'<nav class="crumbs"><a href="./">DepTime</a><span>/</span><a href="./#maps">Rename maps</a>'
             f"<span>/</span>{html.escape(m.title)}</nav>"
             f'<div class="maphead"><h1>{html.escape(m.title)}<small>What was renamed or removed, and what to use '
             f'instead</small></h1><div class="tag mono">{html.escape(span)}</div>'
-            '<p class="intro">Every name and argument that went away in this migration, read from each release\'s own '
-            "code, with what the library itself, its migration guide, or a move to another path says to use instead. "
-            "Nothing here is written by hand.</p></div>"
+            f'<p class="intro">{" ".join(about)}</p></div>'
             '<div class="tiles">'
             + "".join(
                 f'<div class="tile"><b>{n}</b><span>{label}</span></div>'
@@ -509,7 +520,8 @@ def build(
         )
         description = (
             f"{m.title}: {len(replaced)} names and arguments renamed or replaced, {len(gone)} removed, and what "
-            "to use instead, read from each release's own code."
+            "to use instead, "
+            + ("read from each release's own code." if m.ranges else "from the project's migration guide.")
         )
         page = _page(
             f"{m.title} migration: renamed and removed names",
