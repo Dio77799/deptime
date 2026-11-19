@@ -1,13 +1,13 @@
 {
-  "index_built_at": "2026-11-13T12:18:01+00:00",
+  "index_built_at": "2026-11-19T04:57:08+00:00",
   "summary": {
     "cases": 401,
-    "known_gap_share": 2.2,
+    "known_gap_share": 2.0,
     "overall": {
-      "root_cause": 97.8,
-      "root_cause_and_boundary": 97.8,
-      "boundary": 97.7,
-      "replacement": 75.8,
+      "root_cause": 98.0,
+      "root_cause_and_boundary": 98.0,
+      "boundary": 98.0,
+      "replacement": 78.0,
       "replacement_uncurated": 64.8
     },
     "by_tier": {
@@ -21,10 +21,10 @@
       },
       "A": {
         "cases": 206,
-        "root_cause": 98.5,
-        "root_cause_and_boundary": 98.5,
-        "boundary": 98.5,
-        "replacement": 62.8,
+        "root_cause": 99.0,
+        "root_cause_and_boundary": 99.0,
+        "boundary": 99.0,
+        "replacement": 67.9,
         "replacement_uncurated": 53.8
       },
       "B": {
@@ -47,10 +47,10 @@
       },
       "reported": {
         "cases": 393,
-        "root_cause": 98.0,
-        "root_cause_and_boundary": 98.0,
-        "boundary": 98.0,
-        "replacement": 75.1,
+        "root_cause": 98.2,
+        "root_cause_and_boundary": 98.2,
+        "boundary": 98.2,
+        "replacement": 77.4,
         "replacement_uncurated": 63.8
       }
     }
@@ -791,7 +791,7 @@
     "langchain-chains-module-removed-v1": {
       "root_cause": true,
       "boundary": true,
-      "replacement": false,
+      "replacement": true,
       "replacement_uncurated": false
     },
     "langchain-agentexecutor-removed-v1": {
@@ -851,7 +851,7 @@
     "hold-langchain-chains-module-removed-langchain": {
       "root_cause": true,
       "boundary": true,
-      "replacement": false,
+      "replacement": true,
       "replacement_uncurated": false
     },
     "hold-langchain-middleware-toolcallrequest-langchain": {
@@ -1439,13 +1439,13 @@
     "hold-openai-embedding-apiremovedinv1-openai-python": {
       "root_cause": true,
       "boundary": true,
-      "replacement": false,
+      "replacement": true,
       "replacement_uncurated": false
     },
     "hold-openai-image-apiremovedinv1-openai-python": {
       "root_cause": true,
       "boundary": true,
-      "replacement": false,
+      "replacement": true,
       "replacement_uncurated": false
     },
     "pandas-dataframe-append-cpm-python": {
@@ -2337,8 +2337,8 @@
       "replacement_uncurated": null
     },
     "hold-transformers-extract-past-from-model-output-cogvlm2": {
-      "root_cause": false,
-      "boundary": false,
+      "root_cause": true,
+      "boundary": true,
       "replacement": null,
       "replacement_uncurated": null
     },

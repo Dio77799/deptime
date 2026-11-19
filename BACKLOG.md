@@ -128,6 +128,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-CORE-60** (2026-11-19, PR #32 by swpswpswp): a name under a module that became a function reads
   `missing` once its own history ends (fastmcp 3's `prompts.prompt`), and `diff_versions` dates its removal; not
   under a `__getattr__`-served name or an alias. Upgrade-check bench: breaks found 97.8% → 98.5%, no new false alarm.
+- [x] **DT-CORE-65** (2026-11-19, PR #41 by bfs2021): a private method missing from the project's own subclass is
+  explained when another class still has it, if the traceback ran through the module of the one class that lost it
+  (transformers' `GenerationMixin`); the one-class rule still comes first. Traceback bench: one more case passes.
 - [x] **DT-CORE-49** (2026-11-19, PR #34 by swpswpswp): `explain_error` explains an error from a function that
   only raises, when its message matches the installed release's record exactly: a `now_raises` finding with
   `raises` and `raises_since` (llama-index-core's `ServiceContext.from_defaults`).
@@ -306,7 +309,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 
 | ID | Gap | Fix is in |
 |---|---|---|
-| DT-CORE-65 | An attribute missing on an instance of the project's own subclass | query |
 | DT-DATA-68 | Private methods' parameters, and the members of classes in internal modules | extraction |
 | DT-DATA-02 | numpy names only compiled code registers (`ndarray.tostring`) | extraction |
 

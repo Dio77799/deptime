@@ -83,7 +83,10 @@ def test_traceback_frame_narrows_which_class_lost_a_private_member(tmp_path):
         "4.48.3",
         "medium",
     )
-    assert "ran through `gen.generation.utils`" in f.explanation
+    assert (
+        "only `gen.GenerationMixin` is defined where the traceback ran (`gen.generation.utils`)"
+        in f.explanation
+    )
 
 
 def test_no_frame_matching_a_candidate_module_abstains(tmp_path):

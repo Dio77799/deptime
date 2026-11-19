@@ -105,6 +105,11 @@ are data: they can grow in any release.)
   the message the old class now raises (DT-CORE-77).
 
 ### Fixed
+- `explain_error` explains a private method missing from the project's own subclass when another class of the
+  library still has it, if the traceback ran through the module of the one class that lost it: CogVLM2's
+  `_extract_past_from_model_output` error at transformers 4.52.4 now names `GenerationMixin`, which lost it after
+  4.48.3 (`TFGenerationMixin` kept it), at `medium` confidence. With no such frame, or more than one candidate, it
+  still gives no answer (DT-CORE-65, #41).
 - A name under a module that became a function now reads `missing` once the name is gone, instead of `unknown`:
   fastmcp 3 turned `prompts.prompt` into a function and 3.2.0 deleted the old module, so
   `fastmcp.prompts.prompt.Prompt` at 4.2.2 reads `missing`, "seen in 2.1.0..3.1.1". `diff_versions` reports

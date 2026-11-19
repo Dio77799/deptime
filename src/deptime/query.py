@@ -2691,10 +2691,9 @@ class DepTime:
             return []
         if by_frames:
             why = (
-                f"`{owner}` isn't a class of a package DepTime covers; the traceback ran through "
-                f"`{row['cls'].rpartition('.')[0]}`, which defines `{row['label']}`, and no other class of "
-                f"{spec.name} that had `{member}` is defined in a module the traceback ran through. "
-                f"`{row['label']}` no longer has `{member}`, which subclasses inherit."
+                f"`{owner}` isn't a class of a package DepTime covers; of the {spec.name} classes that had "
+                f"`{member}`, only `{row['label']}` is defined where the traceback ran "
+                f"(`{row['cls'].rpartition('.')[0]}`), and subclasses inherit its members."
             )
         else:
             why = (
