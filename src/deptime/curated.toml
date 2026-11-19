@@ -2899,3 +2899,14 @@ path = "gradio.Video.__init__(source)"
 target = "sources"
 quote = "* Renames `source` param in `gr.Audio` and `gr.Video` to `sources`"
 url = "https://github.com/gradio-app/gradio/blob/main/CHANGELOG.md"
+
+
+# weaviate-4
+# weaviate-client 4.10 removed the v3 client: `weaviate.Client(...)` still exists but raises, and its message names
+# the v4 class only after "use Python client v4", which the miner rightly reads as prose (DT-CORE-77).
+[[hint]]
+package = "weaviate-client"
+path = "weaviate.Client"
+target = "weaviate.WeaviateClient"
+quote = "Python client v3 `weaviate.Client(...)` has been removed. Upgrade your code to use Python client v4 `weaviate.WeaviateClient` connections and methods."
+url = "https://github.com/weaviate/weaviate-python-client/blob/v4.20.0/weaviate/client.py#L184-L188"

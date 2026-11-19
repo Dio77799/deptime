@@ -1,4 +1,5 @@
 from deptime.ingest.replacements import (
+    SNAPSHOT_MESSAGE_CHARS,
     Hint,
     PublicNames,
     clean_evidence,
@@ -318,6 +319,29 @@ def test_prose_after_a_cue_is_not_a_target():
     # werkzeug 3.0's `__version__`: the name is the second thing it suggests.
     msg = "The '__version__' attribute is deprecated. Use feature detection or 'importlib.metadata.version(\"werkzeug\")' instead."
     assert _hints(msg) == [("importlib.metadata.version", 0.8)]
+
+
+def test_a_language_or_a_version_in_a_sentence_is_not_a_target():
+    # DT-CORE-77: weaviate-client 4.10's `weaviate.Client` gave "Python" and "v3" as replacements.
+    msg = (
+        "Python client v3 `weaviate.Client(...)` has been removed. Upgrade your code to use Python client v4 "
+        "`weaviate.WeaviateClient` connections and methods. If you have to use v3 code, install the v3 client."
+    )
+    assert _hints(msg) == []
+    # A capitalised name that "instead", "or" or punctuation follows, or one before a capitalised word, stays.
+    assert _hints("Session is deprecated, use Client instead.") == [("Client", 0.85)]
+    assert _hints("Use Agent or Crew.") == [("Agent", 0.6)]
+
+
+def test_a_name_at_the_snapshots_cut_is_not_a_target():
+    # DT-CORE-77: a snapshot keeps a message's first 400 characters, so "… If you have to use v3" may have gone on.
+    def message(length: int) -> str:
+        head, tail = "Client is deprecated. ", " If you have to use v3"
+        return head + "x" * (length - len(head) - len(tail)) + tail
+
+    assert len(message(SNAPSHOT_MESSAGE_CHARS)) == SNAPSHOT_MESSAGE_CHARS
+    assert _hints(message(SNAPSHOT_MESSAGE_CHARS)) == []
+    assert _hints(message(120)) == [("v3", 0.6)]  # a shorter message ends where its author ended it
 
 
 def test_a_method_named_with_a_leading_dot_keeps_it():

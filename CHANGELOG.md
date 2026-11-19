@@ -72,6 +72,13 @@ are data: they can grow in any release.)
   argument renames (`dtypes` → `schema_overrides`, `row_count_name` → `row_index_name`, `join_nulls` →
   `nulls_equal`, `descending` → `reverse`, and the rest), 52 hints in a `# polars-2` group. Rows whose replacement is
   prose or a workaround are left out.
+- A migration hint for weaviate-client 4.10: the removed v3 `weaviate.Client` → `weaviate.WeaviateClient`, quoting
+  the message the old class now raises (DT-CORE-77).
+
+### Fixed
+- A word in a deprecation message is no longer read as its replacement: weaviate's "use Python client v4" and "use
+  v3 code" gave `weaviate.Client` the replacements "Python" and "v3". A name where a stored message was cut off is
+  skipped too, as it may go on (DT-CORE-77).
 
 ## [1.0.3] - 2026-11-17
 

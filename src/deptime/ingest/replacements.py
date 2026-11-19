@@ -93,6 +93,13 @@ IMPORT_CONFIDENCE = 0.8
 _OLD_NEW_RE = re.compile(r"\b(old|new|before|after)\b", re.I)
 # A bare lowercase word that more prose follows is English: "use case documentation", "use new agent methods".
 _WORD_RE = re.compile(r"[a-z]+")
+# So is a plain capitalised word or a version that a lowercase word follows: weaviate's "use Python client v4
+# `weaviate.WeaviateClient`" and "If you have to use v3 code" name a language and a version, not names. CamelCase
+# ("Use FastMCP with …") and snake_case stay names.
+_PLAIN_WORD_RE = re.compile(r"[A-Za-z][a-z]*\d*")
+# Snapshots keep a message's first 400 characters (`ingest/snapshot.py`): a name the cut ends on may be cut short,
+# or the start of a phrase ("If you have to use v3" was "… use v3 code").
+SNAPSHOT_MESSAGE_CHARS = 400
 _FOLLOWING_WORD_RE = re.compile(r"\s+[`'\"]?([A-Za-z]+)")
 _NOT_PROSE_AFTER = {"instead", "or", "and", "directly"}
 # pandas' "use DataFrame/Series.shift": a class, then a slash and the member both share.
@@ -211,12 +218,16 @@ def moved_to_package(message: str | None) -> str | None:
 
 
 def _prose(message: str, start: int, end: int) -> bool:
-    """Whether the name at message[start:end] is a word of a sentence: bare, unquoted, lowercase, and followed by
-    another word ("its use is discouraged", "use feature detection"), not by "instead" or punctuation."""
-    if not _WORD_RE.fullmatch(message[start:end]) or (start and message[start - 1] in "`'\"."):
+    """Whether the name at message[start:end] is a word of a sentence: bare, unquoted, a plain word, and followed by
+    another word ("its use is discouraged", "use feature detection"), not by "instead" or punctuation. A capitalised
+    word or a version counts only before a lowercase word ("use Python client", "use v3 code")."""
+    name = message[start:end]
+    if not _PLAIN_WORD_RE.fullmatch(name) or (start and message[start - 1] in "`'\"."):
         return False
     follow = _FOLLOWING_WORD_RE.match(message, end)
-    return bool(follow) and follow.group(1).lower() not in _NOT_PROSE_AFTER
+    if not follow or follow.group(1).lower() in _NOT_PROSE_AFTER:
+        return False
+    return bool(_WORD_RE.fullmatch(name)) or follow.group(1)[:1].islower()
 
 
 def _target(message: str, m: re.Match[str], skip_expressions: bool, group: str = "t") -> str | None:
@@ -228,6 +239,8 @@ def _target(message: str, m: re.Match[str], skip_expressions: bool, group: str =
     :meth:`_engine.Engine.begin`)."""
     start, end = m.span(group)
     after = message[end : end + 2]
+    if end == len(message) >= SNAPSHOT_MESSAGE_CHARS:
+        return None  # the snapshot's cut: the name, or the sentence it starts, may go on
     if after[:1] == "…" or (skip_expressions and after[:1] in ("(", "[", ".")):
         return None  # "Use pandas.api.typing.… instead": the snapshot couldn't read the rest of the name
     if after[:1] == "-" and after[1:].isalnum():

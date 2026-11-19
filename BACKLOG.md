@@ -116,6 +116,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-CORE-61** (2026-11-18, PR #22 by rise11hx-cmyk): `diff_versions` lists each used name `check_symbols`
   reads `unknown` at an end of the range in a new `unchecked_uses` field, with its reason, and the note points to it.
   Still to do: count such an answer as an abstention in the bench.
+- [x] **DT-CORE-77** (2026-11-18): a plain word before more prose ("use Python client", "use v3 code") and a name
+  at a stored message's 400-character cut are no longer mined as replacements; weaviate's `weaviate.Client` gets the
+  curated `weaviate.WeaviateClient` instead. Over the index's 4,138 deprecation messages only weaviate's two change.
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
