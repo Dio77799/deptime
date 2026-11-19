@@ -5,7 +5,8 @@
   python -m deptime.bench bench/cases --write-baseline bench/baseline.json  record the current run
 
 Scoring is defined in bench/README.md. It runs against the index in DEPTIME_HOME (`deptime index pull`).
-A regression is measured on the cases both runs share, so adding new (harder) cases never fails the check.
+A regression is measured on the cases both runs share, so adding new (harder) cases never fails the check: a metric
+that drops by more than 2 points, or any single case that passed in the baseline and fails now.
 """
 
 from __future__ import annotations
@@ -152,17 +153,21 @@ def summarize(results: list[CaseResult]) -> dict:
 
 
 def regressions(results: list[CaseResult], baseline: dict, max_drop: float = MAX_DROP_POINTS) -> list[str]:
-    """Metrics that fell by more than `max_drop` points on the cases shared with the baseline."""
+    """On the cases shared with the baseline: metrics that fell by more than `max_drop` points, and each case that
+    passed there and fails now. The tolerance alone let a fix that broke one case and fixed another through."""
     base = {
         cid: CaseResult(id=cid, tier="", status="", origin="", got="", **v)
         for cid, v in baseline["cases"].items()
     }
     now = [r for r in results if r.id in base]
     before, after = metrics([base[r.id] for r in now]), metrics(now)
-    return [
+    dropped = [
         f"{m}: {before[m]} -> {after[m]} on {len(now)} shared cases"
         for m in METRICS
         if before[m] is not None and after[m] is not None and after[m] < before[m] - max_drop
+    ]
+    return dropped + [
+        f"{r.id}: passed in the baseline, fails now" for r in now if base[r.id].passed and not r.passed
     ]
 
 
@@ -216,7 +221,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m deptime.bench", description=__doc__.splitlines()[0])
     parser.add_argument("cases", nargs="+", type=Path, help="case files or directories of *.jsonl")
     parser.add_argument(
-        "--baseline", type=Path, help="fail if a metric drops by more than 2 points against this"
+        "--baseline",
+        type=Path,
+        help="fail if a metric drops by more than 2 points against this, or a case that passed there fails",
     )
     parser.add_argument("--write-baseline", type=Path, help="write this run as the new baseline")
     parser.add_argument("--json", action="store_true", help="print the summary as JSON instead of the report")
@@ -237,7 +244,7 @@ def main(argv: list[str] | None = None) -> int:
         args.write_baseline.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
     baseline = json.loads(args.baseline.read_text(encoding="utf-8")) if args.baseline else None
     if baseline and (failed := regressions(results, baseline)):
-        print("\nregression of more than 2 points:\n  " + "\n  ".join(failed), file=sys.stderr)
+        print("\nregression against the baseline:\n  " + "\n  ".join(failed), file=sys.stderr)
         return 1
     return 0
 

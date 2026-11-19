@@ -89,6 +89,14 @@ def test_regression_is_measured_on_shared_cases_only(dt):
     assert any(f.startswith("root_cause: 100.0 -> 0.0") for f in failed)
 
 
+def test_one_case_that_stops_passing_is_a_regression_even_within_the_tolerance(dt):
+    # PR #41 fixed one benchmark case and broke another: the metrics didn't move, so the 2-point tolerance passed it.
+    ok = [_case(f"ok{i}", last_version_with="0.27") for i in range(60)]
+    baseline = baseline_doc(run(dt, [*ok, _case("gap", issue="symbol_removed")]), None)
+    now = run(dt, [*ok[1:], _case("ok0", issue="symbol_removed"), _case("gap")])
+    assert regressions(now, baseline) == ["ok0: passed in the baseline, fails now"]
+
+
 def test_load_cases_rejects_duplicate_ids(tmp_path):
     (tmp_path / "a.jsonl").write_text(json.dumps(_case("same")) + "\n\n")
     (tmp_path / "b.jsonl").write_text(json.dumps(_case("same")) + "\n")

@@ -26,8 +26,8 @@ which of a project's code a dependency update breaks. Everything done before 202
   signs it. A build with no extraction change usually takes under 20 minutes; a `SNAPSHOT_FORMAT` bump means one cold
   build of about 3 hours (format 27's: 2 h 48 min).
 - **Checks that run without anyone:** `ci` on every push (568 offline tests), and `bench` on every code change and
-  every published index. `bench` fails on a benchmark drop of more than 2 points or a false-positive rate up by more
-  than 1, and on the published index itself (`tests/test_golden.py`, DT-QA-03): older than 48 h, a package's newest
+  every published index. `bench` fails on a benchmark drop of more than 2 points, a traceback case that passed in the
+  baseline and fails now, or a false-positive rate up by more than 1, and on the published index itself (`tests/test_golden.py`, DT-QA-03): older than 48 h, a package's newest
   release on PyPI for more than 24 h without being indexed, or a Tier A package's newest release without the names
   its documentation uses.
 - **How well it works:** the README's table, which leads with first runs on unseen cases. Across the six holdout sets'

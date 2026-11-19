@@ -1,8 +1,9 @@
 name: bench
 
 # Traceback benchmark (DT-QA-02): replays bench/cases through explain_error against the published index, and fails
-# when a metric drops by more than 2 points on the cases bench/baseline.json shares with this run. It runs on code
-# changes and after every index build, so a regression in either the code or the data is caught.
+# when a metric drops by more than 2 points on the cases bench/baseline.json shares with this run, or when any one of
+# those cases passed in the baseline and fails now. It runs on code changes and after every index build, so a
+# regression in either the code or the data is caught.
 # The TimeMachine-bench holdout (bench/tmb, DT-QA-04) is checked the same way against bench/tmb/baseline.json, and the
 # per-release holdouts (bench/holdout, DT-QA-07 to -12) against each set's baseline.json: check_symbols and diff_versions on code
 # that works and code that breaks (recall may drop 2 points, the false-positive rate rise 1), and its tracebacks.

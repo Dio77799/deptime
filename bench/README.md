@@ -39,7 +39,7 @@ Each check's right answers were written down before DepTime first ran on it ([be
 
 `check_symbols` answers `unknown`, with the reason, where the index can't tell (a path through an instance such as `pytest.mark`, or into a distribution it doesn't cover): 66 working uses and 5 breaks of the 2026-11f holdout (28 working uses of 2026-11e's, 55 working uses and 2 breaks of 2026-11d's, 40 working uses and 4 breaks of 2026-11-09's, 43 working uses of 2026-11-08's, 79 working uses and 4 breaks of 2026-11-07's since that answer was added), left out of its rates above. Its [misses](https://github.com/cschmertz/deptime/blob/main/bench/holdout/2026-11f/results-2026-11-11.md#misses) are new items in the [backlog](https://github.com/cschmertz/deptime/blob/main/BACKLOG.md), to be scored on the next set. Both tools' two false alarms on 2026-11f are one scikit-learn import from a compiled module, which the index can't read; most of its traceback misses are errors as a web page pastes them (a keyword in backticks, `__init__` printed as `init`). The fixes for the 2026-11d holdout's misses are in the index of 2026-11-10 (`SNAPSHOT_FORMAT` 26): 2 of its 20 and 17 false alarms are left per tool, chromadb's embedding functions, which its `__init__` writes into `globals()`, and the dspy placeholder release that gave 15 of each is now read from the distribution it installs. Since 2026-11-10 the holdout's rule reads a parameter `diff_versions` reports as required at the older release going down (polars 0.19.6's `int_range(n)`), and one passed by position (`StateGraph(State)`), so its "now" figures for `diff_versions` count both right.
 
-Across all 393 real tracebacks in the benchmark, including the ones fixes were designed from, DepTime names the right package, name and release for 97.2%, and a right replacement is among its first three for 74.6%. CI re-scores them and the holdouts on every code change and every published index, and fails on a drop of more than 2 points (or a false-positive rate up by more than 1).
+Across all 393 real tracebacks in the benchmark, including the ones fixes were designed from, DepTime names the right package, name and release for 97.2%, and a right replacement is among its first three for 74.6%. CI re-scores them and the holdouts on every code change and every published index, and fails on a drop of more than 2 points, on any traceback case that used to pass and now fails, or on a false-positive rate up by more than 1.
 
 ## Case format (`cases/*.jsonl`, one JSON object per line)
 
@@ -88,7 +88,7 @@ Keep only cases where the reporter's versions are known, or can be inferred from
 - **Root cause:** `findings[0].package` and `symbol` suffix and `issue` all match.
 - **Boundary:** `last_version_with` matches (prefix rule).
 - **Replacement:** `replacement_contains` is among the top 3 targets.
-- Report per-tier accuracy and the share of `known_gap` cases. CI fails on a regression of more than 2 points.
+- Report per-tier accuracy and the share of `known_gap` cases. CI fails on a drop of more than 2 points in any metric, or on any single case that passed in the baseline and fails now.
 
 Boundary and replacement only count when the root cause is right. The headline metric, `root_cause_and_boundary`, counts a case as passed when the root cause is right and the boundary matches (or the case doesn't expect one).
 
@@ -101,7 +101,7 @@ uv run python -m deptime.bench bench/cases --baseline bench/baseline.json      #
 uv run python -m deptime.bench bench/cases --write-baseline bench/baseline.json  # record an intended change
 ```
 
-`.github/workflows/bench.yml` runs the baseline check on code changes and after every `build-index` run. A regression is measured on the cases that both the baseline and the current run contain. So adding new cases never fails it, and only a case that used to pass and now fails does. After a fix makes cases pass, write a new baseline so they're protected too.
+`.github/workflows/bench.yml` runs the baseline check on code changes and after every `build-index` run. A regression is measured on the cases that both the baseline and the current run contain. So adding new cases never fails it. Any one case that used to pass and now fails does, even when another fix keeps the totals level. After a fix makes cases pass, write a new baseline so they're protected too.
 
 The seed file (`cases/seed.jsonl`) contains well-documented, real-world breaks. Cases marked `known_gap` say which backlog item fixes them.
 
