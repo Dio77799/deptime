@@ -93,6 +93,14 @@ are data: they can grow in any release.)
   `ServiceContext.from_defaults` now reads as raising since 0.11.0, with `llama_index.core.Settings` as the fix
   (curated), where before DepTime said it doesn't analyse that kind of error. It needs the exact installed release
   and the error's full message as the index records it; any other error is answered as before (DT-CORE-49).
+- Migration hints for fastmcp 3.0 and 4.0, from its upgrade guide: the server's `get_tools()`, `get_resources()`,
+  `get_prompts()` and `get_resource_templates()` → `list_*()`, and the removed `fastmcp.server.openapi` and
+  `fastmcp.experimental.server.openapi` modules and their `FastMCPOpenAPI` → `fastmcp.server.providers.openapi` and
+  its `OpenAPIProvider`.
+- Migration hints for transformers 5.0, from its v5 migration guide: the tokenizer's `encode_plus`,
+  `prepare_seq2seq_batch` and `as_target_tokenizer` → `__call__`, `BatchEncoding.words` → `word_ids`,
+  `HUGGINGFACE_CO_RESOLVE_ENDPOINT` → `huggingface_hub.constants.ENDPOINT`, and six `TrainingArguments` renames
+  (`per_gpu_train_batch_size` → `per_device_train_batch_size`, `push_to_hub_token` → `hub_token`, and the rest).
 - A migration hint for weaviate-client 4.10: the removed v3 `weaviate.Client` → `weaviate.WeaviateClient`, quoting
   the message the old class now raises (DT-CORE-77).
 
