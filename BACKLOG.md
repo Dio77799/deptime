@@ -125,6 +125,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-CORE-62** (2026-11-19, PR #23 by rise11hx-cmyk): `diff_versions` lists used names deprecated at
   `to_version` in a new `deprecated_uses` field, wherever the deprecation began, and an in-range deprecation that
   ended before `to_version` carries `detail.until`.
+- [x] **DT-CORE-49** (2026-11-19, PR #34 by swpswpswp): `explain_error` explains an error from a function that
+  only raises, when its message matches the installed release's record exactly: a `now_raises` finding with
+  `raises` and `raises_since` (llama-index-core's `ServiceContext.from_defaults`).
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
@@ -301,7 +304,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 
 | ID | Gap | Fix is in |
 |---|---|---|
-| DT-CORE-49 | A callable that only raises its own message | query |
 | DT-CORE-65 | An attribute missing on an instance of the project's own subclass | query |
 | DT-DATA-68 | Private methods' parameters, and the members of classes in internal modules | extraction |
 | DT-DATA-02 | numpy names only compiled code registers (`ndarray.tostring`) | extraction |

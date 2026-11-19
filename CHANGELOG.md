@@ -87,12 +87,16 @@ are data: they can grow in any release.)
   tag, as the file is gone from `main`): 26 fine-tuning, batch and model types, such as `BatchJobOut` → `BatchJob`
   and `JobsOut` → `ListFineTuningJobsResponse`, each from `mistralai.models` to `mistralai.client.models`, in a
   `# mistralai-v2` group. The old top-level spelling (`mistralai.BatchJobOut`) follows them.
+- `explain_error` explains an error raised by a function the library replaced with a stub that only raises: a
+  finding with the new `issue` value `now_raises`, the library's message in `raises` (untrusted text), the release
+  the stub arrived in as `raises_since`, and the function's replacements. llama-index-core 0.14's
+  `ServiceContext.from_defaults` now reads as raising since 0.11.0, with `llama_index.core.Settings` as the fix
+  (curated), where before DepTime said it doesn't analyse that kind of error. It needs the exact installed release
+  and the error's full message as the index records it; any other error is answered as before (DT-CORE-49).
 - A migration hint for weaviate-client 4.10: the removed v3 `weaviate.Client` → `weaviate.WeaviateClient`, quoting
   the message the old class now raises (DT-CORE-77).
 
 ### Fixed
-- `explain_error` now recognises a callable that raises a recorded error in its indexed release, such as
-  `ServiceContext.from_defaults` in llama-index-core (DT-CORE-49).
 - A word in a deprecation message is no longer read as its replacement: weaviate's "use Python client v4" and "use
   v3 code" gave `weaviate.Client` the replacements "Python" and "v3". A name where a stored message was cut off is
   skipped too, as it may go on (DT-CORE-77).

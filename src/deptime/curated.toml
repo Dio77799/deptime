@@ -1883,6 +1883,15 @@ target = "llama_index.core.Settings"
 quote = "from llama_index import ServiceContext, set_global_service_context … Which now looks like: … from llama_index.core import Settings"
 url = "https://github.com/run-llama/llama_index/blob/v0.12.0/docs/docs/getting_started/v0_10_0_migration.md#deprecated-servicecontext"
 
+# 0.11 left `ServiceContext.from_defaults` as a stub that only raises (DT-CORE-49), and its message names
+# `llama_index.settings.Settings`, a path llama-index-core doesn't have.
+[[hint]]
+package = "llama-index-core"
+path = "llama_index.core.ServiceContext.from_defaults"
+target = "llama_index.core.Settings"
+quote = "service_context = ServiceContext.from_defaults( … Which now looks like: … from llama_index.core import Settings"
+url = "https://github.com/run-llama/llama_index/blob/v0.12.0/docs/docs/getting_started/v0_10_0_migration.md#deprecated-servicecontext"
+
 
 # llamaindex-0.11
 [[hint]]

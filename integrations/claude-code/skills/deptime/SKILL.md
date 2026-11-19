@@ -18,6 +18,8 @@ version questions deterministically. Prefer it over guessing or web searching fo
    - `param_removed` / `symbol_removed` / `module_removed` / `param_kind_changed` → otherwise use `replacements` (highest confidence first), or apply `pin_to_restore` if the user prefers not to migrate. `signature_before` and `signature_after` show the callable on each side, and `links` the release pages and changelog.
      With `internal: true` the name isn't public API, and the code using it is usually another library
      (see the traceback's frames): upgrade that library to a release that supports the new version, or pin.
+   - `now_raises` → the function is still there but only raises (`raises` has the library's message, `raises_since`
+     the release): use `replacements`, or pin below `raises_since`.
    - `never_existed` → the name was probably misremembered; check `symbol_history` or the library's docs.
      At `low` confidence, read `explanation` first: the name may be created at runtime or predate the earliest indexed release.
    - `present_in_installed_version` → not a version change; look for a wrong venv, a shadowing local module, or an optional dependency.
