@@ -451,6 +451,11 @@ def test_check_symbols_suggests_a_curated_keyword_that_the_release_accepts(cover
     assert constructor.hint == method.hint == "For `proxies`, try `timeout`."
     assert already_passed.hint is None
     assert dt.check_symbols("httpx", "0.27.2", checks[:1]).results[0].hint is None
+    # The suggestion follows a positional-count hint as its own sentence.
+    (both,) = dt.check_symbols(
+        "httpx", "0.28.1", [SymbolQuery(path="httpx.Client", kwargs=["proxies"], positional=9)]
+    ).results
+    assert both.hint.startswith("takes ") and both.hint.endswith(". For `proxies`, try `timeout`.")
 
 
 def test_check_symbols_reads_call_notation_in_kwargs(dt):

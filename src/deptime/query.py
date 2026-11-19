@@ -1365,7 +1365,8 @@ class DepTime:
                             and _accepts_kwarg(params_raw, target)
                         ):
                             advice = f"For `{keyword}`, try `{target}`."
-                            hint = f"{hint} {advice}" if hint else advice
+                            # A positional-count hint has no full stop of its own (check_upgrade adds one).
+                            hint = f"{hint}{'' if hint.endswith('.') else '.'} {advice}" if hint else advice
                             break
             results.append(
                 SymbolCheck(

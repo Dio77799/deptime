@@ -101,6 +101,19 @@ are data: they can grow in any release.)
   `prepare_seq2seq_batch` and `as_target_tokenizer` → `__call__`, `BatchEncoding.words` → `word_ids`,
   `HUGGINGFACE_CO_RESOLVE_ENDPOINT` → `huggingface_hub.constants.ENDPOINT`, and six `TrainingArguments` renames
   (`per_gpu_train_batch_size` → `per_device_train_batch_size`, `push_to_hub_token` → `hub_token`, and the rest).
+- Migration hints for fastmcp 4.0's moved imports, from its upgrade guide: `Tool`, `ToolResult`, `Resource`,
+  `Prompt` and `Message` from the removed `fastmcp.tools.tool`, `fastmcp.resources.resource` and
+  `fastmcp.prompts.prompt` → `fastmcp.tools`, `fastmcp.resources` and `fastmcp.prompts`; `FunctionTool`, `tool`,
+  `FunctionResource`, `resource` and `FunctionPrompt` → their `function_*` modules; and the caching models'
+  `CachableToolResult` / `CachablePromptResult` → `Cacheable*`.
+- Migration hints for Pydantic AI 2.0 (`pydantic-ai-slim`), from its migration map: `pydantic_ai.builtin_tools` →
+  `native_tools`, `ModelResponse.vendor_details` → `provider_details`, `vendor_id` and `provider_request_id` →
+  `provider_response_id`, the usage fields `request_tokens` / `response_tokens` → `input_tokens` / `output_tokens`,
+  and four renamed arguments (`UsageLimits(request_tokens_limit=)` → `input_tokens_limit`, `Agent(history_processors=)`
+  → `capabilities`, and two more).
+- `check_symbols` suggests the new keyword for a rejected one when a migration hint names it and the release takes
+  it: "For `request_tokens_limit`, try `input_tokens_limit`." Before, the keyword was listed as rejected with no
+  advice.
 - A migration hint for weaviate-client 4.10: the removed v3 `weaviate.Client` → `weaviate.WeaviateClient`, quoting
   the message the old class now raises (DT-CORE-77).
 
