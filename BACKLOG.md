@@ -119,6 +119,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-CORE-77** (2026-11-18): a plain word before more prose ("use Python client", "use v3 code") and a name
   at a stored message's 400-character cut are no longer mined as replacements; weaviate's `weaviate.Client` gets the
   curated `weaviate.WeaviateClient` instead. Over the index's 4,138 deprecation messages only weaviate's two change.
+- [x] **DT-CORE-78** (2026-11-18): replacements mined from "use the <kind> method X" (sqlalchemy 1.4's 8
+  `Select.append_*` messages) and "`return X(...)` instead of `return X.member(...)`" (gradio 3.x's 31 component
+  `update` messages); no other message changes. Part of DT-CORE-40.
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required

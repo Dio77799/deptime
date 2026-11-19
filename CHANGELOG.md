@@ -79,6 +79,10 @@ are data: they can grow in any release.)
 - A word in a deprecation message is no longer read as its replacement: weaviate's "use Python client v4" and "use
   v3 code" gave `weaviate.Client` the replacements "Python" and "v3". A name where a stored message was cut off is
   skipped too, as it may go on (DT-CORE-77).
+- Two more ways libraries word a replacement are read: SQLAlchemy 1.4's "Use the generative method
+  Select.where()" gives the `Select.append_*` methods their replacements, and gradio 3.x's "`return gr.Audio(...)`
+  instead of `return gr.Audio.update(...)`" points each component's removed `update` method to the component
+  (DT-CORE-78).
 
 ## [1.0.3] - 2026-11-17
 

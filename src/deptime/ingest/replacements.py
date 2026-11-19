@@ -68,8 +68,23 @@ PATTERNS: list[tuple[re.Pattern[str], float]] = [
     ),
     (re.compile(rf"\bcall\s+{_THE}{IDENT}\s+directly\b", re.I), 0.75),
     (re.compile(rf"\binstead,?\s+(?:use|call|access)\s+{_THE}{IDENT}", re.I), 0.75),
+    # sqlalchemy 1.4's "Use the generative method Select.add_columns()": the kind of name, then the name (DT-CORE-78).
+    (
+        re.compile(
+            rf"\buse\s+the\s+(?:[a-z]+\s+)?(?:method|function|class|attribute|property)\s+{IDENT}", re.I
+        ),
+        0.8,
+    ),
     (re.compile(rf"\buse\s+{_THE}{IDENT}", re.I), 0.6),
 ]
+# gradio 3.x's "Simply return a new object instead, e.g. `return gr.Audio(...)` instead of `return
+# gr.Audio.update(...)`": the new call's name, when the old call is one of its members (DT-CORE-78). Not gradio's
+# `gr.update`, whose "`return gr.Textbox(...)` instead of `return gr.update(...)`" is only an example.
+RETURN_INSTEAD_RE = re.compile(
+    rf"[`'\"]+return\s+(?P<t>{_NAME})\([^`'\"]*\)[`'\"]+\s+instead\s+of\s+[`'\"]+return\s+(?P<old>{_NAME})\(",
+    re.I,
+)
+RETURN_INSTEAD_CONFIDENCE = 0.75
 # sqlalchemy's "Please refer to Inspector.get_table_names()" (DT-CORE-40). "Refer to" often points at prose, a URL or
 # a product ("refer to the documentation", "refer to https://…", langchain's "refer to LangGraph"), so only a name
 # that is quoted, dotted, has an underscore or is called counts.
@@ -311,6 +326,9 @@ def mine(message: str | None, *, skip_expressions: bool = False) -> list[Hint]:
         raw = m.group("t")  # "refer to docs." isn't code: the sentence's full stop doesn't count
         if marked or raw.endswith("()") or re.search(r"[._]", _clean(raw)):
             add(_target(message, m, skip_expressions), REFER_CONFIDENCE)
+    for m in RETURN_INSTEAD_RE.finditer(message):
+        if m.group("old").startswith(m.group("t") + "."):
+            add(_target(message, m, skip_expressions), RETURN_INSTEAD_CONFIDENCE)
     for t in _imports(message):
         add(t, IMPORT_CONFIDENCE)
     return sorted(hints.values(), key=lambda h: -h.confidence)

@@ -333,6 +333,31 @@ def test_a_language_or_a_version_in_a_sentence_is_not_a_target():
     assert _hints("Use Agent or Crew.") == [("Agent", 0.6)]
 
 
+def test_the_kind_of_name_before_the_name():
+    # DT-CORE-78: sqlalchemy 1.4's `Select.append_*` methods.
+    msg = (
+        "The Select.append_whereclause() method is deprecated and will be removed in a future release. Use the "
+        "generative method Select.where()."
+    )
+    assert _hints(msg) == [("Select.where", 0.8)]
+    assert _hints("Use the class method `Model.create` for this.") == [("Model.create", 0.8)]
+
+
+def test_a_returned_object_in_place_of_its_own_member():
+    # DT-CORE-78: gradio 3.x's component `update` methods.
+    msg = (
+        "Using the update method is deprecated. Simply return a new object instead, e.g. `return gr.Audio(...)` "
+        "instead of `return gr.Audio.update(...)`."
+    )
+    assert _hints(msg) == [("gr.Audio", 0.75)]
+    # gradio's own `gr.update` works for every component: its example names one, which isn't the replacement.
+    msg = (
+        "Using the update method is deprecated. Simply return a new object instead, e.g. `return gr.Textbox(...)` "
+        "instead of `return gr.update(...)`"
+    )
+    assert _hints(msg) == []
+
+
 def test_a_name_at_the_snapshots_cut_is_not_a_target():
     # DT-CORE-77: a snapshot keeps a message's first 400 characters, so "… If you have to use v3" may have gone on.
     def message(length: int) -> str:
