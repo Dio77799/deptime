@@ -84,9 +84,10 @@ are data: they can grow in any release.)
   `show_export_button` → `buttons`, `color_legend_title` → `color_title` (for `LinePlot`, `BarPlot` and
   `ScatterPlot` alike), and `WaveformOptions`' `show_controls` → `show_recording_waveform`.
 - Migration hints for mistralai 2.0, from the "Type Renames" table of its migration guide (linked at the v2.0.0
-  tag, as the file is gone from `main`): 26 fine-tuning, batch and model types, such as `BatchJobOut` → `BatchJob`
-  and `JobsOut` → `ListFineTuningJobsResponse`, each from `mistralai.models` to `mistralai.client.models`, in a
-  `# mistralai-v2` group. The old top-level spelling (`mistralai.BatchJobOut`) follows them.
+  tag, as the file is gone from `main`): 37 fine-tuning, batch, model, agent, library, document and file types,
+  such as `BatchJobOut` → `BatchJob`, `JobsOut` → `ListFineTuningJobsResponse` and `LibraryOut` → `Library`, each
+  from `mistralai.models` to `mistralai.client.models`, in a `# mistralai-v2` group. The old top-level spelling
+  (`mistralai.BatchJobOut`) follows them where mistralai had one.
 - `explain_error` explains an error raised by a function the library replaced with a stub that only raises: a
   finding with the new `issue` value `now_raises`, the library's message in `raises` (untrusted text), the release
   the stub arrived in as `raises_since`, and the function's replacements. llama-index-core 0.14's
