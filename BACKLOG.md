@@ -125,6 +125,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-CORE-62** (2026-11-19, PR #23 by rise11hx-cmyk): `diff_versions` lists used names deprecated at
   `to_version` in a new `deprecated_uses` field, wherever the deprecation began, and an in-range deprecation that
   ended before `to_version` carries `detail.until`.
+- [x] **DT-CORE-60** (2026-11-19, PR #32 by swpswpswp): a name under a module that became a function reads
+  `missing` once its own history ends (fastmcp 3's `prompts.prompt`), and `diff_versions` dates its removal; not
+  under a `__getattr__`-served name or an alias. Upgrade-check bench: breaks found 97.8% → 98.5%, no new false alarm.
 - [x] **DT-CORE-49** (2026-11-19, PR #34 by swpswpswp): `explain_error` explains an error from a function that
   only raises, when its message matches the installed release's record exactly: a `now_raises` finding with
   `raises` and `raises_since` (llama-index-core's `ServiceContext.from_defaults`).
@@ -295,7 +298,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 
 | ID | Gap | Fix is in |
 |---|---|---|
-| DT-CORE-60 | A module that became a function: names under it read `unknown` (fastmcp 3's `prompts.prompt`) | query |
 | DT-CORE-34 | Constructor keywords of dataclasses and pydantic models; required arguments | query, extraction |
 | DT-DATA-09 | Pydantic model fields as `__init__` keywords | extraction |
 | DT-DATA-76 | A name a lazy table serves doesn't carry its target's deprecation (langchain-community's `llms.OpenAI`) | extraction |

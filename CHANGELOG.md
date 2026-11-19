@@ -105,8 +105,12 @@ are data: they can grow in any release.)
   the message the old class now raises (DT-CORE-77).
 
 ### Fixed
-- `check_symbols` reports historically indexed names as missing after they disappear under a retyped module.
-  `diff_versions` reports removals at the version that dropped the name, including internal names (DT-CORE-60).
+- A name under a module that became a function now reads `missing` once the name is gone, instead of `unknown`:
+  fastmcp 3 turned `prompts.prompt` into a function and 3.2.0 deleted the old module, so
+  `fastmcp.prompts.prompt.Prompt` at 4.2.2 reads `missing`, "seen in 2.1.0..3.1.1". `diff_versions` reports
+  `PromptMessage` and `TextContent` removed at 3.2.0, where they actually went, rather than blaming the 3.0.0 change.
+  It needs the name's own history in the index; a name served by a module `__getattr__` or through an alias stays
+  `unknown`, as the object behind it may still have it (DT-CORE-60).
 - A word in a deprecation message is no longer read as its replacement: weaviate's "use Python client v4" and "use
   v3 code" gave `weaviate.Client` the replacements "Python" and "v3". A name where a stored message was cut off is
   skipped too, as it may go on (DT-CORE-77).
