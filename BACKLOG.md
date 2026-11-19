@@ -122,6 +122,9 @@ in-sample run flags 0 of 3,291 working uses and fails no pull request without a 
 - [x] **DT-CORE-78** (2026-11-18): replacements mined from "use the <kind> method X" (sqlalchemy 1.4's 8
   `Select.append_*` messages) and "`return X(...)` instead of `return X.member(...)`" (gradio 3.x's 31 component
   `update` messages); no other message changes. Part of DT-CORE-40.
+- [x] **DT-CORE-62** (2026-11-19, PR #23 by rise11hx-cmyk): `diff_versions` lists used names deprecated at
+  `to_version` in a new `deprecated_uses` field, wherever the deprecation began, and an in-range deprecation that
+  ended before `to_version` carries `detail.until`.
 
 **Phase 4, the fix (the model's part, outside DepTime): done.** DT-QA-27 met its bar on broken updates nobody had
 seen (`bench/agent-fix/qa27/results-2026-11-17.md`). Held from it: DepTime doesn't check a pydantic model's required
@@ -292,7 +295,6 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 | DT-CORE-60 | A module that became a function: names under it read `unknown` (fastmcp 3's `prompts.prompt`) | query |
 | DT-CORE-34 | Constructor keywords of dataclasses and pydantic models; required arguments | query, extraction |
 | DT-DATA-09 | Pydantic model fields as `__init__` keywords | extraction |
-| DT-CORE-62 | `diff_versions` on a deprecation in force at both ends, or dropped before `to` | query |
 | DT-DATA-76 | A name a lazy table serves doesn't carry its target's deprecation (langchain-community's `llms.OpenAI`) | extraction |
 
 **Tracebacks with no finding**
