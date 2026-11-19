@@ -323,6 +323,12 @@ Known gaps, most with a case kept as `known_gap` in the benchmark. None is sched
 
 ## Later
 
+- **DT-OSS-19** (proposed): ship the survey's rename checker as a contributor tool: for "old name → new name" pairs,
+  whether the index already answers each, can't take it, or would gain it, so a hint PR is checked before review.
+- **DT-DATA-84** (proposed, needs the maintainer's call on build time): index further back than `since = 2023-01-01`
+  for packages whose best-known breaks are older: selenium 4.3's `find_element_by_*`, pymongo 4.0, celery's
+  `celery.task`, click 8.0. Measure the build time, the index size and the share of reported tracebacks it would
+  answer first.
 - **DT-CORE-57**: check code as it is written (a Claude Code hook after each edit), once `check-upgrade` and its
   reader are measured.
 - **DT-DATA-81** (proposed): a sandboxed runtime floor for dynamic packages, so a name that runs reads `unknown` at
