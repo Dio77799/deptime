@@ -112,6 +112,11 @@ are data: they can grow in any release.)
   `provider_response_id`, the usage fields `request_tokens` / `response_tokens` → `input_tokens` / `output_tokens`,
   and four renamed arguments (`UsageLimits(request_tokens_limit=)` → `input_tokens_limit`, `Agent(history_processors=)`
   → `capabilities`, and two more).
+- Migration hints for the MCP Python SDK 2.0's client changes, from its migration guide: the `cursor` argument of
+  `ClientSession`'s four `list_*` methods → `params`, `ClientSessionGroup.call_tool(args=)` → `arguments`, the
+  OAuth client-credentials providers' `scopes=` → `scope`, `mcp.client.streamable_http.MCP_PROTOCOL_VERSION` →
+  `mcp.shared.inbound.MCP_PROTOCOL_VERSION_HEADER`, and the removed `mcp.client.websocket.websocket_client` →
+  `mcp.client.streamable_http.streamable_http_client` (#48).
 - `check_symbols` suggests the new keyword for a rejected one when a migration hint names it and the release takes
   it: "For `request_tokens_limit`, try `input_tokens_limit`." Before, the keyword was listed as rejected with no
   advice.
